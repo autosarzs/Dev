@@ -138,8 +138,7 @@ static Can_ControllerStateType Controller_Status[MAX_CAN_CONTROLLER] = { CAN_CS_
 static uint8  cnt[MAX_CAN_CONTROLLER];
 
 
-static uint32 ui32Base;
-static tCANMsgObject *psMsgObject[CanHwObjectCount];
+static tCANMsgObject *psMsgObject[CAN_HWOBJECT_COUNT];
 static uint8 bClrPendingInt;
 static Can_ErrorStateType Can_ErrorStateType_0;
 
@@ -161,7 +160,6 @@ uint8 HTH_Semaphore[MAX_NO_OF_OBJECTS] = 0 ;							//// simulation of a semaphor
 
 static Can_ControllerStateType Can_ControllerState[NUM_OF_CAN_CONTROLLERS]={CAN_CS_UNINIT};
 static MsgConfType MsgConf[NUM_OF_HOH * MAX_HW_OBJ_COUNT_PER_HOH] = {CAN_MSG_NOT_CONF};
-const CanType TivaCan = CAN_CONFIG;
 
 /*****************************************************************************************/
 /*                                   Local Function Declaration                          */
@@ -281,7 +279,7 @@ void Can_Init( const Can_ConfigType* Config)
 		/*
 		 * Save the BaseAddress of the controller this Hardware Object Belongs to
 		 */
-		BaseAddress=Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanControllerRef->CanControllerBaseAddress ;
+		BaseAddress = Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanControllerRef->CanControllerBaseAddress ;
 		HWREG(BaseAddress + CAN_O_IF1CMSK) |= (CAN_IF1CMSK_WRNRD | CAN_IF1CMSK_ARB | CAN_IF1CMSK_CONTROL );
 
 		/*

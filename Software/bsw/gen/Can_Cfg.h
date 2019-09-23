@@ -57,14 +57,13 @@
 
 #define CAN_polling_timout 300
 
-#define CanHwObjectCount 12
+#define CAN_HWOBJECT_COUNT 12
 
 #define CanBusoffProcessing POLLING
 
 #define CanDevErrorDetect   STD_ON
 
-
-#define CanDevErrorDetect 	FALSE
+#define CanSetBaudrateApi   STD_ON
 
 #define INTERRUPT_MODE 		(0x00)
 
@@ -72,8 +71,6 @@
 
 #define CanBusoffProcessing 	INTERRUPT_MODE
 #define CanControllerActivation
-#define CanControllerBaseAddress
-#define CanController
 
 
 #define CAN0_ID				(0u)
@@ -152,10 +149,16 @@ Example: HRH0-0, HRH1-1, HTH0-2, HTH1-3*/
 /* This parameter defines if or if not Can supports the trigger-transmit API for this handle*/
 #define CAN_TRIGGER_TRANSMIT_ENABLE STD_OFF
 
+#define MAX_NO_OF_OBJECTS 			(65u)
+#define NO_OF_CONTROLLERS_IN_HW 	(2u)
+
+#define CAN_INITIALIZED 			(1u)
+#define CAN_NOT_INITIALIZED 			(0u)
 
 #define NUM_OF_CAN_CONTROLLERS 2U
 #define CONTROLLER_0_ID 0U
 #define CONTROLLER_1_ID 1U
+
 #define CONTROLLER_0_BASE_ADD (volatile uint64*)0x40040000
 #define CONTROLLER_1_BASE_ADD (volatile uint64*)0x40041000
 
