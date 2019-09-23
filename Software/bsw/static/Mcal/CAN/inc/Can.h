@@ -83,11 +83,7 @@ typedef uint8 Can_ServiceId ;
 #define  Can_Write_Id                         ((Can_ServiceId)0x06)
 
 
-
-
 #define NULL_PTR  ((void*)0)
-
-
 
 //*****************************************************************************
 //  Enables / disables API Can_MainFunction_BusOff() for

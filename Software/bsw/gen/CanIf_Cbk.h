@@ -14,7 +14,7 @@
 #define CAN_IF_TYPES_AR_RELEASE_PATCH_VERSION   (1U)
 
 
-#include "../Vertical_Layer/Std_Types.h"
+#include "Std_Types.h"
 /* AUTOSAR checking between Std Types and CAN Modules */
 #if ((STD_TYPES_AR_RELEASE_MAJOR_VERSION != CAN_IF_TYPES_AR_RELEASE_MAJOR_VERSION)\
  ||  (STD_TYPES_AR_RELEASE_MINOR_VERSION != CAN_IF_TYPES_AR_RELEASE_MINOR_VERSION)\

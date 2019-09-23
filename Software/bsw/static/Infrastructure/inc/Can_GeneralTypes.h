@@ -1,3 +1,7 @@
+
+#ifndef CAN_GENERALTYPE_H
+#define CAN_GENERALTYPE_H
+
 #include "Std_Types.h"
 /* Can_ControllerStateType ENUM */
 /*
@@ -56,14 +60,14 @@ typedef struct Can_HwType {
 */
 
 
-
 /*
    Description : This type unites PduId (swPduHandle), SduLength (length), SduData (sdu), and CanId (id) for any CAN L-SDU.
 */
-
 typedef struct Can_PduType{
 	PduIdType swPduHandle ;
 	uint8 length;
 	Can_IdType id ;
 	uint8* sdu ;
 }Can_PduType;
+
+#endif

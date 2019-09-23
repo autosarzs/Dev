@@ -92,7 +92,7 @@
 /*Non-Autosar file*/
 #include "tm4c123gh6pm.h"
 
-#include "../Vertical_Layer/Std_Types.h"
+#include "Std_Types.h"
 /* AUTOSAR checking between Std Types and Can_Cfg Modules */
 #if ((STD_TYPES_AR_RELEASE_MAJOR_VERSION != CAN_CFG_AR_RELEASE_MAJOR_VERSION)\
  ||  (STD_TYPES_AR_RELEASE_MINOR_VERSION != CAN_CFG_AR_RELEASE_MINOR_VERSION)\

@@ -1,6 +1,7 @@
 #ifndef __DET_H__
 #define __DET_H__
 
+#include "Std_Types.h"
 /* Module Version 1.0.0 */
 #define DET_MAJOR_VERSION           (1U)
 #define DET_MINOR_VERSION           (0U)
