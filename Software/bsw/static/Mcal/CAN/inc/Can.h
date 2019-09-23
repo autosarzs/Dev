@@ -1,32 +1,37 @@
-/*****************************************************************************************/
-/*                                                                                       */
-/*    layer              :  MCAL                                                         */
-/*                                                                                       */
-/*    Component          :  CAN                                                          */
-/*    Description        :                                                               */
-/*                                                                                       */
-/*    Module             :  CAN                                                          */
-/*    Description        :  The Can module is part of the lowest layer, performs the     */
-/*                          hardware access and offers a hardware independent API to     */
-/*                          the upper layer.                                             */
-/*                          The only upper layer that has access to the Can module is    */
-/*                          the CanIf module (see also SRS_SPAL_12092).                  */
-/*                          The Can module provides services for initiating transmissions*/
-/*                          and calls the callback functions of the CanIf module for     */
-/*                          notifying events, independently from the hardware.           */
-/*                          Furthermore, it provides services to control the behavior    */
-/*                          and state of the CAN controllers that are belonging to       */
-/*                          the same CAN Hardware Unit.                                  */
-/*                          Several CAN controllers can be controlled by a single Can    */
-/*                          module as long as they belong to the same CAN Hardware Unit  */
-/*                                                                                       */
-/*    File               :  Can.h                                                        */
-/*    HW Target          :  TivaC(TM4C123GH6PM Microcontroller)                       	 */
-/*    Team               :  AUTOSAR_NINJA                                                */
-/*    Coding languages   :  c                                                            */
-/*    Autosar Version    :  4.3.1                                                        */
-/*    Sw Version         :  1.0.0                                                        */
-/*****************************************************************************************/
+/*******************************************************************************
+**                                                                            **
+**  Copyright (C) AUTOSarZs olc (2019)		                                  **
+**                                                                            **
+**  All rights reserved.                                                      **
+**                                                                            **
+**  This document contains proprietary information belonging to AUTOSarZs     **
+**  olc . Passing on and copying of this document, and communication          **
+**  of its contents is not permitted without prior written authorization.     **
+**                                                                            **
+********************************************************************************
+**                                                                            **
+**  FILENAME     : Can.h         			                                  **
+**                                                                            **
+**  VERSION      : 1.0.0                                                      **
+**                                                                            **
+**  DATE         : 2019-09-22                                                 **
+**                                                                            **
+**  VARIANT      : Variant PB                                                 **
+**                                                                            **
+**  PLATFORM     : TIVA C		                                              **
+**                                                                            **
+**  AUTHOR       : AUTOSarZs-DevTeam	                                      **
+**                                                                            **
+**  VENDOR       : AUTOSarZs OLC	                                          **
+**                                                                            **
+**                                                                            **
+**  DESCRIPTION  : CAN Driver source file                                     **
+**                                                                            **
+**  SPECIFICATION(S) : Specification of CAN Driver, AUTOSAR Release 4.3.1     **
+**                                                                            **
+**  MAY BE CHANGED BY USER : no                                               **
+**                                                                            **
+*******************************************************************************/
 
 #ifndef CAN_H_
 #define CAN_H_
