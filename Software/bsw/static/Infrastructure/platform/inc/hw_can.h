@@ -67,6 +67,21 @@ typedef unsigned long long  uint64;
 
 #define MaxValue_BRPE  1024
 #define MinValue_BRPE  64
+
+#define CAN0_BASE               0x40040000  // CAN0
+#define CAN1_BASE               0x40041000  // CAN1
+
+#define CAN_O_CTL               0x00000000  // CAN Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the CAN_O_CTL register.
+//
+//*****************************************************************************
+#define CAN_CTL_EIE               0x00000008  // Error Interrupt Enable
+#define CAN_CTL_SIE               0x00000004  // Status Interrupt Enable
+#define CAN_CTL_IE                0x00000002  // CAN Interrupt Enable
+#define CAN_CTL_INIT            0x00000001  // DeInitialization
 //*****************************************************************************
 //
 // The following are defines for the CAN register offsets.

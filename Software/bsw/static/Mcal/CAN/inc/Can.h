@@ -45,6 +45,18 @@
 /*****************************************************************************************/
 /*                                    Macro Definition                                   */
 /*****************************************************************************************/
+/* Id for the company in the AUTOSAR
+  **/
+#define CAN_VENDOR_ID    (0x100)
+
+/* CAN Module Id */
+#define CAN_MODULE_ID    (123U)
+
+/* CAN Instance Id */
+#define CAN_INSTANCE_ID  (0U)
+
+/* APIs Service Ids */
+
 
 /* CAN StatusType ENUM */
 
@@ -72,10 +84,10 @@ typedef uint8 Can_DetErrorType;
 /* Can_ServiceId ENUM  */
 typedef uint8 Can_ServiceId;
 
-#define  Can_Init_Id                          ((Can_ServiceId)0x00)
+#define  CAN_INIT_API_ID                      ((Can_ServiceId)0x00)
 #define  Can_GetVersionInfo_Id                ((Can_ServiceId)0x07)
 #define  Can_DeInit_Id                        ((Can_ServiceId)0x10)
-#define  Can_SetBaudrate_Id                   ((Can_ServiceId)0x0f)
+#define  CAN_SETBAUDRATE_API_ID               ((Can_ServiceId)0x0f)
 #define  Can_SetControllerMode_Id             ((Can_ServiceId)0x03)
 #define  Can_DisableControllerInterrupts_Id   ((Can_ServiceId)0x04)
 #define  Can_EnableControllerInterrupts_Id    ((Can_ServiceId)0x05)
@@ -83,6 +95,7 @@ typedef uint8 Can_ServiceId;
 #define  Can_GetControllerErrorState_Id       ((Can_ServiceId)0x11)
 #define  Can_GetControllerMode_Id             ((Can_ServiceId)0x12)
 #define  Can_Write_Id                         ((Can_ServiceId)0x06)
+#define Can_MainFunction_Write_SID            (uint8)(0x01)
 
 #define NULL_PTR  ((void*)0)
 
@@ -134,6 +147,24 @@ typedef uint8 CanIdTypeType;
 typedef uint8 CanObjectTypeType;
 #define RECEIVE     ((CanObjectTypeType)0x0)
 #define TRANSMIT    ((CanObjectTypeType)0x1)
+
+
+/*Overlaid return value of Std_ReturnType for CAN driver API Can_Write() */
+#define CAN_BUSY (Std_ReturnType)0x02U
+
+/*Error states of a CAN controller*/
+typedef uint8 Can_ErrorStateType;
+
+#define CAN_ERRORSTATE_ACTIVE  (Can_ErrorStateType) 0U
+#define CAN_ERRORSTATE_PASSIVE (Can_ErrorStateType) 1U
+#define CAN_ERRORSTATE_BUSOFF  (Can_ErrorStateType) 2U
+
+/*States that are used by the several ControllerMode functions*/
+typedef uint8 Can_ControllerStateType;
+#define CAN_CS_UNINIT  (Can_ControllerStateType) 0x00U
+#define CAN_CS_STARTED (Can_ControllerStateType) 0x01U
+#define CAN_CS_STOPPED (Can_ControllerStateType) 0x02U
+#define CAN_CS_SLEEP   (Can_ControllerStateType) 0x03U
 
 typedef float64 McuClockReferencePoint;
 

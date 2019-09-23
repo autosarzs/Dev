@@ -91,17 +91,17 @@ typedef volatile uint64 vuint64_t;
 /** Boolean data type. **/
 ///[SWS_Platform_00034]
 #ifndef FALSE
-#define FALSE		(boolean)false
+#define FALSE		(boolean)0
 #endif
 #ifndef TRUE
-#define TRUE		(boolean)true
+#define TRUE		(boolean)1
 #endif
 
 #ifndef False
-#define False		(boolean)false
+#define False		(boolean)0
 #endif
 #ifndef True
-#define True		(boolean)true
+#define True		(boolean)1
 #endif
 
 #endif

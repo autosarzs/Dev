@@ -48,6 +48,7 @@
 /*                                   Include Component headres                           */
 /*****************************************************************************************/
 #include "hw_can.h"
+#include "Can_lib.h"
 #include "Can.h"
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
@@ -162,6 +163,23 @@ static Can_ControllerStateType Can_ControllerState[NUM_OF_CAN_CONTROLLERS] = {
 static MsgConfType MsgConf[NUM_OF_HOH
 		* MAX_HW_OBJ_COUNT_PER_HOH] = {CAN_MSG_NOT_CONF};
 
+
+/*Description :  variable to contain the CAN Controller Mode (UNINIT,STARTED,STOPPED,SLEEP)*/
+static Can_ControllerStateType Can_ControllerMode [NUM_OF_CAN_CONTROLLERS];
+/*Description :  variable for interrupt Enable in start mode */
+static uint8 uint8_uint8_InterruptEnableInStartMode[NUM_OF_CAN_CONTROLLERS];
+/*Description :  variable for interrupt Disable in stop mode */
+static uint8 uint8_InterruptDisableInStoptMode[NUM_OF_CAN_CONTROLLERS];
+/*Description :  variable for interrupt Disable counter */
+static uint8 uint8_InterruptDisableCounter[NUM_OF_CAN_CONTROLLERS];
+/* This is a mapping between interrupt number (for the peripheral interrupts
+   only) and the register that contains the interrupt enable for that interrupt.*/
+static const uint32 g_pui32EnRegs[] =
+{
+		NVIC_EN0, NVIC_EN1, NVIC_EN2, NVIC_EN3, NVIC_EN4
+};
+
+
 /*****************************************************************************************/
 /*                                   Local Function Declaration                          */
 /*****************************************************************************************/
@@ -214,7 +232,7 @@ void Can_Init(const Can_ConfigType* Config) {
 	/*  Report error CAN_E_PARAM_POINTER API called with wrong parameter */
 	if (Config == NULL_PTR)
 	{
-		Det_ReportError(CAN_MODULE, CAN_INSTANCE, CAN_INIT_API_ID,
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID,
 				CAN_E_PARAM_POINTER);
 	}
 
@@ -223,7 +241,7 @@ void Can_Init(const Can_ConfigType* Config) {
 	 */
 	if (ModuleState != CAN_UNINIT)
 	{
-		Det_ReportError(CAN_MODULE, CAN_INSTANCE, CAN_INIT_API_ID,
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID,
 				CAN_E_TRANSITION);
 	}
 #endif
@@ -245,7 +263,7 @@ void Can_Init(const Can_ConfigType* Config) {
 		 */
 		if (ControllerState[controllerId] != CAN_CS_UNINIT)
 		{
-			Det_ReportError(CAN_MODULE, CAN_INSTANCE, CAN_INIT_API_ID,
+			Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID,
 					CAN_E_TRANSITION);
 		}
 #endif
@@ -318,7 +336,7 @@ void Can_Init(const Can_ConfigType* Config) {
 					> CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
 					{
 				/*Report error as number of used hardware message objects exceeded limit*/
-				Det_ReportError(CAN_MODULE, CAN_INSTANCE, CAN_INIT_API_ID,
+				Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID,
 						CAN_E_INIT_FAILED);
 			}
 #endif
@@ -410,7 +428,7 @@ void Can_Init(const Can_ConfigType* Config) {
 						> CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
 						{
 					/*Report error as the number of occupied hardware message objects exceeded limit 32*/
-					Det_ReportError(CAN_MODULE, CAN_INSTANCE, CAN_INIT_API_ID,
+					Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID,
 							CAN_E_INIT_FAILED);
 				}
 #endif
@@ -475,7 +493,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 	if (CAN_E_UNINIT == ControllerState[Controller]
 			|| NULL_PTR == Global_ConfigType
 			|| (!(HWREG(ui32Base + CAN_O_CTL) & CAN_CTL_INIT))) {
-		Det_ReportError(CAN_MODULE, CAN_INSTANCE, CAN_SETBAUDRATE_API_ID,
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SETBAUDRATE_API_ID,
 				CAN_E_UNINIT);
 		return E_NOT_OK;
 	}
@@ -485,7 +503,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 	 and return E_NOT_OK if the parameter Controller is out of range. */
 #if(CanDevErrorDetect==STD_ON)
 	if (Controller > CAN_CONTROLLERS_NUMBER) {
-		Det_ReportError(CAN_MODULE, CAN_INSTANCE, CAN_SETBAUDRATE_API_ID,
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SETBAUDRATE_API_ID,
 				CAN_E_PARAM_CONTROLLER);
 		return E_NOT_OK;
 	}
@@ -497,7 +515,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 	 and return E_NOT_OK if the parameter BaudRateConfigID has an invalid value*/
 
 	if (BaudRateConfigID > ControllerBaudrateConfigNum[Controller]) {
-		Det_ReportError(CAN_MODULE, CAN_INSTANCE, CAN_SETBAUDRATE_API_ID,
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SETBAUDRATE_API_ID,
 				CAN_E_PARAM_BAUDRATE);
 		return E_NOT_OK;
 	}
@@ -901,8 +919,8 @@ void Can_MainFunction_Mode(void) {
 			}
 		} else {
 			if (g_Config_Ptr->CanControllers[ControllerIndex].CanControllerErrorState
-					== CAN_ERRORSTARE_BUSOFF)
-				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_UINIT);
+					== CAN_ERRORSTATE_BUSOFF)
+				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_UNINIT);
 
 			else
 				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STARTED);
@@ -1183,7 +1201,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,
 #if(CAN_DEV_ERROR_DETECT == STD_ON)
 	if (Can_ControllerState[Controller]==CAN_CS_UNINIT)
 	{
-		Det_ReportError(CAN_MODULE_ID,CAN_INSTANCE_ID,Can_GetControllerMode_SID,CAN_E_UNINIT);
+		Det_ReportError(CAN_MODULE_ID,CAN_INSTANCE_ID,Can_GetControllerMode_Id,CAN_E_UNINIT);
 		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
 	}
 	else
@@ -1196,7 +1214,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,
 	if (Controller >= NUM_OF_CAN_CONTROLLERS)
 	{
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,
-				Can_GetControllerMode_SID, CAN_E_PARAM_CONTROLLER);
+				Can_GetControllerMode_Id, CAN_E_PARAM_CONTROLLER);
 		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
 	} else {
 
@@ -1204,7 +1222,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,
 	if (ControllerModePtr == NULL)
 	{
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,
-				Can_GetControllerMode_SID, CAN_E_PARAM_POINTER);
+				Can_GetControllerMode_Id, CAN_E_PARAM_POINTER);
 		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
 	} else {
 
