@@ -54,16 +54,6 @@
 /*                                   Local Macro Definition                              */
 /*****************************************************************************************/
 
-/*  Can Module StateTypes
- *  CAN_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT.
- *  CAN_READY  : The function Can_Init shall change the module state to CAN_READY
- */
-#define CAN_UNINIT 0x00
-#define CAN_READY  0x01
-
-#define MODULE_ID_CAN       (80)
-#define MAX_CAN_CONTROLLER  (2)
-
 #define valid      1
 #define invalid    0
 
@@ -80,11 +70,6 @@
 /*    Type range              :  0->255                                                  */
 /*    Requirment              : SWS                                                      */
 typedef uint8 Can_ControllerStateType;
-
-/*    Type Description        : variable define can Module state                         */
-/*    Type range              :  0->255                                                  */
-/*    Requirment              : SWS                                                      */
-typedef uint8 Can_ModuleStateType;
 
 /*    Type Description      : 	Struct to map each software meesage object with the number
  its configured hardware message objects in the HW FIFO
@@ -114,8 +99,12 @@ static Can_ModuleStateType ModuleState = CAN_UNINIT;
 
 /*    Type Description        : array to save Controllers state                          */
 /*    Requirment              : SWS                                                      */
-static Can_ControllerStateType ControllerState[CAN_CONTROLLERS_NUMBER] = {
-		CAN_CS_UNINIT };
+static Can_ControllerStateType ControllerState[MAX_CONTROLLERS_NUMBER] = {
+		CAN_CS_UNINIT, CAN_CS_UNINIT };
+
+/*    Type Description        : array to save times of Disabling Controller Interrupts   */
+/*    Requirment              : SWS                                                      */
+static uint8 DisableCnt[MAX_CONTROLLERS_NUMBER];
 
 /*    Type Description        : Pointer to save Module configration parameters           */
 /*    Requirment              : SWS                                                      */
@@ -134,11 +123,7 @@ static uint8 ControllerBaudrateConfigNum[MAX_CONTROLLERS_NUMBER] = {
 /* as tm4c123gh6pm microcontroller doesn't support multiplexed transmission               */
 static str_MessageObjAssignedToHOH MessageObjAssignedToHOH[CAN_HOH_NUMBER];
 
-static Can_StatusType state = CAN_UNINIT;
-static Can_ControllerStateType Controller_Status[MAX_CAN_CONTROLLER] = {
-		CAN_CS_UNINIT, CAN_CS_UNINIT };
 /** ***************************************************************************************/
-static uint8 cnt[MAX_CAN_CONTROLLER];
 
 static tCANMsgObject *psMsgObject[CAN_HWOBJECT_COUNT];
 static uint8 bClrPendingInt;
@@ -624,27 +609,49 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 // Reentrant Function
 void Can_EnableControllerInterrupts(uint8 Controller) {
 	irq_Disable();
-	if (state == CAN_UNINIT
-		)Det_ReportError(MODULE_ID_CAN, 0, Can_EnableControllerInterrupts_Id,
+#if(CanDevErrorDetect==STD_ON)
+	if (ModuleState == CAN_UNINIT)
+    {
+        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_EnableControllerInterrupts_Id,
 				CAN_E_UNINIT);
-	else if (Controller > MAX_CAN_CONTROLLER
-		)Det_ReportError(MODULE_ID_CAN, 0, Can_EnableControllerInterrupts_Id,
+    }
+    /*  [SWS_Can_00210] The function Can_EnableControllerInterrupts shall raise the error
+     *  CAN_E_PARAM_CONTROLLER if the parameter Controller is out of range
+     */
+	else if (Controller > MAX_CONTROLLERS_NUMBER)
+    {
+        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_EnableControllerInterrupts_Id,
 				CAN_E_PARAM_CONTROLLER);
-	else {
-		if (cnt[Controller] > 1) {
-			cnt[Controller]--;
-		} else if (cnt[Controller] == 1) {
-			cnt[Controller] = 0;
-			if (Controller == 0)
-				CANIntEnable(CAN0_BASE,
-						CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS);
-			else if (Controller == 1)
-				CANIntEnable(CAN1_BASE,
-						CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS);
-			else {
-			}
-		}
-	}
+    }
+#endif
+
+    /*  [SWS_Can_00202] When Can_DisableControllerInterrupts has been called
+     *  several times, Can_EnableControllerInterrupts must be called as many times before
+     *  the interrupts are re-enabled
+     */
+    if (DisableCnt[Controller] > 1) {
+        DisableCnt[Controller]--;
+    }
+
+    /*  [SWS_Can_00208] The function Can_EnableControllerInterrupts shall perform no
+     *  action when Can_DisableControllerInterrupts has not been called before
+     */
+    else if (DisableCnt[Controller] == 1) {
+        DisableCnt[Controller] = 0;
+
+        /* [SWS_Can_00050] The function Can_EnableControllerInterrupts shall enable all
+         * interrupts that must be enabled according the current software status
+         */
+        if (Controller == 0)
+            CANIntEnable(CAN0_BASE,
+                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
+        else if (Controller == 1)
+            CANIntEnable(CAN1_BASE,
+                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
+        else {
+        }
+    }
+    /* End of Critical Section */
 	irq_Enable();
 }
 
@@ -652,54 +659,83 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
 // Reentrant Function
 void Can_DisableControllerInterrupts(uint8 Controller) {
 	irq_Disable();
-	if (state == CAN_UNINIT
-		)Det_ReportError(MODULE_ID_CAN, 0, Can_DisableControllerInterrupts_Id,
+#if(CanDevErrorDetect==STD_ON)
+
+    /*  [SWS_Can_00205] The function Can_DisableControllerInterrupts shall raise the error CAN_E_UNINIT if
+     *  the driver not yet initialized
+     */
+	if (ModuleState == CAN_UNINIT)
+    {
+        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DisableControllerInterrupts_Id,
 				CAN_E_UNINIT);
-	else if (Controller > MAX_CAN_CONTROLLER
-		)Det_ReportError(MODULE_ID_CAN, 0, Can_DisableControllerInterrupts_Id,
+    }
+
+    /*  [SWS_Can_00206] The function Can_DisableControllerInterrupts shall raise the error
+     *  CAN_E_PARAM_CONTROLLER if the parameter Controller is out of range
+     */
+	else if (Controller > MAX_CONTROLLERS_NUMBER
+		)Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DisableControllerInterrupts_Id,
 				CAN_E_PARAM_CONTROLLER);
-	else {
-		cnt[Controller]++;
-		if (cnt[Controller] > 0) {
-		} else {
-			/** Can interrupt is disabled*/
-			if (Controller == 0)
-				CANIntDisable(CAN0_BASE,
-						CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS);
-			else if (Controller == 1)
-				CANIntDisable(CAN1_BASE,
-						CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS);
-			else {
-			}
-		}
-	}
+#endif
+
+    /*  [SWS_Can_00202] When Can_DisableControllerInterrupts has been called
+     *  several times, Can_EnableControllerInterrupts must be called as many times before
+     *  the interrupts are re-enabled
+     */
+    if (DisableCnt[Controller] == 0)
+    {
+        /*  [SWS_Can_00049] The function Can_DisableControllerInterrupts shall access the
+         *  CAN controller registers to disable all interrupts for that CAN controller only, if
+         *  interrupts for that CAN Controller are enabled
+         */
+        if (Controller == 0)
+            CANIntDisable(CAN0_BASE,
+                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
+        else if (Controller == 1)
+            CANIntDisable(CAN1_BASE,
+                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
+        else {
+        }
+    }
+    DisableCnt[Controller]++;
+
+    /* End of Critical Section */
 	irq_Enable();
 }
 
 /******************************************************************************************/
 // Non Reentrant Function
 void Can_DeInit(void) {
-	if (DeInitCallsNum == 1) {
-		DeInitCallsNum = 0;
-		if (state != CAN_READY)
-		{
-			// raise CAN_E_TRANSITION Error
-			Det_ReportError(MODULE_ID_CAN, 0, Can_DeInit_Id, CAN_E_TRANSITION);
-		} else {
-			if (Controller_Status[0] == CAN_CS_STARTED
-					|| Controller_Status[1] == CAN_CS_STARTED)
-					{
-				// raise CAN_E_TRANSITION Error
-				Det_ReportError(MODULE_ID_CAN, 0, Can_DeInit_Id,
-						CAN_E_TRANSITION);
-			} else {
-				state = CAN_UNINIT; // [SWS_Can_ 91009] Change Can Status according to SWS
-				CANDeInit();
-			}
-		}
-	} else {
-
-	}
+#if(CanDevErrorDetect==STD_ON)
+    /*   The function Can_DeInit shall raise the error CAN_E_TRANSITION if the driver is not
+     *   in state CAN_READY [SWS_Can_91011]
+     *   [SWS_BSW_00232] Call to De-Initialization functions :
+     *   The module De-Initialization function shall be called only if the module was initialized before
+	 */
+    if (ModuleState != CAN_READY)
+    {
+        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id, CAN_E_TRANSITION);
+    }
+    /*  The function Can_DeInit shall raise the error CAN_E_TRANSITION if any of the CAN
+     *  controllers is in state STARTED [SWS_Can_91012]
+     */
+    if (ControllerState[0] == CAN_CS_STARTED
+            || ControllerState[1] == CAN_CS_STARTED)
+    {
+        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id,
+                CAN_E_TRANSITION);
+    }
+#endif
+    /*  [SWS_Can_ 91009] The function Can_DeInit shall change the module state to
+     *  CAN_UNINIT before de-initializing all controllers inside the HW unit
+     *  [SWS_BSW_00072] Module state after De-Initialization function
+     *  The state of a BSW Module shall be set accordingly at the beginning of the DeInitialization function
+     */
+    ModuleState = CAN_UNINIT;
+    CLR_BITS( HWREG(CAN0_BASE + CAN_O_CTL),0
+             , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );   // DeInit CAN controller0
+    CLR_BITS( HWREG(CAN1_BASE + CAN_O_CTL),0
+             , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );   // DeInit CAN controller1
 }
 
 void Can_MainFunction_Read(void) {

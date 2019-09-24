@@ -36,16 +36,6 @@
 #define CAN_GENERALTYPE_H
 
 #include "Std_Types.h"
-/* Can_ControllerStateType ENUM */
-/*
-   Description : States that are used by the several ControllerMode functions.
-*/
-typedef uint8 Can_ControllerStateType ;
-
-#define CAN_CS_UNINIT  ((Can_ControllerStateType)0x00)   // CAN controller state UNINIT.
-#define CAN_CS_STARTED ((Can_ControllerStateType)0x01)   // CAN controller state STARTED.
-#define CAN_CS_STOPPED ((Can_ControllerStateType)0x02)   // CAN controller state STOPPED.
-#define CAN_CS_SLEEP   ((Can_ControllerStateType)0x03)   // CAN controller state SLEEP.
 
 /* Can_ErrorStateType ENUM */
 /*

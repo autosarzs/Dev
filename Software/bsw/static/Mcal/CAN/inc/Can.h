@@ -50,7 +50,7 @@
 #define CAN_VENDOR_ID    (0x100)
 
 /* CAN Module Id */
-#define CAN_MODULE_ID    (123U)
+#define CAN_MODULE_ID    (80U)
 
 /* CAN Instance Id */
 #define CAN_INSTANCE_ID  (0U)
@@ -58,12 +58,17 @@
 /* APIs Service Ids */
 
 
-/* CAN StatusType ENUM */
-
-typedef uint8 Can_StatusType;
-#define INITIALIZED     1
-#define CAN_UNINIT     ((Can_StatusType)0x00)
-#define CAN_READY      ((Can_StatusType)0x01)
+/* Can_ModuleStateType ENUM */
+/*    Type Description        : variable define can Module state                         */
+/*    Type range              :  0->1                                                 */
+/*    Requirment              : SWS                                                      */
+typedef uint8 Can_ModuleStateType;
+/*  Can_ModuleStateType
+ *  CAN_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT.
+ *  CAN_READY  : The function Can_Init shall change the module state to CAN_READY
+ */
+#define CAN_UNINIT     ((Can_ModuleStateType)0x00)
+#define CAN_READY      ((Can_ModuleStateType)0x01)
 
 /* Can_DetErrorType ENUM */
 typedef uint8 Can_DetErrorType;
