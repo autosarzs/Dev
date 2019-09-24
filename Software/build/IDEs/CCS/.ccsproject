@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?ccsproject version="1.0"?>
+<projectOptions>
+	<ccsVersion value="9.1.0"/>
+	<deviceVariant value="Cortex M.TM4C123GH6PZ"/>
+	<deviceFamily value="TMS470"/>
+	<deviceEndianness value="little"/>
+	<codegenToolVersion value="GNU_7.2.1:Linaro"/>
+	<isElfFormat value="true"/>
+	<linkerCommandFile value="tm4c123gh6pz.lds"/>
+	<rts value="libc.a"/>
+	<createSlaveProjects value=""/>
+	<templateProperties value="id=com.ti.common.project.core.emptyProjectWithMainTemplate_gnu_arm"/>
+	<filesToOpen value="main.c"/>
+</projectOptions>
