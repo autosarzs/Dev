@@ -551,7 +551,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 		/*
 		 * Baud rate Prescaler = tq * CAN Clock
 		 * bit time =  n * tq
-		 *          =[Sync + Prop + Phase1 + Phase2] × tq
+		 *          =[Sync + Prop + Phase1 + Phase2] ï¿½ tq
 		 *  Syn =1 all the time
 		 * 1/Frequency(rate) =n*Tq
 		 * 1/Frequency(rate)*n=Tq
@@ -743,11 +743,14 @@ void Can_MainFunction_Read(void) {
 	Can_HwType Mailbox;
 	int index;
 
+  /*TODO: Loop on all controllers.
+   *        For each controller, check the state if it is STARTED and if this controller mode is POLLING.
+   *        */
+
 	// Check whether we need to check RXready flag or not.
 	if ( HWREG(CAN0_BASE + CAN_O_STS) & CAN_STATUS_RXOK)
 	{
 		// 1. Copy data to temp buffer
-
 		for(index = 0; index < CanHwObjectCount; index++)
 		{
 			CANMessageGet(CAN0_BASE, index, psMsgObject++, bClrPendingInt);
@@ -758,15 +761,16 @@ void Can_MainFunction_Read(void) {
 		//Mailbox.Hoh =
 		Mailbox.ControllerId = 0;
 
+	    //TODO: we need to call this API for each msgObject has the data ready.
 		// 2. inform CanIf using API below.
 		CanIf_RxIndication(Mailbox, PduInfoPtr);//We need to ask how to access these vars
 	}
 #endif
 }
 
-//Can_MainFunction_BusOff_0 or Can_MainFunction_BusOff
 void Can_MainFunction_BusOff(void) {
 #if CanBusoffProcessing == POLLING
+    /*TODO: Loop on all controllers.*/
 	if(HWREG(CAN0_BASE + CAN_O_STS) & CAN_STATUS_BUS_OFF)
 	{
 		CanIf_ControllerBusOff(CAN0_ID);
@@ -784,6 +788,7 @@ Can_HwHandleType Hth, const Can_PduType* PduInfo) {
 	/*
 	 * check if you left the DevErrorDectect Open ..
 	 */
+    /*TODO: Loop on all controllers.*/
 #if (CanDevErrorDetect == TRUE)
 	if (Can_DriverState == CAN_NOT_INITIALIZED)
 	{
