@@ -171,14 +171,105 @@ static const uint32 g_pui32EnRegs[] =
 /*                                   Local Function Definition                           */
 /*****************************************************************************************/
 
+
 /*****************************************************************************************/
-/*    Function Description    :                                                          */
-/*    Parameter in            :                                                          */
+/*    Function Description    :  this function sets the baud rate                        */
+/*    Parameter in            :  BaseAddress : required controller base address 
+                                 BRConfig    : pointer to baudrate configration  
+																 CanCpuClock : Value of CanCpu Clock in Hz               */
 /*    Parameter inout         :                                                          */
 /*    Parameter out           :                                                          */
 /*    Return value            :                                                          */
-/*    Requirment              : SWS_Can_                                                 */
+/*    Requirment              :                                                          */
 /*****************************************************************************************/
+
+static void SetControllerBaudrate(uint32 BaseAddress,CanControllerBaudrateConfig* BRConfig,McuClockReferencePoint CanCpuClock)
+{
+	uint32 ui32BitReg = 0;
+	uint32 ui32BaudRatePrescaler;
+	uint32 n;
+	uint32 ui32Base;
+	
+			/*
+        To set the bit timing register, the controller must be placed in init
+        mode (if not already), and also configuration change bit enabled.  State
+        of the init bit must be saved so it can be restored at the end.
+        Write accesses to the CANBIT register are allowed if the INIT bit is 1.*/
+		/* CAN_CTL_CCE     Write accesses to the CANBIT register are allowed if the INIT bit is 1. */
+		HWREG(BaseAddress + CAN_O_CTL) |= CAN_CTL_CCE; 	/* set INIT_BIT and CCE */
+
+
+		/* 	Set the bit fields of the bit timing register
+		 *	according to Tiva C TM4C123GH6PM page 1058
+		 * 	TSEG2 		= Phase2 - 1
+		 *	TSEG1 		= Prop + Phase1 - 1
+		 *	SJW 		= SJW - 1
+		 *	BRP =BRP */
+
+		/* 	Time Segment After Sample Point (TSEG2)
+		0x00-0x07: The actual interpretation by the hardware of this value is such that one more than the value programmed here is used.
+		So, for example, the reset value of 0x2 means that 3 (2+1) bit time quanta are defined for Phase2
+		The bit time quanta is defined by the BRP field.*/
+		ui32BitReg  = 	(((((BRConfig->CanControllerSeg2) - 1) << CAN_BIT_TSEG2_S)) & CAN_BIT_TSEG2_M);
+
+		/* Time Segment Before Sample Point (TSEG1)
+        0x00-0x0F: The actual interpretation by the hardware of this value is such that one more than the value programmed here is used.
+        So, for example, the reset value of 0x3 means that 4 (3+1) bit time quanta are defined for Phase1 .
+        The bit time quanta is defined by the BRP field. */
+		ui32BitReg |= ((((BRConfig->CanControllerPropSeg + BRConfig ->CanControllerSeg1) - 1) <<CAN_BIT_TSEG1_S) & CAN_BIT_TSEG1_M);
+
+		/*(Re)Synchronization Jump Width (SJW) :
+        0x00-0x03:The actual interpretation by the hardware of this value is such that one more than the value programmed here is used.
+        During the start of frame (SOF), if the CAN controller detects a phase error (misalignment), it can adjust the length of TSEG2 or TSEG1 by the
+        value in SJW. So the reset value of 0 adjusts the length by 1 bit time quanta*/
+		ui32BitReg |= (((BRConfig->CanControllerSyncJumpWidth - 1) << CAN_BIT_SJW_S) & CAN_BIT_SJW_M);
+
+
+		/*
+		 * Baud rate Prescaler = tq * CAN Clock
+		 * bit time =  n * tq
+		 *          =[Sync + Prop + Phase1 + Phase2] × tq
+		 *  Syn =1 all the time
+		 * 1/Frequency(rate) =n*Tq
+		 * 1/Frequency(rate)*n=Tq
+		 * Baud rate Prescaler = CAN Clock*(1/(n*baud rate))
+		 * Baud rate Prescaler = CAN Clock*(1/(n*baud rate))
+		 */
+		n = BRConfig->CanControllerSeg2 + BRConfig->CanControllerSeg1 + 1+ BRConfig->CanControllerPropSeg ;
+
+		/*
+		 * CanControllerBaudRate :-Specifies the baudrate of the controller in kbps
+		 * Baud Rate Prescaler (BRP)
+       The value by which the oscillator frequency is divided for generating the bit time quanta. The bit time is built up from a multiple of this quantum.
+       0x00-0x03F: The actual interpretation by the hardware of this value is such that one more than the value programmed here is used.
+       BRP defines the number of CAN clock periods that make up 1 bit time quanta, so the reset value is 2 bit time quanta (1+1).
+       The CANBRPE register can be used to further divide the bit time */
+
+		ui32BaudRatePrescaler = ((CanCpuClock)/(((BRConfig->CanControllerBaudRate)*1000)*n));
+		ui32BitReg |= ((ui32BaudRatePrescaler) - 1) & CAN_BIT_BRP_M;
+
+
+		/* Set CANBIT Register */
+		/* Register 4: CAN Bit Timing (CANBIT) :-
+		 *             This register is used to program the bit width and bit quantum. Values are programmed to the system
+                   clock frequency. This register is write-enabled by setting the CCE and INIT bits in the CANCTL register */
+		HWREG(BaseAddress + CAN_O_BIT) = ui32BitReg;
+
+
+		/* Set the divider upper bits in the extension register. */
+		/* Baud Rate Prescaler Extension (BRPE)
+       0x00-0x0F: Extend the BRP bit in the CANBIT register to values up to
+       1023. The actual interpretation by the hardware is one more than the
+       value programmed by BRPE (MSBs) and BRP (LSBs). */
+
+		if (ui32BaudRatePrescaler < MaxValue_BRPE  && ui32BaudRatePrescaler > MinValue_BRPE)
+		{
+			HWREG(BaseAddress + CAN_O_BRPE) =((ui32BaudRatePrescaler - 1) >> 6) & CAN_BRPE_BRPE_M;
+		}
+
+		/* reset CCE to disable access to CANBIT register*/
+		HWREG(BaseAddress + CAN_O_CTL) &= ~CAN_CTL_CCE;
+}	
 
 /*****************************************************************************************/
 /*                                   Global Function Definition                          */
