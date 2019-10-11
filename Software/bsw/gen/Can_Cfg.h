@@ -41,12 +41,16 @@
 
 
 
-#define MAX_BAUDRATE_CONFIGS_CONTROLLER_0 	(1U)
-#define MAX_BAUDRATE_CONFIGS_CONTROLLER_1	  (1U)
-#define MAX_CONTROLLERS_NUMBER               2
+#define MAX_BAUDRATE_CONFIGS_CONTROLLER_0 	     (1U)
+#define MAX_BAUDRATE_CONFIGS_CONTROLLER_1	     (1U)
+#define MAX_CONTROLLERS_NUMBER                    2
 #define CAN_CONTROLLERS_NUMBER                    0x01                /*number of can controllers in the ECU*/
-#define CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS    32                  /*TivaC microcontroller supports 32 message objects to be used as Tx or Rx*/
 #define CAN_HOH_NUMBER                            2
+#define CLOCK                                     50000000            /*Can Clock in Hz*/ 
+
+/*Define HOH for Can module */
+#define HTH0_0                                    0
+#define HRH0_1                                    1
 
 // ECUC_Can_00317
 #define POLLING 2
