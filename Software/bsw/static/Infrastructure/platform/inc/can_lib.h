@@ -46,7 +46,17 @@
 //! @{
 //
 //*****************************************************************************
+#include "hw_nvic.h"
+#include "Platform_Types.h"
+#include "hw_can.h"
+#include "hw_ints.h"
 
+#include "hw_memmap.h"
+#include "hw_sysctl.h"
+#include "hw_types.h"
+#include "can_lib.h"
+//#include "debug.h"
+//#include "interrupt.h"
 //*****************************************************************************
 //
 // If building with a C++ compiler, make all of the definitions in this header

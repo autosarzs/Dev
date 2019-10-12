@@ -93,5 +93,16 @@ typedef struct Can_PduType{
 	uint8* sdu ;
 }Can_PduType;
 
+typedef enum CanObjectType
+   {
+       /*
+        * Receive HOH
+        */
+       receive,
+       /*
+        * Transmit HOH
+        */
+       transmit
+   }CanObjectType;
 
 #endif
