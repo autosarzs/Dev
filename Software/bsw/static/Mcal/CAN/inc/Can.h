@@ -164,7 +164,11 @@ typedef uint8 Can_ErrorStateType;
 #define CAN_ERRORSTATE_PASSIVE (Can_ErrorStateType) 1U
 #define CAN_ERRORSTATE_BUSOFF  (Can_ErrorStateType) 2U
 
+/* Can_ControllerStateType ENUM */
 /*States that are used by the several ControllerMode functions*/
+/*    Type Description        : variable define can controller state                     */
+/*    Type range              :  0->3                                                  */
+/*    Requirment              : SWS                                                      */
 typedef uint8 Can_ControllerStateType;
 #define CAN_CS_UNINIT  (Can_ControllerStateType) 0x00U
 #define CAN_CS_STARTED (Can_ControllerStateType) 0x01U
@@ -336,6 +340,5 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID);
 void Can_DeInit(void);
 void Can_DisableControllerInterrupts(uint8 Controller);
 void Can_EnableControllerInterrupts(uint8 Controller);
-void CANDeInit(void);
 
 #endif /* CAN_H_ */
