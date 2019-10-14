@@ -71,17 +71,26 @@
 /*    Requirment              : SWS                                                      */
 typedef uint8 Can_ControllerStateType;
 
-/*    Type Description      : 	Struct to map each software meesage object with the number
+/*    Type Description      : 	Struct to map each receive software meesage object with the number
  its configured hardware message objects in the HW FIFO
- HOHId     	: 	SW meesage objectId from CANIF
+ HRHId     	: 	SW meesage objectId from CANIF
  StartMessageId  : 	ID of the first hardware meesage object in the HW FIFO
  StartMessageId  : 	ID of the last  hardware meesage object in the HW FIFO    */
 typedef struct {
-	uint8 HOHId;
+	uint8 HRHId;
 	uint8 StartMessageId;
 	uint8 EndMessageId;
-} str_MessageObjAssignedToHOH;
+} str_MessageObjAssignedToHRH;
 
+/*    Type Description      : 	Struct to map each transmit software meesage object with the number
+                                its configured hardware message objects in the HW FIFO 
+		        HTHId     	: 	SW meesage objectId from CANIF
+			StartMessageId  : 	ID of the  hardware meesage object in the HW    */
+typedef struct
+{
+	uint8 HTHId;              
+	uint8 MessageId;      
+}str_MessageObjAssignedToHTH;
 /*****************************************************************************************/
 /*                                Exported Variables Definition                          */
 /*****************************************************************************************/
@@ -117,10 +126,13 @@ static uint8 ControllerBaudrateConfigNum[MAX_CONTROLLERS_NUMBER] = {
 
 /* Type Description  :    Struct                                                          */
 /* to save each start and end Hardware message object ID                                  */
-/* of a specific software HOH(message object)                                             */
+/* of a specific software HRH(message object)                                             */
 /* in case of HRH the number of  Hardware message objects >= 1                            */
-static str_MessageObjAssignedToHOH MessageObjAssignedToHRH[CAN_HOH_NUMBER];
+static str_MessageObjAssignedToHRH MessageObjAssignedToHRH[CAN_HRH_NUMBER];
 
+/* Type Description  :    Struct                                                          */
+/* assign each software HTH to a hardware message object                                  */
+static str_MessageObjAssignedToHTH MessageObjAssignedToHTH[CAN_HTH_NUMBER];
 /** ***************************************************************************************/
 
 static tCANMsgObject *psMsgObject[CAN_HWOBJECT_COUNT];
@@ -423,6 +435,8 @@ void Can_Init( const Can_ConfigType* Config)
 			{
 			}
 		#endif
+		    MessageObjAssignedToHTH[HOHCount].HTHId=Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectId ;
+			MessageObjAssignedToHTH[HOHCount].MessageId=UsedHWMessageObjt[controllerId];
 			HWREG(BaseAddress + CAN_O_IF1CRQ)   = UsedHWMessageObjt[controllerId];
 		}
 		/*
@@ -497,7 +511,7 @@ void Can_Init( const Can_ConfigType* Config)
 					/*Set cuurent hardware message as the last one in FIFO */
 			    	HWREG(BaseAddress + CAN_O_IF2MCTL)|= CAN_IF2MCTL_EOB ;
 					/*Map the Current Software HRH with its hardware messages used in the buffer*/
-					MessageObjAssignedToHRH[HOHCount].HOHId=Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectId;
+					MessageObjAssignedToHRH[HOHCount].HRHId=Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectId;
 					/*Save the ID of the first hardware message object used in the FIFO*/
 					MessageObjAssignedToHRH[HOHCount].StartMessageId=UsedHWMessageObjt[controllerId]- Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount]\
 							.CanHwObjectCount +1 ;
