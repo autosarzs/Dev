@@ -43,6 +43,8 @@
 /*****************************************************************************************/
 
 #include "Det.h"
+// core_cm4.h is included to use NVIC_SystemReset Function in Assertion
+#include "core_cm4.h"
 
 /*****************************************************************************************/
 /*                                   Include Component headres                           */
@@ -66,10 +68,6 @@
 /*****************************************************************************************/
 /*                                   Local types Definition                              */
 /*****************************************************************************************/
-/*    Type Description        : variable define can controller state                     */
-/*    Type range              :  0->255                                                  */
-/*    Requirment              : SWS                                                      */
-typedef uint8 Can_ControllerStateType;
 
 /*    Type Description      : 	Struct to map each software meesage object with the number
  its configured hardware message objects in the HW FIFO
@@ -606,19 +604,34 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 }
 #endif
 
-// Reentrant Function
+/*****************************************************************************************/
+/*    Requirment              : SWS_Can_00232                                            */
+/*    Function Description    : This function enables all allowed interrupts.            */
+/*    Parameter in            : Controller                                               */
+/*    Parameter inout         : none                                                     */
+/*    Parameter out           : none                                                     */
+/*    Return value            : none                                                     */
+/*    Reentrancy              : Reentrant Function                                       */
+/*																                         */
+/*****************************************************************************************/
 void Can_EnableControllerInterrupts(uint8 Controller) {
+	/* Critical Section to protect shared resources in a reentrant Function */
 	irq_Disable();
 #if(CanDevErrorDetect==STD_ON)
+	
+	/*  [SWS_Can_00209] The function Can_EnableControllerInterrupts shall raise the error CAN_E_UNINIT if
+     *  the driver not yet initialized
+     */
 	if (ModuleState == CAN_UNINIT)
     {
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_EnableControllerInterrupts_Id,
 				CAN_E_UNINIT);
     }
+
     /*  [SWS_Can_00210] The function Can_EnableControllerInterrupts shall raise the error
      *  CAN_E_PARAM_CONTROLLER if the parameter Controller is out of range
      */
-	else if (Controller > MAX_CONTROLLERS_NUMBER)
+	else if (Controller >= MAX_CONTROLLERS_NUMBER)
     {
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_EnableControllerInterrupts_Id,
 				CAN_E_PARAM_CONTROLLER);
@@ -636,18 +649,21 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
     /*  [SWS_Can_00208] The function Can_EnableControllerInterrupts shall perform no
      *  action when Can_DisableControllerInterrupts has not been called before
      */
-    else if (DisableCnt[Controller] == 1) {
+    else if (1 == DisableCnt[Controller]) {
         DisableCnt[Controller] = 0;
 
         /* [SWS_Can_00050] The function Can_EnableControllerInterrupts shall enable all
          * interrupts that must be enabled according the current software status
          */
-        if (Controller == 0)
+		/*  Enable the first CAN Controller Interrupts */ 
+        if (Controller == CAN0_ID)
+			
             CANIntEnable(CAN0_BASE,
-                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
-        else if (Controller == 1)
+                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
+        /*  Enable the second CAN Controller Interrupts */ 
+		else if (Controller == CAN1_ID)
             CANIntEnable(CAN1_BASE,
-                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
+                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
         else {
         }
     }
@@ -655,9 +671,19 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
 	irq_Enable();
 }
 
-/****************************************************************************************/
-// Reentrant Function
+/*****************************************************************************************/
+/*    Requirement             : SWS_Can_00231                                            */
+/*    Function Description    : This function disables all interrupts                    */
+/*                            : for this CAN controller                                  */
+/*    Parameter in            : Controller                                               */
+/*    Parameter inout         : none                                                     */
+/*    Parameter out           : none                                                     */
+/*    Return value            : none                                                     */
+/*    Reentrancy              : Reentrant Function                                       */
+/**/
+/*****************************************************************************************/
 void Can_DisableControllerInterrupts(uint8 Controller) {
+	/* Critical Section to protect shared resources in a reentrant Function */
 	irq_Disable();
 #if(CanDevErrorDetect==STD_ON)
 
@@ -673,8 +699,8 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
     /*  [SWS_Can_00206] The function Can_DisableControllerInterrupts shall raise the error
      *  CAN_E_PARAM_CONTROLLER if the parameter Controller is out of range
      */
-	else if (Controller > MAX_CONTROLLERS_NUMBER
-		)Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DisableControllerInterrupts_Id,
+	else if (Controller >= MAX_CONTROLLERS_NUMBER)
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DisableControllerInterrupts_Id,
 				CAN_E_PARAM_CONTROLLER);
 #endif
 
@@ -682,18 +708,20 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
      *  several times, Can_EnableControllerInterrupts must be called as many times before
      *  the interrupts are re-enabled
      */
-    if (DisableCnt[Controller] == 0)
+    if (0 == DisableCnt[Controller])
     {
         /*  [SWS_Can_00049] The function Can_DisableControllerInterrupts shall access the
          *  CAN controller registers to disable all interrupts for that CAN controller only, if
          *  interrupts for that CAN Controller are enabled
          */
-        if (Controller == 0)
+        /*  Disable the first CAN Controller Interrupts */ 
+        if (Controller == CAN0_ID)
             CANIntDisable(CAN0_BASE,
-                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
-        else if (Controller == 1)
+                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
+        /*  Disable the second CAN Controller Interrupts */ 
+		else if (Controller == CAN1_ID)
             CANIntDisable(CAN1_BASE,
-                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
+                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
         else {
         }
     }
@@ -703,8 +731,16 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
 	irq_Enable();
 }
 
-/******************************************************************************************/
-// Non Reentrant Function
+/*****************************************************************************************/
+/*    Requirement             : SWS_Can_91002                                            */
+/*    Function Description    : This function de-initializes the module                  */
+/*    Parameter in            : none                                                     */
+/*    Parameter inout         : none                                                     */
+/*    Parameter out           : none                                                     */
+/*    Return value            : none                                                     */
+/*    Reentrancy              : Non Reentrant Function                                   */
+/*																                         */
+/*****************************************************************************************/
 void Can_DeInit(void) {
 #if(CanDevErrorDetect==STD_ON)
     /*   The function Can_DeInit shall raise the error CAN_E_TRANSITION if the driver is not
@@ -732,6 +768,7 @@ void Can_DeInit(void) {
      *  The state of a BSW Module shall be set accordingly at the beginning of the DeInitialization function
      */
     ModuleState = CAN_UNINIT;
+	/*	Disable the first four bits in CAN Control Register in both controllers */
     CLR_BITS( HWREG(CAN0_BASE + CAN_O_CTL),0
              , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );   // DeInit CAN controller0
     CLR_BITS( HWREG(CAN1_BASE + CAN_O_CTL),0
@@ -1466,3 +1503,11 @@ void Can_MainFunction_Write(void) {
 	}
 }
 
+__attribute__((naked)) void assert_failed (char const *file, int line) {
+    (void)pcFilename; /* avoid the "unused parameter" compiler warning */
+    (void)ui32Line;    /* avoid the "unused parameter" compiler warning */
+	/* For a production code , I think it is better to reset the system
+	 * not to cause an infinite loop which is a denial service
+	 */
+    NVIC_SystemReset(); /* reset the system */
+}

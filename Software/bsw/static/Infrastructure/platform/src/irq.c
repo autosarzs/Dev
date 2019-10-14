@@ -34,14 +34,18 @@
 *******************************************************************************/
 
 
-__asm
-void irq_Enable(void)
+
+__attribute__((naked)) void irq_Enable(void)
 {
-    CPSIE i
+	__asm(
+		"CPSIE i\n\t"
+	);
 }
 
-__asm
-void irq_Disable(void)
+
+__attribute__((naked)) void irq_Disable(void)
 {
-    CPSID i
+    __asm(
+		"CPSID i\n\t"
+	);
 }
