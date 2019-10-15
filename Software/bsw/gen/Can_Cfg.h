@@ -50,7 +50,7 @@
 
 // ECUC_Can_00317
 #define POLLING 2
-#define MIXED 1
+
 #define INTERRUPT 0
 
 #define CanRxProcessing POLLING
