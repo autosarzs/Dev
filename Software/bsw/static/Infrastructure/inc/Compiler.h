@@ -38,7 +38,7 @@
 #define AUTOMATIC
 #define TYPEDEF typedef
 #define STATIC 	static
-#define NULL_PTR	((void *)0)
+
 
 #define INLINE __inline__
 
