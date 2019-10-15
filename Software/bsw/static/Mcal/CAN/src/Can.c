@@ -1230,7 +1230,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	Std_ReturnType Loc_Can_GetControllerMode_Ret = E_OK;
 
 #if(CAN_DEV_ERROR_DETECT == STD_ON)
-	if (ControllerState[Controller]==CAN_CS_UNINIT)
+	if (CAN_CS_UNINIT==ControllerState[Controller])
 	{
 		Det_ReportError(CAN_MODULE_ID,CAN_INSTANCE_ID,Can_GetControllerMode_Id,CAN_E_UNINIT);
 		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
@@ -1242,7 +1242,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 
 #endif
 
-	if (Controller >= NUM_OF_CAN_CONTROLLERS)
+	if ( NUM_OF_CAN_CONTROLLERS <= Controller )
 	{
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_CONTROLLER);
 		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
@@ -1251,7 +1251,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	{
 	    /* Do Nothing */
 	}
-	if (ControllerModePtr == NULL)
+	if ( NULL == ControllerModePtr)
 	{
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_POINTER);
 		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
@@ -1261,7 +1261,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	    /* Do Nothing */
 	}
 
-	if (Loc_Can_GetControllerMode_Ret != E_NOT_OK)
+	if ( E_NOT_OK != Loc_Can_GetControllerMode_Ret)
 	{
 
 		*ControllerModePtr = ControllerState[Controller];
@@ -1312,9 +1312,9 @@ void Can_MainFunction_Write(void)
 		
 		for (index = 0; index < NUM_OF_HOH; index++) 
 		{
-			if (Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanObjectType == TRANSMIT)
+			if (TRANSMIT == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanObjectType)
 			{
-				if (Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanControllerRef == Global_ConfigType->CanConfigSetRef->CanControllerRef[CONTROLLER_0_ID])
+				if (&Global_ConfigType->CanConfigSetRef->CanControllerRef[CONTROLLER_0_ID] == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanControllerRef)
 				{
 					#if (CAN_TX_PROCESSING_0==POLLING_PROCESSING)
 
@@ -1337,7 +1337,7 @@ void Can_MainFunction_Write(void)
 					
 					#elif(CAN_TX_PROCESSING_0==MIXED_PROCESSING)
 
-						if (Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling == STD_ON)
+						if ( STD_ON == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
 						{
 														
 							CAN0_IF1CRQ_R =	MessageObjAssignedToHOH[index].StartMessageId;
@@ -1369,7 +1369,7 @@ void Can_MainFunction_Write(void)
 					#endif
 				}
 
-				else if (Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanControllerRef== Global_ConfigType->CanConfigSetRef->CanControllerRef[CONTROLLER_1_ID])
+				else if (&Global_ConfigType->CanConfigSetRef->CanControllerRef[CONTROLLER_1_ID] == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanControllerRef)
 				{
 					#if (CAN_TX_PROCESSING_1==POLLING_PROCESSING)
 				
@@ -1392,7 +1392,7 @@ void Can_MainFunction_Write(void)
 					
 					#elif(CAN_TX_PROCESSING_1==MIXED_PROCESSING)
 
-						if (Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling== STD_ON)
+						if (STD_ON == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
 						{
 							
 							CAN1_IF1CRQ_R =MessageObjAssignedToHOH[index].StartMessageId;
