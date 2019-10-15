@@ -69,7 +69,7 @@
 
 
 
-#define CanBusoffProcessing 	INTERRUPT_MODE
+
 #define CanControllerActivation
 
 
