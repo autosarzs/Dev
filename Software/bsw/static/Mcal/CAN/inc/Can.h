@@ -276,6 +276,9 @@ typedef struct {
 	 configuration (parameters) of one hardware filter. */
 	CanHwFilter *CanHwFilterRef;
 
+	/*Enables polling of this hardware object.*/
+	boolean 	CanHardwareObjectUsesPolling;
+
 } CanHardwareObject;
 //*****************************************************************************
 //  This container contains the configuration parameters and sub containers of
@@ -337,5 +340,6 @@ void Can_DeInit(void);
 void Can_DisableControllerInterrupts(uint8 Controller);
 void Can_EnableControllerInterrupts(uint8 Controller);
 void CANDeInit(void);
-
+Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* ControllerModePtr);
+void Can_MainFunction_Write(void);
 #endif /* CAN_H_ */
