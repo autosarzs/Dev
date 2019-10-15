@@ -90,5 +90,8 @@ typedef uint8 Std_ReturnType;
 #define STD_ON			0x01
 #define STD_OFF			0x00
 
+#define STD_TYPES_AR_RELEASE_MAJOR_VERSION   (4U)
+#define STD_TYPES_AR_RELEASE_MINOR_VERSION   (3U)
+#define STD_TYPES_AR_RELEASE_PATCH_VERSION   (1U)
 
 #endif
