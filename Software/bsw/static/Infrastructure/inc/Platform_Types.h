@@ -36,9 +36,7 @@
 #ifndef PLATFORM_TYPES_H
 #define PLATFORM_TYPES_H
 ///[SWS_Platform_00027]
-#ifndef _Bool
-#define _Bool unsigned char
-#endif
+
 /** CPU Type & CPU_BIT_ORDER & CPU_BYTE_ORDER. **/
 #define CPU_TYPE_8 8
 #define CPU_TYPE_16 16
@@ -91,10 +89,10 @@ typedef volatile uint64 vuint64_t;
 /** Boolean data type. **/
 ///[SWS_Platform_00034]
 #ifndef FALSE
-#define FALSE		(boolean)0
+#define FALSE		(0U)
 #endif
 #ifndef TRUE
-#define TRUE		(boolean)1
+#define TRUE		(1U)
 #endif
 
 #ifndef False
