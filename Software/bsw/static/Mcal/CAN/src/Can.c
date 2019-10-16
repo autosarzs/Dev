@@ -740,7 +740,7 @@ void Can_DeInit(void) {
 }
 
 void Can_MainFunction_Read(void) {
-#ifdef (CanRxProcessing == POLLING || CanRxProcessing == MIXED)
+#if (CanRxProcessing == POLLING || CanRxProcessing == MIXED)
 	Can_HwType Mailbox;
 	int index;
 
