@@ -50,6 +50,8 @@
 #include "hw_can.h"
 #include "Can_lib.h"
 #include "Can.h"
+#include "irq.h"
+#include "Timer0A.h"
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
 /*****************************************************************************************/
@@ -734,7 +736,7 @@ void Can_DeInit(void) {
 }
 
 void Can_MainFunction_Read(void) {
-#ifdef (CanRxProcessing == POLLING || CanRxProcessing == MIXED)
+#if (CanRxProcessing == POLLING || CanRxProcessing == MIXED)
 	Can_HwType Mailbox;
 	int index;
 

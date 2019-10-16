@@ -35,13 +35,13 @@
 
 
 // Enable Interrupts
-__attribute__( ( always_inline ) ) static inline void irq_Enable(void)
+__attribute__( ( always_inline ) ) inline void irq_Enable(void)
 {
 __asm(" cpsie i");
 }
 
 // Disable Interrupts
-__attribute__( ( always_inline ) ) static inline void irq_Disable(void)
+__attribute__( ( always_inline ) ) inline void irq_Disable(void)
 {
 __asm(" cpsid i");
 }
