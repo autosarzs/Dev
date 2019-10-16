@@ -160,9 +160,7 @@ typedef uint8 CanObjectTypeType;
 /*Error states of a CAN controller*/
 typedef uint8 Can_ErrorStateType;
 
-#define CAN_ERRORSTATE_ACTIVE  (Can_ErrorStateType) 0U
-#define CAN_ERRORSTATE_PASSIVE (Can_ErrorStateType) 1U
-#define CAN_ERRORSTATE_BUSOFF  (Can_ErrorStateType) 2U
+
 
 /*States that are used by the several ControllerMode functions*/
 typedef uint8 Can_ControllerStateType;
