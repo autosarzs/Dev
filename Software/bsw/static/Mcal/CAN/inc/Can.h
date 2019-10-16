@@ -42,6 +42,8 @@
 #include "Can_GeneralTypes.h"
 #include "Can_Cfg.h"
 #include "ComStack_Types.h"
+#include "BitHelper.h"
+#include "CanIf_Cbk.h"
 /*****************************************************************************************/
 /*                                    Macro Definition                                   */
 /*****************************************************************************************/

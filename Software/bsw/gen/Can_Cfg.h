@@ -120,7 +120,8 @@ typedef uint8 CanProcessingType;
 #define MIXED_PROCESSING     1U   /* Mixed Mode of operation  */
 #define POLLING_PROCESSING  2U   /* Polling Mode of operation*/
 
-
+#define CAN_CONTROLLER_0_ACTIVATION STD_ON
+#define CAN_CONTROLLER_1_ACTIVATION STD_ON
 
 /*Specifies the type (Full-CAN or Basic-CAN) of a hardware object*/
 #define CAN_HANDLE_TYPE BASIC_CAN
