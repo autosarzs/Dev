@@ -34,11 +34,11 @@
 *******************************************************************************/
 
 
-#ifndef BSW_STATIC_INFRASTRUCTURE_PLATFORM_INC_IRQ_H_
-#define BSW_STATIC_INFRASTRUCTURE_PLATFORM_INC_IRQ_H_
+#ifndef IRQ_H_
+#define IRQ_H_
 
 void irq_Enable(void);
 void irq_Disable(void);
 
 
-#endif /* BSW_STATIC_INFRASTRUCTURE_PLATFORM_INC_IRQ_H_ */
+#endif /* IRQ_H_ */

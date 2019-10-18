@@ -162,15 +162,6 @@ typedef uint8 CanObjectTypeType;
 /*Error states of a CAN controller*/
 typedef uint8 Can_ErrorStateType;
 
-
-
-/*States that are used by the several ControllerMode functions*/
-typedef uint8 Can_ControllerStateType;
-#define CAN_CS_UNINIT  (Can_ControllerStateType) 0x00U
-#define CAN_CS_STARTED (Can_ControllerStateType) 0x01U
-#define CAN_CS_STOPPED (Can_ControllerStateType) 0x02U
-#define CAN_CS_SLEEP   (Can_ControllerStateType) 0x03U
-
 typedef float64 McuClockReferencePoint;
 
 //*****************************************************************************
@@ -339,7 +330,6 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID);
 void Can_DeInit(void);
 void Can_DisableControllerInterrupts(uint8 Controller);
 void Can_EnableControllerInterrupts(uint8 Controller);
-void CANDeInit(void);
 Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* ControllerModePtr);
 void Can_MainFunction_Write(void);
 #endif /* CAN_H_ */
