@@ -84,7 +84,7 @@ typedef struct {
 
 /*    Type Description      : 	Struct to map each transmit software meesage object with the number
                                 its configured hardware message objects in the HW FIFO 
-		        HTHId     	: 	SW meesage objectId from CANIF
+		        HTHId     	: 	SW message objectId from CANIF
 			StartMessageId  : 	ID of the  hardware meesage object in the HW    */
 typedef struct
 {
@@ -240,7 +240,7 @@ static void SetControllerBaudrate(uint32 BaseAddress,CanControllerBaudrateConfig
 		/*
 		 * Baud rate Prescaler = tq * CAN Clock
 		 * bit time =  n * tq
-		 *          =[Sync + Prop + Phase1 + Phase2] � tq
+		 *          =[Sync + Prop + Phase1 + Phase2] × tq
 		 *  Syn =1 all the time
 		 * 1/Frequency(rate) =n*Tq
 		 * 1/Frequency(rate)*n=Tq
@@ -635,7 +635,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 		/*
 		 * Baud rate Prescaler = tq * CAN Clock
 		 * bit time =  n * tq
-		 *          =[Sync + Prop + Phase1 + Phase2] � tq
+		 *          =[Sync + Prop + Phase1 + Phase2] × tq
 		 *  Syn =1 all the time
 		 * 1/Frequency(rate) =n*Tq
 		 * 1/Frequency(rate)*n=Tq
@@ -1199,7 +1199,7 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 //							for()
 //							{
 //								????????????
-//								/*[SWS_Can_00282] ⌈The function Can_SetControllerMode(CAN_CS_STOPPED)
+//								/*[SWS_Can_00282] âThe function Can_SetControllerMode(CAN_CS_STOPPED)
 //                                 shall cancel pending messages.*/
 //
 //							}
@@ -1226,7 +1226,7 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 //							for(  )
 //							{
 //																????????????
-//								/*[SWS_Can_00282] ⌈The function Can_SetControllerMode(CAN_CS_STOPPED)
+//								/*[SWS_Can_00282] âThe function Can_SetControllerMode(CAN_CS_STOPPED)
 //                                 shall cancel pending messages.*/
 //
 //							}
@@ -1262,7 +1262,7 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 //							for()
 //							{
 //																????????????
-//								/*[SWS_Can_00282] ⌈The function Can_SetControllerMode(CAN_CS_STOPPED)
+//								/*[SWS_Can_00282] âThe function Can_SetControllerMode(CAN_CS_STOPPED)
 //                                 shall cancel pending messages.*/
 //
 //							}
@@ -1287,7 +1287,7 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 //							for(  )
 //							{
 //																????????????
-//								/*[SWS_Can_00282] ⌈The function Can_SetControllerMode(CAN_CS_STOPPED)
+//								/*[SWS_Can_00282] âThe function Can_SetControllerMode(CAN_CS_STOPPED)
 //                                 shall cancel pending messages.*/
 //
 //							}
