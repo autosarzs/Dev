@@ -125,6 +125,8 @@ static str_MessageObjAssignedToHOH MessageObjAssignedToHOH[CAN_HOH_NUMBER];
 
 /** ***************************************************************************************/
 
+static tCANMsgObject *psMsgObject[CAN_HWOBJECT_COUNT];
+static uint8 bClrPendingInt;
 static Can_ErrorStateType Can_ErrorStateType_0;
 
 /*
