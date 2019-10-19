@@ -44,11 +44,10 @@
 //
 // Prototype for the function that is called when an invalid argument is passed
 // to an API.  This is only used when doing a DEBUG build.
-//
+// assert_failed Function Definition exists in Can.c
 //*****************************************************************************
-//extern void __error__(char *pcFilename, uint32_t ui32Line);
-
 __attribute__((naked)) void assert_failed (char const *file, int line);
+//extern void __error__(char *pcFilename, uint32_t ui32Line);
 
 //*****************************************************************************
 //

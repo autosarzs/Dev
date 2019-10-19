@@ -37,7 +37,7 @@
 
 #include "Std_Types.h"
 
-typedef uint8 PduIdType ;
+typedef uint32 PduIdType ;
 
 
 typedef uint8 PduLengthType ;

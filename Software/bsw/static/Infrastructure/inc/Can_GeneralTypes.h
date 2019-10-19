@@ -82,6 +82,16 @@ typedef struct Can_HwType {
 				 11 CAN FD frame with Extended CAN ID
 */
 
+/* Can_ControllerStateType ENUM */
+/*States that are used by the several ControllerMode functions*/
+/*    Type Description        : variable define can controller state                     */
+/*    Type range              :  0->3                                                  */
+/*    Requirment              : SWS                                                      */
+typedef uint8 Can_ControllerStateType;
+#define CAN_CS_UNINIT  (Can_ControllerStateType) 0x00U
+#define CAN_CS_STARTED (Can_ControllerStateType) 0x01U
+#define CAN_CS_STOPPED (Can_ControllerStateType) 0x02U
+#define CAN_CS_SLEEP   (Can_ControllerStateType) 0x03U
 
 /*
    Description : This type unites PduId (swPduHandle), SduLength (length), SduData (sdu), and CanId (id) for any CAN L-SDU.

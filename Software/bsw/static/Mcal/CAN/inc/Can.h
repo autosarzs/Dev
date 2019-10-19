@@ -42,6 +42,8 @@
 #include "Can_GeneralTypes.h"
 #include "Can_Cfg.h"
 #include "ComStack_Types.h"
+#include "BitHelper.h"
+#include "CanIf_Cbk.h"
 /*****************************************************************************************/
 /*                                    Macro Definition                                   */
 /*****************************************************************************************/
@@ -164,17 +166,6 @@ typedef uint8 Can_ErrorStateType;
 #define CAN_ERRORSTATE_PASSIVE (Can_ErrorStateType) 1U
 #define CAN_ERRORSTATE_BUSOFF  (Can_ErrorStateType) 2U
 
-/* Can_ControllerStateType ENUM */
-/*States that are used by the several ControllerMode functions*/
-/*    Type Description        : variable define can controller state                     */
-/*    Type range              :  0->3                                                  */
-/*    Requirment              : SWS                                                      */
-typedef uint8 Can_ControllerStateType;
-#define CAN_CS_UNINIT  (Can_ControllerStateType) 0x00U
-#define CAN_CS_STARTED (Can_ControllerStateType) 0x01U
-#define CAN_CS_STOPPED (Can_ControllerStateType) 0x02U
-#define CAN_CS_SLEEP   (Can_ControllerStateType) 0x03U
-
 typedef float64 McuClockReferencePoint;
 
 //*****************************************************************************
@@ -280,6 +271,9 @@ typedef struct {
 	 configuration (parameters) of one hardware filter. */
 	CanHwFilter *CanHwFilterRef;
 
+	/*Enables polling of this hardware object.*/
+	boolean 	CanHardwareObjectUsesPolling;
+
 } CanHardwareObject;
 //*****************************************************************************
 //  This container contains the configuration parameters and sub containers of
@@ -340,5 +334,6 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID);
 void Can_DeInit(void);
 void Can_DisableControllerInterrupts(uint8 Controller);
 void Can_EnableControllerInterrupts(uint8 Controller);
-
+Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* ControllerModePtr);
+void Can_MainFunction_Write(void);
 #endif /* CAN_H_ */
