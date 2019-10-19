@@ -973,8 +973,7 @@ void Can_MainFunction_Mode(void) {
 
 		if (HWREG(ui32Base + CAN_O_CTL) & CAN_CTL_INIT) ////// the controller is in intialization state
 				{
-			if (g_Config_Ptr->CanControllers[ControllerIndex].ControllerStatus
-					== CAN_CS_SLEEP)
+			if (ControllerState[ControllerIndex] == CAN_CS_SLEEP)
 					{
 				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_SLEEP); /// callback function
 			} else {
