@@ -43,6 +43,8 @@
 /*****************************************************************************************/
 
 #include "Det.h"
+// core_cm4.h is included to use NVIC_SystemReset Function in Assertion
+#include "core_cm4.h"
 
 /*****************************************************************************************/
 /*                                   Include Component headres                           */
@@ -50,6 +52,8 @@
 #include "hw_can.h"
 #include "Can_lib.h"
 #include "Can.h"
+#include "irq.h"
+#include "Timer0A.h"
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
 /*****************************************************************************************/
@@ -66,10 +70,6 @@
 /*****************************************************************************************/
 /*                                   Local types Definition                              */
 /*****************************************************************************************/
-/*    Type Description        : variable define can controller state                     */
-/*    Type range              :  0->255                                                  */
-/*    Requirment              : SWS                                                      */
-typedef uint8 Can_ControllerStateType;
 
 /*    Type Description      : 	Struct to map each receive software meesage object with the number
  its configured hardware message objects in the HW FIFO
@@ -152,12 +152,6 @@ static uint8 Can_DriverState = CAN_INITIALIZED; /// assume that init function ha
 static PduIdType Saved_swPduHandle;
 
 uint8 HTH_Semaphore[MAX_NO_OF_OBJECTS] = 0; //// simulation of a semaphore by a sad global variable to protect HTH or generally all tha HOH
-
-static Can_ControllerStateType Can_ControllerState[NUM_OF_CAN_CONTROLLERS] = {
-		CAN_CS_UNINIT };
-static MsgConfType MsgConf[NUM_OF_HOH
-		* MAX_HW_OBJ_COUNT_PER_HOH] = {CAN_MSG_NOT_CONF};
-
 
 /*Description :  variable to contain the CAN Controller Mode (UNINIT,STARTED,STOPPED,SLEEP)*/
 static Can_ControllerStateType Can_ControllerMode [NUM_OF_CAN_CONTROLLERS];
@@ -690,19 +684,34 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 }
 #endif
 
-// Reentrant Function
+/*****************************************************************************************/
+/*    Requirment              : SWS_Can_00232                                            */
+/*    Function Description    : This function enables all allowed interrupts.            */
+/*    Parameter in            : Controller                                               */
+/*    Parameter inout         : none                                                     */
+/*    Parameter out           : none                                                     */
+/*    Return value            : none                                                     */
+/*    Reentrancy              : Reentrant Function                                       */
+/*																                         */
+/*****************************************************************************************/
 void Can_EnableControllerInterrupts(uint8 Controller) {
+	/* Critical Section to protect shared resources in a reentrant Function */
 	irq_Disable();
 #if(CanDevErrorDetect==STD_ON)
-	if (ModuleState == CAN_UNINIT)
+	
+	/*  [SWS_Can_00209] The function Can_EnableControllerInterrupts shall raise the error CAN_E_UNINIT if
+     *  the driver not yet initialized
+     */
+	if (CAN_UNINIT == ModuleState)
     {
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_EnableControllerInterrupts_Id,
 				CAN_E_UNINIT);
     }
+
     /*  [SWS_Can_00210] The function Can_EnableControllerInterrupts shall raise the error
      *  CAN_E_PARAM_CONTROLLER if the parameter Controller is out of range
      */
-	else if (Controller > MAX_CONTROLLERS_NUMBER)
+	else if (Controller >= MAX_CONTROLLERS_NUMBER)
     {
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_EnableControllerInterrupts_Id,
 				CAN_E_PARAM_CONTROLLER);
@@ -720,18 +729,21 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
     /*  [SWS_Can_00208] The function Can_EnableControllerInterrupts shall perform no
      *  action when Can_DisableControllerInterrupts has not been called before
      */
-    else if (DisableCnt[Controller] == 1) {
+    else if (1 == DisableCnt[Controller]) {
         DisableCnt[Controller] = 0;
 
         /* [SWS_Can_00050] The function Can_EnableControllerInterrupts shall enable all
          * interrupts that must be enabled according the current software status
          */
-        if (Controller == 0)
+		/*  Enable the first CAN Controller Interrupts */ 
+        if (CAN0_ID == Controller)
+			
             CANIntEnable(CAN0_BASE,
-                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
-        else if (Controller == 1)
+                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
+        /*  Enable the second CAN Controller Interrupts */ 
+		else if (CAN1_ID == Controller)
             CANIntEnable(CAN1_BASE,
-                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
+                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
         else {
         }
     }
@@ -739,16 +751,25 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
 	irq_Enable();
 }
 
-/****************************************************************************************/
-// Reentrant Function
+/*****************************************************************************************/
+/*    Requirement             : SWS_Can_00231                                            */
+/*    Function Description    : This function disables all interrupts                    */
+/*                            : for this CAN controller                                  */
+/*    Parameter in            : Controller                                               */
+/*    Parameter inout         : none                                                     */
+/*    Parameter out           : none                                                     */
+/*    Return value            : none                                                     */
+/*    Reentrancy              : Reentrant Function                                       */
+/*****************************************************************************************/
 void Can_DisableControllerInterrupts(uint8 Controller) {
+	/* Critical Section to protect shared resources in a reentrant Function */
 	irq_Disable();
 #if(CanDevErrorDetect==STD_ON)
 
     /*  [SWS_Can_00205] The function Can_DisableControllerInterrupts shall raise the error CAN_E_UNINIT if
      *  the driver not yet initialized
      */
-	if (ModuleState == CAN_UNINIT)
+	if (CAN_UNINIT == ModuleState)
     {
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DisableControllerInterrupts_Id,
 				CAN_E_UNINIT);
@@ -757,8 +778,8 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
     /*  [SWS_Can_00206] The function Can_DisableControllerInterrupts shall raise the error
      *  CAN_E_PARAM_CONTROLLER if the parameter Controller is out of range
      */
-	else if (Controller > MAX_CONTROLLERS_NUMBER
-		)Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DisableControllerInterrupts_Id,
+	else if (Controller >= MAX_CONTROLLERS_NUMBER)
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DisableControllerInterrupts_Id,
 				CAN_E_PARAM_CONTROLLER);
 #endif
 
@@ -766,18 +787,20 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
      *  several times, Can_EnableControllerInterrupts must be called as many times before
      *  the interrupts are re-enabled
      */
-    if (DisableCnt[Controller] == 0)
+    if (0 == DisableCnt[Controller])
     {
         /*  [SWS_Can_00049] The function Can_DisableControllerInterrupts shall access the
          *  CAN controller registers to disable all interrupts for that CAN controller only, if
          *  interrupts for that CAN Controller are enabled
          */
-        if (Controller == 0)
+        /*  Disable the first CAN Controller Interrupts */ 
+        if (CAN0_ID == Controller)
             CANIntDisable(CAN0_BASE,
-                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
-        else if (Controller == 1)
+                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
+        /*  Disable the second CAN Controller Interrupts */ 
+		else if (CAN1_ID == Controller)
             CANIntDisable(CAN1_BASE,
-                    CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_MASTER);
+                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
         else {
         }
     }
@@ -787,8 +810,15 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
 	irq_Enable();
 }
 
-/******************************************************************************************/
-// Non Reentrant Function
+/*****************************************************************************************/
+/*    Requirement             : SWS_Can_91002                                            */
+/*    Function Description    : This function de-initializes the module                  */
+/*    Parameter in            : none                                                     */
+/*    Parameter inout         : none                                                     */
+/*    Parameter out           : none                                                     */
+/*    Return value            : none                                                     */
+/*    Reentrancy              : Non Reentrant Function                                   */
+/*****************************************************************************************/
 void Can_DeInit(void) {
 #if(CanDevErrorDetect==STD_ON)
     /*   The function Can_DeInit shall raise the error CAN_E_TRANSITION if the driver is not
@@ -803,8 +833,8 @@ void Can_DeInit(void) {
     /*  The function Can_DeInit shall raise the error CAN_E_TRANSITION if any of the CAN
      *  controllers is in state STARTED [SWS_Can_91012]
      */
-    if (ControllerState[0] == CAN_CS_STARTED
-            || ControllerState[1] == CAN_CS_STARTED)
+    if (CAN_CS_STARTED == ControllerState[0]
+            || CAN_CS_STARTED == ControllerState[1])
     {
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id,
                 CAN_E_TRANSITION);
@@ -816,14 +846,15 @@ void Can_DeInit(void) {
      *  The state of a BSW Module shall be set accordingly at the beginning of the DeInitialization function
      */
     ModuleState = CAN_UNINIT;
+	/*	Disable the first four bits in CAN Control Register in both controllers */
     CLR_BITS( HWREG(CAN0_BASE + CAN_O_CTL),0
              , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );   // DeInit CAN controller0
     CLR_BITS( HWREG(CAN1_BASE + CAN_O_CTL),0
-             , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );   // DeInit CAN controller1
+             , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );  // DeInit CAN controller1
 }
 
 void Can_MainFunction_Read(void) {
-#ifdef (CanRxProcessing == POLLING || CanRxProcessing == MIXED)
+#if (CanRxProcessing == POLLING || CanRxProcessing == MIXED)
 	Can_HwType Mailbox;
 	int index;
 
@@ -1314,88 +1345,104 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 	return ret;
 }
 
-Std_ReturnType Can_GetControllerMode(uint8 Controller,
-		Can_ControllerStateType* ControllerModePtr) {
+Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* ControllerModePtr) 
+{
 	Std_ReturnType Loc_Can_GetControllerMode_Ret = E_OK;
 
 #if(CAN_DEV_ERROR_DETECT == STD_ON)
-	if (Can_ControllerState[Controller]==CAN_CS_UNINIT)
+	if (CAN_CS_UNINIT==ControllerState[Controller])
 	{
 		Det_ReportError(CAN_MODULE_ID,CAN_INSTANCE_ID,Can_GetControllerMode_Id,CAN_E_UNINIT);
 		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
 	}
 	else
 	{
-
+	    /* Do Nothing */
 	}
 
 #endif
 
-	if (Controller >= NUM_OF_CAN_CONTROLLERS)
+	if ( NUM_OF_CAN_CONTROLLERS <= Controller )
 	{
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,
-				Can_GetControllerMode_Id, CAN_E_PARAM_CONTROLLER);
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_CONTROLLER);
 		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
-	} else {
-
-	}
-	if (ControllerModePtr == NULL)
+	} 
+	else 
 	{
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,
-				Can_GetControllerMode_Id, CAN_E_PARAM_POINTER);
+	    /* Do Nothing */
+	}
+	if ( NULL == ControllerModePtr)
+	{
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_POINTER);
 		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
-	} else {
-
+	} 
+	else
+	{
+	    /* Do Nothing */
 	}
 
-	if (Loc_Can_GetControllerMode_Ret != E_NOT_OK)
+	if ( E_NOT_OK != Loc_Can_GetControllerMode_Ret)
 	{
 
-		*ControllerModePtr = Can_ControllerState[Controller];
-	} else {
-
+		*ControllerModePtr = ControllerState[Controller];
 	}
+	else
+	{
+	    /* Do Nothing */
+	}
+
 	return Loc_Can_GetControllerMode_Ret;
 
 }
 
-void Can_MainFunction_Write(void) {
+void Can_MainFunction_Write(void) 
+{
 
 #if ((CAN_TX_PROCESSING_0==POLLING_PROCESSING) || (CAN_TX_PROCESSING_1==POLLING_PROCESSING)\
 	    || (CAN_TX_PROCESSING_0==MIXED_PROCESSING) || (CAN_TX_PROCESSING_1==MIXED_PROCESSING))
 
-	uint8 index, index2;
+	uint8 index;
+	PduIdType PduId; /* Stub variable */
 
-	if (TivaCan.CanConfigSet.CanController[CONTROLLER_0_ID].CanControllerActivation == STD_ON) {
+	#if (CAN_CONTROLLER_0_ACTIVATION == STD_ON)
+	
+		/* Transfer the data in the CAN message object specified by
+			the MNUM field in the CANIFnCRQ register into the CANIFn
+			registers*/
 		CLR_BIT_PERPHBAND(CAN0_IF1CMSK_A, CAN_IF1CMSK_WRNRD);
-	} else {
+	
+	#else 
 		/*Do Nothing*/
-	}
+	
+	#endif 
 
-	if (TivaCan.CanConfigSet.CanController[CONTROLLER_1_ID].CanControllerActivation == STD_ON) {
+	#if (CAN_CONTROLLER_1_ACTIVATION == STD_ON) 
+	
+		/* Transfer the data in the CAN message object specified by
+			the MNUM field in the CANIFnCRQ register into the CANIFn
+			registers*/
 		CLR_BIT_PERPHBAND(CAN1_IF1CMSK_A, CAN_IF1CMSK_WRNRD);
-	} else {
+	
+	#else 
 		/*Do Nothing*/
-	}
+	
+	#endif	
 
-	for (index = 0; index < NUM_OF_HOH; index++) {
-		if (TivaCan.CanConfigSet.CanHardwareObject[index].CanObjectType
-				== TRANSMIT_HOH) {
-			if (TivaCan.CanConfigSet.CanHardwareObject[index].CanControllerRef
-					== &TivaCan.CanConfigSet.CanController[CONTROLLER_0_ID]) {
-#if (CAN_TX_PROCESSING_0==POLLING_PROCESSING)
-
-				for(index2=0U;index2<TivaCan.CanConfigSet.CanHardwareObject[index].CanHwObjectCount;index2++)
+	#if (CAN_CONTROLLER_0_ACTIVATION == STD_ON || CAN_CONTROLLER_1_ACTIVATION == STD_ON)
+		
+		for (index = 0; index < NUM_OF_HOH; index++) 
+		{
+			if (TRANSMIT == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanObjectType)
+			{
+				if (&Global_ConfigType->CanConfigSetRef->CanControllerRef[CONTROLLER_0_ID] == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanControllerRef)
 				{
-					if(*(TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgConfPtr)==CAN_MSG_NOT_CONF)
-					{
-						CAN0_IF1CRQ_R=TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgId;
+					#if (CAN_TX_PROCESSING_0==POLLING_PROCESSING)
+
+						CAN0_IF1CRQ_R=MessageObjAssignedToHOH[index].StartMessageId;
 
 						if(GET_BIT_PERPHBAND(CAN0_IF1MCTL_A,CAN_IF1MCTL_TXRQST) == (uint32)0)
 						{
-							*(TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgConfPtr)=CAN_MSG_CONF;
-
-							CanIf_TxConfirmation(TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].PduId);
+							CanIf_TxConfirmation(PduId);
 
 							/*The Can module shall call CanIf_TxConfirmation to indicate a
 							 successful transmission.It shall either called by the TX-interrupt service routine
@@ -1407,71 +1454,73 @@ void Can_MainFunction_Write(void) {
 						{
 							/* Do Nothing */
 						}
+					
+					#elif(CAN_TX_PROCESSING_0==MIXED_PROCESSING)
+
+						if ( STD_ON == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
+						{
+														
+							CAN0_IF1CRQ_R =	MessageObjAssignedToHOH[index].StartMessageId;
+
+							if (GET_BIT_PERPHBAND(CAN0_IF1MCTL_A,CAN_IF1MCTL_TXRQST) == (uint32) 0) 
+							{
+								CanIf_TxConfirmation(PduId);
+
+								/*The Can module shall call CanIf_TxConfirmation to indicate a
+								 successful transmission.It shall either called by the TX-interrupt service routine
+								 of the corresponding HW resource or inside the Can_MainFunction_Write in case of
+								 polling mode.*/
+							}
+
+							else 
+							{
+								/* Do Nothing */
+							}
+						}
+
+						else 
+						{
+							/*Do Nothing */
+						}	
+
+					#else
+					
+					/*Do Nothing */
+					#endif
+				}
+
+				else if (&Global_ConfigType->CanConfigSetRef->CanControllerRef[CONTROLLER_1_ID] == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanControllerRef)
+				{
+					#if (CAN_TX_PROCESSING_1==POLLING_PROCESSING)
+				
+						CAN1_IF1CRQ_R=MessageObjAssignedToHOH[index].StartMessageId;
+
+						if(GET_BIT_PERPHBAND(CAN1_IF1MCTL_A,CAN_IF1MCTL_TXRQST) == (uint32)0)
+						{
+							CanIf_TxConfirmation(PduId);
+
+							/*The Can module shall call CanIf_TxConfirmation to indicate a
+							 successful transmission.It shall either called by the TX-interrupt service routine
+							 of the corresponding HW resource or inside the Can_MainFunction_Write in case of
+							 polling mode.*/
+						}
+
 						else
 						{
-							/*Do Nothing */
+							/* Do Nothing */
 						}
+					
+					#elif(CAN_TX_PROCESSING_1==MIXED_PROCESSING)
 
-					}
-
-				}
-
-#elif(CAN_TX_PROCESSING_0==MIXED_PROCESSING)
-
-				if (TivaCan.CanConfigSet.CanHardwareObject[index].CanHardwareObjectUsesPolling
-						== STD_ON) {
-					for (index2 = 0U;
-							index2
-									< TivaCan.CanConfigSet.CanHardwareObject[index].CanHwObjectCount;
-							index2++) {
-						if (*(TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgConfPtr)
-								== CAN_MSG_NOT_CONF) {
-							CAN0_IF1CRQ_R =
-									TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgId;
-
-							if (GET_BIT_PERPHBAND(CAN0_IF1MCTL_A,
-									CAN_IF1MCTL_TXRQST) == (uint32) 0) {
-								*(TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgConfPtr) =
-										CAN_MSG_CONF;
-
-								CanIf_TxConfirmation(
-										TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].PduId);
-
-								/*The Can module shall call CanIf_TxConfirmation to indicate a
-								 successful transmission.It shall either called by the TX-interrupt service routine
-								 of the corresponding HW resource or inside the Can_MainFunction_Write in case of
-								 polling mode.*/
-							}
-
-							else {
-								/* Do Nothing */
-							}
-						} else {
-							/*Do Nothing */
-						}
-
-					}
-				}
-
-#else
-				/*Do Nothing */
-#endif
-
-				else if (TivaCan.CanConfigSet.CanHardwareObject[index].CanControllerRef
-						== &TivaCan.CanConfigSet.CanController[CONTROLLER_1_ID]) {
-#if (CAN_TX_PROCESSING_1==POLLING_PROCESSING)
-
-					for(index2=0U;index2<TivaCan.CanConfigSet.CanHardwareObject[index].CanHwObjectCount;index2++)
-					{
-						if(*(TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgConfPtr)==CAN_MSG_NOT_CONF)
+						if (STD_ON == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
 						{
-							CAN1_IF1CRQ_R=TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgId;
+							
+							CAN1_IF1CRQ_R =MessageObjAssignedToHOH[index].StartMessageId;
 
-							if(GET_BIT_PERPHBAND(CAN1_IF1MCTL_A,CAN_IF1MCTL_TXRQST) == (uint32)0)
+							if (GET_BIT_PERPHBAND(CAN1_IF1MCTL_A,CAN_IF1MCTL_TXRQST) == (uint32) 0) 
 							{
-								*(TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgConfPtr)=CAN_MSG_CONF;
-
-								CanIf_TxConfirmation(TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].PduId);
+								
+								CanIf_TxConfirmation(PduId);
 
 								/*The Can module shall call CanIf_TxConfirmation to indicate a
 								 successful transmission.It shall either called by the TX-interrupt service routine
@@ -1479,74 +1528,53 @@ void Can_MainFunction_Write(void) {
 								 polling mode.*/
 							}
 
-							else
+							else 
 							{
 								/* Do Nothing */
 							}
-							else
-							{
-								/*Do Nothing */
-							}
-
+						
 						}
-					}
 
-#elif(CAN_TX_PROCESSING_1==MIXED_PROCESSING)
+						else 
+						{
+							/*Do Nothing */
+						}	
 
-					if (TivaCan.CanConfigSet.CanHardwareObject[index].CanHardwareObjectUsesPolling
-							== STD_ON) {
-						for (index2 = 0U;
-								index2
-										< TivaCan.CanConfigSet.CanHardwareObject[index].CanHwObjectCount;
-								index2++) {
-							if (*(TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgConfPtr)
-									== CAN_MSG_NOT_CONF) {
-								CAN1_IF1CRQ_R =
-										TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgId;
+					#else
+						/*Do Nothing */
+					#endif
+                }
 
-								if (GET_BIT_PERPHBAND(CAN1_IF1MCTL_A,
-										CAN_IF1MCTL_TXRQST) == (uint32) 0) {
-									*(TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].MsgConfPtr) =
-											CAN_MSG_CONF;
+                else
+                {
+						/* Do Nothing */
+                }
+            }
 
-									CanIf_TxConfirmation(
-											TivaCan.CanConfigSet.CanHardwareObject[index].MsgObj[index2].PduId);
-
-									/*The Can module shall call CanIf_TxConfirmation to indicate a
-									 successful transmission.It shall either called by the TX-interrupt service routine
-									 of the corresponding HW resource or inside the Can_MainFunction_Write in case of
-									 polling mode.*/
-								}
-
-								else {
-									/* Do Nothing */
-								}
-							} else {
-								/*Do Nothing */
-							}
-
-						}
-					}
-
-#else
-					/*Do Nothing */
-#endif
-
-				}
-
-				else {
-					/* Do Nothing */
-				}
-			}
-
-			else {
-				/* Do Nothing */
-			}
-
+            else
+            {
+                /* Do Nothing */
+            }
 		}
+
+	#else
+			/* Do Nothing */
+	#endif
+
 #else
 		/* Do Nothing */
 #endif
-	}
 }
 
+/* Prototype for the function that is called when an invalid argument is passed
+ * to an API.  This is only used when doing a DEBUG build.
+ */
+__attribute__((naked)) void assert_failed (char const *file, int line) {
+    (void)pcFilename; /* avoid the "unused parameter" compiler warning */
+    (void)ui32Line;    /* avoid the "unused parameter" compiler warning */
+	/* For a production code , I think it is better to reset the system
+	 * not to cause an infinite loop which is a denial service
+	 * NVIC_SystemReset Function exists in "core_cm4.h" 
+	 */
+    NVIC_SystemReset(); /* reset the system */
+}
