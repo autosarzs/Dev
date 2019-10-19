@@ -74,8 +74,8 @@ typedef uint8 Can_ControllerStateType;
 /*    Type Description      : 	Struct to map each receive software meesage object with the number
  its configured hardware message objects in the HW FIFO
  HRHId     	: 	SW meesage objectId from CANIF
- StartMessageId  : 	ID of the first hardware meesage object in the HW FIFO
- StartMessageId  : 	ID of the last  hardware meesage object in the HW FIFO    */
+ StartMessageId  : 	ID of the first hardware message object in the HW FIFO
+ StartMessageId  : 	ID of the last  hardware message object in the HW FIFO    */
 typedef struct {
 	uint8 HRHId;
 	uint8 StartMessageId;
