@@ -145,7 +145,7 @@ typedef uint8 CanHandleTypeType;
 
 typedef uint8 CanIdTypeType;
 #define EXTENDED    ((CanIdTypeType)0x00)
-#define MIXED       ((CanIdTypeType)0x01)
+#define MIXED       (1U) /* used to compare with another hashdefined value, not casted to anything */
 #define STANDARD    ((CanIdTypeType)0x02)
 
 //*****************************************************************************
