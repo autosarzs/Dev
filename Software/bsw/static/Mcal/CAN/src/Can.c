@@ -132,8 +132,7 @@ static Can_ErrorStateType Can_ErrorStateType_0;
 /*
 
  STATIC Can_HwType MsgObject [MAX_NO_OF_OBJECTS] ;
- /*
- *
+
  but if init function did its job we can use it from the configurations itself
  */
 static Can_ConfigType * g_Config_Ptr;
@@ -653,7 +652,6 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
          */
 		/*  Enable the first CAN Controller Interrupts */ 
         if (CAN0_ID == Controller)
-			
             CANIntEnable(CAN0_BASE,
                     CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
         /*  Enable the second CAN Controller Interrupts */ 
@@ -1486,8 +1484,8 @@ void Can_MainFunction_Write(void)
  * to an API.  This is only used when doing a DEBUG build.
  */
 __attribute__((naked)) void assert_failed (char const *file, int line) {
-    (void)pcFilename; /* avoid the "unused parameter" compiler warning */
-    (void)ui32Line;    /* avoid the "unused parameter" compiler warning */
+    (void)file; /* avoid the "unused parameter" compiler warning */
+    (void)line;    /* avoid the "unused parameter" compiler warning */
 	/* For a production code , I think it is better to reset the system
 	 * not to cause an infinite loop which is a denial service
 	 * NVIC_SystemReset Function exists in "core_cm4.h" 

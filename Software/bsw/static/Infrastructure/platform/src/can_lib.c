@@ -47,13 +47,13 @@
 #include "Platform_Types.h"
 #include "hw_can.h"
 #include "hw_ints.h"
-#include "hw_nvic.h"
-#include "hw_memmap.h"
-#include "hw_sysctl.h"
-#include "hw_types.h"
+//#include "hw_nvic.h"
+//#include "hw_memmap.h"
+//#include "hw_sysctl.h"
+//#include "hw_types.h"
 #include "can_lib.h"
 #include "debug.h"
-#include "interrupt.h"
+//#include "interrupt.h"
 
 //*****************************************************************************
 //
@@ -165,6 +165,7 @@ _CANBaseValid(uint32 ui32Base)
 //! exist.
 //
 //*****************************************************************************
+/*
 static uint8
 _CANIntNumberGet(uint32 ui32Base)
 {
@@ -202,7 +203,7 @@ _CANIntNumberGet(uint32 ui32Base)
 
     return(ui8Int);
 }
-
+*/
 //*****************************************************************************
 //
 //! \internal

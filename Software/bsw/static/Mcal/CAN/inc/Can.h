@@ -144,9 +144,9 @@ typedef uint8 CanHandleTypeType;
 //*****************************************************************************
 
 typedef uint8 CanIdTypeType;
-#define EXTENDED    ((CanIdTypeType)0x0)
-#define MIXED       ((CanIdTypeType)0x1)
-#define STANDARD    ((CanIdTypeType)0x2)
+#define EXTENDED    ((CanIdTypeType)0x00)
+#define MIXED       ((CanIdTypeType)0x01)
+#define STANDARD    ((CanIdTypeType)0x02)
 
 //*****************************************************************************
 //  Specifies if the HardwareObject is used as Transmit or as Receive object
