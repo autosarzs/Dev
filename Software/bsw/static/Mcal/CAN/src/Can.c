@@ -138,7 +138,7 @@ static uint8 Can_DriverState = CAN_INITIALIZED; /// assume that init function ha
 
 static PduIdType Saved_swPduHandle;
 
-uint8 HTH_Semaphore[MAX_NO_OF_OBJECTS] = 0; //// simulation of a semaphore by a sad global variable to protect HTH or generally all tha HOH
+uint8 HTH_Semaphore[MAX_NO_OF_OBJECTS] = {0}; //// simulation of a semaphore by a sad global variable to protect HTH or generally all tha HOH
 
 /*Description :  variable to contain the CAN Controller Mode (UNINIT,STARTED,STOPPED,SLEEP)*/
 static Can_ControllerStateType Can_ControllerMode [NUM_OF_CAN_CONTROLLERS];
