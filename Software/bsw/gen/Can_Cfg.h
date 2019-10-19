@@ -43,16 +43,16 @@
 
 #define MAX_BAUDRATE_CONFIGS_CONTROLLER_0 	     (1U)
 #define MAX_BAUDRATE_CONFIGS_CONTROLLER_1	     (1U)
-#define MAX_CONTROLLERS_NUMBER                    2
-#define CAN_CONTROLLERS_NUMBER                    0x01                /*number of can controllers in the ECU*/
-#define CAN_HOH_NUMBER                            2
-#define CAN_HRH_NUMBER                            1
-#define CAN_HTH_NUMBER                            1
+#define MAX_CONTROLLERS_NUMBER                   (2U)
+#define CAN_CONTROLLERS_NUMBER                   (1U)                /*number of can controllers in the ECU*/
+#define CAN_HOH_NUMBER                           (2U)
+#define CAN_HRH_NUMBER                           (1U)
+#define CAN_HTH_NUMBER                           (1U)
 #define CLOCK                                     50000000            /*Can Clock in Hz*/ 
 
 /*Define HOH for Can module */
-#define HTH0_0                                    0
-#define HRH0_1                                    1
+#define HTH0_0                                   (0U)
+#define HRH0_1                                   (1U)
 
 // ECUC_Can_00317
 #define POLLING 2
