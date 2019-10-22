@@ -73,6 +73,8 @@ typedef unsigned long long  uint64;
 
 #define CAN_O_CTL               0x00000000  // CAN Control
 
+/*TivaC microcontroller supports 32 message objects to be used as Tx or Rx*/
+#define CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS    32                  
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the CAN_O_CTL register.
