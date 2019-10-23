@@ -74,6 +74,28 @@ typedef uint8 Can_ErrorStateType ;
 #define CAN_ERRORSTATE_PASSIVE ((Can_ErrorStateType) 0x01U)  
 #define CAN_ERRORSTATE_BUSOFF  ((Can_ErrorStateType) 0x02U)  
 
+
+/*
+  [SWS_Can_00429]
+  Range : Standard : 0..0x0FF
+          Extended : 0..0xFFFF
+  Represents the hardware object handles of a CAN hardware unit.
+  For CAN hardware units with more than 255 HW objects use extended range.
+*/
+typedef uint16 Can_HwHandleType ;
+
+/*
+  [SWS_Can_00416]
+  Range : Standard32Bit : 0..0x400007FF
+          Extended32Bit : 0..0xDFFFFFFF
+  Represents the Identifier of an L-PDU. The two most significant bits specify the frame type:
+  00 CAN message with Standard CAN ID
+  01 CAN FD frame with Standard CAN ID
+  10 CAN message with Extended CAN ID
+  11 CAN FD frame with Extended CAN ID
+*/
+typedef uint32 Can_IdType ;
+
 /*
   [SWS_CAN_00496]
   This type defines a data structure which clearly provides an Hardware Object 
@@ -90,30 +112,10 @@ typedef struct Can_Hw
 }Can_HwType;
 
 /*
-  [SWS_Can_00429]
-  Range : Standard : 0..0x0FF
-          Extended : 0..0xFFFF
-  Represents the hardware object handles of a CAN hardware unit.
-  For CAN hardware units with more than 255 HW objects use extended range.
-*/
-typedef uint16 Can_HwHandleType ;
-
-/* 
-  [SWS_Can_00416]
-  Range : Standard32Bit : 0..0x400007FF
-          Extended32Bit : 0..0xDFFFFFFF
-  Represents the Identifier of an L-PDU. The two most significant bits specify the frame type:
-  00 CAN message with Standard CAN ID
-  01 CAN FD frame with Standard CAN ID
-  10 CAN message with Extended CAN ID
-  11 CAN FD frame with Extended CAN ID
-*/
-typedef uint32 Can_IdType ;
-
-/*
   [SWS_Can_00415]
   This type unites PduId (swPduHandle), SduLength (length), SduData (sdu), and CanId (id) for any CAN L-SDU.
 */
+
 typedef struct Can_Pdu
 {
 	PduIdType swPduHandle ;

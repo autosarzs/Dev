@@ -194,7 +194,6 @@ static void SetControllerBaudrate(uint32 BaseAddress,CanControllerBaudrateConfig
 	uint32 ui32BitReg = 0;
 	uint32 ui32BaudRatePrescaler;
 	uint32 n;
-	uint32 ui32Base;
 	
 			/*
         To set the bit timing register, the controller must be placed in init
@@ -234,7 +233,7 @@ static void SetControllerBaudrate(uint32 BaseAddress,CanControllerBaudrateConfig
 		/*
 		 * Baud rate Prescaler = tq * CAN Clock
 		 * bit time =  n * tq
-		 *          =[Sync + Prop + Phase1 + Phase2] × tq
+		 *          =[Sync + Prop + Phase1 + Phase2] أ— tq
 		 *  Syn =1 all the time
 		 * 1/Frequency(rate) =n*Tq
 		 * 1/Frequency(rate)*n=Tq
@@ -313,7 +312,7 @@ void Can_Init( const Can_ConfigType* Config)
   /*array to count the used hardware messages for each controller
 	   can't exceed 32 "Hardware specification"                      */	
 	uint8   UsedHWMessageObjt[MAX_CONTROLLERS_NUMBER] = {0};      
-  /*pointer to point to the default baudrate configuration         */
+  /*pointer to point to the default BaudRate configuration         */
 	CanControllerBaudrateConfig* BRConfig ;         
 
 
@@ -321,7 +320,7 @@ void Can_Init( const Can_ConfigType* Config)
 	/*  Report error CAN_E_PARAM_POINTER API called with wrong parameter */
 	if(Config==NULL_PTR)
 	{
-		Det_ReportError( CAN_MODULE, CAN_INSTANCE, CAN_INIT_API_ID, CAN_E_PARAM_POINTER);
+		Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_PARAM_POINTER);
 	}
 
 	/*   The function Can_Init shall raise the error CAN_E_TRANSITION if the driver is not in
@@ -329,7 +328,7 @@ void Can_Init( const Can_ConfigType* Config)
 	 */
 	if(ModuleState!=CAN_UNINIT)
 	{
-		Det_ReportError( CAN_MODULE, CAN_INSTANCE, CAN_INIT_API_ID, CAN_E_TRANSITION);
+		Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_TRANSITION);
 	}
 #endif
 
@@ -350,7 +349,7 @@ void Can_Init( const Can_ConfigType* Config)
 		 */
 		if(ControllerState[controllerId]!=CAN_CS_UNINIT)
 		{
-			Det_ReportError( CAN_MODULE, CAN_INSTANCE, CAN_INIT_API_ID, CAN_E_TRANSITION);
+			Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_TRANSITION);
 		}
 #endif
 		/*
@@ -423,7 +422,7 @@ void Can_Init( const Can_ConfigType* Config)
 			if(UsedHWMessageObjt[controllerId]>CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
 			{
 				/*Report error as number of used hardware message objects exceeded limit*/
-				Det_ReportError( CAN_MODULE, CAN_INSTANCE, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
+				Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
 			}
 			else
 			{
@@ -494,7 +493,7 @@ void Can_Init( const Can_ConfigType* Config)
 				if(UsedHWMessageObjt[controllerId]>CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
 				{
 					/*Report error as the number of occupied hardware message objects exceeded limit 32*/
-					Det_ReportError( CAN_MODULE, CAN_INSTANCE, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
+					Det_ReportError(CAN_MODULE_ID , CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
 				}
 				else
         {
@@ -629,7 +628,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 		/*
 		 * Baud rate Prescaler = tq * CAN Clock
 		 * bit time =  n * tq
-		 *          =[Sync + Prop + Phase1 + Phase2] × tq
+		 *          =[Sync + Prop + Phase1 + Phase2] أ— tq
 		 *  Syn =1 all the time
 		 * 1/Frequency(rate) =n*Tq
 		 * 1/Frequency(rate)*n=Tq
@@ -1228,7 +1227,7 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 //							for()
 //							{
 //								????????????
-//								/*[SWS_Can_00282] âThe function Can_SetControllerMode(CAN_CS_STOPPED)
+//								/*[SWS_Can_00282] أ¢آŒآˆThe function Can_SetControllerMode(CAN_CS_STOPPED)
 //                                 shall cancel pending messages.*/
 //
 //							}
@@ -1255,7 +1254,7 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 //							for(  )
 //							{
 //																????????????
-//								/*[SWS_Can_00282] âThe function Can_SetControllerMode(CAN_CS_STOPPED)
+//								/*[SWS_Can_00282] أ¢آŒآˆThe function Can_SetControllerMode(CAN_CS_STOPPED)
 //                                 shall cancel pending messages.*/
 //
 //							}
@@ -1291,7 +1290,7 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 //							for()
 //							{
 //																????????????
-//								/*[SWS_Can_00282] âThe function Can_SetControllerMode(CAN_CS_STOPPED)
+//								/*[SWS_Can_00282] أ¢آŒآˆThe function Can_SetControllerMode(CAN_CS_STOPPED)
 //                                 shall cancel pending messages.*/
 //
 //							}
@@ -1316,7 +1315,7 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 //							for(  )
 //							{
 //																????????????
-//								/*[SWS_Can_00282] âThe function Can_SetControllerMode(CAN_CS_STOPPED)
+//								/*[SWS_Can_00282] أ¢آŒآˆThe function Can_SetControllerMode(CAN_CS_STOPPED)
 //                                 shall cancel pending messages.*/
 //
 //							}
@@ -1458,7 +1457,7 @@ void Can_MainFunction_Write(void)
 						if ( STD_ON == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
 						{
 														
-							CAN0_IF1CRQ_R =	MessageObjAssignedToHOH[index].StartMessageId;
+							CAN0_IF1CRQ_R =	MessageObjAssignedToHTH[index].MessageId;
 
 							if (GET_BIT_PERPHBAND(CAN0_IF1MCTL_A,CAN_IF1MCTL_TXRQST) == (uint32) 0) 
 							{
@@ -1513,7 +1512,7 @@ void Can_MainFunction_Write(void)
 						if (STD_ON == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
 						{
 							
-							CAN1_IF1CRQ_R =MessageObjAssignedToHOH[index].StartMessageId;
+							CAN1_IF1CRQ_R =MessageObjAssignedToHTH[index].MessageId;
 
 							if (GET_BIT_PERPHBAND(CAN1_IF1MCTL_A,CAN_IF1MCTL_TXRQST) == (uint32) 0) 
 							{
