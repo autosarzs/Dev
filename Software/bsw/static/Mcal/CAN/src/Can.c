@@ -1332,11 +1332,14 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 
 	/*[SWS_Can_00264] The function Can_SetControllerMode(CAN_CS_STOPPED) shall wait for
 	 a limited time until the CAN controller is really switched off. Compare to SWS_Can_00398.*/
+	
+	#if (0) /* MCAL CAN shouldn't use MCAL timer */
 	Timer0A_Init();
 	while ((TIMER0_RIS_R & 0x1) == 0) {
 
 	}
 	/*clear TIMER0A timeout flag   */TIMER0_ICR_R = 0x01;
+	#endif
 	/* return the value E_OK
 	 E_NOT_OK*/
 	return ret;
