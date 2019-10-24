@@ -79,6 +79,8 @@
 
 #define INTERRUPT_MODE 		(0x00)
 
+#define CanTriggerTransmitEnable                    (0U)
+
 
 
 
