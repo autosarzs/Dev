@@ -331,5 +331,6 @@ void Can_DeInit(void);
 void Can_DisableControllerInterrupts(uint8 Controller);
 void Can_EnableControllerInterrupts(uint8 Controller);
 Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* ControllerModePtr);
+Std_ReturnType Can_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr);
 void Can_MainFunction_Write(void);
 #endif /* CAN_H_ */
