@@ -168,7 +168,7 @@ Example: HRH0-0, HRH1-1, HTH0-2, HTH1-3*/
 #define CAN_INITIALIZED 			(1u)
 #define CAN_NOT_INITIALIZED 			(0u)
 
-#define NUM_OF_CAN_CONTROLLERS 2U
+//#define NUM_OF_CAN_CONTROLLERS 2U  --> has been defined above @ line 46
 #define CONTROLLER_0_ID 0U
 #define CONTROLLER_1_ID 1U
 

@@ -160,7 +160,7 @@ typedef uint8 CanObjectTypeType;
 #define CAN_BUSY (Std_ReturnType)0x02U
 
 /*Error states of a CAN controller*/
-typedef uint8 Can_ErrorStateType;
+//typedef uint8 Can_ErrorStateType;  --> has been declared in Can_GeneralTypes.h
 
 typedef float64 McuClockReferencePoint;
 
