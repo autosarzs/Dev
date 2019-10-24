@@ -1095,14 +1095,14 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 	/*initialize local variable to return (E_OK,E_NOT_OK) */
 	Std_ReturnType ret = E_NOT_OK;
 
-#if (DEVLOPEMENT_ERROR)
+#if (CanDevErrorDetect == STD_ON)
 
 	/*[SWS_Can_00198] If development error detection for the Can module is enabled:
 	 if the module is not yet initialized, the function Can_SetControllerMode shall raise
 	 development error CAN_E_UNINIT and return E_NOT_OK.*/
-	if ( CanUnitState == CAN_UNINIT )
+	if (ModuleState != CAN_READY)
 	{
-		Det_ReportError( CAN_DRIVER_ID ,0 ,CAN_SET_CONTROLLER_MODE ,CAN_E_UNINIT );
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_SetControllerMode_Id, CAN_E_UNINIT);
 
 		ret = E_NOT_OK;
 	}
@@ -1113,7 +1113,7 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 	 E_NOT_OK.*/
 	else if (Controller >= NUM_OF_CAN_CONTROLLERS)
 	{
-		Det_ReportError( CAN_DRIVER_ID ,0 ,CAN_SET_CONTROLLER_MODE ,CAN_E_PARAM_CONTROLLER );
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_SetControllerMode_Id, CAN_E_PARAM_CONTROLLER);
 		ret = E_NOT_OK;
 	}
 
@@ -1123,7 +1123,7 @@ Std_ReturnType Can_SetControllerMode(uint8 Controller,
 	else if (((Transition == CAN_CS_STARTED) && ( Can_ControllerMode [Controller]!=CAN_CS_STOPPED))||
 			((Transition == CAN_CS_SLEEP) && (Can_ControllerMode [Controller]!= CAN_CS_STOPPED)))
 	{
-		Det_ReportError( CAN_DRIVER_ID ,0 ,CAN_SET_CONTROLLER_MODE ,CAN_E_TRANSITION );
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_SetControllerMode_Id, CAN_E_TRANSITION);
 		ret = E_NOT_OK;
 	}
 
