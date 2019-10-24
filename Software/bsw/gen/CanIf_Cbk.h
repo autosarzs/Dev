@@ -29,7 +29,7 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId);
 
 /*apply the cnhages */
 void CanIf_ControllerModeIndication( uint8 ControllerId, Can_ControllerStateType ControllerMode );
-
+void CanIf_ControllerBusOff(uint8 ControllerId);
 /**
  * \brief This callout function is called whenever a CAN message is
  *  received in CAN driver.
