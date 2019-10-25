@@ -23,7 +23,7 @@
 #endif
 
 
-typedef uint32 PduIdType;
+//typedef uint32 PduIdType;
 
 void CanIf_TxConfirmation(PduIdType CanTxPduId);
 

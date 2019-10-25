@@ -136,7 +136,7 @@ static str_MessageObjAssignedToHRH MessageObjAssignedToHRH[CAN_HRH_NUMBER];
 static str_MessageObjAssignedToHTH MessageObjAssignedToHTH[CAN_HTH_NUMBER];
 /** ***************************************************************************************/
 
-static tCANMsgObject *psMsgObject[CAN_HWOBJECT_COUNT];
+
 static uint8 bClrPendingInt;
 static Can_ErrorStateType Can_ErrorStateType_0;
 
@@ -148,7 +148,7 @@ static Can_ErrorStateType Can_ErrorStateType_0;
  */
 static Can_ConfigType * g_Config_Ptr;
 static uint8 Can_DriverState = CAN_INITIALIZED; /// assume that init function has initialized it !
-
+static tCANMsgObject *psMsgObject[CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS];
 static PduIdType Saved_swPduHandle;
 
 uint8 HTH_Semaphore[MAX_NO_OF_OBJECTS] = {0}; //// simulation of a semaphore by a sad global variable to protect HTH or generally all tha HOH
@@ -846,41 +846,89 @@ void Can_DeInit(void) {
 }
 
 void Can_MainFunction_Read(void) {
-#if (CanRxProcessing == POLLING || CanRxProcessing == MIXED)
-	Can_HwType Mailbox;
-	int index;
 
-	// Check whether we need to check RXready flag or not.
-	if ( HWREG(CAN0_BASE + CAN_O_STS) & CAN_STATUS_RXOK)
-	{
-		// 1. Copy data to temp buffer
-
-		for(index = 0; index < CanHwObjectCount; index++)
-		{
-			CANMessageGet(CAN0_BASE, index, psMsgObject++, bClrPendingInt);
-		}
-
-		Mailbox.CanId = psMsgObject.ui32MsgID;
-		//TODO:Check the meaning of this variable
-		//Mailbox.Hoh =
-		Mailbox.ControllerId = 0;
-
-		// 2. inform CanIf using API below.
-		CanIf_RxIndication(Mailbox, PduInfoPtr);//We need to ask how to access these vars
-	}
+#if((CanRxProcessing == POLLING ) || (CanRxProcessing == MIXED))
+    Can_HwType Mailbox; // the varaible for Callback function RxIndication
+    int obj_index;  /* variable to count object number */
+    uint8 controllerId; /*variable to count controllers number*/
+    /*
+     *   Loop all controllers to get the new data
+     */
+    // TODO controlledID  base address not implemented here ?
+    for (controllerId = 0; controllerId < CAN_CONTROLLERS_NUMBER;controllerId += 1)
+    {
+#if (CanDevErrorDetect == STD_ON)
+        if (ControllerState[controllerId] == CAN_CS_UNINIT)
+        {
+            // report error to diag
+      //      Det_ReportError(Can_MainFunction_Read_ID,CAN_CS_UNINIT);
+            continue;
+        }//End if
+#endif //CanDevErrorDetect
+        /*
+         * loop for all the hardware object to get the only new avialables data in this object
+         */
+        // TODO psMsgObject shold be config inside init API
+        for(obj_index = 0; obj_index < NUM_OF_HOH; obj_index++)
+        {
+            if(Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[obj_index].CanObjectType==receive)
+            {
+                /*
+                 * Reads a CAN message from one of the message object buffers.
+                 */
+                CANMessageGet(controllerId, obj_index, psMsgObject[obj_index], bClrPendingInt);
+                // check if this object have new data avialables
+                if(( psMsgObject[obj_index]->ui32Flags & MSG_OBJ_NEW_DATA) == MSG_OBJ_NEW_DATA)
+                {
+                    //message ID
+                    Mailbox.CanId = psMsgObject[obj_index]->ui32MsgID;
+                    //hardware object that has new date
+                    Mailbox.Hoh = obj_index;
+                    // controller ID
+                    Mailbox.ControllerId = controllerId;
+                    // 2. inform CanIf using API below.
+                    //TODO fill  PduInfoPt and protoype of can iF
+                  //  CanIf_RxIndication(Mailbox, PduInfoPtr);//We need to ask how to access these vars
+                }// END IF
+            }
+        }// end of object in this controller ID
+    }// end loop for controllerId
 #endif
 }
 
 //Can_MainFunction_BusOff_0 or Can_MainFunction_BusOff
 void Can_MainFunction_BusOff(void) {
+uint8 controllerId; /*variable to count controllers number*/
 #if CanBusoffProcessing == POLLING
-	if(HWREG(CAN0_BASE + CAN_O_STS) & CAN_STATUS_BUS_OFF)
-	{
-		CanIf_ControllerBusOff(CAN0_ID);
-		Can_ErrorStateType_0 = CAN_ERRORSTATE_BUSOFF;
-	}
+    /*
+     *   Loop all controllers to get the new data
+     */
+    for (controllerId = 0; controllerId < CAN_CONTROLLERS_NUMBER;controllerId += 1)
+    {
+#if (CanDevErrorDetect == STD_ON)
+        if (ControllerState[controllerId] == CAN_CS_UNINIT)
+        {
+            // report error to diag
+            //Det_ReportError(Can_MainFunction_Bus_OFF_ID,CAN_CS_UNINIT);
+            continue;
+        }// end if
+#endif //CanDevErrorDetect
+        /*
+         * Reads one of the controller status registers. and get bus off status
+         */
+        // TODO controlledID  base address not implemented here ?
+        if(CANStatusGet(controllerId, CAN_STS_CONTROL) == CAN_STATUS_BUS_OFF)
+        {
+            // the call back function in CANIF that report the bus of state
+            CanIf_ControllerBusOff(controllerId);
+            // raise the BUS_OFF flag to upper Layer
+            //TODO raising this error
+            // Can_ErrorStateType[controllerId]= CAN_ERRORSTATE_BUSOFF;
+        }// End bus_off state If
+    }// End Loop
 #endif
 }
+
 
 Std_ReturnType Can_Write(
 
@@ -969,9 +1017,9 @@ Can_HwHandleType Hth, const Can_PduType* PduInfo) {
 
 			/// what is the type of the message id ?
 
-			psMsgObject->ui32Flags =
-					(g_Config_Ptr->HardWareObject[Hth].CanIdType == STANDARD ) ?
-							MSG_OBJ_NO_FLAGS : MSG_OBJ_EXTENDED_ID;
+			//psMsgObject->ui32Flags =
+					//(g_Config_Ptr->HardWareObject[Hth].CanIdType == STANDARD ) ?
+							//MSG_OBJ_NO_FLAGS : MSG_OBJ_EXTENDED_ID;
 
 			// also from the can_id_type itself
 			/*
@@ -1060,8 +1108,7 @@ void Can_MainFunction_Mode(void) {
 				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STOPPED);
 			}
 		} else {
-			if (g_Config_Ptr->CanControllers[ControllerIndex].CanControllerErrorState
-					== CAN_ERRORSTATE_BUSOFF)
+	        if (ControllerState[ControllerIndex] == CAN_CS_UNINIT)
 				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_UNINIT);
 
 			else
