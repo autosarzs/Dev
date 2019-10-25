@@ -153,14 +153,8 @@ static PduIdType Saved_swPduHandle;
 
 uint8 HTH_Semaphore[MAX_NO_OF_OBJECTS] = {0}; //// simulation of a semaphore by a sad global variable to protect HTH or generally all tha HOH
 
-/*Description :  variable to contain the CAN Controller Mode (UNINIT,STARTED,STOPPED,SLEEP)*/
-static Can_ControllerStateType Can_ControllerMode [NUM_OF_CAN_CONTROLLERS];
-/*Description :  variable for interrupt Enable in start mode */
-static uint8 uint8_uint8_InterruptEnableInStartMode[NUM_OF_CAN_CONTROLLERS];
-/*Description :  variable for interrupt Disable in stop mode */
-static uint8 uint8_InterruptDisableInStoptMode[NUM_OF_CAN_CONTROLLERS];
-/*Description :  variable for interrupt Disable counter */
-static uint8 uint8_InterruptDisableCounter[NUM_OF_CAN_CONTROLLERS];
+
+
 /* This is a mapping between interrupt number (for the peripheral interrupts
    only) and the register that contains the interrupt enable for that interrupt.*/
 static const uint32 g_pui32EnRegs[] =

@@ -915,7 +915,7 @@
 // The following are defines for the bit fields in the NVIC_VTABLE register.
 //
 //*****************************************************************************
-#define NVIC_VTABLE_OFFSET_M    0xFFFFFC00  // Vector Table Offset
+//#define NVIC_VTABLE_OFFSET_M    0xFFFFFC00  // Vector Table Offset
 #define NVIC_VTABLE_OFFSET_S    10
 
 //*****************************************************************************
