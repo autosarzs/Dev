@@ -55,6 +55,7 @@
 #include "irq.h"
 #include "Timer0A.h"
 #include "Det.h"
+#include "CanIf_cbk.h"
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
 /*****************************************************************************************/
@@ -920,7 +921,7 @@ uint8 controllerId; /*variable to count controllers number*/
         if(CANStatusGet(controllerId, CAN_STS_CONTROL) == CAN_STATUS_BUS_OFF)
         {
             // the call back function in CANIF that report the bus of state
-            CanIf_ControllerBusOff(controllerId);
+     //       CanIf_ControllerBusOff(controllerId);
             // raise the BUS_OFF flag to upper Layer
             //TODO raising this error
             // Can_ErrorStateType[controllerId]= CAN_ERRORSTATE_BUSOFF;
@@ -1103,16 +1104,16 @@ void Can_MainFunction_Mode(void) {
 				{
 			if (ControllerState[ControllerIndex] == CAN_CS_SLEEP)
 					{
-				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_SLEEP); /// callback function
+				//CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_SLEEP); /// callback function
 			} else {
-				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STOPPED);
+			//	CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STOPPED);
 			}
 		} else {
-	        if (ControllerState[ControllerIndex] == CAN_CS_UNINIT)
-				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_UNINIT);
+	       // if (ControllerState[ControllerIndex] == CAN_CS_UNINIT)
+			//	CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_UNINIT);
 
-			else
-				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STARTED);
+			//else
+			//	CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STARTED);
 		}
 	}
 }
@@ -1703,7 +1704,7 @@ void Can_MainFunction_Write(void)
 
 							if (GET_BIT_PERPHBAND(CAN0_IF1MCTL_A,CAN_IF1MCTL_TXRQST) == (uint32) 0) 
 							{
-								CanIf_TxConfirmation(PduId);
+								//CanIf_TxConfirmation(PduId);
 
 								/*The Can module shall call CanIf_TxConfirmation to indicate a
 								 successful transmission.It shall either called by the TX-interrupt service routine
