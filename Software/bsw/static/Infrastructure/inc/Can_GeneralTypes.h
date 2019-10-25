@@ -34,6 +34,7 @@
 *******************************************************************************/
 #ifndef __CAN_GENERAL_TYPES_H__
 #define __CAN_GENERAL_TYPES_H__
+
  /* Module Version 1.0.0 */
 #define CAN_GENERAL_TYPES_SW_MAJOR_VERSION           (1U)
 #define CAN_GENERAL_TYPES_SW_MINOR_VERSION           (0U)
@@ -111,18 +112,7 @@ typedef struct Can_Hw
   uint8 ControllerId ; // ControllerId provided by CanIf clearly identify the corresponding controller
 }Can_HwType;
 
-/*
-  [SWS_Can_00415]
-  This type unites PduId (swPduHandle), SduLength (length), SduData (sdu), and CanId (id) for any CAN L-SDU.
-*/
 
-typedef struct Can_Pdu
-{
-	PduIdType swPduHandle ;
-	uint8 length;
-	Can_IdType id ;
-	uint8* sdu ;
-}Can_PduType;
 
 /* 
   [SWS_CanTrcv_00163]
@@ -166,5 +156,14 @@ typedef uint8 CanTrcv_TrcvWakeupReasonType;
 #define CANTRCV_WU_POWER_ON       ((CanTrcv_TrcvWakeupReasonType)0x05U)
 #define CANTRCV_WU_BY_PIN         ((CanTrcv_TrcvWakeupReasonType)0x06U)
 #define CANTRCV_WU_BY_SYSERR      ((CanTrcv_TrcvWakeupReasonType)0x07U)
+
+typedef uint8 CanObjectType;
+/**
+  Receive HOH  */
+#define receive      ((CanObjectType)0x00U)
+/**
+  Transmit HOH  */
+#define transmit     ((CanObjectType)0x01U)
+
 
 #endif /* __CAN_GENERAL_TYPES_H__ */

@@ -39,7 +39,15 @@
 
 #ifndef __DRIVERLIB_CAN_H__
 #define __DRIVERLIB_CAN_H__
-
+#include "Platform_Types.h"
+#include "hw_can.h"
+#include "hw_ints.h"
+#include "hw_nvic.h"
+#include "hw_memmap.h"
+#include "hw_sysctl.h"
+#include "hw_types.h"
+#include "can_lib.h"
+#include "debug.h"
 //*****************************************************************************
 //
 //! \addtogroup can_api
