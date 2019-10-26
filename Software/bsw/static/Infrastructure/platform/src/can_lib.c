@@ -803,7 +803,7 @@ CANBitTimingSet(uint32 ui32Base, tCANBitClkParms *psClkParms)
 //! \return None.
 //
 //*****************************************************************************
-void
+/*void
 CANIntRegister(uint32 ui32Base, void (*pfnHandler)(void))
 {
     uint8 ui8IntNumber;
@@ -828,7 +828,7 @@ CANIntRegister(uint32 ui32Base, void (*pfnHandler)(void))
     // Enable the Ethernet interrupt.
     //
     IntEnable(ui8IntNumber);
-}
+}*/
 
 //*****************************************************************************
 //
@@ -845,7 +845,7 @@ CANIntRegister(uint32 ui32Base, void (*pfnHandler)(void))
 //! \return None.
 //
 //*****************************************************************************
-void
+/*void
 CANIntUnregister(uint32 ui32Base)
 {
     uint8 ui8IntNumber;
@@ -870,7 +870,7 @@ CANIntUnregister(uint32 ui32Base)
     // Register the interrupt handler.
     //
     IntUnregister(ui8IntNumber);
-}
+}*/
 
 //*****************************************************************************
 //
