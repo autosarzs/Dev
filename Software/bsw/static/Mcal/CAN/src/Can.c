@@ -548,8 +548,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 	 The function Can_SetBaudrate shall raise the error CAN_E_UNINIT and return
 	 E_NOT_OK if the driver is not yet initialized.*/
 	if (CAN_E_UNINIT == ControllerState[Controller]
-			|| NULL_PTR == Global_ConfigType
-			|| (!(HWREG(ui32Base + CAN_O_CTL) & CAN_CTL_INIT))) {
+			|| NULL_PTR == Global_ConfigType) {
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SETBAUDRATE_API_ID,
 				CAN_E_UNINIT);
 		return E_NOT_OK;
