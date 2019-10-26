@@ -1087,7 +1087,9 @@ Can_HwHandleType Hth, const Can_PduType* PduInfo) {
  ----------------------------------------------------------------------*/
 void Can_MainFunction_Mode(void) {
 	uint8 ControllerIndex;
-	uint32 ui32Base;
+	/* initialize base address to controller 0*/
+	/* still need to enter a loop to do the work for controller 0 and 1. not controller 0 only as now */
+	uint32 ui32Base = Global_ConfigType->CanConfigSetRef->CanControllerRef[0].CanControllerBaseAddress;
 
 	for (ControllerIndex = 0; ControllerIndex < NO_OF_CONTROLLERS_IN_HW;
 			ControllerIndex++) {
