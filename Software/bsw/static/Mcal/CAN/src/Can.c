@@ -139,7 +139,7 @@ static str_MessageObjAssignedToHTH MessageObjAssignedToHTH[CAN_HTH_NUMBER];
 
 
 static uint8 bClrPendingInt;
-static Can_ErrorStateType Can_ErrorStateType_0;
+//static Can_ErrorStateType Can_ErrorStateType_0;
 
 /*
 
@@ -147,7 +147,7 @@ static Can_ErrorStateType Can_ErrorStateType_0;
 
  but if init function did its job we can use it from the configurations itself
  */
-static Can_ConfigType * g_Config_Ptr;
+//static Can_ConfigType * g_Config_Ptr;
 static uint8 Can_DriverState = CAN_INITIALIZED; /// assume that init function has initialized it !
 static tCANMsgObject *psMsgObject[CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS];
 static PduIdType Saved_swPduHandle;
