@@ -139,10 +139,16 @@ static str_MessageObjAssignedToHTH MessageObjAssignedToHTH[CAN_HTH_NUMBER];
 static tCANMsgObject *psMsgObject[CAN_HWOBJECT_COUNT];
 static uint8 bClrPendingInt;
 static Can_ErrorStateType Can_ErrorStateType_0;
-
+/*
+ * swPduHandle is a global variable updated in CAN_Write function from PduInfo pointer
+ *  and saved to be passed to CanIf_TxConfirmation
+ */
 static PduIdType swPduHandle;
 
-uint8 HTH_Semaphore[MAX_NO_OF_OBJECTS] = {0}; //// simulation of a semaphore by a sad global variable to protect HTH or generally all tha HOH
+/*
+ *  global variable used to protect the Hth in CAN_Write function
+ */
+static uint8 HTH_Semaphore[MAX_NO_OF_OBJECTS] = {0};
 
 /*Description :  variable to contain the CAN Controller Mode (UNINIT,STARTED,STOPPED,SLEEP)*/
 static Can_ControllerStateType Can_ControllerMode [NUM_OF_CAN_CONTROLLERS];
@@ -1199,8 +1205,7 @@ void Can_MainFunction_Mode(void) {
 				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STOPPED);
 			}
 		} else {
-			if (g_Config_Ptr->CanControllers[ControllerIndex].CanControllerErrorState
-					== CAN_ERRORSTATE_BUSOFF)
+			if (HWREG(ui32Base + CAN_O_STS) & CAN_STATUS_BUS_OFF)
 				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_UNINIT);
 
 			else
