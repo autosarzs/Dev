@@ -553,19 +553,17 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 				CAN_E_UNINIT);
 		return E_NOT_OK;
 	}
-#endif
+
 	/* [SWS_CAN_00494]If development error detection for the Can module is enabled
 	 the function Can_SetBaudrate shall raise the error CAN_E_PARAM_CONTROLLER
 	 and return E_NOT_OK if the parameter Controller is out of range. */
-#if(CanDevErrorDetect==STD_ON)
+
 	if (Controller > CAN_CONTROLLERS_NUMBER) {
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SETBAUDRATE_API_ID,
 				CAN_E_PARAM_CONTROLLER);
 		return E_NOT_OK;
 	}
-#endif
 
-#if(CanDevErrorDetect==STD_ON)	
 	/* [SWS_CAN_00493] If development error detection for the Can module is enabled:
 	 The function Can_SetBaudrate shall raise the error CAN_E_PARAM_BAUDRATE
 	 and return E_NOT_OK if the parameter BaudRateConfigID has an invalid value*/
