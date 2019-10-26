@@ -145,7 +145,7 @@ typedef uint8 CanHandleTypeType;
 
 typedef uint8 CanIdTypeType;
 #define EXTENDED    ((CanIdTypeType)0x00)
-#define MIXED       ((CanIdTypeType)0x01)
+#define MIXED       (1U) /* used to compare with another hashdefined value, not casted to anything */
 #define STANDARD    ((CanIdTypeType)0x02)
 
 //*****************************************************************************
@@ -271,6 +271,20 @@ typedef struct {
 	boolean 	CanHardwareObjectUsesPolling;
 
 } CanHardwareObject;
+
+
+/*
+  [SWS_Can_00415]
+  This type unites PduId (swPduHandle), SduLength (length), SduData (sdu), and CanId (id) for any CAN L-SDU.
+*/
+
+typedef struct Can_Pdu
+{
+    PduIdType swPduHandle ;
+    uint8 length;
+    Can_IdType id ;
+    uint8* sdu ;
+}Can_PduType;
 //*****************************************************************************
 //  This container contains the configuration parameters and sub containers of
 //  the AUTOSAR Can module.

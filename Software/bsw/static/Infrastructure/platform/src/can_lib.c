@@ -44,15 +44,9 @@
 //
 //*****************************************************************************
 
-#include "Platform_Types.h"
-#include "hw_can.h"
-#include "hw_ints.h"
-//#include "hw_nvic.h"
-//#include "hw_memmap.h"
-//#include "hw_sysctl.h"
-//#include "hw_types.h"
+
 #include "can_lib.h"
-#include "debug.h"
+
 //#include "interrupt.h"
 
 //*****************************************************************************
@@ -809,7 +803,7 @@ CANBitTimingSet(uint32 ui32Base, tCANBitClkParms *psClkParms)
 //! \return None.
 //
 //*****************************************************************************
-void
+/*void
 CANIntRegister(uint32 ui32Base, void (*pfnHandler)(void))
 {
     uint8 ui8IntNumber;
@@ -834,7 +828,7 @@ CANIntRegister(uint32 ui32Base, void (*pfnHandler)(void))
     // Enable the Ethernet interrupt.
     //
     IntEnable(ui8IntNumber);
-}
+}*/
 
 //*****************************************************************************
 //
@@ -851,7 +845,7 @@ CANIntRegister(uint32 ui32Base, void (*pfnHandler)(void))
 //! \return None.
 //
 //*****************************************************************************
-void
+/*void
 CANIntUnregister(uint32 ui32Base)
 {
     uint8 ui8IntNumber;
@@ -876,7 +870,7 @@ CANIntUnregister(uint32 ui32Base)
     // Register the interrupt handler.
     //
     IntUnregister(ui8IntNumber);
-}
+}*/
 
 //*****************************************************************************
 //
