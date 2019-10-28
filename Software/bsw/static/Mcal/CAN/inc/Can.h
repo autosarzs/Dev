@@ -271,6 +271,20 @@ typedef struct {
 	boolean 	CanHardwareObjectUsesPolling;
 
 } CanHardwareObject;
+
+
+/*
+  [SWS_Can_00415]
+  This type unites PduId (swPduHandle), SduLength (length), SduData (sdu), and CanId (id) for any CAN L-SDU.
+*/
+
+typedef struct Can_Pdu
+{
+    PduIdType swPduHandle ;
+    uint8 length;
+    Can_IdType id ;
+    uint8* sdu ;
+}Can_PduType;
 //*****************************************************************************
 //  This container contains the configuration parameters and sub containers of
 //  the AUTOSAR Can module.

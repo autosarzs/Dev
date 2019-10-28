@@ -41,13 +41,25 @@
 
 
 
-#define MAX_BAUDRATE_CONFIGS_CONTROLLER_0 	(1U)
-#define MAX_BAUDRATE_CONFIGS_CONTROLLER_1	  (1U)
-#define MAX_CONTROLLERS_NUMBER               2
-#define CAN_CONTROLLERS_NUMBER                    0x01                /*number of can controllers in the ECU*/
-#define CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS    32                  /*TivaC microcontroller supports 32 message objects to be used as Tx or Rx*/
-#define CAN_HOH_NUMBER                            2
+#define MAX_BAUDRATE_CONFIGS_CONTROLLER_0 	     (1U)
+#define MAX_BAUDRATE_CONFIGS_CONTROLLER_1	     (1U)
+#define MAX_CONTROLLERS_NUMBER                   (2U)
+#define CAN_CONTROLLERS_NUMBER                   (1U)                /*number of can controllers in the ECU*/
+#define CAN_HOH_NUMBER                           (2U)
+#define CAN_HRH_NUMBER                           (1U)
+#define CAN_HTH_NUMBER                           (1U)
+#define CLOCK                                    (50000000)            /*Can Clock in Hz*/
+#define CONTROLLER_0_BDR_ID                      (0U)
+#define CONTROLLER0_ID                           (0U)
+#define DEFAULT_BAUDRATE_CONFIGRATION_ID         (0U)
+#define USED_CONTROLLERS_NUMBER                  (1U)                 /*Number of used controllers (one from two)*/
 
+/*Define HOH for Can module */
+#define HTH0_0                                   (0U)
+#define HRH0_1                                   (1U)
+
+/*Define controllers Base address*/
+#define BASE_0                                   (0x40040000)
 // ECUC_Can_00317
 #define POLLING 2
 
@@ -66,6 +78,8 @@
 #define CanSetBaudrateApi   STD_ON
 
 #define INTERRUPT_MODE 		(0x00)
+
+#define CanTriggerTransmitEnable    FALSE
 
 
 

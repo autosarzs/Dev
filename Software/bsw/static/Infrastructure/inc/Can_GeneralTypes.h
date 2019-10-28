@@ -34,6 +34,7 @@
 *******************************************************************************/
 #ifndef __CAN_GENERAL_TYPES_H__
 #define __CAN_GENERAL_TYPES_H__
+
  /* Module Version 1.0.0 */
 #define CAN_GENERAL_TYPES_SW_MAJOR_VERSION           (1U)
 #define CAN_GENERAL_TYPES_SW_MINOR_VERSION           (0U)
@@ -74,6 +75,28 @@ typedef uint8 Can_ErrorStateType ;
 #define CAN_ERRORSTATE_PASSIVE ((Can_ErrorStateType) 0x01U)  
 #define CAN_ERRORSTATE_BUSOFF  ((Can_ErrorStateType) 0x02U)  
 
+
+/*
+  [SWS_Can_00429]
+  Range : Standard : 0..0x0FF
+          Extended : 0..0xFFFF
+  Represents the hardware object handles of a CAN hardware unit.
+  For CAN hardware units with more than 255 HW objects use extended range.
+*/
+typedef uint16 Can_HwHandleType ;
+
+/*
+  [SWS_Can_00416]
+  Range : Standard32Bit : 0..0x400007FF
+          Extended32Bit : 0..0xDFFFFFFF
+  Represents the Identifier of an L-PDU. The two most significant bits specify the frame type:
+  00 CAN message with Standard CAN ID
+  01 CAN FD frame with Standard CAN ID
+  10 CAN message with Extended CAN ID
+  11 CAN FD frame with Extended CAN ID
+*/
+typedef uint32 Can_IdType ;
+
 /*
   [SWS_CAN_00496]
   This type defines a data structure which clearly provides an Hardware Object 
@@ -89,38 +112,7 @@ typedef struct Can_Hw
   uint8 ControllerId ; // ControllerId provided by CanIf clearly identify the corresponding controller
 }Can_HwType;
 
-/*
-  [SWS_Can_00429]
-  Range : Standard : 0..0x0FF
-          Extended : 0..0xFFFF
-  Represents the hardware object handles of a CAN hardware unit.
-  For CAN hardware units with more than 255 HW objects use extended range.
-*/
-typedef uint16 Can_HwHandleType ;
 
-/* 
-  [SWS_Can_00416]
-  Range : Standard32Bit : 0..0x400007FF
-          Extended32Bit : 0..0xDFFFFFFF
-  Represents the Identifier of an L-PDU. The two most significant bits specify the frame type:
-  00 CAN message with Standard CAN ID
-  01 CAN FD frame with Standard CAN ID
-  10 CAN message with Extended CAN ID
-  11 CAN FD frame with Extended CAN ID
-*/
-typedef uint32 Can_IdType ;
-
-/*
-  [SWS_Can_00415]
-  This type unites PduId (swPduHandle), SduLength (length), SduData (sdu), and CanId (id) for any CAN L-SDU.
-*/
-typedef struct Can_Pdu
-{
-	PduIdType swPduHandle ;
-	uint8 length;
-	Can_IdType id ;
-	uint8* sdu ;
-}Can_PduType;
 
 /* 
   [SWS_CanTrcv_00163]
@@ -164,5 +156,14 @@ typedef uint8 CanTrcv_TrcvWakeupReasonType;
 #define CANTRCV_WU_POWER_ON       ((CanTrcv_TrcvWakeupReasonType)0x05U)
 #define CANTRCV_WU_BY_PIN         ((CanTrcv_TrcvWakeupReasonType)0x06U)
 #define CANTRCV_WU_BY_SYSERR      ((CanTrcv_TrcvWakeupReasonType)0x07U)
+
+typedef uint8 CanObjectType;
+/**
+  Receive HOH  */
+#define receive      ((CanObjectType)0x00U)
+/**
+  Transmit HOH  */
+#define transmit     ((CanObjectType)0x01U)
+
 
 #endif /* __CAN_GENERAL_TYPES_H__ */
