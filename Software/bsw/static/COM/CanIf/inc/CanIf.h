@@ -35,6 +35,8 @@
 #ifndef __CANIF_H__
 #define __CANIF_H__
 
+#include "CanIf_Types.h"
+
 
 typedef uint8 CanIfWakeupSupportType;
 #define CONTROLLER    ((CanIfWakeupSupportType)0x0)
@@ -94,7 +96,7 @@ typedef struct {
 				/*Callout functions with respect to the upper layers. This callout functions
 				defined in this container are common to all configured underlying CAN Drivers / CAN Transceiver Drivers.*/
 
-				CanIfDispatchConfig CanIfDispatchCfg;
+				CanIfDispatchCfg CanIfDispatchConfig;
 				
 				/*Configuration parameters for all the underlying CAN drivers are aggregated under this container*/
 				
@@ -102,11 +104,11 @@ typedef struct {
 				
 				/*This container contains the init parameters of the CAN Interface.*/
 				
-				CanIfInitConfiguration  CanIfInitCfg;
+				CanIfInitCfg	CanIfInitConfiguration;
 				
 				/*This container contains the private configuration (parameters) of the CAN Interface.*/
 				
-				CanIfPrivateConfiguration   	CanIfPrivateCfg;
+				CanIfPrivateCfg   	CanIfPrivateConfiguration;
 				
 				/*This container contains the public configuration (parameters) of the CAN Interface.*/
 				
@@ -121,119 +123,112 @@ typedef struct {
 
 
 typedef struct {
-				/*Selects whether the DLC check is supported.
-					True: Enabled False: Disabled*/
-		
-				bool						CanIfDlcCheck;
-	
-				/*Description : Defined the number of L-PDU elements for the transmit buffering.
-				The Tx L-PDU buffers shall be used to store an L-PDU once for each different L-PDU handle.
-				Range: 0..max. number of Tx L-PDUs to be used.
-				Default Value: NUMBER_OF_TX_PDUS*/
-				
-				uint8					CanIfNumberOfTxBuffers;                                       
-				
 				/*Selects the desired software filter mechanism for reception only. 
 				Each implemented software filtering method is identified by this enumeration number.
-				Range: Types implemented software filtering methods*/
-				
-				CanIfSoftwareFilterType  CanIfSoftwareFilter;
-				
-}CanIfPrivateConfiguration;
+				Range: Types implemented software filtering methods
+				Range: 	BINARY 	Selects Binary Filter method.
+						INDEX 	Selects Index Filter method.
+						LINEAR 	Selects Linear Filter method.
+						TABLE 	Selects Table Filter method.*/
+				CanIfPrivateSoftwareFilterType  CanIfPrivateSoftwareFilter;
+}CanIfPrivateCfg;
 
 typedef struct {
-	
-	
-				/*Enables and disables the development error detection and notification mechanism.
-					True: Enabled False: Disabled*/
-				bool CanIfDevErrorDetect;
-	
-	
-				/*Selects support for multiple CAN Drivers.
-				True: Enabled False: Disabled*/
-				bool CanIfMultipleDriverSupport;
-				/*Number of served CAN hardware units.
-				Range: 1..max. number of underlying supported CAN Hardware units*/
-
-				unit8 CanIfNumberOfCanHwUnits;
-	
-				/*Configuration parameter to enable/disable the API to poll for Tx Confirmation state.*/
-	
-				bool CanIfPublicTxConfirmPollingSupport;
-	
-				/*Enables / Disables the API CanIf_ReadRxPduData() for reading received L-PDU data.
-				True: Enabled False: Disabled*/	
-				bool CanIfReadRxPduDataApi;
-	
-				/*Enables and disables the API for reading the received L-PDU data.
-				True: Enabled False: Disabled
-				Default value :false*/
-				
-				bool CanIfReadRxPduNotifyStatusApi;
-	
-	
-				/*Enables and disables the API for reading the notification status of transmit and receive L-PDUs.
-				True: Enabled False: Disabled*/
-				
-				bool CanIfReadTxPduNotifyStatusApi;
-	
-				/*Enables and disables the API for reconfiguration of the CAN Identifier for each Transmit L-PDU.
-				True: Enabled False: Disabled*/
-	
-				bool	CanIfSetDynamicTxIdApi;
-
-				/*Enables and disables the API for reading the version information about the CAN Interface.
-				True: Enabled False: Disabled*/
-	
-				bool CanIfVersionInfoApi;
-	
-}CanIfPublicConfiguration;
+				/* Defines header files for callback functions which shall be included in
+				case of CDDs. Range of characters is 1.. 32. 
+				Type: EcucStringParamDef*/
+				uint8 CanIfPublicCddHeaderFileStr[CanIfPublicCddHeaderFile];
+}CanIfPublicCfg;
  
 typedef struct {
-	
-	
-	
+				/* Check with the Author the change i have made before comitting */
 				/*	Selects the CAN Interface specific configuration setup. This type of the external data structure shall 
 				contain the post build initialization data for the CAN Interface for all underlying CAN Dirvers.
 				constant to CanIf_ConfigType*/
-				uint8 CanIfConfigSet[32];
-	
-	
-				/*Total number of CanRxPduIds to be handled. Range: 0..max number of defined CanRxPduIds*/
-
-				uint8 CanIfNumberOfCanRxPduIds;
-	
-				/*Total number of CanTxPduIds to be handled. Range: 0..max number of defined CanTxPduIds*/
-					uint8CanIfNumberOfCanTXPduIds;
-	
-				/*Total number of dynamic CanTxPduIds to be handled. Range: 0..max. nember of defined CanTxPduIds*/
-	
-				uint8 CanIfNumberOfDynamicCanTXPduIds;
-	
-	/***************************************************************************************************************************
-	*															Included Containers 
-	****************************************************************************************************************************/
-				/*This container contains the references to the configuration setup of each underlying CAN driver.*/
+				uint8 CanIfInitCfgSetStr[CanIfInitCfgSet];
 				
-				CanIfInitControllerConfig CanIfInitControllerCfg; 
+				/* Maximum total size of all Tx buffers. This parameter is needed only in
+				case of post-build loadable implementation using static memory
+				allocation.
+				Range: 0..18446744073709551615 */
+				uint64 CanIfMaxBufferSize;
 				
-				/*This container contains the references to the configuration setup of each underlying CAN Driver.*/
+				/* Maximum number of Pdus. This parameter is needed only in case of
+				post-build loadable implementation using static memory allocation.
+				Range: 0..18446744073709551615 */
+				uint64 CanIfMaxRxPduCfg;
 				
-				CanIfInitHohConfig CanIfInitHohCfg;
+				/* Maximum number of Pdus. This parameter is needed only in case of
+				post-build loadable implementation using static memory allocation.
+				Range: 0..18446744073709551615 */
+				uint64 CanIfMaxTxPduCfg;
 				
-				/*This container contains the configuration (parameters) of each receive CAN L-PDU.
-				The SHORT-NAME of "CanIfRxPduConfig" container itself represents the symolic name of Receive L-PDU.*/
+				/**************************************************************************************************************
+																Included Containers 
+				**************************************************************************************************************/
 				
-				CanIfRxPduConfig CanIfRxPduCfg;
+				/* This container contains the Txbuffer configuration.
+				Multiple buffers with different sizes could be configured.
+				If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the
+				CanIf Tx L-PDU only refers via this CanIfBufferCfg the
+				corresponding CanIfHthCfg. */
+				CanIfBufferCfg	CanIfBufferConfig;
 				
-				/*This container contains the configuration (parameters) of each transmit CAN L-PDU. 
-				The SHORT-NAME of "CanIfTxPduConfig" container represents the symolic name of Transmit L-PDU*/
+				/* This container contains the references to the
+				configuration setup of each underlying CAN Driver. */
+				CanIfInitHohCfg	CanIfInitHohConfig;
 				
-				CanIfTxPduConfig	CanIfTxPduCfg;
-
-}CanIfInitConfiguration;
+				/* This container contains the configuration (parameters)
+				of each receive CAN L-PDU.
+				The SHORT-NAME of "CanIfRxPduConfig" container
+				itself represents the symolic name of Receive L-PDU.
+				This L-SDU produces a meta data item of type
+				CAN_ID_32. */
+				CanIfRxPduCfg	CanIfRxPduConfig;
+				
+				/* This container contains the configuration (parameters)
+				of a transmit CAN L-PDU. It has to be configured as
+				often as a transmit CAN L-PDU is needed.
+				The SHORT-NAME of "CanIfTxPduConfig" container
+				represents the symolic name of Transmit L-PDU.
+				This L-SDU consumes a meta data item of type
+				CAN_ID_32. */
+				CanIfTxPduCfg	CanIfTxPduConfig;
+				
+}CanIfInitCfg;
 
 typedef struct {
+				/* CAN Identifier of transmit CAN L-PDUs used by the CAN Driver for
+				CAN L-PDU transmission. Range: 11 Bit For Standard CAN Identifier
+				... 29 Bit For Extended CAN identifier
+				The CAN Identifier may be omitted for dynamic transmit L-PDUs.
+				Range: 0 .. 536870911 */
+				uint32 CanIfTxPduCanId;
+				
+				/* Identifier mask which denotes relevant bits in the CAN Identifier. This
+				parameter may be used to keep parts of the CAN Identifier of dynamic
+				transmit L-PDUs static. Range: 11 bits for Standard CAN Identifier, 29
+				bits for Extended CAN Identifier.
+				Range: 0 .. 536870911 */
+				uint32 CanIfTxPduCanIdMask;
+				
+				/* Type of CAN Identifier of the transmit CAN L-PDU used by the CAN
+				Driver module for CAN L-PDU transmission. */
+				uint8 CanIfTxPduCanIdType;
+				
+				/* ECU wide unique, symbolic handle for transmit CAN L-SDU.
+				Range: 0..max. number of CantTxPduIds */
+				uint32 CanIfTxPduId;
+				
+}CanIfTxPduCfg;
+
+typedef struct {
+				uint8 CanIfDispatchUserCheckTrcvWakeFlagIndicationName;
+				
+				/* Selects support of Partial Network features in CanIf.
+					True: Enabled
+					False: Disabled */
+				uint8 CanIfPublicPnSupport;
 				
 				/*Name of target BusOff notification services to target upper layers (PduRouter, CanNm, CanTp and ComplexDeviceDrivers).*/
 
@@ -251,7 +246,7 @@ typedef struct {
 
 				//FunctionNameDef CanIfWakeupValidNotification
 				
-}CanIfDispatchConfig;
+}CanIfDispatchCfg;
  
 
 typedef struct {
