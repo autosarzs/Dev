@@ -289,6 +289,14 @@ typedef uint8 CanIfTxPduCanIdTypeConfig;
 Range: 0..max. number of CantTxPduIds */
 #define CanIfTxPduIdValue						(4294967295)
 
-#define CANIF_PUBLIC_PN_SUPPORT				  	STD_OFF
+/* If CanIfPublicPnFilterSupport is enabled, by this parameter PDUs
+could be configured which will pass the CanIfPnFilter.
+If there is no CanIfTxPduPnFilterPdu configured per controller,
+the corresponding controller applies no CanIfPnFilter.
+dependency: This parameter shall only be configurable if CanIfPublicPnSupport equals True. */
+#if(CanIfPublicPnSupport==STD_ON)
+	#define CanIfTxPduPnFilterPdu				STD_OFF
+#endif
 
+	
 #endif /* __CANIF_CFG_H__ */
