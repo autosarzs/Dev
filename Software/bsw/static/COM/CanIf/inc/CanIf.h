@@ -219,6 +219,7 @@ typedef struct {
 				/* ECU wide unique, symbolic handle for transmit CAN L-SDU.
 				Range: 0..max. number of CantTxPduIds */
 				uint32 CanIfTxPduId;
+					
 				
 }CanIfTxPduCfg;
 
