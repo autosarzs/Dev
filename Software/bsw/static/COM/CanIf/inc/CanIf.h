@@ -219,7 +219,17 @@ typedef struct {
 				/* ECU wide unique, symbolic handle for transmit CAN L-SDU.
 				Range: 0..max. number of CantTxPduIds */
 				uint32 CanIfTxPduId;
-					
+				
+				/* If CanIfPublicPnFilterSupport is enabled, by this parameter PDUs
+				could be configured which will pass the CanIfPnFilter.
+				If there is no CanIfTxPduPnFilterPdu configured per controller,
+				the corresponding controller applies no CanIfPnFilter.
+				dependency: This parameter shall only be configurable if
+				CanIfPublicPnSupport equals True. */
+				#if(CanIfPublicPnSupport==STD_ON)
+					uint8 CanIfTxPduPnFilterPdu;
+				#endif
+				
 				
 }CanIfTxPduCfg;
 
