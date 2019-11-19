@@ -295,7 +295,7 @@ If there is no CanIfTxPduPnFilterPdu configured per controller,
 the corresponding controller applies no CanIfPnFilter.
 dependency: This parameter shall only be configurable if CanIfPublicPnSupport equals True. */
 #if(CanIfPublicPnSupport==STD_ON)
-	#define CanIfTxPduPnFilterPdu				STD_OFF
+	#define CanIfTxPduPnFilterPduConfig				STD_OFF
 #endif
 
 	
