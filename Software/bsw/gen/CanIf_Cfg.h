@@ -43,14 +43,14 @@
 //  Buffer element length depends on the size of the referencing PDUs
 //  Default Value: false
 //*****************************************************************************
-#define CanIfFixedBuffer                STD_OFF
+#define CanIfFixedBuffer                		STD_OFF
 
 //*****************************************************************************
 //  Selects whether Data Length Check is supported.
 //  True: Enabled False: Disabled
 //  Default Value: true
 //*****************************************************************************
-#define CanIfPrivateDataLengthCheck     STD_ON
+#define CanIfPrivateDataLengthCheck     		STD_ON
 
 //*****************************************************************************
 //  Selects the desired software filter mechanism for reception only. Each
@@ -295,8 +295,38 @@ If there is no CanIfTxPduPnFilterPdu configured per controller,
 the corresponding controller applies no CanIfPnFilter.
 dependency: This parameter shall only be configurable if CanIfPublicPnSupport equals True. */
 #if(CanIfPublicPnSupport==STD_ON)
-	#define CanIfTxPduPnFilterPduConfig				STD_OFF
+	#define CanIfTxPduPnFilterPduConfig			STD_OFF
 #endif
 
+/* Enables and disables transmit confirmation for each transmit CAN
+L-SDU for reading its notification status.
+True: Enabled False: Disabled
+dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
+#define CANIF_READTXPDU_NOTIFY_STATUS_API		STD_OFF
+
+/* Enables and disables transmit confirmation for each transmit CAN
+L-SDU for reading its notification status.
+True: Enabled False: Disabled
+dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
+#if(CANIF_READTXPDU_NOTIFY_STATUS_API==STD_ON)
+	#define CANIF_TXPDU_READ_NOTIFYSTATUS		STD_OFF
+#endif
+
+
+
+
+/* Enables and disables receive indication for each receive CAN L-SDU
+for reading its notification status.
+True: Enabled False: Disabled
+dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
+#define CANIF_READRXPDU_NOTIFY_STATUS_API		STD_OFF
+
+/* Enables and disables receive indication for each receive CAN L-SDU
+for reading its notification status.
+True: Enabled False: Disabled
+dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
+#if(CANIF_READRXPDU_NOTIFY_STATUS_API==STD_ON)
+	#define CANIF_RXPDU_READ_NOTIFYSTATUS		STD_OFF
+#endif
 	
 #endif /* __CANIF_CFG_H__ */
