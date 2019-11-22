@@ -230,6 +230,13 @@ typedef struct {
 					uint8 CanIfTxPduPnFilterPdu;
 				#endif
 				
+				/* Enables and disables transmit confirmation for each transmit CAN
+				L-SDU for reading its notification status.
+				True: Enabled False: Disabled
+				dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
+				#if(CANIF_READTXPDU_NOTIFY_STATUS_API==STD_ON)
+				uint8 CanIfTxPduReadNotifyStatus;
+				#endif
 				
 }CanIfTxPduCfg;
 
