@@ -112,12 +112,12 @@ typedef struct {
 				
 				/*This container contains the public configuration (parameters) of the CAN Interface.*/
 				
-				CanIfPublicConfiguration     CanIfPublicCfg;
+				CanIfPublicCfg		CanIfPublicConfiguration;
 				
 				/*This container contains the configuration (parameters) of all addressed CAN transceivers by each underlying 
 				CAN Transceiver Driver*/
 				
-				CanIfTransceiverDrvConfig   CanIfTransceiverDrvCfg;
+				CanIfPublicCfg      CanIfTransceiverDrvConfig;
 
 }CanIf;
 
@@ -213,7 +213,11 @@ typedef struct {
 				uint32 CanIfTxPduCanIdMask;
 				
 				/* Type of CAN Identifier of the transmit CAN L-PDU used by the CAN
-				Driver module for CAN L-PDU transmission. */
+				Driver module for CAN L-PDU transmission. 
+				Range: 	EXTENDED_CAN CAN 		frame with extended identifier (29 bits)
+						EXTENDED_FD_CAN CAN FD 	frame with extended identifier (29 bits)
+						STANDARD_CAN CAN 		frame with standard identifier (11 bits)
+						STANDARD_FD_CAN CAN FD 	frame with standard identifier (11 bits) */
 				uint8 CanIfTxPduCanIdType;
 				
 				/* ECU wide unique, symbolic handle for transmit CAN L-SDU.
@@ -238,7 +242,32 @@ typedef struct {
 				uint8 CanIfTxPduReadNotifyStatus;
 				#endif
 				
+				/* Determines if or if not CanIf shall use the trigger transmit API for this PDU.
+				dependency: If CanIfTxPduTriggerTransmit is TRUE then CanIfTxPduUserTxConfirmationUL 
+				has to be either PDUR or CDD and CanIfTxPduUserTriggerTransmitName has to be specified accordingly */
+				uint8 CanIfTxPduTriggerTransmit;
+				
+				/* Enables/disables truncation of PDUs that exceed the configured size. */
+				uint8 CanIfTxPduTruncation;
+				
+				/* Defines the type of each transmit CAN L-PDU.
+				Range:	DYNAMIC 	CAN ID is defined at runtime.
+						STATIC 		CAN ID is defined at compile-time. */
+				uint8 CanIfTxPduType;
+				
+				/* Configurable reference to a CanIf buffer configuration. CanIfBufferCfg */
+				CanIfBufferCfg* CanIfTxPduBufferRef;
+				
+				/* Reference to the "global" Pdu structure to allow harmonization of handle IDs in the COM-Stack.
+				//Pdu* CanIfTxPduRef;
+				will be configured in implementation */
 }CanIfTxPduCfg;
+
+typedef struct{
+				
+}CanIfRxPduCfg;
+
+
 
 typedef struct {
 				uint8 CanIfDispatchUserCheckTrcvWakeFlagIndicationName;
