@@ -456,7 +456,7 @@ for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
 #if(CanIfPublicReadRxPduNotifyStatusApi==STD_ON)
-	#define CANIF_RXPDU_READ_NOTIFYSTATUS		STD_OFF
+	#define CANIF_RXPDU_READ_NOTIFYSTATUS		(STD_OFF)
 #endif
 
 /* This parameter defines the upper layer (UL) module to which the indication of
@@ -478,14 +478,14 @@ are configured for receive indications and thus <User_RxIndication>()
 shall not be called, CANIF_RXPDU_USERRXINDICATION_UL and
 CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
 typedef uint8 CANIF_RXPDU_USERRXINDICATION_UL;
-#define CAN_NM								((CANIF_RXPDU_USERRXINDICATION_UL)0x00U)
-#define CAN_TP								((CANIF_RXPDU_USERRXINDICATION_UL)0x01U)
-#define CAN_TSYN							((CANIF_RXPDU_USERRXINDICATION_UL)0x02U)
-#define CDD									((CANIF_RXPDU_USERRXINDICATION_UL)0x03U)
-#define J1939NM								((CANIF_RXPDU_USERRXINDICATION_UL)0x04U)
-#define J1939TP								((CANIF_RXPDU_USERRXINDICATION_UL)0x05U)
-#define PDUR								((CANIF_RXPDU_USERRXINDICATION_UL)0x06U)
-#define XCP									((CANIF_RXPDU_USERRXINDICATION_UL)0x07U)
+#define CAN_NM									((CANIF_RXPDU_USERRXINDICATION_UL)0x00U)
+#define CAN_TP									((CANIF_RXPDU_USERRXINDICATION_UL)0x01U)
+#define CAN_TSYN								((CANIF_RXPDU_USERRXINDICATION_UL)0x02U)
+#define CDD										((CANIF_RXPDU_USERRXINDICATION_UL)0x03U)
+#define J1939NM									((CANIF_RXPDU_USERRXINDICATION_UL)0x04U)
+#define J1939TP									((CANIF_RXPDU_USERRXINDICATION_UL)0x05U)
+#define PDUR									((CANIF_RXPDU_USERRXINDICATION_UL)0x06U)
+#define XCP										((CANIF_RXPDU_USERRXINDICATION_UL)0x07U)
 
 /* This parameter defines the name of the <User_RxIndication>. This parameter depends
 on the parameter CanIfRxPduUserRxIndicationUL. If CanIfRxPduUserRxIndicationUL equals
@@ -513,5 +513,15 @@ and CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
 #else if(CanIfRxPduUserRxIndicationUL==CDD)
 	#define CanIfRxPduUserRxIndicationName		CDD_CanIfRxIndication /* Selectable */
 #endif	
+
+/* Lower CAN Identifier of a receive CAN L-PDU for identifier range
+definition, in which all CAN Ids are mapped to one PduId.
+Range: 0 - 536870911 */
+#define CANIF_RXPDU_CANIDRANGE_LOWERCANID 		(0U)
+
+/* Upper CAN Identifier of a receive CAN L-PDU for identifier range
+definition, in which all CAN Ids are mapped to one PduId.
+Range: 0 - 536870911 */
+#define CANIF_RXPDU_CANIDRANGE_UPPERCANID		(536870911U)
 
 #endif /* __CANIF_CFG_H__ */
