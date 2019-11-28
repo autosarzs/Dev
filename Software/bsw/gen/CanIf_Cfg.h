@@ -307,13 +307,7 @@ dependency: This parameter shall only be configurable if CanIfPublicPnSupport eq
 L-SDU for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-#define CANIF_READTXPDU_NOTIFY_STATUS_API		STD_OFF
-
-/* Enables and disables transmit confirmation for each transmit CAN
-L-SDU for reading its notification status.
-True: Enabled False: Disabled
-dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-#if(CANIF_READTXPDU_NOTIFY_STATUS_API==STD_ON)
+#if(CanIfPublicReadTxPduNotifyStatusApi==STD_ON)
 	#define CANIF_TXPDU_READ_NOTIFYSTATUS		STD_OFF
 #endif
 
@@ -456,12 +450,6 @@ dependency: CANIF_CANPDUID_READDATA_API must be enabled */
 #if(CANIF_CANPDUID_READDATA_API==STD_ON)
 	#define CANIF_RXPDU_READDATA				(STD_OFF)
 #endif
-
-/* Enables and disables receive indication for each receive CAN L-SDU
-for reading its notification status.
-True: Enabled False: Disabled
-dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
-#define CANIF_READRXPDU_NOTIFY_STATUS_API		STD_OFF
 
 /* Enables and disables receive indication for each receive CAN L-SDU
 for reading its notification status.
