@@ -365,7 +365,17 @@ typedef struct{
 				will be configured in implementation */
 }CanIfRxPduCfg;
 
-
+typedef struct{
+				/* Lower CAN Identifier of a receive CAN L-PDU for identifier range
+				definition, in which all CAN Ids are mapped to one PduId.
+				Range: 0 - 536870911 */
+				uint32 CanIfRxPduCanIdRangeLowerCanId;
+				
+				/* Upper CAN Identifier of a receive CAN L-PDU for identifier range
+				definition, in which all CAN Ids are mapped to one PduId.
+				Range: 0 - 536870911 */
+				uint32 CanIfRxPduCanIdRangeUpperCanId;
+}CanIfRxPduCanIdRange;
 
 typedef struct {
 				uint8 CanIfDispatchUserCheckTrcvWakeFlagIndicationName;
