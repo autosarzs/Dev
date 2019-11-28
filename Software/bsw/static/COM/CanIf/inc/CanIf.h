@@ -255,6 +255,28 @@ typedef struct {
 						STATIC 		CAN ID is defined at compile-time. */
 				uint8 CanIfTxPduType;
 				
+				/* This parameter defines the upper layer (UL) module to which the confirmation of
+				the successfully transmitted CANTXPDUID has to be routed via the <User_TxConfirmation>.
+				This <User_TxConfirmation> has to be invoked when the confirmation of the configured CANTXPDUID
+				will be received by a Tx confirmation event from the CAN Driver module.
+				If no upper layer (UL) module is configured, no <User_TxConfirmation> has to be called in case of
+				a Tx confirmation event of the CANTXPDUID from the CAN Driver module.
+				Range:	CAN_NM		CAN NM
+						CAN_TP 		CAN TP
+						CAN_TSYN	Global Time Synchronization over CAN
+						CDD 		Complex Driver
+						J1939NM 	J1939Nm
+						J1939TP 	J1939Tp
+						PDUR 		PDU Router
+						XCP 		Extended Calibration Protocol 
+				Note: If CanIfTxPduTriggerTransmit is not specified or FALSE, no upper
+				layer modules have to be configured for Trigger Transmit. Therefore,
+				<User_TriggerTransmit>() will not be called and CanIfTxPduUserTxConfirmationUL
+				as well as CanIfTxPduUserTriggerTransmitName need not to be configured. */
+				#if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
+					uint8 CanIfTxPduUserTxConfirmationUL;
+				#endif
+				
 				/* Configurable reference to a CanIf buffer configuration. CanIfBufferCfg */
 				CanIfBufferCfg* CanIfTxPduBufferRef;
 				
@@ -264,7 +286,83 @@ typedef struct {
 }CanIfTxPduCfg;
 
 typedef struct{
+				/* CAN Identifier of Receive CAN L-PDUs used by the CAN Interface.
+				Exa: Software Filtering. This parameter is used if exactly one Can
+				Identifier is assigned to the Pdu. If a range is assigned then the
+				CanIfRxPduCanIdRange parameter shall be used.
+				Range: 11 Bit For Standard CAN Identifier ... 29 Bit For Extended CAN identifier */
+				uint32 CanIfRxPduCanId;
 				
+				/* Identifier mask which denotes relevant bits in the CAN Identifier. This
+				parameter defines a CAN Identifier range in an alternative way to
+				CanIfRxPduCanIdRange. It identifies the bits of the configured CAN
+				Identifier that must match the received CAN Identifier. Range: 11 bits
+				for Standard CAN Identifier, 29 bits for Extended CAN Identifier. */
+				uint32 CanIfRxPduCanIdMask;
+				
+				/* CAN Identifier of receive CAN L-PDUs used by the CAN Driver for
+				CAN L-PDU reception.
+				Range: 	EXTENDED_CAN 			CAN 2.0 or CAN FD frame with extended identifier (29 bits)
+						EXTENDED_FD_CAN 		CAN FD frame with extended identifier (29 bits)
+						EXTENDED_NO_FD_CAN		CAN 2.0 frame with extended identifier (29 bits)
+						STANDARD_CAN 			CAN 2.0 or CAN FD frame with standard identifier (11 bits)
+						STANDARD_FD_CAN 		CAN FD frame with standard identifier (11 bits)
+						STANDARD_NO_FD_CAN 		CAN 2.0 frame with standard identifier (11 bits) */
+				uint8 CanIfRxPduCanIdType;
+				
+				/* Data length of the received CAN L-PDUs used by the CAN Interface.
+				This information is used for Data Length Check. Additionally it might
+				specify the valid bits in case of the discrete DLC for CAN FD L-PDUs > 8 bytes.
+				The data area size of a CAN L-PDU can have a range from 0 to 64 bytes. */
+				uint8 CanIfRxPduDataLength;
+				
+				/* ECU wide unique, symbolic handle for receive CAN L-SDU. It shall
+				fulfill ANSI/AUTOSAR definitions for constant defines. Range: 0..max. number of defined CanRxPduIds
+				Range: 0 - 4294967295 */
+				uint32 CanIfRxPduId;
+				
+				/* Enables and disables the Rx buffering for reading of received L-SDU
+				data. True: Enabled False: Disabled
+				dependency: CANIF_CANPDUID_READDATA_API must be enabled */
+				#if(CANIF_CANPDUID_READDATA_API==STD_ON)
+					uint8 CanIfRxPduReadData;
+				#endif
+				
+				/* /* Enables and disables receive indication for each receive CAN L-SDU
+				for reading its notification status.
+				True: Enabled False: Disabled
+				dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */ */
+				#if(CanIfPublicReadRxPduNotifyStatusApi==STD_ON)
+					uint8 CanIfRxPduReadNotifyStatus;
+				#endif
+				
+				/* This parameter defines the upper layer (UL) module to which the indication of
+				the successfully received CANRXPDUID has to be routed via <User_RxIndication>.
+				This <User_RxIndication> has to be invoked when the indication of the configured CANRXPDUID
+				will be received by an Rx indication event from the CAN Driver module.
+				If no upper layer (UL) module is configured, no <User_RxIndication> has to be called in case of
+				an Rx indication event of the CANRXPDUID from the CAN Driver module.
+				Range:	CAN_NM		CAN NM
+						CAN_TP 		CAN TP
+						CAN_TSYN	Global Time Synchronization over CAN
+						CDD 		Complex Driver
+						J1939NM 	J1939Nm
+						J1939TP 	J1939Tp
+						PDUR 		PDU Router
+						XCP 		Extended Calibration Protocol 
+				Note: If receive indications are not necessary or no upper layer modules
+				are configured for receive indications and thus <User_RxIndication>()
+				shall not be called, CANIF_RXPDU_USERRXINDICATION_UL and
+				CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
+				uint8 CanIfRxPduUserRxIndicationUL;
+				
+				/* The HRH to which Rx L-PDU belongs to, is referred through this parameter.
+				dependency: This information has to be derived from the CAN Driver configuration.*/
+				CanIfHrhCfg* CanIfRxPduHrhIdRef;
+				
+				/* Reference to the "global" Pdu structure to allow harmonization of handle IDs in the COM-Stack.
+				//Pdu* CanIfRxPduRef;
+				will be configured in implementation */
 }CanIfRxPduCfg;
 
 
