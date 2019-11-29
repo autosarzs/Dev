@@ -511,7 +511,7 @@ and CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
 	#define CanIfRxPduUserRxIndicationName		CanTSyn_CanIfRxIndication
 
 #else if(CanIfRxPduUserRxIndicationUL==CDD)
-	#define CanIfRxPduUserRxIndicationName		CDD_CanIfRxIndication /* Selectable */
+	#define CanIfRxPduUserRxIndicationName		Cdd_CanIfRxIndication /* Selectable */
 #endif	
 
 /* Lower CAN Identifier of a receive CAN L-PDU for identifier range
@@ -523,5 +523,27 @@ Range: 0 - 536870911 */
 definition, in which all CAN Ids are mapped to one PduId.
 Range: 0 - 536870911 */
 #define CANIF_RXPDU_CANIDRANGE_UPPERCANID		(536870911U)
+
+/* This parameter defines the upper layer module to which the CheckTrcvWakeFlagIndication
+from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
+parameter shall not be configurable. */
+#if(CanIfPublicPnSupport==STD_ON)
+	typedef uint8 CanIfDispatchUserCheckTrcvWakeFlagIndicationUL;
+	#define CAN_SM								((CanIfDispatchUserCheckTrcvWakeFlagIndicationUL)0x00)
+	#define CDD									((CanIfDispatchUserCheckTrcvWakeFlagIndicationUL)0x01)
+#endif
+
+/* This parameter defines the name of <User_CheckTrcvWakeFlagIndication>. If
+CanIfDispatchUserCheckTrcvWakeFlagIndicationUL equals CAN_SM the name of
+<User_CheckTrcvWakeFlagIndication> is fixed. If it equals CDD, the name is selectable.
+If CanIfPublicPnSupport equals False, this parameter shall not be configurable.
+dependency: CANIF_DISPATCH_USERCHECKTRCVWAKEFLAGINDICATION_UL, CANIF_PUBLIC_PN_SUPPORT */
+#if(CanIfPublicPnSupport==STD_ON)
+	#if(CanIfDispatchUserCheckTrcvWakeFlagIndicationUL==CAN_SM)
+		#define CanIfDispatchUserCheckTrcvWakeFlagIndicationName	CanSM_CheckTrcvWakeFlagIndication
+	#else if(CanIfDispatchUserCheckTrcvWakeFlagIndicationUL==CDD)
+		#define CanIfDispatchUserCheckTrcvWakeFlagIndicationName	Cdd_CheckTrcvWakeFlagIndication
+	#endif
+#endif
 
 #endif /* __CANIF_CFG_H__ */
