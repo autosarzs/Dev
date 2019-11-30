@@ -640,7 +640,7 @@ wake up sources have to be routed via <User_ValidateWakeupEvent>. If parameter C
 disabled, this parameter cannot be configured. dependency: CANIF_WAKEUP_CHECK_VALIDATION_API */
 #if(CanIfPublicWakeupCheckValidSupport==STD_ON)
 	typedef uint8 CANIF_DISPATCH_USERVALIDATEWAKEUPEVENTUL;
-	#define CAN_SM								((CANIF_DISPATCH_USERVALIDATEWAKEUPEVENTUL)0x00)
+	#define ECUM								((CANIF_DISPATCH_USERVALIDATEWAKEUPEVENTUL)0x00)
 	#define CDD									((CANIF_DISPATCH_USERVALIDATEWAKEUPEVENTUL)0x01)
 #endif
 
@@ -649,10 +649,10 @@ CANIF_USERVALIDATEWAKEUPEVENT_UL. CANIF_USERVALIDATEWAKEUPEVENT_UL equals ECUM t
 is fixed. CANIF_USERVALIDATEWAKEUPEVENT_UL equals CDD, the name of <User_ValidateWakeupEvent> is selectable. If parameter 
 CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, no <User_ValidateWakeupEvent> API can be configured. */
 #if(CanIfPublicWakeupCheckValidSupport==STD_ON)
-	#if(CanIfDispatchUserValidateWakeupEventUL==CAN_SM)
-		#define CanIfDispatchUserValidateWakeupEventName		CanSM_ConfirmPnAvailability
+	#if(CanIfDispatchUserValidateWakeupEventUL==ECUM)
+		#define CanIfDispatchUserValidateWakeupEventName		EcuM_ValidateWakeupEvent
 	#else if(CanIfDispatchUserValidateWakeupEventUL==CDD)
-		#define CanIfDispatchUserValidateWakeupEventName		Cdd_ConfirmPnAvailability
+		#define CanIfDispatchUserValidateWakeupEventName		Cdd_ValidateWakeupEvent
 	#endif
 #endif
 
