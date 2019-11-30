@@ -526,11 +526,11 @@ Range: 0 - 536870911 */
 
 /* This parameter defines the upper layer module to which the CheckTrcvWakeFlagIndication
 from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
-parameter shall not be configurable. */
+parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
 #if(CanIfPublicPnSupport==STD_ON)
-	typedef uint8 CanIfDispatchUserCheckTrcvWakeFlagIndicationUL;
-	#define CAN_SM								((CanIfDispatchUserCheckTrcvWakeFlagIndicationUL)0x00)
-	#define CDD									((CanIfDispatchUserCheckTrcvWakeFlagIndicationUL)0x01)
+	typedef uint8 CANIF_DISPATCH_USERCHECKTRCVWAKEFLAGINDICATION_UL;
+	#define CAN_SM								((CANIF_DISPATCH_USERCHECKTRCVWAKEFLAGINDICATION_UL)0x00)
+	#define CDD									((CANIF_DISPATCH_USERCHECKTRCVWAKEFLAGINDICATION_UL)0x01)
 #endif
 
 /* This parameter defines the name of <User_CheckTrcvWakeFlagIndication>. If
@@ -543,6 +543,116 @@ dependency: CANIF_DISPATCH_USERCHECKTRCVWAKEFLAGINDICATION_UL, CANIF_PUBLIC_PN_S
 		#define CanIfDispatchUserCheckTrcvWakeFlagIndicationName	CanSM_CheckTrcvWakeFlagIndication
 	#else if(CanIfDispatchUserCheckTrcvWakeFlagIndicationUL==CDD)
 		#define CanIfDispatchUserCheckTrcvWakeFlagIndicationName	Cdd_CheckTrcvWakeFlagIndication
+	#endif
+#endif
+
+/* This parameter defines the upper layer module to which the ClearTrcvWufFlagIndication
+from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
+parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
+#if(CanIfPublicPnSupport==STD_ON)
+	typedef uint8 CANIF_DISPATCH_USERCLEARTRCVWUFFLAGINDICATION_UL;
+	#define CAN_SM								((CANIF_DISPATCH_USERCLEARTRCVWUFFLAGINDICATION_UL)0x00)
+	#define CDD									((CANIF_DISPATCH_USERCLEARTRCVWUFFLAGINDICATION_UL)0x01)
+#endif
+
+/* This parameter defines the name of <User_ClearTrcvWufFlagIndication>. If
+CanIfDispatchUserClearTrcvWufFlagIndicationUL equals CAN_SM the name of
+<User_ClearTrcvWufFlagIndication> is fixed. If it equals CDD, the name is selectable.
+If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurable. */
+#if(CanIfPublicPnSupport==STD_ON)
+	#if(CanIfDispatchUserClearTrcvWufFlagIndicationUL==CAN_SM)
+		#define CanIfDispatchUserClearTrcvWufFlagIndicationName		CanSM_ClearTrcvWufFlagIndication
+	#else if(CanIfDispatchUserClearTrcvWufFlagIndicationUL==CDD)
+		#define CanIfDispatchUserClearTrcvWufFlagIndicationName		Cdd_ClearTrcvWufFlagIndication
+	#endif
+#endif
+
+/* This parameter defines the upper layer module to which the ConfirmPnAvailability notification
+from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
+parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
+#if(CanIfPublicPnSupport==STD_ON)
+	typedef uint8 CANIF_DISPATCH_USERCONFIRMPNAVAILABILITY_UL;
+	#define CAN_SM								((CANIF_DISPATCH_USERCONFIRMPNAVAILABILITY_UL)0x00)
+	#define CDD									((CANIF_DISPATCH_USERCONFIRMPNAVAILABILITY_UL)0x01)
+#endif
+
+/* This parameter defines the name of <User_ConfirmPnAvailability>. If
+CanIfDispatchUserConfirmPnAvailabilityUL equals CAN_SM the name of
+<User_ConfirmPnAvailability> is fixed. If it equals CDD, the name is selectable.
+If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurable. */
+#if(CanIfPublicPnSupport==STD_ON)
+	#if(CanIfDispatchUserConfirmPnAvailabilityUL==CAN_SM)
+		#define CanIfDispatchUserConfirmPnAvailabilityName		CanSM_ConfirmPnAvailability
+	#else if(CanIfDispatchUserConfirmPnAvailabilityUL==CDD)
+		#define CanIfDispatchUserConfirmPnAvailabilityName		Cdd_ConfirmPnAvailability
+	#endif
+#endif
+
+/* This parameter defines the upper layer (UL) module to which the notifications of all
+ControllerBusOff events from the CAN Driver modules have to be routed via <User_ControllerBusOff>.
+There is no possibility to configure no upper layer (UL) module as the provider of <User_ControllerBusOff>. */
+typedef uint8 CANIF_DISPATCH_USERCTRLBUSOFF_UL;
+#define CAN_SM									((CANIF_DISPATCH_USERCTRLBUSOFF_UL)0x00)
+#define CDD										((CANIF_DISPATCH_USERCTRLBUSOFF_UL)0x01)
+
+/* This parameter defines the name of <User_ControllerBusOff>. This parameter depends on the parameter
+CANIF_USERCTRLBUSOFF_UL. If CANIF_USERCTRLBUSOFF_UL equals CAN_SM the name of <User_ControllerBusOff>
+is fixed. If CANIF_USERCTRLBUSOFF_UL equals CDD, the name of <User_ControllerBusOff> is selectable. */
+#if(CanIfDispatchUserCtrlBusOffUL==CAN_SM)
+	#define CanIfDispatchUserCtrlBusOffName		CanSM_ControllerBusOff
+#else if(CanIfDispatchUserCtrlBusOffUL==CDD)
+	#define CanIfDispatchUserCtrlBusOffName		Cdd_ControllerBusOff
+#endif
+
+/* This parameter defines the upper layer (UL) module to which the notifications of all ControllerTransition
+events from the CAN Driver modules have to be routed via <User_ControllerModeIndication>. */
+typedef uint8 CANIF_DISPATCH_USERCTRLMODEINDICATION_UL;
+#define CAN_SM									((CANIF_DISPATCH_USERCTRLMODEINDICATION_UL)0x00)
+#define CDD										((CANIF_DISPATCH_USERCTRLMODEINDICATION_UL)0x01)
+
+/* This parameter defines the name of <User_ControllerModeIndication>. This parameter depends on the parameter
+CANIF_USERCTRLMODEINDICATION_UL. If CANIF_USERCTRLMODEINDICATION_UL equals CAN_SM the name of <User_ControllerModeIndication>
+is fixed. If CANIF_USERCTRLMODEINDICATION_UL equals CDD, the name of <User_ControllerModeIndication> is selectable. */
+#if(CanIfDispatchUserCtrlModeIndicationUL==CAN_SM)
+	#define CanIfDispatchUserCtrlModeIndicationName		CanSM_ControllerModeIndication
+#else if(CanIfDispatchUserCtrlModeIndicationUL==CDD)
+	#define CanIfDispatchUserCtrlModeIndicationName		Cdd_ControllerModeIndication
+#endif
+
+/* This parameter defines the upper layer (UL) module to which the notifications of all TransceiverTransition events from
+the CAN Transceiver Driver modules have to be routed via <User_TrcvModeIndication>. If no UL module is configured, no upper
+layer callback function will be called. */
+typedef uint8 CANIF_DISPATCH_USERTRCVMODEINDICATION_UL;
+#define CAN_SM									((CANIF_DISPATCH_USERTRCVMODEINDICATION_UL)0x00)
+#define CDD										((CANIF_DISPATCH_USERTRCVMODEINDICATION_UL)0x01)
+
+/* This parameter defines the name of <User_TrcvModeIndication>. This parameter depends on the parameter
+CANIF_USERTRCVMODEINDICATION_UL. If CANIF_USERTRCVMODEINDICATION_UL equals CAN_SM the name of <User_TrcvModeIndication>
+is fixed. If CANIF_USERTRCVMODEINDICATION_UL equals CDD, the name of <User_TrcvModeIndication> is selectable. */
+#if(CanIfDispatchUserTrcvModeIndicationUL==CAN_SM)
+	#define CanIfDispatchUserTrcvModeIndicationName		CanSM_TransceiverModeIndication
+#else if(CanIfDispatchUserTrcvModeIndicationUL==CDD)
+	#define CanIfDispatchUserTrcvModeIndicationName		Cdd_TransceiverModeIndication
+#endif
+
+/* This parameter defines the upper layer (UL) module to which the notifications about positive former requested
+wake up sources have to be routed via <User_ValidateWakeupEvent>. If parameter CANIF_WAKEUP_CHECK_VALIDATION_API is
+disabled, this parameter cannot be configured. dependency: CANIF_WAKEUP_CHECK_VALIDATION_API */
+#if(CanIfPublicWakeupCheckValidSupport==STD_ON)
+	typedef uint8 CANIF_DISPATCH_USERVALIDATEWAKEUPEVENTUL;
+	#define CAN_SM								((CANIF_DISPATCH_USERVALIDATEWAKEUPEVENTUL)0x00)
+	#define CDD									((CANIF_DISPATCH_USERVALIDATEWAKEUPEVENTUL)0x01)
+#endif
+
+/* This parameter defines the name of <User_ValidateWakeupEvent>. This parameter depends on the parameter
+CANIF_USERVALIDATEWAKEUPEVENT_UL. CANIF_USERVALIDATEWAKEUPEVENT_UL equals ECUM the name of <User_ValidateWakeupEvent>
+is fixed. CANIF_USERVALIDATEWAKEUPEVENT_UL equals CDD, the name of <User_ValidateWakeupEvent> is selectable. If parameter 
+CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, no <User_ValidateWakeupEvent> API can be configured. */
+#if(CanIfPublicWakeupCheckValidSupport==STD_ON)
+	#if(CanIfDispatchUserValidateWakeupEventUL==CAN_SM)
+		#define CanIfDispatchUserValidateWakeupEventName		CanSM_ConfirmPnAvailability
+	#else if(CanIfDispatchUserValidateWakeupEventUL==CDD)
+		#define CanIfDispatchUserValidateWakeupEventName		Cdd_ConfirmPnAvailability
 	#endif
 #endif
 
