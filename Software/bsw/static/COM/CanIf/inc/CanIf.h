@@ -377,6 +377,45 @@ typedef struct{
 				uint32 CanIfRxPduCanIdRangeUpperCanId;
 }CanIfRxPduCanIdRange;
 
+typedef struct{
+				/* This parameter defines the upper layer module to which the CheckTrcvWakeFlagIndication
+				from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
+				parameter shall not be configurable. */
+				#if(CanIfPublicPnSupport==STD_ON)
+					uint8 CanIfDispatchUserCheckTrcvWakeFlagIndicationUL;
+				#endif
+				
+				/* This parameter defines the upper layer module to which the ClearTrcvWufFlagIndication
+				from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
+				parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
+				#if(CanIfPublicPnSupport==STD_ON)
+					uint8 CanIfDispatchUserClearTrcvWufFlagIndicationUL;
+				#endif
+				
+				/* This parameter defines the upper layer module to which the ClearTrcvWufFlagIndication
+				from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
+				parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
+				#if(CanIfPublicPnSupport==STD_ON)
+					uint8 CanIfDispatchUserConfirmPnAvailabilityUL;
+				#endif
+				
+				/* This parameter defines the upper layer (UL) module to which the notifications of all
+				ControllerBusOff events from the CAN Driver modules have to be routed via <User_ControllerBusOff>.
+				There is no possibility to configure no upper layer (UL) module as the provider of <User_ControllerBusOff>.
+				dependency: CANIF_PUBLIC_PN_SUPPORT */
+				uint8 CanIfDispatchUserCtrlBusOffUL;
+				
+				/* This parameter defines the upper layer (UL) module to which the notifications of all ControllerTransition
+				events from the CAN Driver modules have to be routed via <User_ControllerModeIndication>. */
+				uint8 CanIfDispatchUserCtrlModeIndicationUL;
+				
+				/* This parameter defines the upper layer (UL) module to which the notifications about positive former requested
+				wake up sources have to be routed via <User_ValidateWakeupEvent>. If parameter CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, this parameter cannot be configured. dependency: CANIF_WAKEUP_CHECK_VALIDATION_API */
+				#if(CanIfPublicWakeupCheckValidSupport==STD_ON)
+					uint8 CanIfDispatchUserValidateWakeupEventUL;
+				#endif
+}CanIfDispatchCfg;
+
 typedef struct {
 				uint8 CanIfDispatchUserCheckTrcvWakeFlagIndicationName;
 				
