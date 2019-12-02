@@ -283,10 +283,10 @@ typedef struct{
 					uint8 CanIfRxPduReadData;
 				#endif
 				
-				/* /* Enables and disables receive indication for each receive CAN L-SDU
+				/* Enables and disables receive indication for each receive CAN L-SDU
 				for reading its notification status.
 				True: Enabled False: Disabled
-				dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */ */
+				dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
 				#if(CanIfPublicReadRxPduNotifyStatusApi==STD_ON)
 					uint8 CanIfRxPduReadNotifyStatus;
 				#endif
