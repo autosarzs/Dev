@@ -85,7 +85,7 @@ typedef struct {
 						INDEX 	Selects Index Filter method.
 						LINEAR 	Selects Linear Filter method.
 						TABLE 	Selects Table Filter method.*/
-				CanIfPrivateSoftwareFilterType  CanIfPrivateSoftwareFilter;
+				uint8  CanIfPrivateSoftwareFilter;
 }CanIfPrivateCfg;
 
 typedef struct {
@@ -194,7 +194,7 @@ typedef struct {
 				True: Enabled False: Disabled
 				dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
 				#if(CANIF_READTXPDU_NOTIFY_STATUS_API==STD_ON)
-				uint8 CanIfTxPduReadNotifyStatus;
+					uint8 CanIfTxPduReadNotifyStatus;
 				#endif
 				
 				/* Determines if or if not CanIf shall use the trigger transmit API for this PDU.
@@ -363,6 +363,10 @@ typedef struct{
 				/* This parameter defines the upper layer (UL) module to which the notifications of all ControllerTransition
 				events from the CAN Driver modules have to be routed via <User_ControllerModeIndication>. */
 				uint8 CanIfDispatchUserCtrlModeIndicationUL;
+				
+				/* This parameter defines the upper layer (UL) module to which the notifications of all TransceiverTransition
+				events from	the CAN Transceiver Driver modules have to be routed via <User_TrcvModeIndication>. If no UL module is configured, no upper	layer callback function will be called. */
+				uint8 CanIfDispatchUserTrcvModeIndicationUL;
 				
 				/* This parameter defines the upper layer (UL) module to which the notifications about positive former requested
 				wake up sources have to be routed via <User_ValidateWakeupEvent>. If parameter CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, this parameter cannot be configured. dependency: CANIF_WAKEUP_CHECK_VALIDATION_API */
