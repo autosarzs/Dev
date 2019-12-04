@@ -703,7 +703,8 @@ CanIfHrhRangeRxPduRangeCanIdType.*/
 
 /*Lower CAN Identifier of a receive CAN L-PDU for identifier range
 definition, in which all CAN Ids shall pass the software filtering.*/
-#define  CanIfHrhRangeRxPduLowerCanIdValue     	(536870911)
+#define  CanIfHrhRangeRxPduLowerCanId0	     	(0U)
+#define  CanIfHrhRangeRxPduLowerCanId1	     	(1U)
 
 /*Used as mask value in combination with CanIfHrhRangeBaseId for a
 masked ID range in which all CAN Ids shall pass the software filtering.
@@ -715,7 +716,8 @@ typedef uint8 CANIF_HRHRANGE_RXPDU_RANGE_CANID_TYPE;
 
 /*Upper CAN Identifier of a receive CAN L-PDU for identifier range
 definition, in which all CAN Ids shall pass the software filtering.*/
-#define CanIfHrhRangeRxPduUpperCanIdValue      	(536870911)
+#define CanIfHrhRangeRxPduUpperCanId0      		(0U)
+#define CanIfHrhRangeRxPduUpperCanId1      		(1U)
 
 /*This parameter defines the number of CanIf Tx L-PDUs which can be
 buffered in one Txbuffer. If this value equals 0, the CanIf does not
