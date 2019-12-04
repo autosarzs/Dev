@@ -656,4 +656,70 @@ CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, no <User_ValidateWakeupEvent> API
 	#endif
 #endif
 
+/*This parameter abstracts from the CAN Driver specific parameter
+Controller. Each controller of all connected CAN Driver modules shall
+be assigned to one specific ControllerId of the CanIf. Range:
+0..number of configured controllers of all CAN Driver modules*/
+#define CanIfCtrlIdValue						(255U)
+
+/*This parameter defines if a respective controller of the referenced CAN
+Driver modules is queriable for wake up events.
+True: Enabled False: Disabled*/
+#define CanIfCtrlWakeupSupport					STD_OFF
+
+/*This parameter abstracts from the CAN Transceiver Driver specific
+parameter Transceiver. Each transceiver of all connected CAN
+Transceiver Driver modules shall be assigned to one specific
+TransceiverId of the CanIf.
+Range: 0..number of configured transceivers of all CAN Transceiver
+Driver modules*/
+#define  CanIfTrcvIdValue						(255U)
+
+/*This parameter defines if a respective transceiver of the referenced
+CAN Transceiver Driver modules is queriable for wake up events.
+True: Enabled False: Disabled*/
+#define CanIfTrcvWakeupSupport					STD_OFF
+
+/*Selects the hardware receive objects by using the HRH range/list from
+CAN Driver configuration to define, for which HRH a software filtering
+has to be performed at during receive processing.
+True: Software filtering is enabled False: Software filtering is enabled*/
+#define CanIfHrhSoftwareFilter                  STD_ON
+
+/*CAN Identifier used as base value in combination with
+CanIfHrhRangeMask for a masked ID range in which all CAN Ids shall
+pass the software filtering. The size of this parameter is limited by
+CanIfHrhRangeRxPduRangeCanIdType*/
+#define CanIfHrhRangeBaseIdValue               (536870911)
+
+/*Used as mask value in combination with CanIfHrhRangeBaseId for a
+masked ID range in which all CAN Ids shall pass the software filtering.
+The size of this parameter is limited by
+CanIfHrhRangeRxPduRangeCanIdType.*/
+#define  CanIfHrhRangeMaskValue                (536870911)
+
+/*Lower CAN Identifier of a receive CAN L-PDU for identifier range
+definition, in which all CAN Ids shall pass the software filtering.*/
+#define  CanIfHrhRangeRxPduLowerCanIdValue     (536870911)
+
+/*Used as mask value in combination with CanIfHrhRangeBaseId for a
+masked ID range in which all CAN Ids shall pass the software filtering.
+The size of this parameter is limited by
+CanIfHrhRangeRxPduRangeCanIdType.*/
+typedef uint8 CanIfHrhRangeRxPduRangeCanIdType;
+#define EXTENDED	((CanIfHrhRangeRxPduRangeCanIdType)0x00)
+#define STANDARD	((CanIfHrhRangeRxPduRangeCanIdType)0x01)
+
+/*Upper CAN Identifier of a receive CAN L-PDU for identifier range
+definition, in which all CAN Ids shall pass the software filtering.*/
+#define CanIfHrhRangeRxPduUpperCanIdValue      (536870911)
+
+/*This parameter defines the number of CanIf Tx L-PDUs which can be
+buffered in one Txbuffer. If this value equals 0, the CanIf does not
+perform Txbuffering for the CanIf Tx L-PDUs which are assigned to this
+Txbuffer. If CanIfPublicTxBuffering equals False, this parameter equals
+0 for all TxBuffer. If the CanHandleType of the referred HTH equals
+FULL, this parameter equals 0 for this TxBuffer.*/
+#define CanIfBufferSizeValue                     (255U)
+
 #endif /* __CANIF_CFG_H__ */
