@@ -39,43 +39,37 @@
 #include "CanIf_Cfg.h"
 
 
+
 typedef struct {
-	
-	/***************************************************************************************************************************
-	*															Included Containers 
-	****************************************************************************************************************************/
-				
-				/*This container contains the configuration (parameters) of all addressed CAN controllers by each underlying CAN driver.*/
-				CanIfControllerConfig CanIfControllerCfg;
-				
-				/*Callout functions with respect to the upper layers. This callout functions
-				defined in this container are common to all configured underlying CAN Drivers / CAN Transceiver Drivers.*/
 
-				CanIfDispatchCfg CanIfDispatchConfig;
+/*Configuration parameters for all the underlying CAN
+Driver modules are aggregated under this container.
+For each CAN Driver module a seperate instance of
+this container has to be provided.*/
+CanIfCtrlDrvCfg CanIfCtrlDrvConfig;
 				
-				/*Configuration parameters for all the underlying CAN drivers are aggregated under this container*/
+/*Callback functions provided by upper layer modules of
+the CanIf. The callback functions defined in this
+container are common to all configured CAN Driver /
+CAN Transceiver Driver modules.*/
+CanIfDispatchCfg CanIfDispatchConfig;
+								
+/*This container contains the init parameters of the CAN Interface.*/
+CanIfInitCfg	CanIfInitConfig;
 				
-				CanIfDriverConfig  CanIfDriverCfg;
+/*This container contains the private configuration (parameters) of the CAN Interface.*/
+CanIfPrivateCfg   	CanIfPrivateConfig;
 				
-				/*This container contains the init parameters of the CAN Interface.*/
-				
-				CanIfInitCfg	CanIfInitConfiguration;
-				
-				/*This container contains the private configuration (parameters) of the CAN Interface.*/
-				
-				CanIfPrivateCfg   	CanIfPrivateConfiguration;
-				
-				/*This container contains the public configuration (parameters) of the CAN Interface.*/
-				
-				CanIfPublicCfg		CanIfPublicConfiguration;
-				
-				/*This container contains the configuration (parameters) of all addressed CAN transceivers by each underlying 
-				CAN Transceiver Driver*/
-				
-				CanIfPublicCfg      CanIfTransceiverDrvConfig;
+/*This container contains the public configuration (parameters) of the CAN Interface.*/
+CanIfPublicCfg		CanIfPublicConfig;
 
+/*This container contains the configuration (parameters)
+of all addressed CAN transceivers by each underlying
+CAN Transceiver Driver module. For each CAN
+transceiver Driver a seperate instance of this container
+shall be provided.*/            
+CanIfTrcvDrvCfg    CanIfTrcvDrvConfig;   
 }CanIf;
-
 
 typedef struct {
 				/*Selects the desired software filter mechanism for reception only. 
@@ -376,9 +370,151 @@ typedef struct{
 }CanIfDispatchCfg;
 
 
+typedef struct {
 
+/*This parameter abstracts from the CAN Driver specific parameter
+Controller. Each controller of all connected CAN Driver modules shall
+be assigned to one specific ControllerId of the CanIf. Range:
+0..number of configured controllers of all CAN Driver modules	*/
+uint8 CanIfCtrlId;
 
+/*This parameter references to the logical handle of the underlying CAN
+controller from the CAN Driver module to be served by the CAN
+Interface module. The following parameters of CanController config
+container shall be referenced by this link: CanControllerId,
+CanWakeupSourceRef
+Range: 0..max. number of underlying supported CAN controllers*/
+CanIfInitHohCfg *CanIfCtrlCanCtrlRef;
 
+}CanIfCtrlCfg;
 
+typedef struct {
+/*Description Reference to the Init Hoh Configuration*/
+CanIfInitHohCfg *CanIfCtrlDrvInitHohConfigRef 	;
+/*CAN Interface Driver Reference.
+This reference can be used to get any information (Ex. Driver Name,
+Vendor ID) from the CAN driver.
+The CAN Driver name can be derived from the ShortName of the CAN
+driver module.*/
+CanGeneral * CanIfCtrlDrvNameRef;
+
+/*This container contains the configuration (parameters)
+of an adressed CAN controller by an underlying CAN
+Driver module. This container is configurable per CAN
+controller.*/	
+CanIfCtrlCfg CanIfCtrlConfig;
+
+}CanIfCtrlDrvCfg;
+
+typedef struct {
+
+/*This container contains the configuration (parameters) of
+one addressed CAN transceiver by the underlying CAN
+Transceiver Driver module. For each CAN transceiver a
+seperate instance of this container has to be provided.
+*/
+CanIfTrcvCfg CanIfTrcvConfig;
+}CanIfTrcvDrvCfg
+
+typedef struct {
+/*This parameter abstracts from the CAN Transceiver Driver specific
+parameter Transceiver. Each transceiver of all connected CAN
+Transceiver Driver modules shall be assigned to one specific
+TransceiverId of the CanIf.
+Range: 0..number of configured transceivers of all CAN Transceiver
+Driver modules*/
+uint8 CanIfTrcvId;
+
+/*This parameter references to the logical handle of the underlying CAN
+transceiver from the CAN transceiver driver module to be served by the
+CAN Interface module.
+Range: 0..max. number of underlying supported CAN transceivers*/
+CanTrcvChannel *CanIfTrcvCanTrcvRef;
+}CanIfTrcvCfg;
+
+typedef struct{
+/*This container contains configuration parameters for
+each hardware receive object (HRH).*/
+CanIfHrhCfg 			CanIfHrhConfig;
+
+/*This container contains parameters related to each HTH.*/
+CanIfHthCfg           CanIfHthConfig;
+}CanIfInitHohCfg;
+
+typedef struct {
+/*Reference to controller Id to which the HTH belongs to. A controller
+can contain one or more HTHs.*/
+CanIfCtrlCfg  *CanIfHthCanCtrlIdRef;
+
+/*The parameter refers to a particular HTH object in the CanDrv
+configuration (see CanHardwareObject ECUC_Can_00324).
+CanIf receives the following information of the CanDrv module by
+this reference:
+ CanHandleType (see ECUC_Can_00323)
+ CanObjectId (see ECUC_Can_00326)*/
+CanHardwareObject * CanIfHthIdSymRef;
+}CanIfHthCfg;
+
+typedef struct {
+/*Reference to controller Id to which the HRH belongs to. A controller
+can contain one or more HRHs.*/	
+CanIfCtrlCfg * 	CanIfHrhCanCtrlIdRef;
+
+/*The parameter refers to a particular HRH object in the CanDrv
+configuration*/	
+CanHardwareObject * CanIfHrhIdSymRef;
+	
+/*Defines the parameters required for configurating
+multiple CANID ranges for a given same HRH.*/
+CanIfHrhRangeCfg CanIfHrhRangeConfig;
+}CanIfHrhCfg;
+
+typedef struct {
+/*CAN Identifier used as base value in combination with
+CanIfHrhRangeMask for a masked ID range in which all CAN Ids shall
+pass the software filtering. The size of this parameter is limited by
+CanIfHrhRangeRxPduRangeCanIdType. */
+	
+uint32  CanIfHrhRangeBaseId;
+	
+/*Used as mask value in combination with CanIfHrhRangeBaseId for a
+masked ID range in which all CAN Ids shall pass the software filtering.
+The size of this parameter is limited by
+CanIfHrhRangeRxPduRangeCanIdType.*/
+uint32 CanIfHrhRangeMask;
+	
+/*Lower CAN Identifier of a receive CAN L-PDU for identifier range
+definition, in which all CAN Ids shall pass the software filtering*/
+uint32 CanIfHrhRangeRxPduLowerCanId;
+	
+/*Specifies whether a configured Range of CAN Ids shall only consider
+standard CAN Ids or extended CAN Id
+*EXTENDED All the CANIDs are of type extended only (29 bit).
+*STANDARD All the CANIDs are of type standard only (11bit).*/
+  uint8  CanIfHrhRangeRxPduRangeCanIdType  ;
+
+/*Upper CAN Identifier of a receive CAN L-PDU for identifier range
+definition, in which all CAN Ids shall pass the software filtering.*/
+uint32 CanIfHrhRangeRxPduUpperCanId;
+
+}CanIfHrhRangeCfg;
+
+typedef struct {
+/*This parameter defines the number of CanIf Tx L-PDUs which can be
+buffered in one Txbuffer. If this value equals 0, the CanIf does not
+perform Txbuffering for the CanIf Tx L-PDUs which are assigned to this
+Txbuffer. If CanIfPublicTxBuffering equals False, this parameter equals
+0 for all TxBuffer. If the CanHandleType of the referred HTH equals
+FULL, this parameter equals 0 for this TxBuffer.
+Range :Range 0 .. 255*/
+uint8 CanIfBufferSize;
+	
+/*Reference to HTH, that defines the hardware object or the pool of
+hardware objects configured for transmission. All the CanIf Tx L-PDUs
+refer via the CanIfBufferCfg and this parameter to the HTHs if
+TxBuffering is enabled, or not.
+Each HTH shall not be assigned to more than one buffer*/
+CanIfHthCfg	* CanIfBufferHthRef;
+}CanIfBufferCfg;
 
 #endif /* __CANIF_H__ */
