@@ -39,43 +39,37 @@
 #include "CanIf_Cfg.h"
 
 
+
 typedef struct {
-	
-	/***************************************************************************************************************************
-	*															Included Containers 
-	****************************************************************************************************************************/
-				
-				/*This container contains the configuration (parameters) of all addressed CAN controllers by each underlying CAN driver.*/
-				CanIfControllerConfig CanIfControllerCfg;
-				
-				/*Callout functions with respect to the upper layers. This callout functions
-				defined in this container are common to all configured underlying CAN Drivers / CAN Transceiver Drivers.*/
 
-				CanIfDispatchCfg CanIfDispatchConfig;
+/*Configuration parameters for all the underlying CAN
+Driver modules are aggregated under this container.
+For each CAN Driver module a seperate instance of
+this container has to be provided.*/
+CanIfCtrlDrvCfg CanIfCtrlDrvConfig;
 				
-				/*Configuration parameters for all the underlying CAN drivers are aggregated under this container*/
+/*Callback functions provided by upper layer modules of
+the CanIf. The callback functions defined in this
+container are common to all configured CAN Driver /
+CAN Transceiver Driver modules.*/
+CanIfDispatchCfg CanIfDispatchConfig;
+								
+/*This container contains the init parameters of the CAN Interface.*/
+CanIfInitCfg	CanIfInitConfig;
 				
-				CanIfDriverConfig  CanIfDriverCfg;
+/*This container contains the private configuration (parameters) of the CAN Interface.*/
+CanIfPrivateCfg   	CanIfPrivateConfig;
 				
-				/*This container contains the init parameters of the CAN Interface.*/
-				
-				CanIfInitCfg	CanIfInitConfiguration;
-				
-				/*This container contains the private configuration (parameters) of the CAN Interface.*/
-				
-				CanIfPrivateCfg   	CanIfPrivateConfiguration;
-				
-				/*This container contains the public configuration (parameters) of the CAN Interface.*/
-				
-				CanIfPublicCfg		CanIfPublicConfiguration;
-				
-				/*This container contains the configuration (parameters) of all addressed CAN transceivers by each underlying 
-				CAN Transceiver Driver*/
-				
-				CanIfPublicCfg      CanIfTransceiverDrvConfig;
+/*This container contains the public configuration (parameters) of the CAN Interface.*/
+CanIfPublicCfg		CanIfPublicConfig;
 
+/*This container contains the configuration (parameters)
+of all addressed CAN transceivers by each underlying
+CAN Transceiver Driver module. For each CAN
+transceiver Driver a seperate instance of this container
+shall be provided.*/            
+CanIfTrcvDrvCfg    CanIfTrcvDrvConfig;   
 }CanIf;
-
 
 typedef struct {
 				/*Selects the desired software filter mechanism for reception only. 
