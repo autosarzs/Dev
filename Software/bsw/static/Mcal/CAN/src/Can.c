@@ -119,7 +119,7 @@ static uint8 DisableCnt[MAX_CONTROLLERS_NUMBER];
 
 /*    Type Description        : Pointer to save Module configration parameters           */
 /*    Requirment              : SWS                                                      */
-static Can_ConfigType* Global_ConfigType = NULL_PTR;
+static Can_ConfigType* Global_Config = NULL_PTR;
 
 /*    Type Description        : array to save Number of poosible baudrate configration 
  for each controllers                                     */
@@ -275,24 +275,24 @@ static void SetControllerBaudrate(uint32 BaseAddress,CanControllerBaudrateConfig
 /*                                   Global Function Definition                          */
 /*****************************************************************************************/
 
-/*****************************************************************************************/
-/*    Function Description    : This function initializes the module                     */
-/*    Parameter in            : const Can_ConfigType* Config                             */
-/*    Parameter inout         : none                                                     */
-/*    Parameter out           : none                                                     */
-/*    Return value            : none                                                     */
-/*    Requirment              : SWS_Can_00223                                            */
-/*    Notes                   : Can_Init() dosn't set  clock for controllers according   */
-/*                                to [SWS_Can_00407] 									 */
-/*								#If the register can affect several hardware modules and */
-/*								if it is not an I/O register it shall be initialized by  */
-/*								the MCU driver. 										 */
-/*                              #One-time writable registers that require initialization */
-/*								directly after reset shall be initialized by the startup */
-/*								code #Tm4c123gh microcontroller doesn't support			 */
-/*								Multiplexed Transmission So it's not configured          */
-/*				  			                                                             */
-/*																                         */
+/****************************************************************************************/
+/*    Function Description    : This function initializes the module                    */
+/*    Parameter in            : const Can_ConfigType* Config                            */
+/*    Parameter inout         : none                                                    */
+/*    Parameter out           : none                                                    */
+/*    Return value            : none                                                    */
+/*    Requirment              : SWS_Can_00223                                           */
+/*    Notes                   : Can_Init() dosn't set  clock for controllers according  */
+/*                                to [SWS_Can_00407]                                    */
+/*                              #If the register can affect several hardware modules and*/
+/*                              if it is not an I/O register it shall be initialized by */
+/*                              the MCU driver.                                         */
+/*                              #One-time writable registers that require initialization*/
+/*                              directly after reset shall be initialized by the startup*/
+/*                              code #Tm4c123gh microcontroller doesn't support         */
+/*                              Multiplexed Transmission So it's not configured         */
+/*                                                                                      */
+/*                                                                                      */
 /*****************************************************************************************/
 void Can_Init( const Can_ConfigType* Config)
 {
@@ -313,9 +313,9 @@ void Can_Init( const Can_ConfigType* Config)
 
 #if(CanDevErrorDetect == STD_ON)
     /* Report error CAN_E_PARAM_POINTER API called with wrong parameter */
-    if(Config==NULL_PTR)
+    if(Config == NULL_PTR)
     {
-        Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_PARAM_POINTER);
+        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_PARAM_POINTER);
     }
 
     /* The function Can_Init shall raise the error CAN_E_TRANSITION if the driver is not in
@@ -328,10 +328,10 @@ void Can_Init( const Can_ConfigType* Config)
 #endif
 
     /* Save the configration pointer to be used in other APIs            */
-    Global_ConfigType = (Can_ConfigType*)Config;
+    Global_Config = (Can_ConfigType*)Config;
 
     /* Loop to initialize all controllers configured to be used in the Module   */
-    for(controllerId=0; controllerId < USED_CONTROLLERS_NUMBER; controllerId++)
+    for(controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER; controllerId++)
     {
 #if(CanDevErrorDetect == STD_ON)
         /*
@@ -344,59 +344,61 @@ void Can_Init( const Can_ConfigType* Config)
         }
 #endif
         /* Save Current controller BaseAddress */
-        BaseAddress = Config->CanConfigSetRef->CanControllerRef[controllerId].CanControllerBaseAddress;
+        BaseAddress = Global_Config->CanConfigSetRef->CanControllerRef[controllerId].CanControllerBaseAddress;
 
         /* [SWS_Can_00245]   The function Can_Init shall initialize all CAN controllers 
         * according to their configuration.
         */
-        HWREG(BaseAddress + CAN_O_CTL) = (CAN_CTL_INIT );
+        HWREG(BaseAddress + CAN_O_CTL) = (CAN_CTL_INIT);
 
         /* Set Baud rate fo each controller */
         /* Save current baudrate Configurations */
-        BRConfig = &(Global_ConfigType->CanConfigSetRef->CanControllerRef[controllerId].\
+        BRConfig = &(Global_Config->CanConfigSetRef->CanControllerRef[controllerId].\
                     CanControllerDefaultBaudrate[DEFAULT_BAUDRATE_CONFIGRATION_ID]);
     /* Call static function SetControllerBaudrate to Set baud rate */
-        SetControllerBaudrate(BaseAddress,BRConfig,*(Global_ConfigType->CanConfigSetRef->\
+        SetControllerBaudrate(BaseAddress, BRConfig, *(Global_Config->CanConfigSetRef->\
                                 CanControllerRef[controllerId].CanCpuClockRef));
     /* [SWS_Can_00259]  The function Can_Init shall set all CAN controllers in the state STOPPED */
-        ControllerState[controllerId]=CAN_CS_STOPPED ;
+        ControllerState[controllerId] = CAN_CS_STOPPED ;
     }
 
-    /*
-    * Loop to Configure Hardware message objects to be Transmit or receive
-    */
+    /* Loop to Configure Hardware message objects to be Transmit or receive */
     for(HOHCount = 0; HOHCount < CAN_HOH_NUMBER; HOHCount++)
     {
         /* Save the BaseAddress of the controller this Hardware Object Belongs to */
-        BaseAddress = Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanControllerRef->CanControllerBaseAddress;
+        BaseAddress = Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanControllerRef->CanControllerBaseAddress;
         /* Fetch the current HOH Controller ID */
-        controllerId=Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanControllerRef->CanControllerId;
+        controllerId = Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanControllerRef->CanControllerId;
         HWREG(BaseAddress + CAN_O_IF1CMSK) |= (CAN_IF1CMSK_WRNRD | CAN_IF1CMSK_ARB | CAN_IF1CMSK_CONTROL );
         
         /* Configuration for transmit message object type HTH */
-        if(Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectType==TRANSMIT)
+        if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectType == TRANSMIT)
         {
-            HWREG(BaseAddress + CAN_O_IF1ARB2) &=~ CAN_IF1ARB2_MSGVAL;              /* must be cleared before configuration */
-            HWREG(BaseAddress + CAN_O_IF1MCTL) |= (CAN_IF1MCTL_TXIE );              
+            HWREG(BaseAddress + CAN_O_IF1ARB2) &= ~CAN_IF1ARB2_MSGVAL;              /* must be cleared before configuration */
+            HWREG(BaseAddress + CAN_O_IF1MCTL) |= (CAN_IF1MCTL_TXIE );
             HWREG(BaseAddress + CAN_O_IF1ARB2) |= CAN_IF1ARB2_DIR;                  /* transmit */
             
             /* Configuration for 11-bits Standard ID type */
-            if(Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanIdType==STANDARD)
+            if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanIdType == STANDARD)
             {
-                HWREG(BaseAddress + CAN_O_IF1ARB2) &= ~CAN_IF1ARB2_XTD;             /* Standard */
+                HWREG(BaseAddress + CAN_O_IF1ARB2) &= ~CAN_IF1ARB2_XTD;
             }
             /* Configuration for 29-bits Extended ID type */
-            else if(Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanIdType==EXTENDED)
+            else if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanIdType == EXTENDED)
             {
-                HWREG(BaseAddress + CAN_O_IF1ARB2) |= CAN_IF1ARB2_XTD;              /* Extended */
+                HWREG(BaseAddress + CAN_O_IF1ARB2) |= CAN_IF1ARB2_XTD;
             }
-            HWREG(BaseAddress + CAN_O_IF1ARB2) |= CAN_IF1ARB2_MSGVAL;           /*set as valid message object*/
+            else
+            {
+                /* Do Nothing */
+            }
+            HWREG(BaseAddress + CAN_O_IF1ARB2) |= CAN_IF1ARB2_MSGVAL;           /* set as valid message object */
 
             /* increament to save the number of occupied hardware objects */
             UsedHWMessageObjt[controllerId]++;
 
 #if(CanDevErrorDetect == STD_ON)
-            if(UsedHWMessageObjt[controllerId]>CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
+            if(UsedHWMessageObjt[controllerId] > CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
             {
                 /* Report error as number of used hardware message objects exceeded limit */
                 Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
@@ -406,38 +408,37 @@ void Can_Init( const Can_ConfigType* Config)
                 /* Do Nothing */
             }
 #endif
-            MessageObjAssignedToHTH[HOHCount].HTHId=Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectId ;
-            MessageObjAssignedToHTH[HOHCount].MessageId=UsedHWMessageObjt[controllerId];
+            MessageObjAssignedToHTH[HOHCount].HTHId = Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectId ;
+            MessageObjAssignedToHTH[HOHCount].MessageId = UsedHWMessageObjt[controllerId];
             HWREG(BaseAddress + CAN_O_IF1CRQ)   = UsedHWMessageObjt[controllerId];
         }
         /* Configuration for receive message object type HRH */
-        else if(Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectType==RECEIVE)
+        else if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectType == RECEIVE)
         {
             /* [SWS_CAN_00489]  The CAN driver shall support controllers which implement 
             * a hardware FIFO. The size of the FIFO is configured via "CanHwObjectCount".
             */
-            /* To prevent loss of received messages, some controllers support a FIFO built
-            * from a set of hardware objects, while on other controllers
-            */
-            HwObjectCount=Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanHwObjectCount;
+            HwObjectCount = Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanHwObjectCount;
 
             /* Loop to configure all hardware objects in the FIFO to Configure one HRH */
             while(HwObjectCount--)
             {
                 HWREG(BaseAddress + CAN_O_IF2CMSK) |= (CAN_IF2CMSK_WRNRD | CAN_IF2CMSK_ARB | CAN_IF2CMSK_CONTROL | CAN_IF2CMSK_MASK);
                 HWREG(BaseAddress + CAN_O_IF2MCTL) |= (CAN_IF2MCTL_UMASK |CAN_IF2MCTL_RXIE|CAN_IF2MCTL_DLC_M);
-                HWREG(BaseAddress + CAN_O_IF2ARB2) &=~ CAN_IF2ARB2_MSGVAL;                   /*must be cleared before configuration*/
-                HWREG(BaseAddress + CAN_O_IF2ARB2) &=~ CAN_IF2ARB2_DIR;                      /*Receive*/
-                if(Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanIdType == STANDARD)
+                /* must be cleared before configuration */
+                HWREG(BaseAddress + CAN_O_IF2ARB2) &= ~CAN_IF2ARB2_MSGVAL;
+                /* Receive */
+                HWREG(BaseAddress + CAN_O_IF2ARB2) &= ~CAN_IF2ARB2_DIR;
+                if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanIdType == STANDARD)
                 {
                     /* When using an 11-bit identifier, [12:2]bits are used for bits [10:0] of the ID. */
-                    HWREG(BaseAddress + CAN_O_IF2ARB2) &=~ CAN_IF2ARB2_XTD;
-                    HWREG(BaseAddress + CAN_O_IF2ARB2) |= (CAN_IF2ARB2_ID_STANDARD) & ((Config->CanConfigSetRef-> \
+                    HWREG(BaseAddress + CAN_O_IF2ARB2) &= ~CAN_IF2ARB2_XTD;
+                    HWREG(BaseAddress + CAN_O_IF2ARB2) |= (CAN_IF2ARB2_ID_STANDARD) & ((Global_Config->CanConfigSetRef-> \
                             CanHardwareObjectRef[HOHCount].CanHwFilterRef->CanHwFilterCode) << 2);
-                    HWREG(BaseAddress + CAN_O_IF2MSK2) = (CAN_IF2MSK2_IDMSK_STANDARD) & ((Config->CanConfigSetRef-> \
+                    HWREG(BaseAddress + CAN_O_IF2MSK2) = (CAN_IF2MSK2_IDMSK_STANDARD) & ((Global_Config->CanConfigSetRef-> \
                             CanHardwareObjectRef[HOHCount].CanHwFilterRef->CanHwFilterMask) << 2);
                 }
-                else if(Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanIdType == EXTENDED)
+                else if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanIdType == EXTENDED)
                 {
                     /*
                     * When using a 29-bit identifier,  12:0 bits are used for bits [28:16] of the
@@ -446,14 +447,14 @@ void Can_Init( const Can_ConfigType* Config)
                     HWREG(BaseAddress + CAN_O_IF2ARB2)|= CAN_IF2ARB2_XTD; /*Extended ID*/
 
                     /* set ID in the arbitration register */
-                    HWREG(BaseAddress + CAN_O_IF2ARB1) |= (CAN_IF2ARB1_ID_M) & (Config->CanConfigSetRef-> \
+                    HWREG(BaseAddress + CAN_O_IF2ARB1) |= (CAN_IF2ARB1_ID_M) & (Global_Config->CanConfigSetRef-> \
                         CanHardwareObjectRef[HOHCount].CanHwFilterRef->CanHwFilterCode);
-                    HWREG(BaseAddress + CAN_O_IF2ARB2) = (CAN_IF2ARB2_ID_M) & ((Config->CanConfigSetRef-> \
+                    HWREG(BaseAddress + CAN_O_IF2ARB2) = (CAN_IF2ARB2_ID_M) & ((Global_Config->CanConfigSetRef-> \
                             CanHardwareObjectRef[HOHCount].CanHwFilterRef->CanHwFilterMask) >> 0xF);
                     /* Set Mask filter */
-                    HWREG(BaseAddress + CAN_O_IF2MSK1) = (CAN_IF2MSK1_IDMSK_M) & (Config->CanConfigSetRef-> \
+                    HWREG(BaseAddress + CAN_O_IF2MSK1) = (CAN_IF2MSK1_IDMSK_M) & (Global_Config->CanConfigSetRef-> \
                             CanHardwareObjectRef[HOHCount].CanHwFilterRef->CanHwFilterMask);
-                    HWREG(BaseAddress + CAN_O_IF2MSK2) = (CAN_IF2MSK2_IDMSK_M) & ((Config->CanConfigSetRef-> \
+                    HWREG(BaseAddress + CAN_O_IF2MSK2) = (CAN_IF2MSK2_IDMSK_M) & ((Global_Config->CanConfigSetRef-> \
                             CanHardwareObjectRef[HOHCount].CanHwFilterRef->CanHwFilterMask) >> 0xF);
                 }
                 /* set as valid message object */
@@ -463,10 +464,10 @@ void Can_Init( const Can_ConfigType* Config)
                 UsedHWMessageObjt[controllerId]++;
 
 #if(CanDevErrorDetect == STD_ON)
-                if(UsedHWMessageObjt[controllerId]>CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
+                if(UsedHWMessageObjt[controllerId] > CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
                 {
                     /* Report error as the number of occupied hardware message objects exceeded limit 32 */
-                    Det_ReportError(CAN_MODULE_ID , CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
+                    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
                 }
                 else
                 {
@@ -478,10 +479,10 @@ void Can_Init( const Can_ConfigType* Config)
                     /* Set cuurent hardware message as the last one in FIFO */
                     HWREG(BaseAddress + CAN_O_IF2MCTL) |= CAN_IF2MCTL_EOB ;
                     /* Map the Current Software HRH with its hardware messages used in the buffer */
-                    MessageObjAssignedToHRH[HOHCount].HRHId=Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectId;
+                    MessageObjAssignedToHRH[HOHCount].HRHId = Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanObjectId;
                     /*Save the ID of the first hardware message object used in the FIFO*/
                     MessageObjAssignedToHRH[HOHCount].StartMessageId = UsedHWMessageObjt[controllerId] - \
-                            Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanHwObjectCount + 1;
+                            Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOHCount].CanHwObjectCount + 1;
                     /* Save the ID of the last hardware message object used in the FIFO */
                     MessageObjAssignedToHRH[HOHCount].EndMessageId = UsedHWMessageObjt[controllerId];
                 }
@@ -515,11 +516,11 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 	uint32 n;
 	uint32 ui32Base;
 	CanControllerBaudrateConfig* current_baudrate =
-			&(Global_ConfigType->CanConfigSetRef->CanControllerRef[Controller].CanControllerDefaultBaudrate[BaudRateConfigID]);
+			&(Global_Config->CanConfigSetRef->CanControllerRef[Controller].CanControllerDefaultBaudrate[BaudRateConfigID]);
 
 	/* fetch base address */
 	ui32Base =
-			Global_ConfigType->CanConfigSetRef->CanControllerRef[Controller].CanControllerBaseAddress;
+			Global_Config->CanConfigSetRef->CanControllerRef[Controller].CanControllerBaseAddress;
 
 #if(CanDevErrorDetect==STD_ON) /* DET notifications */
 
@@ -527,7 +528,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 	 The function Can_SetBaudrate shall raise the error CAN_E_UNINIT and return
 	 E_NOT_OK if the driver is not yet initialized.*/
 	if (CAN_E_UNINIT == ControllerState[Controller]
-			|| NULL_PTR == Global_ConfigType) {
+			|| NULL_PTR == Global_Config) {
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SETBAUDRATE_API_ID,
 				CAN_E_UNINIT);
 		return E_NOT_OK;
@@ -619,7 +620,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 		 The CANBRPE register can be used to further divide the bit time */
 
 		ui32BaudRatePrescaler =
-				((*(Global_ConfigType->CanConfigSetRef->CanControllerRef[Controller]).CanCpuClockRef)
+				((*(Global_Config->CanConfigSetRef->CanControllerRef[Controller]).CanCpuClockRef)
 						/ (((current_baudrate->CanControllerBaudRate) * 1000)
 								* n));
 		ui32BitReg |= ((ui32BaudRatePrescaler) - 1) & CAN_BIT_BRP_M;
@@ -848,7 +849,7 @@ void Can_MainFunction_Read(void) {
         // TODO psMsgObject shold be config inside init API
         for(obj_index = 0; obj_index < NUM_OF_HOH; obj_index++)
         {
-            if(Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[obj_index].CanObjectType==receive)
+            if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[obj_index].CanObjectType==receive)
             {
                 /*
                  * Reads a CAN message from one of the message object buffers.
@@ -1033,7 +1034,7 @@ Std_ReturnType Can_write (
 
         for (Hoh_count = 0 ; Hoh_count < CAN_HOH_NUMBER  ; Hoh_count++)
         {
-            if (Hth == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[Hoh_count].CanObjectId)
+            if (Hth == Global_Config->CanConfigSetRef->CanHardwareObjectRef[Hoh_count].CanObjectId)
             {
                 hth_index = Hoh_count ;
             }
@@ -1049,7 +1050,7 @@ Std_ReturnType Can_write (
          * return E_NOT_OK if the parameter Hth is not a configured Hardware Transmit
          * Handle.⌋
          */
-        if (Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[hth_index].CanObjectType != TRANSMIT)
+        if (Global_Config->CanConfigSetRef->CanHardwareObjectRef[hth_index].CanObjectType != TRANSMIT)
         {
             //det error CAN_E_PARAM_HANDLE
             returnVal = E_NOT_OK ;
@@ -1065,7 +1066,7 @@ Std_ReturnType Can_write (
             {
                 HTH_Semaphore[hth_index] = 1 ;
 
-                ui32Base = Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[hth_index].CanControllerRef->CanControllerBaseAddress ;
+                ui32Base = Global_Config->CanConfigSetRef->CanHardwareObjectRef[hth_index].CanControllerRef->CanControllerBaseAddress ;
                 /*
                  * check if hardware is busy
                  */
@@ -1081,7 +1082,7 @@ Std_ReturnType Can_write (
                 ui16ArbReg_2 = CAN_IF1ARB2_DIR;             /// transmit M.O.
 
 
-                if (Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[hth_index].CanIdType == EXTENDED)
+                if (Global_Config->CanConfigSetRef->CanHardwareObjectRef[hth_index].CanIdType == EXTENDED)
                 {
 
 
@@ -1090,7 +1091,7 @@ Std_ReturnType Can_write (
                     ui16ArbReg_2 |= CAN_IF1ARB2_MSGVAL | CAN_IF1ARB2_XTD ;
 
                 }
-                else if (Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[hth_index].CanIdType == STANDARD)
+                else if (Global_Config->CanConfigSetRef->CanHardwareObjectRef[hth_index].CanIdType == STANDARD)
                 {
                     ui16ArbReg_2 |= (  PduInfo->id  << 2 ) & CAN_IF1ARB2_ID_M ;
                     ui16ArbReg_1 |= CAN_IF1ARB2_MSGVAL ;
@@ -1209,7 +1210,7 @@ void Can_MainFunction_Mode(void) {
 	uint8 ControllerIndex;
 	/* initialize base address to controller 0*/
 	/* still need to enter a loop to do the work for controller 0 and 1. not controller 0 only as now */
-	uint32 ui32Base = Global_ConfigType->CanConfigSetRef->CanControllerRef[0].CanControllerBaseAddress;
+	uint32 ui32Base = Global_Config->CanConfigSetRef->CanControllerRef[0].CanControllerBaseAddress;
 
 	for (ControllerIndex = 0; ControllerIndex < NO_OF_CONTROLLERS_IN_HW;
 			ControllerIndex++) {
@@ -1406,9 +1407,9 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
 
                 for(HOH_Index=0U;HOH_Index<NUM_OF_HOH;HOH_Index++)
                 {
-                     if(Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanObjectType == transmit)
+                     if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanObjectType == transmit)
                         {
-                            while(Can_HWObjIndex<Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
+                            while(Can_HWObjIndex<Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
                             {
 
                                 CAN0_IF1CRQ_R =((uint32)((uint32)Can_HWObjIndex));
@@ -1451,9 +1452,9 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
             for(HOH_Index=0U;HOH_Index<NUM_OF_HOH;HOH_Index++)
             {
 
-                    if(Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanObjectType==transmit)
+                    if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanObjectType==transmit)
                     {
-                        while(Can_HWObjIndex<Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
+                        while(Can_HWObjIndex<Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
                         {
 
                             CAN1_IF1CRQ_R =((uint32)((uint32)Can_HWObjIndex));
@@ -1512,9 +1513,9 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
                 for(HOH_Index=0U;HOH_Index<NUM_OF_HOH;HOH_Index++)
                 {
 
-                        if(Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanObjectType== transmit)
+                        if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanObjectType== transmit)
                         {
-                            while(Can_HWObjIndex<Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
+                            while(Can_HWObjIndex<Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
                             {
 
                                 CAN0_IF1CRQ_R =((uint32)((uint32)Can_HWObjIndex));
@@ -1562,9 +1563,9 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
             for(HOH_Index=0U;HOH_Index<NUM_OF_HOH;HOH_Index++)
             {
 
-                    if(Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanObjectType==transmit)
+                    if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanObjectType==transmit)
                     {
-                        while(Can_HWObjIndex<Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
+                        while(Can_HWObjIndex<Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
                         {
 
                             CAN1_IF1CRQ_R =((uint32)((uint32)Can_HWObjIndex));
@@ -1794,9 +1795,9 @@ void Can_MainFunction_Write(void)
 		
 		for (index = 0; index < NUM_OF_HOH; index++) 
 		{
-			if (TRANSMIT == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanObjectType)
+			if (TRANSMIT == Global_Config->CanConfigSetRef->CanHardwareObjectRef[index].CanObjectType)
 			{
-				if (&Global_ConfigType->CanConfigSetRef->CanControllerRef[CONTROLLER_0_ID] == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanControllerRef)
+				if (&Global_Config->CanConfigSetRef->CanControllerRef[CONTROLLER_0_ID] == Global_Config->CanConfigSetRef->CanHardwareObjectRef[index].CanControllerRef)
 				{
 					#if (CAN_TX_PROCESSING_0==POLLING_PROCESSING)
 
@@ -1819,7 +1820,7 @@ void Can_MainFunction_Write(void)
 					
 					#elif(CAN_TX_PROCESSING_0==MIXED_PROCESSING)
 
-						if ( STD_ON == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
+						if ( STD_ON == Global_Config->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
 						{
 														
 							CAN0_IF1CRQ_R =	MessageObjAssignedToHTH[index].MessageId;
@@ -1851,7 +1852,7 @@ void Can_MainFunction_Write(void)
 					#endif
 				}
 
-				else if (&Global_ConfigType->CanConfigSetRef->CanControllerRef[CONTROLLER_1_ID] == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanControllerRef)
+				else if (&Global_Config->CanConfigSetRef->CanControllerRef[CONTROLLER_1_ID] == Global_Config->CanConfigSetRef->CanHardwareObjectRef[index].CanControllerRef)
 				{
 					#if (CAN_TX_PROCESSING_1==POLLING_PROCESSING)
 				
@@ -1874,7 +1875,7 @@ void Can_MainFunction_Write(void)
 					
 					#elif(CAN_TX_PROCESSING_1==MIXED_PROCESSING)
 
-						if (STD_ON == Global_ConfigType->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
+						if (STD_ON == Global_Config->CanConfigSetRef->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
 						{
 							
 							CAN1_IF1CRQ_R =MessageObjAssignedToHTH[index].MessageId;
