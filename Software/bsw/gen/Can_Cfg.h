@@ -57,8 +57,7 @@
 #define HTH0_0                                   (0U)
 #define HRH0_1                                   (1U)
 
-/*Define controllers Base address*/
-#define BASE_0                                   (0x40040000)
+
 // ECUC_Can_00317
 #define POLLING 2
 
@@ -173,8 +172,7 @@ Example: HRH0-0, HRH1-1, HTH0-2, HTH1-3*/
 #define CONTROLLER_0_ID 0U
 #define CONTROLLER_1_ID 1U
 
-#define CONTROLLER_0_BASE_ADD (volatile uint64*)0x40040000
-#define CONTROLLER_1_BASE_ADD (volatile uint64*)0x40041000
+
 
 #define NUM_OF_HOH 2U
 #define HOH_0_ID 0U
@@ -194,7 +192,6 @@ Example: HRH0-0, HRH1-1, HTH0-2, HTH1-3*/
 #define PERIOD_0 (float32) 0.001
 #define PERIOD_1 (float32) 0.005
 
-#define  NUM_OF_CAN_CONTROLLERS  2U
 #define  DEVLOPEMENT_ERROR      STD_OFF
 #define  CanTimeoutDuration     0.5
 
