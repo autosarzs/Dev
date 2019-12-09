@@ -60,8 +60,9 @@
 /*                                   Local Macro Definition                              */
 /*****************************************************************************************/
 
-#define valid      1
-#define invalid    0
+#define valid                     (1U)
+#define invalid                   (0U)
+#define MAX_CONTROLLERS_NUMBER    (2U)                  /*Number of controllers in TivaC */
 
 /*****************************************************************************************/
 /*                                   Local Definition                                    */
@@ -538,7 +539,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 	 the function Can_SetBaudrate shall raise the error CAN_E_PARAM_CONTROLLER
 	 and return E_NOT_OK if the parameter Controller is out of range. */
 
-	if (Controller > CAN_CONTROLLERS_NUMBER) {
+	if (Controller > USED_CONTROLLERS_NUMBER) {
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SETBAUDRATE_API_ID,
 				CAN_E_PARAM_CONTROLLER);
 		return E_NOT_OK;
@@ -682,7 +683,7 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
     /*  [SWS_Can_00210] The function Can_EnableControllerInterrupts shall raise the error
      *  CAN_E_PARAM_CONTROLLER if the parameter Controller is out of range
      */
-	else if (Controller >= MAX_CONTROLLERS_NUMBER)
+	else if (Controller >= USED_CONTROLLERS_NUMBER)
     {
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_EnableControllerInterrupts_Id,
 				CAN_E_PARAM_CONTROLLER);
@@ -748,7 +749,7 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
     /*  [SWS_Can_00206] The function Can_DisableControllerInterrupts shall raise the error
      *  CAN_E_PARAM_CONTROLLER if the parameter Controller is out of range
      */
-	else if (Controller >= MAX_CONTROLLERS_NUMBER)
+	else if (Controller >= USED_CONTROLLERS_NUMBER)
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DisableControllerInterrupts_Id,
 				CAN_E_PARAM_CONTROLLER);
 #endif
@@ -833,7 +834,7 @@ void Can_MainFunction_Read(void) {
      *   Loop all controllers to get the new data
      */
     // TODO controlledID  base address not implemented here ?
-    for (controllerId = 0; controllerId < CAN_CONTROLLERS_NUMBER;controllerId += 1)
+    for (controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER;controllerId += 1)
     {
 #if (CanDevErrorDetect == STD_ON)
         if (ControllerState[controllerId] == CAN_CS_UNINIT)
@@ -881,7 +882,7 @@ uint8 controllerId; /*variable to count controllers number*/
     /*
      *   Loop all controllers to get the new data
      */
-    for (controllerId = 0; controllerId < CAN_CONTROLLERS_NUMBER;controllerId += 1)
+    for (controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER;controllerId += 1)
     {
 #if (CanDevErrorDetect == STD_ON)
         if (ControllerState[controllerId] == CAN_CS_UNINIT)
@@ -1262,14 +1263,14 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
 
     uint8 Can_HWObjIndex=0;
     uint8 HOH_Index;
-#if (CAN_DEV_ERROR_DETECT==STD_ON)
+#if (CanDevErrorDetect==STD_ON)
 
     /*[SWS_Can_00198] If development error detection for the Can module is enabled:
                   if the module is not yet initialized, the function Can_SetControllerMode shall raise
                   development error CAN_E_UNINIT and return E_NOT_OK.*/
     if ( ControllerState[Controller] == CAN_UNINIT )
     {
-        Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID,CAN_SET_CONTROLLER_MODE ,CAN_E_UNINIT );
+        Det_ReportError( CAN_MODULE_ID , CAN_INSTANCE_ID,Can_SetControllerMode_Id ,CAN_E_UNINIT );
 
         ret = E_NOT_OK;
     }
@@ -1278,9 +1279,9 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
                    if the parameter Controller is out of range, the function Can_SetControllerMode
                    shall raise development error CAN_E_PARAM_CONTROLLER and return
                    E_NOT_OK.*/
-    else if (Controller >= MAX_CONTROLLERS_NUMBER)
+    else if (Controller >= USED_CONTROLLERS_NUMBER)
     {
-        Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID ,CAN_SET_CONTROLLER_MODE ,CAN_E_PARAM_CONTROLLER );
+        Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID ,Can_SetControllerMode_Id ,CAN_E_PARAM_CONTROLLER );
         ret = E_NOT_OK;
     }
 
@@ -1290,7 +1291,7 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
     else if (((Transition == CAN_CS_STARTED) && ( ControllerState[Controller]!=CAN_CS_STOPPED))||
             ((Transition == CAN_CS_SLEEP) &&  (ControllerState[Controller]!= CAN_CS_STOPPED)))
     {
-        Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID ,CAN_SET_CONTROLLER_MODE ,CAN_E_TRANSITION );
+        Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID ,Can_SetControllerMode_Id ,CAN_E_TRANSITION );
         ret = E_NOT_OK;
     }
 
@@ -1619,33 +1620,38 @@ Return value:   Std_ReturnType  -->E_OK: Error state request has been accepted
 */
 Std_ReturnType Can_GetControllerErrorState(uint8 ControllerId,Can_ErrorStateType* ErrorStatePtr)
 {
+/*Save Return value*/
 Std_ReturnType Return_type =E_OK;
-#if(CAN_DEV_ERROR_DETECT==STD_ON)
+uint32  BaseAddress=0;
+/*Variable to read CAN Error state register*/
+Can_ErrorStateType   ErrorState = 0;
+
+#if(CanDevErrorDetect==STD_ON)
 /**
 [SWS_Can_91006]  If development error detection for the Can module is enabled: if the parameter ControllerId is out of range,
 the function Can_GetControllerErrorState shall raise development error CAN_E_PARAM_CONTROLLER and return E_NOT_OK.
 */
-if(ControllerId >= MAX_CONTROLLERS_NUMBER )
+if(ControllerId >= USED_CONTROLLERS_NUMBER )
 {
-    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CANGetControllerErrorState, CAN_E_PARAM_CONTROLLER);
+    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_PARAM_CONTROLLER);
     return E_NOT_OK;
 }
 /**
 [SWS_Can_91005]  If development error detection for the Can module is enabled: if the module is not yet initialized,
  the function Can_GetControllerErrorState shall raise development error CAN_E_UNINIT and return E_NOT_OK
 */
-if(Can_ControllerMode[ControllerId] == CAN_CS_UNINIT)
+if(ModuleState == CAN_UNINIT)
 {
-    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CANGetControllerErrorState, CAN_E_UNINIT);
+    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_UNINIT);
     return E_NOT_OK;
 }
 /**
 [SWS_Can_91007]  If development error detection for the Can module is enabled: if the parameter ErrorStatePtr is a null pointer,
  the function Can_GetControllerErrorState shall raise development error  CAN_E_PARAM_POINTER and return E_NOT_OK.
 */
-if(ErrorStatePtr == NULL)
+if(ErrorStatePtr == NULL_PTR)
 {
-    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CANGetControllerErrorState, CAN_E_PARAM_POINTER);
+    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_PARAM_POINTER);
     return E_NOT_OK;
 }
 
@@ -1654,57 +1660,29 @@ if(ErrorStatePtr == NULL)
 [SWS_Can_91008] When the API Can_GetControllerErrorState()  is called with Controller Id as input parameter then Can driver shall read
 the error state register of Can Controller and shall return the error status to upper layer
 */
-         switch(ControllerId)
-         {
-            case  CAN0_ID :
 
-                    if(CAN0_STS_R|CAN_STS_BOFF )
-                     {
-                         *ErrorStatePtr =CAN_ERRORSTATE_BUSOFF;
-                     }
-                     else
-                     {
-                      switch (CAN0_STS_R |CAN_STS_EPASS )
-                      {
+             /* Save Current controller BaseAddress*/
+             BaseAddress = Global_Config->CanConfigSetRef->CanControllerRef[ControllerId].CanControllerBaseAddress ;
+             /* Save Error State it can be
+              *BussOff OR Error Active state Or Error Passive state
+              */
+             ErrorState  = (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_BOFF ) | \
+                           (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_EPASS) ;
+                  switch (ErrorState)
+                  {
+                      case CAN_ERRORSTATE_ACTIVE  :
+                      *ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
+                      break;
+                      case  CAN_ERRORSTATE_PASSIVE:
+                      *ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
+                      break;
+                      case CAN_ERRORSTATE_BUSOFF  :
+                      *ErrorStatePtr = CAN_ERRORSTATE_BUSOFF ;
+                      default  :
+                      Return_type =E_NOT_OK;
+                      break;
+                  }
 
-                          case CAN_ERRORSTATE_ACTIVE :
-                          *ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
-                          break;
-                          case  CAN_ERRORSTATE_PASSIVE:
-                          *ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
-                          break;
-                          default  :
-                          Return_type =E_NOT_OK;
-                          break;
-                      }
-                     }
-                   break;
-            case  CAN1_ID :
-                    if(CAN1_STS_R|CAN_STS_BOFF )
-                     {
-                         *ErrorStatePtr =CAN_ERRORSTATE_BUSOFF;
-                     }
-                     else
-                     {
-                      switch (CAN1_STS_R |CAN_STS_EPASS )
-                      {
-
-                          case CAN_ERRORSTATE_ACTIVE :
-                          *ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
-                          break;
-                          case  CAN_ERRORSTATE_PASSIVE :
-                          *ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
-                          break;
-                          default  :
-                          Return_type =E_NOT_OK;
-                          break;
-                      }
-                     }
-                   break;
-            default :
-                 Return_type =E_NOT_OK;
-                 break;
-         }
 return  Return_type;
 }
 
@@ -1712,7 +1690,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 {
 	Std_ReturnType Loc_Can_GetControllerMode_Ret = E_OK;
 
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
 	if (CAN_CS_UNINIT==ControllerState[Controller])
 	{
 		Det_ReportError(CAN_MODULE_ID,CAN_INSTANCE_ID,Can_GetControllerMode_Id,CAN_E_UNINIT);
@@ -1734,7 +1712,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	{
 	    /* Do Nothing */
 	}
-	if ( NULL == ControllerModePtr)
+	if ( NULL_PTR == ControllerModePtr)
 	{
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_POINTER);
 		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
