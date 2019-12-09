@@ -1207,37 +1207,68 @@ static void CANDataRegWrite ( uint8 * pui8Data, uint32 * pui32Register , uint8 u
  - This function performs the polling of CAN controller mode transitions.
  - it implements the polling of CAN status register flags to detect transition of CAN Controller state.
  ----------------------------------------------------------------------*/
-void Can_MainFunction_Mode(void) {
-	uint8 ControllerIndex;
-	/* initialize base address to controller 0*/
-	/* still need to enter a loop to do the work for controller 0 and 1. not controller 0 only as now */
-	uint32 ui32Base = Global_Config->CanConfigSetRef->CanControllerRef[0].CanControllerBaseAddress;
+void Can_MainFunction_Mode(void)
+{
+    /* counter to loop on controllers         */
+	uint8 ControllerIndex  = 0 ;
+	/* static variable to save old state      */
+	static uint8 Old_State = 0 ;
+	/* variable to read HW status register    */
+	uint8  StatusReg_State = 0 ;
+	/* variable to save Controller BaseAddress*/
+	uint32 ui32Base = 0;
+    /*
+     *  [SWS_Can_00370] The function Can_Mainfunction_Mode shall poll a flag of the
+     *   CAN status register until the flag signals that the change takes effect and
+     *   notify the upper layer with function CanIf_ControllerModeIndication about
+     *   a successful state transition referring to the corresponding CAN controller
+     *   with the abstract CanIf ControllerId .
+     */
+	for (ControllerIndex = 0; ControllerIndex < USED_CONTROLLERS_NUMBER;ControllerIndex++)
+	{
+	    /*Save current controller BaseAddress*/
+	    ui32Base        = Global_Config->CanConfigSetRef->CanControllerRef[ControllerIndex]\
+	                                                             .CanControllerBaseAddress;
+	    /*Save Current hardware state */
+	    StatusReg_State = HWREG(ui32Base + CAN_O_CTL) & CAN_CTL_INIT ;
 
-	for (ControllerIndex = 0; ControllerIndex < NO_OF_CONTROLLERS_IN_HW;
-			ControllerIndex++) {
-		switch (ControllerIndex) {
-		case 0:
-			ui32Base = CAN0_BASE;
-			break;
-		case 1:
-			ui32Base = CAN1_BASE;
-			break;
+        /* CAN_CS_STARTED state transition successfully achieved
+         * and confirmed from HW register .
+         * Send notification to CanIf only if CHANGE in state successfully achieved
+         */
+		if(ControllerState[ControllerIndex] == CAN_CS_STARTED      &&   \
+		   StatusReg_State                  != CAN_CTL_INIT        &&   \
+		   Old_State                        != CAN_CS_STARTED  )
+		{
+
+		   CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STARTED);
+		   Old_State = CAN_CS_STARTED ;
 		}
-
-		if (HWREG(ui32Base + CAN_O_CTL) & CAN_CTL_INIT) ////// the controller is in intialization state
-				{
-			if (ControllerState[ControllerIndex] == CAN_CS_SLEEP)
-					{
-				//CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_SLEEP); /// callback function
-			} else {
-			//	CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STOPPED);
-			}
-		} else {
-	       // if (ControllerState[ControllerIndex] == CAN_CS_UNINIT)
-			//	CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_UNINIT);
-
-			//else
-			//	CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STARTED);
+        /* CAN_CS_STOPPED state transition successfully achieved
+         * and confirmed from HW register .
+         * Send notification to CanIf only if CHANGE in state successfully achieved
+         */
+		else if(ControllerState[ControllerIndex] == CAN_CS_STOPPED &&   \
+		        StatusReg_State                  == CAN_CTL_INIT   &&   \
+		        Old_State                        != CAN_CS_STOPPED  )
+	    {
+				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STOPPED);
+				Old_State = CAN_CS_STOPPED ;
+		}
+        /* CAN_CS_SLEEP state transition successfully achieved
+         * Sleep mode not supported by HW so no register reading
+         * Send notification to CanIf only if CHANGE in state successfully achieved
+         */
+		else if(ControllerState[ControllerIndex] == CAN_CS_SLEEP   &&  \
+		        Old_State                        != CAN_CS_STOPPED     \
+                 )
+        {
+            CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_SLEEP);
+            Old_State = CAN_CS_SLEEP ;
+        }
+		else
+		{
+		    /*Do Nothing MISRA rule*/
 		}
 	}
 }
@@ -1689,51 +1720,49 @@ return  Return_type;
 Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* ControllerModePtr) 
 {
 	Std_ReturnType Loc_Can_GetControllerMode_Ret = E_OK;
-
-#if(CanDevErrorDetect == STD_ON)
-	if (CAN_CS_UNINIT==ControllerState[Controller])
+    /*  [SWS_Can_91016] If development error detection for the Can module is enabled:
+     *  The function Can_GetControllerMode shall raise the error CAN_E_UNINIT and
+     *  return E_NOT_OK if the driver is not yet initialized.
+     *  ( SRS_BSW_00406,SRS_BSW_00416)
+     */
+	if(ModuleState == CAN_UNINIT)
 	{
-		Det_ReportError(CAN_MODULE_ID,CAN_INSTANCE_ID,Can_GetControllerMode_Id,CAN_E_UNINIT);
-		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
+        #if(CanDevErrorDetect == STD_ON)
+	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_UNINIT);
+	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
+        #endif
 	}
+	/*[SWS_Can_91017] If parameter Controller of Can_GetControllerMode() has an invalid value,
+	 *  the CanDrv shall report development error code CAN_E_PARAM_CONTROLLER to the Det_ReportError
+	 *  service of the DET.(SRS_BSW_00323)
+	 */
+	else if(NUM_OF_CAN_CONTROLLERS <= Controller)
+	{
+        #if(CanDevErrorDetect == STD_ON)
+	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_CONTROLLER);
+	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
+        #endif
+	}
+	/*[SWS_Can_91018] If parameter ControllerModePtr of Can_GetControllerMode() has an null pointer,
+	 *  the CanDrv shall report development error code CAN_E_PARAM_POINTER to the Det_ReportError
+	 *   service of the DET. (SRS_BSW_00323)
+	 */
+	else if(NULL_PTR == ControllerModePtr)
+	{
+        #if(CanDevErrorDetect == STD_ON)
+	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_POINTER);
+	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
+        #endif
+	}
+	/*
+	 * [SWS_Can_91015] The service Can_GetControllerMode shall return the mode
+	 * of the requested CAN controller.
+	 */
 	else
 	{
-	    /* Do Nothing */
+	    *ControllerModePtr = ControllerState[Controller];
 	}
-
-#endif
-
-	if ( NUM_OF_CAN_CONTROLLERS <= Controller )
-	{
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_CONTROLLER);
-		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
-	} 
-	else 
-	{
-	    /* Do Nothing */
-	}
-	if ( NULL_PTR == ControllerModePtr)
-	{
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_POINTER);
-		Loc_Can_GetControllerMode_Ret = E_NOT_OK;
-	} 
-	else
-	{
-	    /* Do Nothing */
-	}
-
-	if ( E_NOT_OK != Loc_Can_GetControllerMode_Ret)
-	{
-
-		*ControllerModePtr = ControllerState[Controller];
-	}
-	else
-	{
-	    /* Do Nothing */
-	}
-
 	return Loc_Can_GetControllerMode_Ret;
-
 }
 
 void Can_MainFunction_Write(void) 
