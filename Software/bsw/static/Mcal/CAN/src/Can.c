@@ -1729,6 +1729,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	{
         #if(CanDevErrorDetect == STD_ON)
 	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_UNINIT);
+        #else
 	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
         #endif
 	}
@@ -1740,6 +1741,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	{
         #if(CanDevErrorDetect == STD_ON)
 	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_CONTROLLER);
+        #else
 	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
         #endif
 	}
@@ -1751,6 +1753,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	{
         #if(CanDevErrorDetect == STD_ON)
 	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_POINTER);
+        #else
 	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
         #endif
 	}
