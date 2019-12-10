@@ -43,7 +43,7 @@
 
 #define MAX_BAUDRATE_CONFIGS_CONTROLLER_0 	     (1U)
 #define MAX_BAUDRATE_CONFIGS_CONTROLLER_1	     (1U)
-#define USED_CONTROLLERS_NUMBER                  (1U)                /*number of can controllers in the ECU*/
+#define USED_CONTROLLERS_NUMBER                  (2U)                /*number of can controllers in the ECU*/
 #define CAN_HOH_NUMBER                           (2U)
 #define CAN_HRH_NUMBER                           (1U)
 #define CAN_HTH_NUMBER                           (1U)
@@ -51,7 +51,6 @@
 #define CONTROLLER_0_BDR_ID                      (0U)
 #define CONTROLLER0_ID                           (0U)
 #define DEFAULT_BAUDRATE_CONFIGRATION_ID         (0U)
-#define USED_CONTROLLERS_NUMBER                  (1U)                 /*Number of used controllers (one from two)*/
 
 /*Define HOH for Can module */
 #define HTH0_0                                   (0U)
