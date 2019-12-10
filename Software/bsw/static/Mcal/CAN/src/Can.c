@@ -1212,7 +1212,7 @@ void Can_MainFunction_Mode(void)
     /* counter to loop on controllers         */
 	uint8 ControllerIndex  = 0 ;
 	/* static variable to save old state      */
-	static uint8 Old_State = 0 ;
+	static uint8 Old_State[USED_CONTROLLERS_NUMBER] = {0} ;
 	/* variable to read HW status register    */
 	uint8  StatusReg_State = 0 ;
 	/* variable to save Controller BaseAddress*/
@@ -1238,11 +1238,11 @@ void Can_MainFunction_Mode(void)
          */
 		if(ControllerState[ControllerIndex] == CAN_CS_STARTED      &&   \
 		   StatusReg_State                  != CAN_CTL_INIT        &&   \
-		   Old_State                        != CAN_CS_STARTED  )
+		   Old_State[ControllerIndex]       != CAN_CS_STARTED  )
 		{
 
 		   CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STARTED);
-		   Old_State = CAN_CS_STARTED ;
+		   Old_State[ControllerIndex]  = CAN_CS_STARTED ;
 		}
         /* CAN_CS_STOPPED state transition successfully achieved
          * and confirmed from HW register .
@@ -1250,21 +1250,21 @@ void Can_MainFunction_Mode(void)
          */
 		else if(ControllerState[ControllerIndex] == CAN_CS_STOPPED &&   \
 		        StatusReg_State                  == CAN_CTL_INIT   &&   \
-		        Old_State                        != CAN_CS_STOPPED  )
+		        Old_State[ControllerIndex]       != CAN_CS_STOPPED  )
 	    {
 				CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_STOPPED);
-				Old_State = CAN_CS_STOPPED ;
+				Old_State[ControllerIndex]  = CAN_CS_STOPPED ;
 		}
         /* CAN_CS_SLEEP state transition successfully achieved
          * Sleep mode not supported by HW so no register reading
          * Send notification to CanIf only if CHANGE in state successfully achieved
          */
 		else if(ControllerState[ControllerIndex] == CAN_CS_SLEEP   &&  \
-		        Old_State                        != CAN_CS_STOPPED     \
+		        Old_State[ControllerIndex]       != CAN_CS_STOPPED     \
                  )
         {
             CanIf_ControllerModeIndication(ControllerIndex, CAN_CS_SLEEP);
-            Old_State = CAN_CS_SLEEP ;
+            Old_State[ControllerIndex]  = CAN_CS_SLEEP ;
         }
 		else
 		{
