@@ -1268,7 +1268,7 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
     /*[SWS_Can_00198] If development error detection for the Can module is enabled:
                   if the module is not yet initialized, the function Can_SetControllerMode shall raise
                   development error CAN_E_UNINIT and return E_NOT_OK.*/
-    if ( ControllerState[Controller] == CAN_UNINIT )
+    if ( CAN_UNINIT == ModuleState )
     {
         Det_ReportError( CAN_MODULE_ID , CAN_INSTANCE_ID,Can_SetControllerMode_Id ,CAN_E_UNINIT );
 
