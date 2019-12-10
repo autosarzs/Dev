@@ -34,12 +34,20 @@
  *******************************************************************************/
 #include "Std_Types.h"
 #include "ComStack_Types.h"
+#include "CanIf_Cbk.h"
 
 Std_ReturnType Det_ReportError(uint16 ModuleId, uint8 InstanceId, uint8 ApiId,
-		uint8 ErrorId) {
+		uint8 ErrorId)
+{
 	return 0;
 }
 
-void CanIf_TxConfirmation(PduIdType CanTxPduId) {
+void CanIf_TxConfirmation(PduIdType CanTxPduId)
+{
+
+}
+
+void CanIf_ControllerModeIndication( uint8 ControllerId, Can_ControllerStateType ControllerMode )
+{
 
 }
