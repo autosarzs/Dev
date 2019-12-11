@@ -1270,36 +1270,40 @@ void Can_MainFunction_Mode(void)
     }
 }
 
-/*[SWS_Can_00230]         */
-/*Service name   : Can_SetControllerMode
- Syntax           : Std_ReturnType Can_SetControllerMode(uint8 Controller,Can_ControllerStateType Transition)
- Service ID[hex]  : 0x03
- Sync/Async       : Asynchronous
- Reentrancy       : Non Reentrant
- Parameters (in)  : Controller CAN controller for which the status shall be changed
- Transition Transition value to request new CAN controller state
- Parameters(inout):None
- Parameters (out) : None
- Return value:Std_ReturnType E_OK    : request accepted
- E_NOT_OK: request not accepted, a development error occurred
- Description: This function performs software triggered state transitions of the CAN controller State machine.*/
-
+/*[SWS_Can_00230]*/
+/********************************************************************************************/
+/* Service Name     : Can_SetControllerMode                                                 */
+/* Syntax           : Std_ReturnType Can_SetControllerMode                                  */
+/*                    (uint8 Controller,Can_ControllerStateType Transition)                 */
+/* Service ID[hex]  : 0x03                                                                  */
+/* Sync/Async       : Asynchronous                                                          */
+/* Reentrancy       : Non Reentrant                                                         */
+/* Parameters (in)  : Controller CAN controller for which the status shall be changed       */
+/*                    Transition Transition value to request new CAN controller state       */
+/* Parameters(inout): None                                                                  */
+/* Parameters (out) : None                                                                  */
+/* Return Value     : Std_ReturnType E_OK    : request accepted                             */
+/* E_NOT_OK         : request not accepted, a development error occurred                    */
+/* DESCRIPTION      : This function performs software triggered state transitions           */
+/* of the CAN controller State machine.                                                     */
+/********************************************************************************************/
 Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType Transition )
 {
     /*initialize local variable to return (E_OK,E_NOT_OK) */
-    Std_ReturnType ret = E_NOT_OK;
-
+    Std_ReturnType ret = E_OK;
+    
     uint8 Can_HWObjIndex=0;
-    uint8 HOH_Index;
-#if (CanDevErrorDetect==STD_ON)
+    uint8 HOH_Index = 0;
+    uint32 ui32BaseAddress = 0;
+
+#if (CAN_DEV_ERROR_DETECT==STD_ON)
 
     /*[SWS_Can_00198] If development error detection for the Can module is enabled:
-                  if the module is not yet initialized, the function Can_SetControllerMode shall raise
-                  development error CAN_E_UNINIT and return E_NOT_OK.*/
+    if the module is not yet initialized, the function Can_SetControllerMode shall raise
+    development error CAN_E_UNINIT and return E_NOT_OK.*/
     if ( CAN_UNINIT == ModuleState )
     {
-        Det_ReportError( CAN_MODULE_ID , CAN_INSTANCE_ID,Can_SetControllerMode_Id ,CAN_E_UNINIT );
-
+        Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID,CAN_SET_CONTROLLER_MODE ,CAN_E_UNINIT );
         ret = E_NOT_OK;
     }
 
@@ -1307,9 +1311,9 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
                    if the parameter Controller is out of range, the function Can_SetControllerMode
                    shall raise development error CAN_E_PARAM_CONTROLLER and return
                    E_NOT_OK.*/
-    else if (Controller >= USED_CONTROLLERS_NUMBER)
+    else if (Controller >= MAX_CONTROLLERS_NUMBER)
     {
-        Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID ,Can_SetControllerMode_Id ,CAN_E_PARAM_CONTROLLER );
+        Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID ,CAN_SET_CONTROLLER_MODE ,CAN_E_PARAM_CONTROLLER );
         ret = E_NOT_OK;
     }
 
@@ -1317,24 +1321,21 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
                    if an invalid transition has been requested, the function Can_SetControllerMode shall
                    raise the error CAN_E_TRANSITION and return E_NOT_OK.*/
     else if (((Transition == CAN_CS_STARTED) && ( ControllerState[Controller]!=CAN_CS_STOPPED))||
-            ((Transition == CAN_CS_SLEEP) &&  (ControllerState[Controller]!= CAN_CS_STOPPED)))
+            ((Transition == CAN_CS_SLEEP) &&  (ControllerState[Controller]!= CAN_CS_STOPPED || ControllerState[Controller]!= CAN_CS_SLEEP)))
     {
-        Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID ,Can_SetControllerMode_Id ,CAN_E_TRANSITION );
+        Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID ,CAN_SET_CONTROLLER_MODE ,CAN_E_TRANSITION );
         ret = E_NOT_OK;
     }
-
     else
-
 #endif
     {
+        ui32BaseAddress = Global_Config->CanControllerCfgRef[Controller].CanControllerBaseAddress;
         switch(Transition)
         {
         case CAN_CS_STARTED:
             /*[SWS_Can_00261] The function Can_SetControllerMode(CAN_CS_STARTED)
                   shall set the hardware registers in a way that makes the CAN controller participating
                   on the network.*/
-            if(Controller==CAN0_ID)
-            {
 
                 /* [SWS_Can_00384] Each time the CAN controller state machine is triggered with the state
                    transition value CAN_CS_STARTED, the function Can_SetControllerMode shall re-initialise
@@ -1343,163 +1344,71 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
                 if(DisableCnt[0U]==0U)
                 {
                     /* Enables individual CAN controller interrupt sources */
-                    HWREG(CAN0_BASE + CAN_O_CTL) |= CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS;
+                    HWREG(ui32BaseAddress + CAN_O_CTL) |= CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS;
                     /* Enable the general interrupt.*/
-                    HWREG(g_pui32EnRegs[(INT_CAN0 - 16) / 32]) =(1 << ((INT_CAN0 - 16) & 31));
+                    CANIntEnable(ui32BaseAddress,CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
+                    //HWREG(g_pui32EnRegs[(INT_CAN0 - 16) / 32]) =(1 << ((INT_CAN0 - 16) & 31));
                     /* Enables the CAN controller for message processing.  Once enabled, the
                   controller automatically transmits any pending frames, and processes any
                   received frames.*/
-                    HWREG(CAN0_BASE + CAN_O_CTL) &= ~CAN_CTL_INIT;
+                    HWREG(ui32BaseAddress + CAN_O_CTL) &= ~CAN_CTL_INIT;
                     /*set the interrupt Enable in start mode flag      */
                     DisableCnt[Controller]=1U;
                 }
-
                 else
                 {
                     /* Enables the CAN controller for message processing.  Once enabled, the
                   controller automatically transmits any pending frames, and processes any
                   received frames.*/
-                    HWREG(CAN0_BASE + CAN_O_CTL) &= ~CAN_CTL_INIT;
+                    HWREG(ui32BaseAddress + CAN_O_CTL) &= ~CAN_CTL_INIT;
                 }
-
-            }
-
-            else if(Controller==CAN1_ID)
-            {
-                /*SWS_Can_00425] Enabling of CAN interrupts shall not be executed,
-                  when CAN interrupts have been disabled by function Can_DisableControllerInterrupts.*/
-
-
-                if(DisableCnt[1U]==0U)
-                {
-                    /* [SWS_Can_00261]  The function Can_SetControllerMode(CAN_CS_STARTED) shall set
-                     the hardware registers in a way that makes the CAN controller participating
-                      on the network.*/
-                    /* Enables individual CAN controller interrupt sources */
-                    HWREG(CAN1_BASE + CAN_O_CTL) |= CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS;
-                    /* Enable the general interrupt.*/
-                    HWREG(g_pui32EnRegs[(INT_CAN1 - 16) / 32]) =1 << ((INT_CAN1 - 16) & 31);
-                    /* Enables the CAN controller for message processing.  Once enabled, the
-                  controller automatically transmits any pending frames, and processes any
-                  received frames.*/
-                    HWREG(CAN1_BASE + CAN_O_CTL) &= ~CAN_CTL_INIT;
-                    /*set the interrupt Enable in start mode flag      */
-                    DisableCnt[Controller]=1U;
-                }
-
-                else
-                {
-                    /* Enables the CAN controller for message processing.  Once enabled, the
-                  controller automatically transmits any pending frames, and processes any
-                  received frames.*/
-                    HWREG(CAN1_BASE + CAN_O_CTL) &= ~CAN_CTL_INIT;
-                }
-
-
-            }
-            else
-            {
-
-            }
             /* setting the new mode to STARTED */
             ControllerState[Controller] = CAN_CS_STARTED;
             break;
-
         case CAN_CS_STOPPED:
             /* [SWS_Can_00197]  The function Can_SetControllerMode shall disable interrupts that are not
                     allowed in the new state. */
-            if(Controller == CAN0_ID)
+
+            /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
+                 by function Can_disableControllerInterrupts.*/
+            if(DisableCnt[0U]>=1U)
             {
+                HWREG(ui32BaseAddress + CAN_O_CTL) |= CAN_CTL_INIT;
+            }
+            else
+            {
+                /* [SWS_Can_00263] The function Can_SetControllerMode(CAN_CS_STOPPED) shall set the
+               bits inside the CAN hardware such that the CAN controller stops participating on the
+               network.*/
+
                 /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
-                     by function Can_disableControllerInterrupts.*/
-                if(DisableCnt[0U]>=1U)
-                {
-                    HWREG(CAN0_BASE + CAN_O_CTL) |= CAN_CTL_INIT;
-
-
-                }
-                else
-                {
-                    /* [SWS_Can_00263] The function Can_SetControllerMode(CAN_CS_STOPPED) shall set the
-                   bits inside the CAN hardware such that the CAN controller stops participating on the
-                   network.*/
-
-                    /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
-                     by function Can_disableControllerInterrupts.*/
-                    HWREG(CAN0_BASE + CAN_O_CTL) |= CAN_CTL_INIT;
-                    /* disable the CAN controller Interrupt     */
-                    HWREG(CAN0_BASE + CAN_O_CTL) &= ~(CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS);
-                    /* set interrupt disable in stop mode */
-                    DisableCnt[Controller]=1U;
-
-                }
-
-                for(HOH_Index=0U;HOH_Index<NUM_OF_HOH;HOH_Index++)
-                {
-                     if(Global_Config->CanHardwareObjectRef[HOH_Index].CanObjectType == transmit)
-                        {
-                            while(Can_HWObjIndex<Global_Config->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
-                            {
-
-                                CAN0_IF1CRQ_R =((uint32)((uint32)Can_HWObjIndex));
-                                CAN0_IF1MCTL_R&=((uint32)(~(uint32)0x100U));
-                                CAN0_IF1CMSK_R &= ((uint32)(~(uint32)0x80U));
-                                Can_HWObjIndex++;
-                            }
-                        }
-                        else
-                        {
-
-                        }
+                 by function Can_disableControllerInterrupts.*/
+                HWREG(ui32BaseAddress + CAN_O_CTL) |= CAN_CTL_INIT;
+                /* disable the CAN controller Interrupt     */
+                HWREG(ui32BaseAddress + CAN_O_CTL) &= ~(CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS);
+                /* set interrupt disable in stop mode */
+                DisableCnt[Controller]=1U;
 
             }
-
-            }
-            else if(Controller == CAN1_ID)
-            {
-                if(DisableCnt[1U]>=1U)
-                {
-                    /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
-                     by function Can_disableControllerInterrupts.*/
-                    HWREG(CAN1_BASE + CAN_O_CTL) |= CAN_CTL_INIT;
-
-
-                }
-                else
-                {
-                    /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
-                     by function Can_disableControllerInterrupts.*/
-                    HWREG(CAN1_BASE + CAN_O_CTL) |= CAN_CTL_INIT;
-
-                    /* disable the CAN controller Interrupt     */
-                    HWREG(CAN1_BASE + CAN_O_CTL) &= ~(CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS);
-                    /* set interrupt disable in stop mode */
-                    DisableCnt[Controller]=1U;
-
-                }
 
             for(HOH_Index=0U;HOH_Index<NUM_OF_HOH;HOH_Index++)
             {
-
-                    if(Global_Config->CanHardwareObjectRef[HOH_Index].CanObjectType==transmit)
+                 if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanObjectType == transmit)
                     {
-                        while(Can_HWObjIndex<Global_Config->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
+                        while(Can_HWObjIndex<Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
                         {
 
-                            CAN1_IF1CRQ_R =((uint32)((uint32)Can_HWObjIndex));
-                            CAN1_IF1MCTL_R&=((uint32)(~(uint32)0x100U));
-                            CAN1_IF1CMSK_R &= ((uint32)(~(uint32)0x80U));
+                            HWREG(ui32BaseAddress + CAN_O_IF1CRQ) =((uint32)((uint32)Can_HWObjIndex));
+                            HWREG(ui32BaseAddress + CAN_O_IF1MCTL) &=((uint32)(~(uint32)CAN_IF1MCTL_TXRQST));
+                            HWREG(ui32BaseAddress + CAN_O_IF1CMSK) &= ((uint32)(~(uint32)CAN_IF1CMSK_WRNRD));
                             Can_HWObjIndex++;
-                                                   }
+                        }
                     }
                     else
                     {
 
                     }
-
             }
-            }
-
             /* setting the new mode to STOPPED */
             ControllerState[Controller] = CAN_CS_STOPPED;
 
@@ -1512,114 +1421,54 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
                       [SWS_Can_00290] If the CAN HW does not support a sleep mode, the function
                      Can_SetControllerMode(CAN_CS_SLEEP) shall set the CAN controller to the logical sleep mode.*/
             /*[SWS_Can_00197] The function Can_SetControllerMode shall disable interrupts that are not allowed in the new state. */
-            if(Controller == CAN0_ID)
+            if(DisableCnt[0U]>=1U)
             {
-                if(DisableCnt[0U]>=1U)
-                {
-                    /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
-                          by function Can_disableControllerInterrupts.*/
-                    HWREG(CAN0_BASE + CAN_O_CTL) |= CAN_CTL_INIT;
-
-
-                }
-                else
-                {
-                    /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
-                          by function Can_disableControllerInterrupts.*/
-                    HWREG(CAN0_BASE + CAN_O_CTL) |= CAN_CTL_INIT;
-
-                    /* disable the CAN controller Interrupt     */
-                    HWREG(CAN0_BASE + CAN_O_CTL) &= ~(CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS);
-                    /* set interrupt disable in stop mode */
-                    DisableCnt[Controller]=1U;
-
-                }
-
-                /*[SWS_Can_00282] The function Can_SetControllerMode(CAN_CS_STOPPED)
-                                 shall cancel pending messages.*/
-
-
-                for(HOH_Index=0U;HOH_Index<NUM_OF_HOH;HOH_Index++)
-                {
-
-                        if(Global_Config->CanHardwareObjectRef[HOH_Index].CanObjectType== transmit)
-                        {
-                            while(Can_HWObjIndex<Global_Config->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
-                            {
-
-                                CAN0_IF1CRQ_R =((uint32)((uint32)Can_HWObjIndex));
-                                CAN0_IF1MCTL_R&=((uint32)(~(uint32)0x100U));
-                                CAN0_IF1CMSK_R &= ((uint32)(~(uint32)0x80U));
-                                Can_HWObjIndex++;
-                            }
-                        }
-                        else
-                        {
-
-                        }
-
-                }
+                /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
+                      by function Can_disableControllerInterrupts.*/
+                HWREG(ui32BaseAddress + CAN_O_CTL) |= CAN_CTL_INIT;
 
 
             }
-            else if(Controller == CAN1_ID)
+            else
             {
-                if(DisableCnt[1U]>=1U)
-                {
-                    /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
-                          by function Can_disableControllerInterrupts.*/
-                    HWREG(CAN1_BASE + CAN_O_CTL) |= CAN_CTL_INIT;
+                /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
+                      by function Can_disableControllerInterrupts.*/
+                HWREG(ui32BaseAddress + CAN_O_CTL) |= CAN_CTL_INIT;
 
+                /* disable the CAN controller Interrupt     */
+                HWREG(ui32BaseAddress + CAN_O_CTL) &= ~(CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS);
+                /* set interrupt disable in stop mode */
+                DisableCnt[Controller]=1U;
 
-                }
-                else
-                {
-                    /*Disabling of CAN interrupts shall not be executed, when CAN interrupts have been disabled
-                          by function Can_disableControllerInterrupts.*/
-                    HWREG(CAN1_BASE + CAN_O_CTL) |= CAN_CTL_INIT;
-                    /* disable the CAN controller Interrupt     */
-                    HWREG(CAN1_BASE + CAN_O_CTL) &= ~(CAN_INT_MASTER | CAN_INT_ERROR | CAN_INT_STATUS);
-                    /* set interrupt disable in stop mode */
-                    DisableCnt[Controller]=1U;
-
-                }
-
-
-       /*[SWS_Can_00282] The function Can_SetControllerMode(CAN_CS_STOPPED)
-            shall cancel pending messages.*/
-
-
+            }
+            /*[SWS_Can_00282] The function Can_SetControllerMode(CAN_CS_STOPPED)
+                             shall cancel pending messages.*/
             for(HOH_Index=0U;HOH_Index<NUM_OF_HOH;HOH_Index++)
             {
 
-                    if(Global_Config->CanHardwareObjectRef[HOH_Index].CanObjectType==transmit)
-                    {
-                        while(Can_HWObjIndex<Global_Config->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
-                        {
-
-                            CAN1_IF1CRQ_R =((uint32)((uint32)Can_HWObjIndex));
-                            CAN1_IF1MCTL_R&=((uint32)(~(uint32)0x100U));
-                            CAN1_IF1CMSK_R &= ((uint32)(~(uint32)0x80U));
-                            Can_HWObjIndex++;
-                        }
-                    }
-                    else
+                if(Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanObjectType== transmit)
+                {
+                    while(Can_HWObjIndex<Global_Config->CanConfigSetRef->CanHardwareObjectRef[HOH_Index].CanHwObjectCount)
                     {
 
+                        HWREG(ui32BaseAddress + CAN_O_IF1CRQ) =((uint32)((uint32)Can_HWObjIndex));
+                        HWREG(ui32BaseAddress + CAN_O_IF1MCTL) &=((uint32)(~(uint32)0x100U));
+                        HWREG(ui32BaseAddress + CAN_O_IF1CMSK) &= ((uint32)(~(uint32)0x80U));
+                        Can_HWObjIndex++;
                     }
-                    }
+                }
+                else
+                {
 
+                }
             }
-
-
             /* setting the new mode to SLEEP */
             ControllerState[Controller] = CAN_CS_SLEEP;
-
-
+            break;
+        default:
+            ret = E_NOT_OK;
         }
     }
-
-
     /*[SWS_Can_00262] The function Can_SetControllerMode(CAN_CS_STARTED) shall wait for
                   limited time until the CAN controller is fully operational. Compare to SWS_Can_00398.*/
 
