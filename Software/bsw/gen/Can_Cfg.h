@@ -121,9 +121,9 @@ present it shall have the Id 0.*/
 /* Selects support of Pretended Network features in Can driver. */
 #define CAN_PUBLIC_ICOM_SUPPORT 				STD_OFF
 
-#define INTERRUPT_PROCESSING (uint8)0U   /* Interrupt Mode of operation*/
-#define MIXED_PROCESSING     (uint8)1U   /* Mixed Mode of operation  */
-#define POLLING_PROCESSING   (uint8)2U   /* Polling Mode of operation*/
+#define INTERRUPT_PROCESSING ((uint8)0U)   /* Interrupt Mode of operation*/
+#define MIXED_PROCESSING     ((uint8)1U)   /* Mixed Mode of operation  */
+#define POLLING_PROCESSING   ((uint8)2U)   /* Polling Mode of operation*/
 
 #define CAN_CONTROLLER_0_ACTIVATION STD_ON
 #define CAN_CONTROLLER_1_ACTIVATION STD_ON

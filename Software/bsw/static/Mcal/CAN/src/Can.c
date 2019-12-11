@@ -1772,12 +1772,11 @@ void Can_MainFunction_Write(void)
 	uint8 index;
 	for(ControllerIndex=0 ; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
 	{
-#if ((POLLING_PROCESSING ==	Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing)
-	|| (MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing))
+#if ((POLLING_PROCESSING ==	Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing) || (MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing))
 	
 	PduIdType PduId = swPduHandle ; /* Stub variable */
 
-	#if (CAN_CONTROLLER_ACTIVATION[ControllerIndex] == STD_ON)
+	#if (STD_ON == CAN_CONTROLLER_ACTIVATION[ControllerIndex])
 	
 		/* Transfer the data in the CAN message object specified by
 			the MNUM field in the CANIFnCRQ register into the CANIFn
