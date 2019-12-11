@@ -29,13 +29,15 @@ CanController CanControllerCfg[] =
     {
         0,                                  /*  Controller ID   */
         0x40040000,                         /*  BASE Address    */
-        &Clk,                               /*  Reference to System clock in Hz */
+        MIXED_PROCESSING,
+		&Clk,                               /*  Reference to System clock in Hz */
         &CanControllerBaudrateConf[0]       /*  Reference to Baudrate configuration */
     },
     {
         1,                                  /*  Controller ID   */
         0x40041000,                         /*  BASE Address    */
-        &Clk,                               /*  Reference to System clock in Hz */
+        MIXED_PROCESSING,
+		&Clk,                               /*  Reference to System clock in Hz */
         &CanControllerBaudrateConf[0]       /*  Reference to Baudrate configuration */
     }
 };

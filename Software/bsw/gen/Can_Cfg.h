@@ -43,7 +43,7 @@
 
 #define MAX_BAUDRATE_CONFIGS_CONTROLLER_0 	     (1U)
 #define MAX_BAUDRATE_CONFIGS_CONTROLLER_1	     (1U)
-#define USED_CONTROLLERS_NUMBER                  (2U)                /*number of can controllers in the ECU*/
+#define USED_CONTROLLERS_NUMBER                  ((uint8)2U)                /*number of can controllers in the ECU*/
 #define CAN_HOH_NUMBER                           (2U)
 #define CAN_HRH_NUMBER                           (1U)
 #define CAN_HTH_NUMBER                           (1U)
@@ -121,15 +121,9 @@ present it shall have the Id 0.*/
 /* Selects support of Pretended Network features in Can driver. */
 #define CAN_PUBLIC_ICOM_SUPPORT 				STD_OFF
 
-/* Enables / disables API Can_MainFunction_Write() for handling PDU transmission
-events in polling mode. */
-typedef uint8 CanProcessingType;
-#define CAN_TX_PROCESSING_0 MIXED_PROCESSING
-#define CAN_TX_PROCESSING_1 MIXED_PROCESSING
-
-#define INTERRUPT_PROCESSING 0U   /* Interrupt Mode of operation*/
-#define MIXED_PROCESSING     1U   /* Mixed Mode of operation  */
-#define POLLING_PROCESSING  2U   /* Polling Mode of operation*/
+#define INTERRUPT_PROCESSING (uint8)0U   /* Interrupt Mode of operation*/
+#define MIXED_PROCESSING     (uint8)1U   /* Mixed Mode of operation  */
+#define POLLING_PROCESSING   (uint8)2U   /* Polling Mode of operation*/
 
 #define CAN_CONTROLLER_0_ACTIVATION STD_ON
 #define CAN_CONTROLLER_1_ACTIVATION STD_ON
@@ -173,7 +167,7 @@ Example: HRH0-0, HRH1-1, HTH0-2, HTH1-3*/
 
 
 
-#define NUM_OF_HOH 2U
+#define NUM_OF_HOH (uint8)2U
 #define HOH_0_ID 0U
 #define HOH_1_ID 1U
 #define HOH_0_OBJ_CNT 1U

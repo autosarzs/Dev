@@ -200,7 +200,12 @@ typedef struct {
     */
     uint8   CanControllerId;
 
-    /*
+	/* [ECUC_Can_00318] Enables / disables API Can_MainFunction_Write() 
+	 * for handling PDU transmission events in polling mode.
+	 */
+	uint8 CanTxProcessing;
+    
+	/*
     *   Specifies the CAN controller base address.
     */
     uint32 CanControllerBaseAddress;
@@ -210,6 +215,8 @@ typedef struct {
     *   It shall be given in Hz
     */
     McuClockReferencePoint* CanCpuClockRef;
+	
+	
 
     /*
     *   Reference to baudrate configuration container configured for the Can    Controller.
