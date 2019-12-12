@@ -91,7 +91,8 @@ typedef struct {
 			StartMessageId  : 	ID of the  hardware meesage object in the HW    */
 typedef struct
 {
-	uint8 HTHId;              
+	uint8 HTHId;  
+	uint8 StartMessageId;
 	uint8 MessageId;      
 }str_MessageObjAssignedToHTH;
 /*****************************************************************************************/
@@ -1769,98 +1770,101 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 void Can_MainFunction_Write(void) 
 {
 	uint8 ControllerIndex=0; 
-	uint8 index;
+	
 	for(ControllerIndex=0 ; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
 	{
-#if ((POLLING_PROCESSING ==	Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing) || (MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing))
-	
-	PduIdType PduId = swPduHandle ; /* Stub variable */
-
-	#if (STD_ON == CAN_CONTROLLER_ACTIVATION[ControllerIndex])
-	
-		/* Transfer the data in the CAN message object specified by
-			the MNUM field in the CANIFnCRQ register into the CANIFn
-			registers*/
-		CLR_BIT_PERPHBAND(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1CMSK, CAN_IF1CMSK_WRNRD);
-		
-		for (index = 0; index < NUM_OF_HOH; index++) 
+		if ((POLLING_PROCESSING ==	Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing) || (MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing))
 		{
-			if (TRANSMIT == Global_Config->CanHardwareObjectRef[index].CanObjectType)
+			uint8 index;
+			PduIdType PduId = swPduHandle ; /* Stub variable */
+
+			if (STD_ON == CAN_CONTROLLER_ACTIVATION[ControllerIndex])
 			{
-				if (Global_Config->CanControllerCfgRef[ControllerIndex] == Global_Config->CanHardwareObjectRef[index].CanControllerRef)
+				
+				/* Transfer the data in the CAN message object specified by
+					the MNUM field in the CANIFnCRQ register into the CANIFn
+					registers*/
+				CLR_BIT_PERPHBAND(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1CMSK, CAN_IF1CMSK_WRNRD);
+				
+				for (index = 0; index < NUM_OF_HOH; index++) 
 				{
-					#if (POLLING_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing )
-
-						HWREG(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1CRQ) =
-						MessageObjAssignedToHTH[index].StartMessageId;
-
-						if(GET_BIT_PERPHBAND(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1MCTL , CAN_IF1MCTL_TXRQST) == (uint32)0)
+					if (TRANSMIT == Global_Config->CanHardwareObjectRef[index].CanObjectType)
+					{
+						if (&Global_Config->CanControllerCfgRef[ControllerIndex] == Global_Config->CanHardwareObjectRef[index].CanControllerRef)
 						{
-							CanIf_TxConfirmation(PduId);
-
-							/*The Can module shall call CanIf_TxConfirmation to indicate a
-							 successful transmission.It shall either called by the TX-interrupt service routine
-							 of the corresponding HW resource or inside the Can_MainFunction_Write in case of
-							 polling mode.*/
-						}
-
-						else
-						{
-							/* Do Nothing */
-						}
-					
-					#elif(MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing)
-
-						if ( STD_ON == Global_Config->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
-						{
-														
-							HWREG(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1CRQ) =
-							MessageObjAssignedToHTH[index].MessageId;
-
-							if(GET_BIT_PERPHBAND(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1MCTL , CAN_IF1MCTL_TXRQST) == (uint32)0)
+							if (POLLING_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing )
 							{
-								//CanIf_TxConfirmation(PduId);
+								HWREG(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1CRQ) =
+								MessageObjAssignedToHTH[index].StartMessageId;
 
-								/*The Can module shall call CanIf_TxConfirmation to indicate a
-								 successful transmission.It shall either called by the TX-interrupt service routine
-								 of the corresponding HW resource or inside the Can_MainFunction_Write in case of
-								 polling mode.*/
+								if(GET_BIT_PERPHBAND(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1MCTL , CAN_IF1MCTL_TXRQST) == (uint32)0)
+								{
+									CanIf_TxConfirmation(PduId);
+
+									/*The Can module shall call CanIf_TxConfirmation to indicate a
+									 successful transmission.It shall either called by the TX-interrupt service routine
+									 of the corresponding HW resource or inside the Can_MainFunction_Write in case of
+									 polling mode.*/
+								}
+
+								else
+								{
+									/* Do Nothing */
+								}
 							}
+							else if(MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing)
+							{
+								if ( STD_ON == Global_Config->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
+								{
+																
+									HWREG(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1CRQ) =
+									MessageObjAssignedToHTH[index].MessageId;
 
+									if(GET_BIT_PERPHBAND(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1MCTL , CAN_IF1MCTL_TXRQST) == (uint32)0)
+									{
+										//CanIf_TxConfirmation(PduId);
+
+										/*The Can module shall call CanIf_TxConfirmation to indicate a
+										 successful transmission.It shall either called by the TX-interrupt service routine
+										 of the corresponding HW resource or inside the Can_MainFunction_Write in case of
+										 polling mode.*/
+									}
+
+									else 
+									{
+										/* Do Nothing */
+									}
+								}
+								else 
+								{
+									/*Do Nothing */
+								}
+							}
 							else 
 							{
-								/* Do Nothing */
-							}
+								/*Do Nothing */
+							}	
 						}
-
-						else 
+						else
 						{
-							/*Do Nothing */
-						}	
-
-					#else
-					
-					/*Do Nothing */
-					#endif
-				}
-                else
-                {
+								/* Do Nothing */
+						}
+					}
+					else
+					{
 						/* Do Nothing */
-                }
-            }
-
-            else
-            {
-                /* Do Nothing */
-            }
+					}
+				}
+			}
+			else
+			{
+					/* Do Nothing */
+			}
 		}
-	#else 
-		/*Do Nothing*/
-	
-	#endif
-#else
-		/* Do Nothing */
-#endif
+		else
+		{
+				/* Do Nothing */
+		}
 	}
 }
 
