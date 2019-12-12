@@ -1773,7 +1773,8 @@ void Can_MainFunction_Write(void)
 	
 	for(ControllerIndex=0 ; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
 	{
-		if ((POLLING_PROCESSING ==	Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing) || (MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing))
+		if ((POLLING_PROCESSING ==	Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing)
+			|| (MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing))
 		{
 			uint8 index;
 			PduIdType PduId = swPduHandle ; /* Stub variable */
