@@ -51,3 +51,19 @@ void CanIf_ControllerModeIndication( uint8 ControllerId, Can_ControllerStateType
 {
 
 }
+
+/**
+ * \brief This callout function is called whenever a CAN message is
+ *  received in CAN driver.
+ */
+void CanIf_RxIndication
+(
+    const Can_HwType * Mailbox,
+    const PduInfoType * PduInfoPtr
+)
+
+{
+
+}
+
+

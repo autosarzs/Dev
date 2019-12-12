@@ -823,6 +823,17 @@ void Can_DeInit(void) {
              , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );  // DeInit CAN controller1
 }
 
+/****************************************************************************************/
+/*    Function Description    : This function                    */
+/*    Parameter in            : none                                                    */
+/*    Parameter inout         : none                                                    */
+/*    Parameter out           : none                                                    */
+/*    Return value            : none                                                    */
+/*    Requirment              : SWS_Can_                                           */
+/*    Notes                   :                                                        */
+/*                                                                                      */
+/*                                                                                      */
+/*****************************************************************************************/
 void Can_MainFunction_Read(void) {
 
 #if((CanRxProcessing == POLLING ) || (CanRxProcessing == MIXED))
@@ -844,7 +855,7 @@ void Can_MainFunction_Read(void) {
         }//End if
 #endif //CanDevErrorDetect
         /*
-         * loop for all the hardware object to get the only new avialables data in this object
+         * loop for all the hardware object to get the only new available data in this object
          */
         // TODO psMsgObject shold be config inside init API
         for(obj_index = 0; obj_index < NUM_OF_HOH; obj_index++)
@@ -866,7 +877,7 @@ void Can_MainFunction_Read(void) {
                     Mailbox.ControllerId = controllerId;
                     // 2. inform CanIf using API below.
                     //TODO fill  PduInfoPt and protoype of can iF
-                  //  CanIf_RxIndication(Mailbox, PduInfoPtr);//We need to ask how to access these vars
+                    CanIf_RxIndication(Mailbox, PduInfoPtr);//We need to ask how to access these vars
                 }// END IF
             }
         }// end of object in this controller ID
@@ -874,6 +885,17 @@ void Can_MainFunction_Read(void) {
 #endif
 }
 
+/****************************************************************************************/
+/*    Function Description    : This function                    */
+/*    Parameter in            : none                                                    */
+/*    Parameter inout         : none                                                    */
+/*    Parameter out           : none                                                    */
+/*    Return value            : none                                                    */
+/*    Requirment              : SWS_Can_                                           */
+/*    Notes                   :                                                        */
+/*                                                                                      */
+/*                                                                                      */
+/*****************************************************************************************/
 //Can_MainFunction_BusOff_0 or Can_MainFunction_BusOff
 void Can_MainFunction_BusOff(void) {
 uint8 controllerId; /*variable to count controllers number*/
@@ -1648,70 +1670,70 @@ Return value:   Std_ReturnType  -->E_OK: Error state request has been accepted
 */
 Std_ReturnType Can_GetControllerErrorState(uint8 ControllerId,Can_ErrorStateType* ErrorStatePtr)
 {
-/*Save Return value*/
-Std_ReturnType Return_type =E_OK;
-uint32  BaseAddress=0;
-/*Variable to read CAN Error state register*/
-Can_ErrorStateType   ErrorState = 0;
+    /*Save Return value*/
+    Std_ReturnType Return_type =E_OK;
+    uint32  BaseAddress=0;
+    /*Variable to read CAN Error state register*/
+    Can_ErrorStateType   ErrorState = 0;
 
 #if(CanDevErrorDetect==STD_ON)
-/**
-[SWS_Can_91006]  If development error detection for the Can module is enabled: if the parameter ControllerId is out of range,
-the function Can_GetControllerErrorState shall raise development error CAN_E_PARAM_CONTROLLER and return E_NOT_OK.
-*/
-if(ControllerId >= USED_CONTROLLERS_NUMBER )
-{
-    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_PARAM_CONTROLLER);
-    return E_NOT_OK;
-}
-/**
-[SWS_Can_91005]  If development error detection for the Can module is enabled: if the module is not yet initialized,
- the function Can_GetControllerErrorState shall raise development error CAN_E_UNINIT and return E_NOT_OK
-*/
-if(ModuleState == CAN_UNINIT)
-{
-    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_UNINIT);
-    return E_NOT_OK;
-}
-/**
-[SWS_Can_91007]  If development error detection for the Can module is enabled: if the parameter ErrorStatePtr is a null pointer,
- the function Can_GetControllerErrorState shall raise development error  CAN_E_PARAM_POINTER and return E_NOT_OK.
-*/
-if(ErrorStatePtr == NULL_PTR)
-{
-    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_PARAM_POINTER);
-    return E_NOT_OK;
-}
+    /**
+    [SWS_Can_91006]  If development error detection for the Can module is enabled: if the parameter ControllerId is out of range,
+    the function Can_GetControllerErrorState shall raise development error CAN_E_PARAM_CONTROLLER and return E_NOT_OK.
+    */
+    if(ControllerId >= USED_CONTROLLERS_NUMBER )
+    {
+        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_PARAM_CONTROLLER);
+        return E_NOT_OK;
+    }
+    /**
+    [SWS_Can_91005]  If development error detection for the Can module is enabled: if the module is not yet initialized,
+     the function Can_GetControllerErrorState shall raise development error CAN_E_UNINIT and return E_NOT_OK
+    */
+    if(ModuleState == CAN_UNINIT)
+    {
+        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_UNINIT);
+        return E_NOT_OK;
+    }
+    /**
+    [SWS_Can_91007]  If development error detection for the Can module is enabled: if the parameter ErrorStatePtr is a null pointer,
+     the function Can_GetControllerErrorState shall raise development error  CAN_E_PARAM_POINTER and return E_NOT_OK.
+    */
+    if(ErrorStatePtr == NULL_PTR)
+    {
+        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_PARAM_POINTER);
+        return E_NOT_OK;
+    }
 
 #endif
-/**
-[SWS_Can_91008] When the API Can_GetControllerErrorState()  is called with Controller Id as input parameter then Can driver shall read
-the error state register of Can Controller and shall return the error status to upper layer
-*/
+    /**
+    [SWS_Can_91008] When the API Can_GetControllerErrorState()  is called with Controller Id as input parameter then Can driver shall read
+    the error state register of Can Controller and shall return the error status to upper layer
+    */
 
-             /* Save Current controller BaseAddress*/
-             BaseAddress = Global_Config->CanControllerCfgRef[ControllerId].CanControllerBaseAddress ;
-             /* Save Error State it can be
-              *BussOff OR Error Active state Or Error Passive state
-              */
-             ErrorState  = (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_BOFF ) | \
-                           (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_EPASS) ;
-                  switch (ErrorState)
-                  {
-                      case CAN_ERRORSTATE_ACTIVE  :
-                      *ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
-                      break;
-                      case  CAN_ERRORSTATE_PASSIVE:
-                      *ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
-                      break;
-                      case CAN_ERRORSTATE_BUSOFF  :
-                      *ErrorStatePtr = CAN_ERRORSTATE_BUSOFF ;
-                      default  :
-                      Return_type =E_NOT_OK;
-                      break;
-                  }
+    /* Save Current controller BaseAddress*/
+    BaseAddress = Global_Config->CanControllerCfgRef[ControllerId].CanControllerBaseAddress ;
+    /* Save Error State it can be
+    *BussOff OR Error Active state Or Error Passive state
+    */
+    ErrorState  = (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_BOFF ) | \
+               (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_EPASS) ;
+    switch (ErrorState)
+    {
+        case CAN_ERRORSTATE_ACTIVE  :
+        *ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
+        break;
+        case  CAN_ERRORSTATE_PASSIVE:
+        *ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
+        break;
+        case CAN_ERRORSTATE_BUSOFF  :
+        *ErrorStatePtr = CAN_ERRORSTATE_BUSOFF ;
+        break;
+        default:
+        Return_type =E_NOT_OK;
+    }
 
-return  Return_type;
+    return  Return_type;
 }
 
 Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* ControllerModePtr) 
