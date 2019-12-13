@@ -59,10 +59,7 @@
 
 // ECUC_Can_00317
 #define POLLING 2
-
 #define INTERRUPT 0
-
-#define CanRxProcessing POLLING
 
 #define CAN_polling_timout 300
 

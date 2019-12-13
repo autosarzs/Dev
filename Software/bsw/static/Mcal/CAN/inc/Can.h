@@ -200,6 +200,11 @@ typedef struct {
     */
     uint8   CanControllerId;
 
+	/*	[ECUC_Can_00317] Enables / disables API Can_MainFunction_Write() for handling PDU transmission
+	 *	events in polling mode
+	 */
+	uint8 CanRxProcessing;
+	
     /*
     *   Specifies the CAN controller base address.
     */

@@ -836,53 +836,58 @@ void Can_DeInit(void) {
 /*****************************************************************************************/
 void Can_MainFunction_Read(void) {
 
-#if((CanRxProcessing == POLLING ) || (CanRxProcessing == MIXED))
-    Can_HwType Mailbox; // the varaible for Callback function RxIndication
-    int obj_index;  /* variable to count object number */
-    uint8 controllerId; /*variable to count controllers number*/
-    /*
-     *   Loop all controllers to get the new data
-     */
-    // TODO controlledID  base address not implemented here ?
-    for (controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER;controllerId += 1)
-    {
-#if (CanDevErrorDetect == STD_ON)
-        if (ControllerState[controllerId] == CAN_CS_UNINIT)
-        {
-            // report error to diag
-      //      Det_ReportError(Can_MainFunction_Read_ID,CAN_CS_UNINIT);
-            continue;
-        }//End if
-#endif //CanDevErrorDetect
-        /*
-         * loop for all the hardware object to get the only new available data in this object
-         */
-        // TODO psMsgObject shold be config inside init API
-        for(obj_index = 0; obj_index < NUM_OF_HOH; obj_index++)
-        {
-            if(Global_Config->CanHardwareObjectRef[obj_index].CanObjectType==receive)
-            {
-                /*
-                 * Reads a CAN message from one of the message object buffers.
-                 */
-                CANMessageGet(controllerId, obj_index, psMsgObject[obj_index], bClrPendingInt);
-                // check if this object have new data avialables
-                if(( psMsgObject[obj_index]->ui32Flags & MSG_OBJ_NEW_DATA) == MSG_OBJ_NEW_DATA)
-                {
-                    //message ID
-                    Mailbox.CanId = psMsgObject[obj_index]->ui32MsgID;
-                    //hardware object that has new date
-                    Mailbox.Hoh = obj_index;
-                    // controller ID
-                    Mailbox.ControllerId = controllerId;
-                    // 2. inform CanIf using API below.
-                    //TODO fill  PduInfoPt and protoype of can iF
-                    CanIf_RxIndication(Mailbox, PduInfoPtr);//We need to ask how to access these vars
-                }// END IF
-            }
-        }// end of object in this controller ID
-    }// end loop for controllerId
-#endif
+if ((POLLING_PROCESSING ==	Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanRxProcessing)
+	|| (MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanRxProcessing))
+	{
+		Can_HwType Mailbox; // the varaible for Callback function RxIndication
+		int obj_index;  /* variable to count object number */
+		uint8 controllerId; /*variable to count controllers number*/
+		/*
+		 *   Loop all controllers to get the new data
+		 */
+		// TODO controlledID  base address not implemented here ?
+		for (controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER;controllerId += 1)
+		{
+	#if (CanDevErrorDetect == STD_ON)
+			if (ControllerState[controllerId] == CAN_CS_UNINIT)
+			{
+				// report error to diag
+		  //      Det_ReportError(Can_MainFunction_Read_ID,CAN_CS_UNINIT);
+				continue;
+			}//End if
+	#endif //CanDevErrorDetect
+			/*
+			 * loop for all the hardware object to get the only new available data in this object
+			 */
+			// TODO psMsgObject shold be config inside init API
+			for(obj_index = 0; obj_index < NUM_OF_HOH; obj_index++)
+			{
+				if(Global_Config->CanHardwareObjectRef[obj_index].CanObjectType==receive)
+				{
+					/*
+					 * Reads a CAN message from one of the message object buffers.
+					 */
+					CANMessageGet(controllerId, obj_index, psMsgObject[obj_index], bClrPendingInt);
+					// check if this object have new data avialables
+					if(( psMsgObject[obj_index]->ui32Flags & MSG_OBJ_NEW_DATA) == MSG_OBJ_NEW_DATA)
+					{
+						//message ID
+						Mailbox.CanId = psMsgObject[obj_index]->ui32MsgID;
+						//hardware object that has new date
+						Mailbox.Hoh = obj_index;
+						// controller ID
+						Mailbox.ControllerId = controllerId;
+						// 2. inform CanIf using API below.
+						//TODO fill  PduInfoPt and protoype of can iF
+						CanIf_RxIndication(Mailbox, PduInfoPtr);//We need to ask how to access these vars
+					}// END IF
+				}
+			}// end of object in this controller ID
+		}// end loop for controllerId
+	}
+	else
+	{
+	}
 }
 
 /****************************************************************************************/
