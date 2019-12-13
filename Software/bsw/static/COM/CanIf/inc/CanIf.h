@@ -79,22 +79,22 @@ typedef struct {
 						INDEX 	Selects Index Filter method.
 						LINEAR 	Selects Linear Filter method.
 						TABLE 	Selects Table Filter method.*/
-				uint8  CanIfPrivateSoftwareFilter;
-}CanIfPrivateCfg;
+				CANIF_PRIVATE_SOFTWARE_FILTER_TYPE  CanIfPrivateSoftwareFilterType;
+}CanIfPrivateCfgType;
 
 typedef struct {
 				/* Defines header files for callback functions which shall be included in
 				case of CDDs. Range of characters is 1.. 32. 
 				Type: EcucStringParamDef*/
-				uint8 CanIfPublicCddHeaderFileStr[CanIfPublicCddHeaderFile];
-}CanIfPublicCfg;
+				uint8 CanIfPublicCddHeaderFile[CANIF_PUBLIC_CDD_HEADER_FILE];
+}CanIfPublicCfgType;
  
 typedef struct {
 				/* Check with the Author the change i have made before comitting */
 				/*	Selects the CAN Interface specific configuration setup. This type of the external data structure shall 
 				contain the post build initialization data for the CAN Interface for all underlying CAN Dirvers.
 				constant to CanIf_ConfigType*/
-				uint8 CanIfInitCfgSetStr[CanIfInitCfgSet];
+				uint8 CanIfInitCfgSet[CANIF_INIT_CFG_SET];
 				
 				/* Maximum total size of all Tx buffers. This parameter is needed only in
 				case of post-build loadable implementation using static memory
@@ -144,7 +144,7 @@ typedef struct {
 				CAN_ID_32. */
 				CanIfTxPduCfg	CanIfTxPduConfig;
 				
-}CanIfInitCfg;
+}CanIfInitCfgType;
 
 typedef struct {
 				/* CAN Identifier of transmit CAN L-PDUs used by the CAN Driver for
@@ -167,7 +167,7 @@ typedef struct {
 						EXTENDED_FD_CAN CAN FD 	frame with extended identifier (29 bits)
 						STANDARD_CAN CAN 		frame with standard identifier (11 bits)
 						STANDARD_FD_CAN CAN FD 	frame with standard identifier (11 bits) */
-				uint8 CanIfTxPduCanIdType;
+				CANIF_TX_PDU_CAN_ID_TYPE CanIfTxPduCanIdType;
 				
 				/* ECU wide unique, symbolic handle for transmit CAN L-SDU.
 				Range: 0..max. number of CantTxPduIds */
@@ -179,7 +179,7 @@ typedef struct {
 				the corresponding controller applies no CanIfPnFilter.
 				dependency: This parameter shall only be configurable if
 				CanIfPublicPnSupport equals True. */
-				#if(CanIfPublicPnSupport==STD_ON)
+				#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
 					uint8 CanIfTxPduPnFilterPdu;
 				#endif
 				
@@ -187,7 +187,7 @@ typedef struct {
 				L-SDU for reading its notification status.
 				True: Enabled False: Disabled
 				dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-				#if(CANIF_READTXPDU_NOTIFY_STATUS_API==STD_ON)
+				#if(CANIF_TX_PDU_READ_NOTIFY_STATUS==STD_ON)
 					uint8 CanIfTxPduReadNotifyStatus;
 				#endif
 				
@@ -202,7 +202,7 @@ typedef struct {
 				/* Defines the type of each transmit CAN L-PDU.
 				Range:	DYNAMIC 	CAN ID is defined at runtime.
 						STATIC 		CAN ID is defined at compile-time. */
-				uint8 CanIfTxPduType;
+				CANIF_TX_PDU_TYPE CanIfTxPduType;
 				
 				/* This parameter defines the upper layer (UL) module to which the confirmation of
 				the successfully transmitted CANTXPDUID has to be routed via the <User_TxConfirmation>.
@@ -223,7 +223,7 @@ typedef struct {
 				<User_TriggerTransmit>() will not be called and CanIfTxPduUserTxConfirmationUL
 				as well as CanIfTxPduUserTriggerTransmitName need not to be configured. */
 				#if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
-					uint8 CanIfTxPduUserTxConfirmationUL;
+					CANIF_TX_PDU_USER_TX_CONFIRMATION_UL CanIfTxPduUserTxConfirmationUL;
 				#endif
 				
 				/* Configurable reference to a CanIf buffer configuration. CanIfBufferCfg */
@@ -232,7 +232,7 @@ typedef struct {
 				/* Reference to the "global" Pdu structure to allow harmonization of handle IDs in the COM-Stack.
 				//Pdu* CanIfTxPduRef;
 				will be configured in implementation */
-}CanIfTxPduCfg;
+}CanIfTxPduCfgType;
 
 typedef struct{
 				/* CAN Identifier of Receive CAN L-PDUs used by the CAN Interface.
@@ -257,7 +257,7 @@ typedef struct{
 						STANDARD_CAN 			CAN 2.0 or CAN FD frame with standard identifier (11 bits)
 						STANDARD_FD_CAN 		CAN FD frame with standard identifier (11 bits)
 						STANDARD_NO_FD_CAN 		CAN 2.0 frame with standard identifier (11 bits) */
-				uint8 CanIfRxPduCanIdType;
+				CANIF_RX_PDU_CAN_ID_TYPE CanIfRxPduCanIdType;
 				
 				/* Data length of the received CAN L-PDUs used by the CAN Interface.
 				This information is used for Data Length Check. Additionally it might
@@ -273,7 +273,7 @@ typedef struct{
 				/* Enables and disables the Rx buffering for reading of received L-SDU
 				data. True: Enabled False: Disabled
 				dependency: CANIF_CANPDUID_READDATA_API must be enabled */
-				#if(CANIF_CANPDUID_READDATA_API==STD_ON)
+				#if(CANIF_CAN_PDU_ID_READ_DATA_API==STD_ON)
 					uint8 CanIfRxPduReadData;
 				#endif
 				
@@ -281,7 +281,7 @@ typedef struct{
 				for reading its notification status.
 				True: Enabled False: Disabled
 				dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
-				#if(CanIfPublicReadRxPduNotifyStatusApi==STD_ON)
+				#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
 					uint8 CanIfRxPduReadNotifyStatus;
 				#endif
 				
@@ -303,7 +303,7 @@ typedef struct{
 				are configured for receive indications and thus <User_RxIndication>()
 				shall not be called, CANIF_RXPDU_USERRXINDICATION_UL and
 				CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
-				uint8 CanIfRxPduUserRxIndicationUL;
+				CANIF_RX_PDU_USER_RX_INDICATION_UL CanIfRxPduUserRxIndicationUL;
 				
 				/* The HRH to which Rx L-PDU belongs to, is referred through this parameter.
 				dependency: This information has to be derived from the CAN Driver configuration.*/
@@ -312,7 +312,7 @@ typedef struct{
 				/* Reference to the "global" Pdu structure to allow harmonization of handle IDs in the COM-Stack.
 				//Pdu* CanIfRxPduRef;
 				will be configured in implementation */
-}CanIfRxPduCfg;
+}CanIfRxPduCfgType;
 
 typedef struct{
 				/* Lower CAN Identifier of a receive CAN L-PDU for identifier range
@@ -324,50 +324,50 @@ typedef struct{
 				definition, in which all CAN Ids are mapped to one PduId.
 				Range: 0 - 536870911 */
 				uint32 CanIfRxPduCanIdRangeUpperCanId;
-}CanIfRxPduCanIdRange;
+}CanIfRxPduCanIdRangeType;
 
 typedef struct{
 				/* This parameter defines the upper layer module to which the CheckTrcvWakeFlagIndication
 				from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
 				parameter shall not be configurable. */
-				#if(CanIfPublicPnSupport==STD_ON)
-					uint8 CanIfDispatchUserCheckTrcvWakeFlagIndicationUL;
+				#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
+					CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_UL CanIfDispatchUserCheckTrcvWakeFlagIndicationUL;
 				#endif
 				
 				/* This parameter defines the upper layer module to which the ClearTrcvWufFlagIndication
 				from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
 				parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
-				#if(CanIfPublicPnSupport==STD_ON)
-					uint8 CanIfDispatchUserClearTrcvWufFlagIndicationUL;
+				#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
+					CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_UL CanIfDispatchUserClearTrcvWufFlagIndicationUL;
 				#endif
 				
 				/* This parameter defines the upper layer module to which the ClearTrcvWufFlagIndication
 				from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
 				parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
-				#if(CanIfPublicPnSupport==STD_ON)
-					uint8 CanIfDispatchUserConfirmPnAvailabilityUL;
+				#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
+					CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_UL CanIfDispatchUserConfirmPnAvailabilityUL;
 				#endif
 				
 				/* This parameter defines the upper layer (UL) module to which the notifications of all
 				ControllerBusOff events from the CAN Driver modules have to be routed via <User_ControllerBusOff>.
 				There is no possibility to configure no upper layer (UL) module as the provider of <User_ControllerBusOff>.
 				dependency: CANIF_PUBLIC_PN_SUPPORT */
-				uint8 CanIfDispatchUserCtrlBusOffUL;
+				CANIF_DISPATCH_USER_CTRL_BUS_OFF_UL CanIfDispatchUserCtrlBusOffUL;
 				
 				/* This parameter defines the upper layer (UL) module to which the notifications of all ControllerTransition
 				events from the CAN Driver modules have to be routed via <User_ControllerModeIndication>. */
-				uint8 CanIfDispatchUserCtrlModeIndicationUL;
+				CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_UL CanIfDispatchUserCtrlModeIndicationUL;
 				
 				/* This parameter defines the upper layer (UL) module to which the notifications of all TransceiverTransition
 				events from	the CAN Transceiver Driver modules have to be routed via <User_TrcvModeIndication>. If no UL module is configured, no upper	layer callback function will be called. */
-				uint8 CanIfDispatchUserTrcvModeIndicationUL;
+				CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_UL CanIfDispatchUserTrcvModeIndicationUL;
 				
 				/* This parameter defines the upper layer (UL) module to which the notifications about positive former requested
 				wake up sources have to be routed via <User_ValidateWakeupEvent>. If parameter CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, this parameter cannot be configured. dependency: CANIF_WAKEUP_CHECK_VALIDATION_API */
-				#if(CanIfPublicWakeupCheckValidSupport==STD_ON)
-					uint8 CanIfDispatchUserValidateWakeupEventUL;
+				#if(CANIF_PUBLIC_WAKEUP_CHECK_VALID_SUPPORT==STD_ON)
+					CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_UL CanIfDispatchUserValidateWakeupEventUL;
 				#endif
-}CanIfDispatchCfg;
+}CanIfDispatchCfgType;
 
 typedef struct {
 				/*This parameter abstracts from the CAN Driver specific parameter
@@ -382,7 +382,7 @@ typedef struct {
 				container shall be referenced by this link: CanControllerId, CanWakeupSourceRef
 				Range: 0..max. number of underlying supported CAN controllers*/
 				CanController *CanIfCtrlCanCtrlRef;
-}CanIfCtrlCfg;
+}CanIfCtrlCfgType;
 
 typedef struct {
 				/*Description Reference to the Init Hoh Configuration*/
@@ -396,14 +396,14 @@ typedef struct {
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	
 				CanIfCtrlCfg CanIfCtrlConfig;
-}CanIfCtrlDrvCfg;
+}CanIfCtrlDrvCfgType;
 
 typedef struct {
 				/*This container contains the configuration (parameters) of
 				one addressed CAN transceiver by the underlying CAN Transceiver Driver module.
 				For each CAN transceiver a seperate instance of this container has to be provided. */
 				CanIfTrcvCfg CanIfTrcvConfig;
-}CanIfTrcvDrvCfg
+}CanIfTrcvDrvCfgType;
 
 typedef struct {
 				/*This parameter abstracts from the CAN Transceiver Driver specific parameter Transceiver.
@@ -416,7 +416,7 @@ typedef struct {
 				CAN transceiver driver module to be served by the CAN Interface module.
 				Range: 0..max. number of underlying supported CAN transceivers*/
 				CanTrcvChannel* CanIfTrcvCanTrcvRef;
-}CanIfTrcvCfg;
+}CanIfTrcvCfgType;
 
 typedef struct{
 				/*This container contains configuration parameters for each hardware receive object (HRH).*/
@@ -424,7 +424,7 @@ typedef struct{
 
 				/*This container contains parameters related to each HTH.*/
 				CanIfHthCfg CanIfHthConfig;
-}CanIfInitHohCfg;
+}CanIfInitHohCfgType;
 
 typedef struct {
 				/*Reference to controller Id to which the HTH belongs to. A controller can contain one or more HTHs.*/
@@ -435,7 +435,7 @@ typedef struct {
 				- CanHandleType (see ECUC_Can_00323)
 				- CanObjectId (see ECUC_Can_00326) */
 				CanHardwareObject* CanIfHthIdSymRef;
-}CanIfHthCfg;
+}CanIfHthCfgType;
 
 typedef struct {
 				/*Reference to controller Id to which the HRH belongs to. A controller can contain one or more HRHs.*/	
@@ -446,7 +446,7 @@ typedef struct {
 	
 				/*Defines the parameters required for configurating multiple CANID ranges for a given same HRH.*/
 				CanIfHrhRangeCfg CanIfHrhRangeConfig;
-}CanIfHrhCfg;
+}CanIfHrhCfgType;
 
 typedef struct {
 				/*CAN Identifier used as base value in combination with CanIfHrhRangeMask for a masked ID range
@@ -465,12 +465,12 @@ typedef struct {
 				/*Specifies whether a configured Range of CAN Ids shall only consider standard CAN Ids or extended CAN Id
 				Range: 		EXTENDED All the CANIDs are of type extended only (29 bit).
 							STANDARD All the CANIDs are of type standard only (11bit). */
-				uint8 CanIfHrhRangeRxPduRangeCanIdType;
+				CANIF_HRH_RANGE_RX_PDU_RANGE_CAN_ID_TYPE CanIfHrhRangeRxPduRangeCanIdType;
 
 				/*Upper CAN Identifier of a receive CAN L-PDU for identifier range definition, in which all CAN Ids shall
 				pass the software filtering.*/
 				uint32 CanIfHrhRangeRxPduUpperCanId;
-}CanIfHrhRangeCfg;
+}CanIfHrhRangeCfgType;
 
 typedef struct {
 				/*This parameter defines the number of CanIf Tx L-PDUs which can be buffered in one Txbuffer. If this value
@@ -484,6 +484,6 @@ typedef struct {
 				All the CanIf Tx L-PDUs refer via the CanIfBufferCfg and this parameter to the HTHs if TxBuffering is enabled, or
 				not. Each HTH shall not be assigned to more than one buffer*/
 				CanIfHthCfg* CanIfBufferHthRef;
-}CanIfBufferCfg;
+}CanIfBufferCfgType;
 
 #endif /* __CANIF_H__ */
