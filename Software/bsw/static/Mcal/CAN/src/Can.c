@@ -719,6 +719,9 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
         else {
         }
     }
+	else
+	{
+	}
     /* End of Critical Section */
 	irq_Enable();
 }
@@ -802,15 +805,18 @@ void Can_DeInit(void) {
     {
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id, CAN_E_TRANSITION);
     }
-    /*  The function Can_DeInit shall raise the error CAN_E_TRANSITION if any of the CAN
-     *  controllers is in state STARTED [SWS_Can_91012]
-     */
-    if (CAN_CS_STARTED == ControllerState[0]
-            || CAN_CS_STARTED == ControllerState[1])
-    {
-        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id,
-                CAN_E_TRANSITION);
-    }
+	uint8 ControllerIndex = 0 ;
+	for(ControllerIndex = 0; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
+	{
+		/*  The function Can_DeInit shall raise the error CAN_E_TRANSITION if any of the CAN
+		 *  controllers is in state STARTED [SWS_Can_91012]
+		 */
+		if (CAN_CS_STARTED == ControllerState[ControllerIndex])
+		{
+			Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id,
+					CAN_E_TRANSITION);
+		}
+	}
 #endif
     /*  [SWS_Can_ 91009] The function Can_DeInit shall change the module state to
      *  CAN_UNINIT before de-initializing all controllers inside the HW unit
@@ -818,11 +824,12 @@ void Can_DeInit(void) {
      *  The state of a BSW Module shall be set accordingly at the beginning of the DeInitialization function
      */
     ModuleState = CAN_UNINIT;
-	/*	Disable the first four bits in CAN Control Register in both controllers */
-    CLR_BITS( HWREG(CAN0_BASE + CAN_O_CTL),0
-             , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );   // DeInit CAN controller0
-    CLR_BITS( HWREG(CAN1_BASE + CAN_O_CTL),0
-             , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );  // DeInit CAN controller1
+	for(ControllerIndex = 0; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
+	{
+		/*	Disable the first four bits in CAN Control Register in both controllers */
+		CLR_BITS( HWREG(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_CTL),0
+				 , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );   // DeInit CAN controller of ControllerIndex
+	}
 }
 
 void Can_MainFunction_Read(void) {
