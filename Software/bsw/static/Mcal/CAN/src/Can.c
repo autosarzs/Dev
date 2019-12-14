@@ -365,7 +365,7 @@ void Can_Init( const Can_ConfigType* Config)
     }
 
     /* Loop to Configure Hardware message objects to be Transmit or receive */
-    for(HOHCount = 0; HOHCount < CAN_HOH_NUMBER; HOHCount++)
+    for(HOHCount = 0; HOHCount < NUM_OF_HOH; HOHCount++)
     {
         /* Save the BaseAddress of the controller this Hardware Object Belongs to */
         BaseAddress = Global_Config->CanHardwareObjectRef[HOHCount].CanControllerRef->CanControllerBaseAddress;
@@ -929,20 +929,17 @@ Std_ReturnType Can_write (
 
 )
 {
-
-
     Std_ReturnType returnVal = E_NOT_OK ;
+	
+#if (CanDevErrorDetect == STD_ON)
 
-
-
-#if (CanDevErrorDetect == TRUE)
-
-    if (ModuleState == CAN_UNINIT)
+    if (CAN_UNINIT == ModuleState)
     {
         returnVal = E_NOT_OK ;
-        /// call Det function CAN_E_UNINIT
+        // call Det function CAN_E_UNINIT
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_UNINIT);
     }
-    else if (PduInfo == NULL_PTR)
+    else if (NULL_PTR == PduInfo)
     {
         /*
          * [SWS_CAN_00219] ⌈ If development error detection for CanDrv is enabled:
@@ -950,6 +947,7 @@ Std_ReturnType Can_write (
          * parameter PduInfo is a null pointer.⌋
          */
         returnVal = E_NOT_OK ;
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_POINTER);
     }
     else if (PduInfo->length > 8 )
     {
@@ -959,220 +957,194 @@ Std_ReturnType Can_write (
          * CAN_E_PARAM_DATA_LENGTH : if length is more that 8 bytes and Can controller is not CAN FD
          */
         returnVal = E_NOT_OK ;
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_DATA_LENGTH);
     }
-    else if (CanTriggerTransmitEnable == FALSE)
+    else if (FALSE == CanTriggerTransmitEnable)
     {
         /*
          * [SWS_CAN_00505] ⌈ If development error detection for CanDrv is enabled:
          * Can_Write() shall raise CAN_E_PARAM_POINTER and shall return E_NOT_OK if the
          * trigger transmit API is disabled for this hardware object (CanTriggerTransmitEnable =
-         * FALSE) and the SDU pointer inside PduInfo is a null pointer.⌋
+         * FALSE) and the SDU pointer inside PduInfo is a null pointer.
          */
         if (PduInfo->sdu == NULL_PTR)
         {
             returnVal = E_NOT_OK ;
-
+			Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_POINTER);
         }
     }
-
     else
+	{
+	}
+	
+#endif		/* end of CanDevErrorDetect */
+	/*
+	 * [SWS_Can_00212] ⌈ The function Can_Write shall perform following actions if the
+	 * hardware transmit object is free:
+	 * The mutex for that HTH is set to ‘signaled’
+	 * The ID, Data Length and SDU are put in a format appropriate for the hardware
+	 * (if necessary) and copied in the appropriate hardware registers/buffers.
+	 * All necessary control operations to initiate the transmit are done
+	 * The mutex for that HTH is released
+	 * The function returns with E_OK⌋ (SRS_Can_01049)
+	 */
+
+	/*
+	 * Prepare the variables to be put in the following registers:
+	 * * Command Mask
+	 * * Mask 1
+	 * * Mask 2
+	 * * Arbitration 1
+	 * * Arbitration 2
+	 * * Message Control
+	 *
+	 * All 16 bits
+	 */
+
+	uint16 ui16CmdMaskReg   = 0 ;
+	uint16 ui16MaskReg_1    = 0 ;
+	uint16 ui16MaskReg_2    = 0 ;
+	uint16 ui16ArbReg_1     = 0 ;
+	uint16 ui16ArbReg_2     = 0 ;
+	uint16 ui16MsgCtrl      = 0 ;
+
+	/*
+	 *  variable to hold the base address of a can controller
+	 */
+	uint32 ui32Base = 0 ;
+
+	/*
+	 * local variable points to the transmit HW object that the interface wants to use.
+	 */
+	uint8 hth_index = 0 ;
+
+	/*
+	 *  local variable used as a counter to loop on MessageObjAssignedToHTH[] array
+	 */
+	uint8 Hth_count = 0 ;
+
+	/*
+	 * local variable used as a counter to loop on CanHardwareObjectRef elements to detect info about the Hw object needed.
+	 */
+	uint8 Hoh_count = 0 ;
+
+	/*
+	 *      local variable to hold the data
+	 */
+	uint8 real_hwObjectId = 0 ;
+
+	for (Hoh_count = 0 ; Hoh_count < NUM_OF_HOH  ; Hoh_count++)
+	{
+		if (Hth == Global_Config->CanHardwareObjectRef[Hoh_count].CanObjectId)
+		{
+			hth_index = Hoh_count ;
+		}
+	}
+
+#if (CanDevErrorDetect == STD_ON)
+
+	/*
+	 * [SWS_Can_00217] If development error detection for the Can module is enabled:
+	 * The function Can_Write shall raise the error CAN_E_PARAM_HANDLE and shall
+	 * return E_NOT_OK if the parameter Hth is not a configured Hardware Transmit
+	 * Handle.⌋
+	 */
+	if (Global_Config->CanHardwareObjectRef[hth_index].CanObjectType != TRANSMIT)
+	{
+		returnVal = E_NOT_OK ;
+		//det error CAN_E_PARAM_HANDLE
+		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_HANDLE);
+	}
+	else
+	{
+	}
 #endif
-    {
+	if (0 == HTH_Semaphore[hth_index])
+	{
+		HTH_Semaphore[hth_index] = 1 ;
 
-        /*
-         * [SWS_Can_00212] ⌈ The function Can_Write shall perform following actions if the
-         * hardware transmit object is free:
-         *  The mutex for that HTH is set to ‘signaled’
-         *  The ID, Data Length and SDU are put in a format appropriate for the hardware
-         * (if necessary) and copied in the appropriate hardware registers/buffers.
-         *  All necessary control operations to initiate the transmit are done
-         *  The mutex for that HTH is released
-         *  The function returns with E_OK⌋ (SRS_Can_01049)
-         */
+		ui32Base = Global_Config->CanHardwareObjectRef[hth_index].CanControllerRef->CanControllerBaseAddress ;
+		/*
+		 * check if hardware is busy
+		 */
+		if(HWREG(ui32Base + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
+		{
+			/*
+			 * the hardware transmit object is busy
+			 * [SWS_Can_00213] ⌈ The function Can_Write shall perform no actions if the
+			 * hardware transmit object is busy with another transmit request for an L-PDU:
+			 * 1. The transmission of the other L-PDU shall not be cancelled and the function
+			 * Can_Write is left without any actions.
+			 * 2. The function Can_Write shall return CAN_BUSY. (SRS_Can_01049).
+			 */
+			returnVal = CAN_BUSY ;
+		}
+		else
+		{
+			ui16CmdMaskReg |= CAN_IF1CMSK_WRNRD | CAN_IF1CMSK_DATAA |
+							  CAN_IF1CMSK_DATAB | CAN_IF1CMSK_CONTROL|
+							  CAN_IF1CMSK_ARB ;
 
-        /*
-         * Prepare the variables to be put in the following registers:
-         * * Command Mask
-         * * Mask 1
-         * * Mask 2
-         * * Arbitration 1
-         * * Arbitration 2
-         * * Message Control
-         *
-         * All 16 bits
-         */
+			ui16MsgCtrl |= CAN_IF1MCTL_TXRQST;          /// transmission request
+			ui16ArbReg_2 = CAN_IF1ARB2_DIR;             /// transmit M.O.
 
-        uint16 ui16CmdMaskReg   = 0 ;
-        uint16 ui16MaskReg_1    = 0 ;
-        uint16 ui16MaskReg_2    = 0 ;
-        uint16 ui16ArbReg_1     = 0 ;
-        uint16 ui16ArbReg_2     = 0 ;
-        uint16 ui16MsgCtrl      = 0 ;
+			if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == EXTENDED)
+			{
+				ui16ArbReg_1 |= PduInfo->id & CAN_IF1ARB1_ID_M ;
+				ui16ArbReg_2 |= (PduInfo->id >> 16 ) & CAN_IF1ARB2_ID_M ;
+				ui16ArbReg_2 |= CAN_IF1ARB2_MSGVAL | CAN_IF1ARB2_XTD ;
+			}
+			else if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == STANDARD)
+			{
+				ui16ArbReg_2 |= (  PduInfo->id  << 2 ) & CAN_IF1ARB2_ID_M ;
+				ui16ArbReg_1 |= CAN_IF1ARB2_MSGVAL ;
+			}
+			else
+			{
+			}
+			ui16MsgCtrl |=  ( ( PduInfo->length ) & CAN_IF1MCTL_DLC_M ) ;
+			ui16MsgCtrl |= CAN_IF1MCTL_EOB  | CAN_IF1MCTL_TXIE ;
+			
+			CANDataRegWrite (
+					PduInfo->sdu,
+					(uint32 *)( ui32Base + CAN_O_IF1DA1 ),
+					PduInfo->length
+			);
+			
+			HWREG(ui32Base + CAN_O_IF1ARB2) &=~ CAN_IF1ARB2_MSGVAL;
+			HWREG(ui32Base + CAN_O_IF1CMSK) = ui16CmdMaskReg;
+			HWREG(ui32Base + CAN_O_IF1MSK1) = ui16MaskReg_1;
+			HWREG(ui32Base + CAN_O_IF1MSK2) = ui16MaskReg_2;
+			HWREG(ui32Base + CAN_O_IF1ARB1) = ui16ArbReg_1;
+			HWREG(ui32Base + CAN_O_IF1ARB2) = ui16ArbReg_2;
+			HWREG(ui32Base + CAN_O_IF1MCTL) = ui16MsgCtrl;
 
-        /*
-         *  variable to hold the base address of a can controller
-         */
-        uint32 ui32Base ;
+		   for (Hth_count = 0 ; Hth_count < CAN_HTH_NUMBER  ; Hth_count++)
+			{
+				if (Hth ==  MessageObjAssignedToHTH[Hth_count].HTHId )
+				{
+					real_hwObjectId = MessageObjAssignedToHTH[Hth_count].MessageId ;
+				}
+			}
 
-        /*
-         * local variable points to the transmit HW object that the interface wants to use.
-         */
-        uint8 hth_index;
+			HWREG(ui32Base + CAN_O_IF1CRQ) = real_hwObjectId ;
+			HTH_Semaphore[hth_index] = 0 ;
 
-        /*
-         *  local variable used as a counter to loop on MessageObjAssignedToHTH[] array
-         */
-        uint8 Hth_count;
+			/*
+			 *  [SWS_Can_00276] ⌈ The function Can_Write shall store the swPduHandle that is
+				given inside the parameter PduInfo until the Can module calls the
+				CanIf_TxConfirmation for this request where the swPduHandle is given as
+				parameter.()
+			 */
+			swPduHandle = PduInfo->swPduHandle ;
 
-        /*
-         * local variable used as a counter to loop on CanHardwareObjectRef elements to detect info about the Hw object needed.
-         */
-        uint8 Hoh_count;
-
-        /*
-         *      local variable to hold the data
-         */
-        uint8 real_hwObjectId ;
-
-        for (Hoh_count = 0 ; Hoh_count < CAN_HOH_NUMBER  ; Hoh_count++)
-        {
-            if (Hth == Global_Config->CanHardwareObjectRef[Hoh_count].CanObjectId)
-            {
-                hth_index = Hoh_count ;
-            }
-
-
-        }
-
-#if (CanDevErrorDetect == TRUE)
-
-        /*
-         * [SWS_Can_00217] ⌈ If development error detection for the Can module is enabled:
-         * The function Can_Write shall raise the error CAN_E_PARAM_HANDLE and shall
-         * return E_NOT_OK if the parameter Hth is not a configured Hardware Transmit
-         * Handle.⌋
-         */
-        if (Global_Config->CanHardwareObjectRef[hth_index].CanObjectType != TRANSMIT)
-        {
-            //det error CAN_E_PARAM_HANDLE
-            returnVal = E_NOT_OK ;
-
-        }
-        else
-#endif
-
-        {
-
-
-            if (HTH_Semaphore[hth_index] == 0 )
-            {
-                HTH_Semaphore[hth_index] = 1 ;
-
-                ui32Base = Global_Config->CanHardwareObjectRef[hth_index].CanControllerRef->CanControllerBaseAddress ;
-                /*
-                 * check if hardware is busy
-                 */
-                while (HWREG(ui32Base + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
-                {}
-
-
-                ui16CmdMaskReg |= CAN_IF1CMSK_WRNRD | CAN_IF1CMSK_DATAA |
-                                  CAN_IF1CMSK_DATAB | CAN_IF1CMSK_CONTROL|
-                                  CAN_IF1CMSK_ARB ;
-
-                ui16MsgCtrl |= CAN_IF1MCTL_TXRQST;          /// transmission request
-                ui16ArbReg_2 = CAN_IF1ARB2_DIR;             /// transmit M.O.
-
-
-                if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == EXTENDED)
-                {
-
-
-                    ui16ArbReg_1 |= PduInfo->id & CAN_IF1ARB1_ID_M ;
-                    ui16ArbReg_2 |= (PduInfo->id >> 16 ) & CAN_IF1ARB2_ID_M ;
-                    ui16ArbReg_2 |= CAN_IF1ARB2_MSGVAL | CAN_IF1ARB2_XTD ;
-
-                }
-                else if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == STANDARD)
-                {
-                    ui16ArbReg_2 |= (  PduInfo->id  << 2 ) & CAN_IF1ARB2_ID_M ;
-                    ui16ArbReg_1 |= CAN_IF1ARB2_MSGVAL ;
-
-                }
-                else
-                {}
-
-
-                ui16MsgCtrl |=  ( ( PduInfo->length ) & CAN_IF1MCTL_DLC_M ) ;
-
-                ui16MsgCtrl |= CAN_IF1MCTL_EOB  | CAN_IF1MCTL_TXIE ;
-
-
-
-                CANDataRegWrite (
-
-                        PduInfo->sdu,
-                        (uint32 *)( ui32Base + CAN_O_IF1DA1 ),
-                        PduInfo->length
-                );
-
-
-                HWREG(ui32Base + CAN_O_IF1ARB2) &=~ CAN_IF1ARB2_MSGVAL;
-
-                HWREG(ui32Base + CAN_O_IF1CMSK) = ui16CmdMaskReg;
-                HWREG(ui32Base + CAN_O_IF1MSK1) = ui16MaskReg_1;
-                HWREG(ui32Base + CAN_O_IF1MSK2) = ui16MaskReg_2;
-                HWREG(ui32Base + CAN_O_IF1ARB1) = ui16ArbReg_1;
-                HWREG(ui32Base + CAN_O_IF1ARB2) = ui16ArbReg_2;
-                HWREG(ui32Base + CAN_O_IF1MCTL) = ui16MsgCtrl;
-
-               for (Hth_count = 0 ; Hth_count < CAN_HTH_NUMBER  ; Hth_count++)
-                {
-
-                    if (Hth ==  MessageObjAssignedToHTH[Hth_count].HTHId )
-                    {
-                        real_hwObjectId = MessageObjAssignedToHTH[Hth_count].MessageId ;
-
-                    }
-
-                }
-
-                HWREG(ui32Base + CAN_O_IF1CRQ) = real_hwObjectId ;
-
-                HTH_Semaphore[hth_index] = 0 ;
-
-                /*
-                 *  [SWS_Can_00276] ⌈ The function Can_Write shall store the swPduHandle that is
-                    given inside the parameter PduInfo until the Can module calls the
-                    CanIf_TxConfirmation for this request where the swPduHandle is given as
-                    parameter. ⌋ ()
-                 */
-                swPduHandle = PduInfo->swPduHandle ;
-
-                /*
-                 * (SRS_Can_01049)
-                 */
-                returnVal = E_OK ;
-
-            }
-            else
-            {
-                /*
-                 * [SWS_Can_00213] ⌈ The function Can_Write shall perform no actions if the
-                 * hardware transmit object is busy with another transmit request for an L-PDU:
-                 * 1. The transmission of the other L-PDU shall not be cancelled and the function
-                 * Can_Write is left without any actions.
-                 * 2. The function Can_Write shall return CAN_BUSY.⌋ (SRS_Can_01049).
-                 */
-                returnVal = CAN_BUSY ;
-
-            }
-
-        }
-
-    }
+			returnVal = E_OK ;
+		}
+	}
+	else
+	{
+	}
     return returnVal ;
-
 }
 
 static void CANDataRegWrite ( uint8 * pui8Data, uint32 * pui32Register , uint8 ui8Size)
@@ -1767,6 +1739,10 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	return Loc_Can_GetControllerMode_Ret;
 }
 
+/*
+ *	[SRS_Can_01051] The CAN Driver shall provide a transmission
+ *	confirmation service
+ */
 void Can_MainFunction_Write(void) 
 {
 	uint8 ControllerIndex=0; 
