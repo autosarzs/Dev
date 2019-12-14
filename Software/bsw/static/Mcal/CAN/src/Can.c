@@ -708,16 +708,9 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
         /* [SWS_Can_00050] The function Can_EnableControllerInterrupts shall enable all
          * interrupts that must be enabled according the current software status
          */
-		/*  Enable the first CAN Controller Interrupts */ 
-        if (CAN0_ID == Controller)
-            CANIntEnable(CAN0_BASE,
-                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
-        /*  Enable the second CAN Controller Interrupts */ 
-		else if (CAN1_ID == Controller)
-            CANIntEnable(CAN1_BASE,
-                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
-        else {
-        }
+		/*  Enable the specified CAN Controller Interrupts */
+		CANIntEnable(Global_Config->CanHardwareObjectRef[Controller].CanControllerRef->CanControllerBaseAddress,
+				CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
     }
 	else
 	{
@@ -768,16 +761,9 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
          *  CAN controller registers to disable all interrupts for that CAN controller only, if
          *  interrupts for that CAN Controller are enabled
          */
-        /*  Disable the first CAN Controller Interrupts */ 
-        if (CAN0_ID == Controller)
-            CANIntDisable(CAN0_BASE,
-                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
-        /*  Disable the second CAN Controller Interrupts */ 
-		else if (CAN1_ID == Controller)
-            CANIntDisable(CAN1_BASE,
-                    CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
-        else {
-        }
+        /*  Disable the specified CAN Controller Interrupts */
+		CANIntDisable(Global_Config->CanHardwareObjectRef[Controller].CanControllerRef->CanControllerBaseAddress,
+				CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
     }
     DisableCnt[Controller]++;
 
