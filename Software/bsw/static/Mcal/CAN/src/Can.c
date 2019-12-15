@@ -780,7 +780,9 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
 /*    Return value            : none                                                     */
 /*    Reentrancy              : Non Reentrant Function                                   */
 /*****************************************************************************************/
-void Can_DeInit(void) {
+void Can_DeInit(void) 
+{
+    uint8 controller_Idx = 0U;
 #if(CanDevErrorDetect==STD_ON)
     /*   The function Can_DeInit shall raise the error CAN_E_TRANSITION if the driver is not
      *   in state CAN_READY [SWS_Can_91011]
@@ -791,7 +793,8 @@ void Can_DeInit(void) {
     {
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id, CAN_E_TRANSITION);
     }
-	uint8 ControllerIndex = 0 ;
+
+  uint8 ControllerIndex = 0 ;
 	for(ControllerIndex = 0; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
 	{
 		/*  The function Can_DeInit shall raise the error CAN_E_TRANSITION if any of the CAN
@@ -803,6 +806,7 @@ void Can_DeInit(void) {
 					CAN_E_TRANSITION);
 		}
 	}
+
 #endif
     /*  [SWS_Can_ 91009] The function Can_DeInit shall change the module state to
      *  CAN_UNINIT before de-initializing all controllers inside the HW unit
@@ -810,6 +814,7 @@ void Can_DeInit(void) {
      *  The state of a BSW Module shall be set accordingly at the beginning of the DeInitialization function
      */
     ModuleState = CAN_UNINIT;
+
 	for(ControllerIndex = 0; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
 	{
 		/*	Disable the first four bits in CAN Control Register in both controllers */
