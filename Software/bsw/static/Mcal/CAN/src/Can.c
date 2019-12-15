@@ -781,6 +781,7 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
 /*    Reentrancy              : Non Reentrant Function                                   */
 /*****************************************************************************************/
 void Can_DeInit(void) {
+	uint8 ControllerIndex = 0 ;
 #if(CanDevErrorDetect==STD_ON)
     /*   The function Can_DeInit shall raise the error CAN_E_TRANSITION if the driver is not
      *   in state CAN_READY [SWS_Can_91011]
@@ -791,7 +792,7 @@ void Can_DeInit(void) {
     {
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id, CAN_E_TRANSITION);
     }
-	uint8 ControllerIndex = 0 ;
+	
 	for(ControllerIndex = 0; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
 	{
 		/*  The function Can_DeInit shall raise the error CAN_E_TRANSITION if any of the CAN
