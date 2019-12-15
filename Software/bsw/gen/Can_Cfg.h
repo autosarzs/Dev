@@ -35,6 +35,7 @@
 /*                                   Include headres                                     */
 /*****************************************************************************************/
 #include "Can_PBcfg.h"
+#include "Std_Types.h"
 /*****************************************************************************************/
 /*                                    Macro Definition                                   */
 /*****************************************************************************************/
@@ -100,7 +101,6 @@
 /*Non-Autosar file*/
 #include "tm4c123gh6pm.h"
 
-#include "Std_Types.h"
 /* AUTOSAR checking between Std Types and Can_Cfg Modules */
 #if ((STD_TYPES_AR_RELEASE_MAJOR_VERSION != CAN_CFG_AR_RELEASE_MAJOR_VERSION)\
  ||  (STD_TYPES_AR_RELEASE_MINOR_VERSION != CAN_CFG_AR_RELEASE_MINOR_VERSION)\
