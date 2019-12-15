@@ -781,7 +781,9 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
 /*    Return value            : none                                                     */
 /*    Reentrancy              : Non Reentrant Function                                   */
 /*****************************************************************************************/
-void Can_DeInit(void) {
+void Can_DeInit(void) 
+{
+    uint8 controller_Idx = 0U;
 #if(CAN_DEV_ERROR_DETECT == STD_ON)
     /*   The function Can_DeInit shall raise the error CAN_E_TRANSITION if the driver is not
      *   in state CAN_READY [SWS_Can_91011]
@@ -795,12 +797,14 @@ void Can_DeInit(void) {
     /*  The function Can_DeInit shall raise the error CAN_E_TRANSITION if any of the CAN
      *  controllers is in state STARTED [SWS_Can_91012]
      */
-    if (CAN_CS_STARTED == ControllerState[0]
-            || CAN_CS_STARTED == ControllerState[1])
+    for(controller_Idx = 0;  controller_Idx < USED_CONTROLLERS_NUMBER; controller_Idx++)
     {
-        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id,
-                CAN_E_TRANSITION);
+        if(CAN_CS_STARTED == ControllerState[controller_Idx])
+        {
+            Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id, CAN_E_TRANSITION);
+        }
     }
+    
 #endif
     /*  [SWS_Can_ 91009] The function Can_DeInit shall change the module state to
      *  CAN_UNINIT before de-initializing all controllers inside the HW unit
@@ -808,11 +812,12 @@ void Can_DeInit(void) {
      *  The state of a BSW Module shall be set accordingly at the beginning of the DeInitialization function
      */
     ModuleState = CAN_UNINIT;
-	/*	Disable the first four bits in CAN Control Register in both controllers */
-    CLR_BITS( HWREG(CAN0_BASE + CAN_O_CTL),0
-             , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );   // DeInit CAN controller0
-    CLR_BITS( HWREG(CAN1_BASE + CAN_O_CTL),0
-             , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );  // DeInit CAN controller1
+    /* Disable the first four bits in CAN Control Register in both controllers */
+    for(controller_Idx = 0;  controller_Idx < USED_CONTROLLERS_NUMBER; controller_Idx++)
+    {
+        CLR_BITS( HWREG(Global_Config->CanControllerCfgRef[controller_Idx].CanControllerBaseAddress + CAN_O_CTL),0
+                , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );   // DeInit CAN controller0
+    }
 }
 
 void Can_MainFunction_Read(void) {
