@@ -157,13 +157,6 @@ typedef uint8 CanTrcv_TrcvWakeupReasonType;
 #define CANTRCV_WU_BY_PIN         ((CanTrcv_TrcvWakeupReasonType)0x06U)
 #define CANTRCV_WU_BY_SYSERR      ((CanTrcv_TrcvWakeupReasonType)0x07U)
 
-typedef uint8 CanObjectType;
-/**
-  Receive HOH  */
-#define receive      ((CanObjectType)0x00U)
-/**
-  Transmit HOH  */
-#define transmit     ((CanObjectType)0x01U)
 
 
 #endif /* __CAN_GENERAL_TYPES_H__ */
