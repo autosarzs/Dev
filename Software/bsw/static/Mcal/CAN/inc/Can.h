@@ -103,6 +103,9 @@ typedef uint8 Can_ServiceId;
 #define  Can_GetControllerMode_Id             ((Can_ServiceId)0x12)
 #define  Can_Write_Id                         ((Can_ServiceId)0x06)
 #define Can_MainFunction_Write_SID            (uint8)(0x01)
+#define  CAN_MAIN_FUNCTION_READ_ID            ((Can_ServiceId)0x01)
+#define  CAN_MAIN_FUNCTION_BUS_OFF_ID         ((Can_ServiceId)0x02)
+
 
 #define NULL_PTR  ((void*)0)
 

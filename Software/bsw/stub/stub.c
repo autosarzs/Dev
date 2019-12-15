@@ -66,4 +66,9 @@ void CanIf_RxIndication
 
 }
 
+void CanIf_ControllerBusOff(uint8 ControllerId)
+{
+
+}
+
 
