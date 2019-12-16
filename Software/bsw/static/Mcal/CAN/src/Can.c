@@ -774,7 +774,8 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
 /*****************************************************************************************/
 void Can_DeInit(void) 
 {
-    uint8 controller_Idx = 0U;
+	uint8 ControllerIndex = 0 ;
+	
 #if(CAN_DEV_ERROR_DETECT == STD_ON)
     /*   The function Can_DeInit shall raise the error CAN_E_TRANSITION if the driver is not
      *   in state CAN_READY [SWS_Can_91011]
@@ -786,12 +787,12 @@ void Can_DeInit(void)
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id, CAN_E_TRANSITION);
     }
 
-	for(controller_Idx = 0; controller_Idx < USED_CONTROLLERS_NUMBER; controller_Idx++)
+	for(ControllerIndex = 0; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
 	{
 		/*  The function Can_DeInit shall raise the error CAN_E_TRANSITION if any of the CAN
 		 *  controllers is in state STARTED [SWS_Can_91012]
 		 */
-		if (CAN_CS_STARTED == ControllerState[controller_Idx])
+		if (CAN_CS_STARTED == ControllerState[ControllerIndex])
 		{
 			Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_DeInit_Id,
 					CAN_E_TRANSITION);
@@ -806,10 +807,10 @@ void Can_DeInit(void)
      */
     ModuleState = CAN_UNINIT;
 
-	for(controller_Idx = 0; controller_Idx < USED_CONTROLLERS_NUMBER; controller_Idx++)
+	for(ControllerIndex = 0; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
 	{
 		/*	Disable the first four bits in CAN Control Register in both controllers */
-		CLR_BITS( HWREG(Global_Config->CanHardwareObjectRef[controller_Idx].CanControllerRef->CanControllerBaseAddress + CAN_O_CTL),0
+		CLR_BITS( HWREG(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_CTL),0
 				 , CAN_CTL_INIT | CAN_CTL_IE | CAN_CTL_SIE | CAN_CTL_EIE );   // DeInit CAN controller of ControllerIndex
 	}
 }
@@ -915,8 +916,9 @@ uint8 controllerId; /*variable to count controllers number*/
 Std_ReturnType Can_write (Can_HwHandleType Hth, const Can_PduType * PduInfo)
 {
     Std_ReturnType returnVal = E_NOT_OK ;
-#if (CAN_DEV_ERROR_DETECT == STD_ON)
-    if (ModuleState == CAN_UNINIT)
+	
+#if (CanDevErrorDetect == STD_ON)
+    if (CAN_UNINIT == ModuleState)
     {
         returnVal = E_NOT_OK ;
         // call Det function CAN_E_UNINIT
@@ -1015,6 +1017,7 @@ Std_ReturnType Can_write (Can_HwHandleType Hth, const Can_PduType * PduInfo)
 	 *      local variable to hold the data
 	 */
 	uint8 real_hwObjectId = 0 ;
+
 	for (Hoh_count = 0 ; Hoh_count < NUM_OF_HOH  ; Hoh_count++)
 	{
 		if (Hth == Global_Config->CanHardwareObjectRef[Hoh_count].CanObjectId)
@@ -1023,7 +1026,7 @@ Std_ReturnType Can_write (Can_HwHandleType Hth, const Can_PduType * PduInfo)
 		}
 	}
 
-#if (CAN_DEV_ERROR_DETECT == STD_ON)
+#if (CanDevErrorDetect == STD_ON)
 	/*
 	 * [SWS_Can_00217] If development error detection for the Can module is enabled:
 	 * The function Can_Write shall raise the error CAN_E_PARAM_HANDLE and shall
