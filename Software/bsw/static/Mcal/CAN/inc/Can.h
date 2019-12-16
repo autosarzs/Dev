@@ -95,7 +95,7 @@ typedef uint8 Can_ServiceId;
 #define  Can_GetVersionInfo_Id                ((Can_ServiceId)0x07)
 #define  Can_DeInit_Id                        ((Can_ServiceId)0x10)
 #define  CAN_SETBAUDRATE_API_ID               ((Can_ServiceId)0x0f)
-#define  Can_SetControllerMode_Id             ((Can_ServiceId)0x03)
+#define  CAN_SET_CONTROLLER_MODE                ((Can_ServiceId)0x03)
 #define  Can_DisableControllerInterrupts_Id   ((Can_ServiceId)0x04)
 #define  Can_EnableControllerInterrupts_Id    ((Can_ServiceId)0x05)
 #define  Can_CheckWakeup_Id                   ((Can_ServiceId)0x0b)

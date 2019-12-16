@@ -70,8 +70,6 @@
 
 #define CanBusoffProcessing POLLING
 
-#define CanDevErrorDetect   STD_ON
-
 #define CanSetBaudrateApi   STD_ON
 
 #define INTERRUPT_MODE 		(0x00)
@@ -109,7 +107,7 @@
 #endif
 
 /* Switches the development error detection and notification on or off */
-#define CAN_DEV_ERROR_DETECT					STD_OFF
+#define CAN_DEV_ERROR_DETECT                (STD_ON)
 
 /* Specifies the InstanceId of this module instance. If only one instance is
 present it shall have the Id 0.*/
