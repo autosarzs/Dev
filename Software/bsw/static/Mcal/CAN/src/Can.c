@@ -815,6 +815,18 @@ void Can_DeInit(void)
 	}
 }
 
+/****************************************************************************************/
+/*    Function Description    : This function performs the polling of RX indications    */
+/*                              when CAN_RX_PROCESSING is set to POLLING.               */
+/*    Parameter in            : none                                                    */
+/*    Parameter inout         : none                                                    */
+/*    Parameter out           : none                                                    */
+/*    Return value            : none                                                    */
+/*    Requirment              : SWS_Can_00226                                           */
+/*    Notes                   :                                                        */
+/*                                                                                      */
+/*                                                                                      */
+/*****************************************************************************************/
 void Can_MainFunction_Read(void) 
 {
 
