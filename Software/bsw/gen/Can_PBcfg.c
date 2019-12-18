@@ -28,16 +28,18 @@ CanController CanControllerCfg[] =
 {
     {
         0,                                  /*  Controller ID   */
-        MIXED_PROCESSING,					/*  CanTxProcessing */
+        POLLING_PROCESSING,                 /*  CanRxProcessing */
+        POLLING_PROCESSING,                 /*  CanTxProcessing */
         0x40040000,                         /*  BASE Address    */
-		&Clk,                               /*  Reference to System clock in Hz */
+        &Clk,                               /*  Reference to System clock in Hz */
         &CanControllerBaudrateConf[0]       /*  Reference to Baudrate configuration */
     },
     {
         1,                                  /*  Controller ID   */
-        MIXED_PROCESSING,					/*  CanTxProcessing */
+        POLLING_PROCESSING,                 /*  CanRxProcessing */
+        POLLING_PROCESSING,                 /*  CanTxProcessing */
         0x40041000,                         /*  BASE Address    */
-		&Clk,                               /*  Reference to System clock in Hz */
+        &Clk,                               /*  Reference to System clock in Hz */
         &CanControllerBaudrateConf[0]       /*  Reference to Baudrate configuration */
     }
 };

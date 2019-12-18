@@ -103,6 +103,8 @@ typedef uint8 Can_ServiceId;
 #define  Can_GetControllerMode_Id             ((Can_ServiceId)0x12)
 #define  Can_Write_Id                         ((Can_ServiceId)0x06)
 #define Can_MainFunction_Write_SID            (uint8)(0x01)
+#define  CAN_MAIN_FUNCTION_READ_ID            ((Can_ServiceId)0x01)
+#define  CAN_MAIN_FUNCTION_BUS_OFF_ID         ((Can_ServiceId)0x02)
 
 #define NULL_PTR  ((void*)0)
 
@@ -199,13 +201,15 @@ typedef struct {
     *   Driver. The value for this parameter starts with 0 and continue without any gaps.
     */
     uint8   CanControllerId;
-
-	/* [ECUC_Can_00318] Enables / disables API Can_MainFunction_Write() 
-	 * for handling PDU transmission events in polling mode.
-	 */
-	uint8 CanTxProcessing;
-    
-	/*
+    /* [ECUC_Can_00317] Enables / disables API Can_MainFunction_Read() 
+    *    for handling PDU receiption events in polling mode
+    */
+    uint8 CanRxProcessing;
+    /* [ECUC_Can_00318] Enables / disables API Can_MainFunction_Write() 
+     * for handling PDU transmission events in polling mode.
+     */
+    uint8 CanTxProcessing;
+    /*
     *   Specifies the CAN controller base address.
     */
     uint32 CanControllerBaseAddress;
@@ -311,17 +315,19 @@ typedef struct Can_Pdu
 //  the AUTOSAR Can module.
 //*****************************************************************************
 
-typedef struct {
-	/*Reference to CAN Controller to which the HOH is associated to.*/
-	CanController *CanControllerRef;
-	/*This container contains the configuration (parameters) of CAN Hardware Objects. */
-	CanHardwareObject *CanHardwareObjectRef;
+typedef struct 
+{
+    /*Reference to CAN Controller to which the HOH is associated to.*/
+    CanController *CanControllerRef;
+    /*This container contains the configuration (parameters) of CAN Hardware Objects. */
+    CanHardwareObject *CanHardwareObjectRef;
 } CanConfigSet;
 
 //*****************************************************************************
 //  This container holds the configuration of a single CAN Driver.
 //*****************************************************************************
-typedef struct {
+typedef struct 
+{
     /*
     *   This container contains the configuration parameters and sub
     *   containers of the AUTOSAR Can module...Multiplicity =1

@@ -815,24 +815,40 @@ void Can_DeInit(void)
 	}
 }
 
-void Can_MainFunction_Read(void) {
+/****************************************************************************************/
+/*    Function Description    : This function performs the polling of RX indications    */
+/*                              when CAN_RX_PROCESSING is set to POLLING.               */
+/*    Parameter in            : none                                                    */
+/*    Parameter inout         : none                                                    */
+/*    Parameter out           : none                                                    */
+/*    Return value            : none                                                    */
+/*    Requirment              : SWS_Can_00226                                           */
+/*    Notes                   :                                                        */
+/*                                                                                      */
+/*                                                                                      */
+/*****************************************************************************************/
+void Can_MainFunction_Read(void) 
+{
 
-#if((CanRxProcessing == POLLING ) || (CanRxProcessing == MIXED))
-    Can_HwType Mailbox; // the varaible for Callback function RxIndication
-    int obj_index;  /* variable to count object number */
-    uint8 controllerId; /*variable to count controllers number*/
     /*
      *   Loop all controllers to get the new data
      */
     // TODO controlledID  base address not implemented here ?
-    for (controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER;controllerId += 1)
+    uint8 controllerId = 0 ; /*variable to count controllers number*/
+    for (controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER; controllerId++)
     {
+        /*SWS_Can_00108*/
+        if ((POLLING_PROCESSING == Global_Config->CanHardwareObjectRef[controllerId].CanControllerRef->CanRxProcessing) ||
+            (
+                    (MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[controllerId].CanControllerRef->CanRxProcessing) &&
+                    (TRUE == Global_Config->CanHardwareObjectRef[controllerId].CanHardwareObjectUsesPolling)
+            ))
+        {
+            uint8 obj_index;  /* variable to count object number */
 #if (CAN_DEV_ERROR_DETECT == STD_ON)
         if (ControllerState[controllerId] == CAN_CS_UNINIT)
         {
-            // report error to diag
-      //      Det_ReportError(Can_MainFunction_Read_ID,CAN_CS_UNINIT);
-            continue;
+                Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_MAIN_FUNCTION_READ_ID, CAN_E_UNINIT);
         }//End if
 #endif //CanDevErrorDetect
         /*
@@ -846,30 +862,48 @@ void Can_MainFunction_Read(void) {
                 /*
                  * Reads a CAN message from one of the message object buffers.
                  */
-                CANMessageGet(controllerId, obj_index, psMsgObject[obj_index], bClrPendingInt);
+                    CANMessageGet(Global_Config->CanControllerCfgRef[controllerId].CanControllerBaseAddress,
+                                  obj_index, psMsgObject[obj_index], bClrPendingInt);
                 // check if this object have new data avialables
                 if(( psMsgObject[obj_index]->ui32Flags & MSG_OBJ_NEW_DATA) == MSG_OBJ_NEW_DATA)
                 {
+                        Can_HwType Mailbox; // the varaible for Callback function RxIndication
+                        PduInfoType PduInfo;
                     //message ID
                     Mailbox.CanId = psMsgObject[obj_index]->ui32MsgID;
-                    //hardware object that has new date
+                        //hardware object that has new data
                     Mailbox.Hoh = obj_index;
                     // controller ID
                     Mailbox.ControllerId = controllerId;
+                        PduInfo.SduLength = psMsgObject[obj_index]->ui32MsgLen;
+                        PduInfo.SduDataPtr = psMsgObject[obj_index]->pui8MsgData;
                     // 2. inform CanIf using API below.
-                    //TODO fill  PduInfoPt and protoype of can iF
-                  //  CanIf_RxIndication(Mailbox, PduInfoPtr);//We need to ask how to access these vars
+                        CanIf_RxIndication(&Mailbox, &PduInfo);
                 }// END IF
             }
         }// end of object in this controller ID
+        }
+        else
+        {
+        }
     }// end loop for controllerId
-#endif
 }
 
-//Can_MainFunction_BusOff_0 or Can_MainFunction_BusOff
+/****************************************************************************************/
+/*    Function Description    : This scheduled function performs the polling of bus-off */
+/*                              events that are configured statically as 'to be polled'.*/
+/*    Parameter in            : none                                                    */
+/*    Parameter inout         : none                                                    */
+/*    Parameter out           : none                                                    */
+/*    Return value            : none                                                    */
+/*    Requirment              : SWS_Can_00227                                           */
+/*    Notes                   :                                                        */
+/*                                                                                      */
+/*                                                                                      */
+/*****************************************************************************************/
 void Can_MainFunction_BusOff(void) {
 uint8 controllerId; /*variable to count controllers number*/
-#if CanBusoffProcessing == POLLING
+#if(CanBusoffProcessing == POLLING)
     /*
      *   Loop all controllers to get the new data
      */
@@ -878,19 +912,18 @@ uint8 controllerId; /*variable to count controllers number*/
 #if (CAN_DEV_ERROR_DETECT == STD_ON)
         if (ControllerState[controllerId] == CAN_CS_UNINIT)
         {
-            // report error to diag
-            //Det_ReportError(Can_MainFunction_Bus_OFF_ID,CAN_CS_UNINIT);
-            continue;
+            Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_MAIN_FUNCTION_BUS_OFF_ID, CAN_E_UNINIT);
+
         }// end if
 #endif //CanDevErrorDetect
         /*
          * Reads one of the controller status registers. and get bus off status
          */
-        // TODO controlledID  base address not implemented here ?
-        if(CANStatusGet(controllerId, CAN_STS_CONTROL) == CAN_STATUS_BUS_OFF)
+        if(CANStatusGet(Global_Config->CanControllerCfgRef[controllerId].CanControllerBaseAddress,
+                        CAN_STS_CONTROL) == CAN_STATUS_BUS_OFF)
         {
             // the call back function in CANIF that report the bus of state
-     //       CanIf_ControllerBusOff(controllerId);
+            CanIf_ControllerBusOff(controllerId);
             // raise the BUS_OFF flag to upper Layer
             //TODO raising this error
             // Can_ErrorStateType[controllerId]= CAN_ERRORSTATE_BUSOFF;
@@ -1126,6 +1159,9 @@ Std_ReturnType Can_write (
 			 */
 			swPduHandle = PduInfo->swPduHandle ;
 
+                /*
+                 * (SRS_Can_01049)
+                 */
 			returnVal = E_OK ;
 		}
 	}
