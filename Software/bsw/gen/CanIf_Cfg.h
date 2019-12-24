@@ -767,4 +767,52 @@ FULL, this parameter equals 0 for this TxBuffer.*/
 	#define CANIF_BUFFER_SIZE                  (255U)
 #endif
 
+/**************************************************************************************************************
+*                                                           Definations numbers of muliplicity                                                                
+*************************************************************************************************************/
+
+/* CAN_DRIVER_NUM is a size of array to define the number of underlying CAN Driver modules*/
+/* It defines muliplicity of CanIfCtrlDrvCfg & CanIfInitHohCfg containers */
+#define  CAN_DRIVER_NUM                             3
+
+/*CAN_TRANSCEIVER_NUM is used to specify the number of containers contains the configuration (parameters)
+of all addressed CAN transceivers by each underlying
+CAN Transceiver Driver module*/
+/*It defines muliplicity of CanIfTrcvDrvCfg & CanIfTrcvCfg containers */
+#define CAN_TRANSCEIVER_NUM                         1
+
+/*BUFFERS_NUM is a size of array to define the number of containers contain the Txbuffer configuration.
+Multiple buffers with different sizes could be configured.
+If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the
+CanIf Tx L-PDU only refers via this CanIfBufferCfg the
+corresponding CanIfHthCfg.*/
+/*It defines muliplicity of CanIfBufferCfg container*/
+#define  BUFFERS_NUM                                10
+
+/* RX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
+of each receive CAN L-PDU.*/
+/*It defines muliplicity of CanIfRxPduCfg container*/
+#define RX_CAN_L-PDU_NUM                            10
+
+/*TX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
+of each transmit CAN L-PDU.*/
+/*It defines muliplicity of CanIfTxPduCfg container*/
+#define TX_CAN_L-PDU_NUM                            10 
+
+/*HRH_OBj_NUM is used to specify the number of containers contains configuration parameters for
+each hardware receive object (HRH).*/
+/*It defines muliplicity of CanIfHrhCfg container*/
+#define HRH_OBj_NUM                                 2
+
+/*HTH_OBj_NUM is used to specify the number of containers contains configuration parameters for
+each hardware transmit object (HTH).*/
+/*It defines muliplicity of CanIfHthCfg container*/
+#define HTH_OBj_NUM                                 2
+
+/*CANID_RANGES_NUM is used to specify the number of containers Defines the parameters required for configurating
+multiple CANID ranges for a given same HRH*/
+/*It defines muliplicity of CanIfHrhRangeCfg container*/
+#define CANID_RANGES_NUM                           16    
+
+
 #endif /* __CANIF_CFG_H__ */

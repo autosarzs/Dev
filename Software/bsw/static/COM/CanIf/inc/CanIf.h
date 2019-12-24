@@ -46,7 +46,7 @@ typedef struct {
 Driver modules are aggregated under this container.
 For each CAN Driver module a seperate instance of
 this container has to be provided.*/
-CanIfCtrlDrvCfg CanIfCtrlDrvConfig;
+CanIfCtrlDrvCfg CanIfCtrlDrvConfig[CAN_DRIVER_NUM]; 
 				
 /*Callback functions provided by upper layer modules of
 the CanIf. The callback functions defined in this
@@ -68,7 +68,7 @@ of all addressed CAN transceivers by each underlying
 CAN Transceiver Driver module. For each CAN
 transceiver Driver a seperate instance of this container
 shall be provided.*/            
-CanIfTrcvDrvCfg    CanIfTrcvDrvConfig;   
+CanIfTrcvDrvCfg    CanIfTrcvDrvConfig[CAN_TRANSCEIVER_NUM];   
 }CanIf;
 
 typedef struct {
@@ -121,11 +121,11 @@ typedef struct {
 				If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the
 				CanIf Tx L-PDU only refers via this CanIfBufferCfg the
 				corresponding CanIfHthCfg. */
-				CanIfBufferCfg	CanIfBufferConfig;
+				CanIfBufferCfg	CanIfBufferConfig[BUFFERS_NUM];
 				
 				/* This container contains the references to the
 				configuration setup of each underlying CAN Driver. */
-				CanIfInitHohCfg	CanIfInitHohConfig;
+				CanIfInitHohCfg	CanIfInitHohConfig[CAN_DRIVER_NUM];
 				
 				/* This container contains the configuration (parameters)
 				of each receive CAN L-PDU.
@@ -133,7 +133,7 @@ typedef struct {
 				itself represents the symolic name of Receive L-PDU.
 				This L-SDU produces a meta data item of type
 				CAN_ID_32. */
-				CanIfRxPduCfg	CanIfRxPduConfig;
+				CanIfRxPduCfg	CanIfRxPduConfig[RX_CAN_L-PDU_NUM];
 				
 				/* This container contains the configuration (parameters)
 				of a transmit CAN L-PDU. It has to be configured as
@@ -142,7 +142,7 @@ typedef struct {
 				represents the symolic name of Transmit L-PDU.
 				This L-SDU consumes a meta data item of type
 				CAN_ID_32. */
-				CanIfTxPduCfg	CanIfTxPduConfig;
+				CanIfTxPduCfg	CanIfTxPduConfig[TX_CAN_L-PDU_NUM];
 				
 }CanIfInitCfgType;
 
@@ -402,7 +402,7 @@ typedef struct {
 				/*This container contains the configuration (parameters) of
 				one addressed CAN transceiver by the underlying CAN Transceiver Driver module.
 				For each CAN transceiver a seperate instance of this container has to be provided. */
-				CanIfTrcvCfg CanIfTrcvConfig;
+				CanIfTrcvCfg CanIfTrcvConfig[CAN_TRANSCEIVER_NUM];
 }CanIfTrcvDrvCfgType;
 
 typedef struct {
@@ -420,10 +420,10 @@ typedef struct {
 
 typedef struct{
 				/*This container contains configuration parameters for each hardware receive object (HRH).*/
-				CanIfHrhCfg CanIfHrhConfig;
+				CanIfHrhCfg CanIfHrhConfig[HRH_OBj_NUM];
 
 				/*This container contains parameters related to each HTH.*/
-				CanIfHthCfg CanIfHthConfig;
+				CanIfHthCfg CanIfHthConfig[HTH_OBj_NUM];
 }CanIfInitHohCfgType;
 
 typedef struct {
@@ -445,7 +445,7 @@ typedef struct {
 				CanHardwareObject* CanIfHrhIdSymRef;
 	
 				/*Defines the parameters required for configurating multiple CANID ranges for a given same HRH.*/
-				CanIfHrhRangeCfg CanIfHrhRangeConfig;
+				CanIfHrhRangeCfg CanIfHrhRangeConfig[CANID_RANGES_NUM];
 }CanIfHrhCfgType;
 
 typedef struct {
@@ -485,5 +485,37 @@ typedef struct {
 				not. Each HTH shall not be assigned to more than one buffer*/
 				CanIfHthCfg* CanIfBufferHthRef;
 }CanIfBufferCfgType;
+
+
+/**************************************************************************************************************
+																Type definitions																
+**************************************************************************************************************/
+				
+
+typedef struct {
+				/*This type defines a data structure for the post build parameters of the CAN
+				interface for all underlying CAN drivers. At initialization the CanIf gets a
+				pointer to a structure of this type to get access to its configuration data, which
+				is necessary for initialization.*/
+				CanIf *CanIfRef;
+}CanIf_ConfigType;
+
+
+typedef uint8 CANIF_PDU_MODE_TYPE 
+				/*The PduMode of a channel defines its transmit or receive activity.
+				Communication direction (transmission and/or reception) of the channel can
+				be controlled separately or together by upper layers.*/
+				#define CANIF_OFFLINE							((CANIF_PDU_MODE_TYPE)0x00)
+				#define CANIF_TX_OFFLINE						((CANIF_PDU_MODE_TYPE)0x01)
+				#define CANIF_TX_OFFLINE_ACTIVE					((CANIF_PDU_MODE_TYPE)0x02)
+				#define CANIF_ONLINE							((CANIF_PDU_MODE_TYPE)0x03)
+
+
+				typedef uint8 CANIF_NOTIFSTATUS_TYPE 
+				/*CanIf_NotifStatusType Return value of CAN L-PDU notification status.
+				*0x00 No transmit or receive event occurred for the requested L-PDU.
+				* – The requested Rx/Tx CAN L-PDU was successfully transmitted or received.*/
+				#define CANIF_NO_NOTIFICATION							((CANIF_NOTIFSTATUS_TYPE)0x00)
+				#define CANIF_TX_RX_NOTIFICATION						((CANIF_NOTIFSTATUS_TYPE)0x01)
 
 #endif /* __CANIF_H__ */
