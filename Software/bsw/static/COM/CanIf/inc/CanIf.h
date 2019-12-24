@@ -46,29 +46,29 @@ typedef struct {
 Driver modules are aggregated under this container.
 For each CAN Driver module a seperate instance of
 this container has to be provided.*/
-CanIfCtrlDrvCfg CanIfCtrlDrvConfig;
+CanIfCtrlDrvCfgType CanIfCtrlDrvConfig;
 				
 /*Callback functions provided by upper layer modules of
 the CanIf. The callback functions defined in this
 container are common to all configured CAN Driver /
 CAN Transceiver Driver modules.*/
-CanIfDispatchCfg CanIfDispatchConfig;
+CanIfDispatchCfgType CanIfDispatchConfig;
 								
 /*This container contains the init parameters of the CAN Interface.*/
-CanIfInitCfg	CanIfInitConfig;
+CanIfInitCfgType	CanIfInitConfig;
 				
 /*This container contains the private configuration (parameters) of the CAN Interface.*/
-CanIfPrivateCfg   	CanIfPrivateConfig;
+CanIfPrivateCfgType   	CanIfPrivateConfig;
 				
 /*This container contains the public configuration (parameters) of the CAN Interface.*/
-CanIfPublicCfg		CanIfPublicConfig;
+CanIfPublicCfgType		CanIfPublicConfig;
 
 /*This container contains the configuration (parameters)
 of all addressed CAN transceivers by each underlying
 CAN Transceiver Driver module. For each CAN
 transceiver Driver a seperate instance of this container
 shall be provided.*/            
-CanIfTrcvDrvCfg    CanIfTrcvDrvConfig;   
+CanIfTrcvDrvCfgType    CanIfTrcvDrvConfig;   
 }CanIf;
 
 typedef struct {
@@ -121,11 +121,11 @@ typedef struct {
 				If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the
 				CanIf Tx L-PDU only refers via this CanIfBufferCfg the
 				corresponding CanIfHthCfg. */
-				CanIfBufferCfg	CanIfBufferConfig;
+				CanIfBufferCfgType	CanIfBufferConfig;
 				
 				/* This container contains the references to the
 				configuration setup of each underlying CAN Driver. */
-				CanIfInitHohCfg	CanIfInitHohConfig;
+				CanIfInitHohCfgType	CanIfInitHohConfig;
 				
 				/* This container contains the configuration (parameters)
 				of each receive CAN L-PDU.
@@ -133,7 +133,7 @@ typedef struct {
 				itself represents the symolic name of Receive L-PDU.
 				This L-SDU produces a meta data item of type
 				CAN_ID_32. */
-				CanIfRxPduCfg	CanIfRxPduConfig;
+				CanIfRxPduCfgType	CanIfRxPduConfig;
 				
 				/* This container contains the configuration (parameters)
 				of a transmit CAN L-PDU. It has to be configured as
@@ -142,7 +142,7 @@ typedef struct {
 				represents the symolic name of Transmit L-PDU.
 				This L-SDU consumes a meta data item of type
 				CAN_ID_32. */
-				CanIfTxPduCfg	CanIfTxPduConfig;
+				CanIfTxPduCfgType	CanIfTxPduConfig;
 				
 }CanIfInitCfgType;
 
@@ -227,7 +227,7 @@ typedef struct {
 				#endif
 				
 				/* Configurable reference to a CanIf buffer configuration. CanIfBufferCfg */
-				CanIfBufferCfg* CanIfTxPduBufferRef;
+				CanIfBufferCfgType* CanIfTxPduBufferRef;
 				
 				/* Reference to the "global" Pdu structure to allow harmonization of handle IDs in the COM-Stack.
 				//Pdu* CanIfTxPduRef;
@@ -307,7 +307,7 @@ typedef struct{
 				
 				/* The HRH to which Rx L-PDU belongs to, is referred through this parameter.
 				dependency: This information has to be derived from the CAN Driver configuration.*/
-				CanIfHrhCfg* CanIfRxPduHrhIdRef;
+				CanIfHrhCfgType* CanIfRxPduHrhIdRef;
 				
 				/* Reference to the "global" Pdu structure to allow harmonization of handle IDs in the COM-Stack.
 				//Pdu* CanIfRxPduRef;
@@ -381,28 +381,28 @@ typedef struct {
 				Interface module. The following parameters of CanController config
 				container shall be referenced by this link: CanControllerId, CanWakeupSourceRef
 				Range: 0..max. number of underlying supported CAN controllers*/
-				CanController *CanIfCtrlCanCtrlRef;
+				CanControllerType *CanIfCtrlCanCtrlRef;
 }CanIfCtrlCfgType;
 
 typedef struct {
 				/*Description Reference to the Init Hoh Configuration*/
-				CanIfInitHohCfg *CanIfCtrlDrvInitHohConfigRef 	;
+				CanIfInitHohCfgType *CanIfCtrlDrvInitHohConfigRef 	;
 
 				/*CAN Interface Driver Reference.
 				This reference can be used to get any information (Ex. Driver Name, Vendor ID) from
 				the CAN driver. The CAN Driver name can be derived from the ShortName of the CAN driver module.*/
-				CanGeneral * CanIfCtrlDrvNameRef;
+				CanGeneralType * CanIfCtrlDrvNameRef;
 
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	
-				CanIfCtrlCfg CanIfCtrlConfig;
+				CanIfCtrlCfgType CanIfCtrlConfig;
 }CanIfCtrlDrvCfgType;
 
 typedef struct {
 				/*This container contains the configuration (parameters) of
 				one addressed CAN transceiver by the underlying CAN Transceiver Driver module.
 				For each CAN transceiver a seperate instance of this container has to be provided. */
-				CanIfTrcvCfg CanIfTrcvConfig;
+				CanIfTrcvCfgType CanIfTrcvConfig;
 }CanIfTrcvDrvCfgType;
 
 typedef struct {
@@ -420,32 +420,32 @@ typedef struct {
 
 typedef struct{
 				/*This container contains configuration parameters for each hardware receive object (HRH).*/
-				CanIfHrhCfg CanIfHrhConfig;
+				CanIfHrhCfgType CanIfHrhConfig;
 
 				/*This container contains parameters related to each HTH.*/
-				CanIfHthCfg CanIfHthConfig;
+				CanIfHthCfgType CanIfHthConfig;
 }CanIfInitHohCfgType;
 
 typedef struct {
 				/*Reference to controller Id to which the HTH belongs to. A controller can contain one or more HTHs.*/
-				CanIfCtrlCfg* CanIfHthCanCtrlIdRef;
+				CanIfCtrlCfgType* CanIfHthCanCtrlIdRef;
 
 				/*The parameter refers to a particular HTH object in the CanDrv configuration (see CanHardwareObject 
 				ECUC_Can_00324). CanIf receives the following information of the CanDrv module by this reference:
 				- CanHandleType (see ECUC_Can_00323)
 				- CanObjectId (see ECUC_Can_00326) */
-				CanHardwareObject* CanIfHthIdSymRef;
+				CanHardwareObjectType* CanIfHthIdSymRef;
 }CanIfHthCfgType;
 
 typedef struct {
 				/*Reference to controller Id to which the HRH belongs to. A controller can contain one or more HRHs.*/	
-				CanIfCtrlCfg* CanIfHrhCanCtrlIdRef;
+				CanIfCtrlCfgType* CanIfHrhCanCtrlIdRef;
 
 				/*The parameter refers to a particular HRH object in the CanDrv configuration*/	
-				CanHardwareObject* CanIfHrhIdSymRef;
+				CanHardwareObjectType* CanIfHrhIdSymRef;
 	
 				/*Defines the parameters required for configurating multiple CANID ranges for a given same HRH.*/
-				CanIfHrhRangeCfg CanIfHrhRangeConfig;
+				CanIfHrhRangeCfgType CanIfHrhRangeConfig;
 }CanIfHrhCfgType;
 
 typedef struct {
@@ -483,7 +483,7 @@ typedef struct {
 				/*Reference to HTH, that defines the hardware object or the pool of hardware objects configured for transmission.
 				All the CanIf Tx L-PDUs refer via the CanIfBufferCfg and this parameter to the HTHs if TxBuffering is enabled, or
 				not. Each HTH shall not be assigned to more than one buffer*/
-				CanIfHthCfg* CanIfBufferHthRef;
+				CanIfHthCfgType* CanIfBufferHthRef;
 }CanIfBufferCfgType;
 
 #endif /* __CANIF_H__ */
