@@ -153,10 +153,10 @@ static uint8 HTH_Semaphore[MAX_NO_OF_OBJECTS] = {0};
 static uint32 CAN_CONTROLLER_ACTIVATION[]={STD_ON , STD_ON};
 
 
-static uint8 bClrPendingInt;
+static uint8 ClrPendingInt = 0;
 
 
-static tCANMsgObject *psMsgObject[CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS];
+static tCANMsgObject psMsgObject[CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS];
 
 
 /*****************************************************************************************/
@@ -295,6 +295,10 @@ void Can_Init( const Can_ConfigType* Config)
     uint8   controllerId;
     /* variable to count SW HOH number                                  */
     uint8   HOHCount;
+    /* variable to count SW HRH number                                  */
+    uint8   HRHCount = 0 ;
+    /* variable to count SW HRH number                                  */
+     uint8  HTHCount = 0 ;
     /* variable to save controller BaseAddres                           */
     uint32  BaseAddress;
     /* variable to save the number of hardware messages n each SW HOH   */
@@ -306,7 +310,7 @@ void Can_Init( const Can_ConfigType* Config)
     CanControllerBaudrateConfig* BRConfig;
 
 
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
     /* Report error CAN_E_PARAM_POINTER API called with wrong parameter */
     if(Config == NULL_PTR)
     {
@@ -328,7 +332,7 @@ void Can_Init( const Can_ConfigType* Config)
     /* Loop to initialize all controllers configured to be used in the Module   */
     for(controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER; controllerId++)
     {
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
         /*
         * The function Can_Init shall raise the error CAN_E_TRANSITION
         * if the Can controller is not in state CAN_CS_UNINIT [SWS_Can_00408]
@@ -391,19 +395,19 @@ void Can_Init( const Can_ConfigType* Config)
             /* increament to save the number of occupied hardware objects */
             UsedHWMessageObjt[controllerId]++;
 
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
-            if(UsedHWMessageObjt[controllerId] > CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
-            {
-                /* Report error as number of used hardware message objects exceeded limit */
-                Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
-            }
-            else
-            {
-                /* Do Nothing */
-            }
-#endif
-            MessageObjAssignedToHTH[HOHCount].HTHId = Global_Config->CanHardwareObjectRef[HOHCount].CanObjectId ;
-            MessageObjAssignedToHTH[HOHCount].MessageId = UsedHWMessageObjt[controllerId];
+            #if(CanDevErrorDetect == STD_ON)
+                if(UsedHWMessageObjt[controllerId] > CAN_HOH_NUMBER)
+                {
+                   /* Report error as the number of occupied hardware message objects exceeded limit 32 */
+                   Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
+                }
+                else
+                {
+                   /* Do Nothing */
+                }
+            #endif
+            MessageObjAssignedToHTH[HTHCount].HTHId = Global_Config->CanHardwareObjectRef[HOHCount].CanObjectId ;
+            MessageObjAssignedToHTH[HTHCount++].MessageId = UsedHWMessageObjt[controllerId];
             HWREG(BaseAddress + CAN_O_IF1CRQ)   = UsedHWMessageObjt[controllerId];
         }
         /* Configuration for receive message object type HRH */
@@ -457,31 +461,32 @@ void Can_Init( const Can_ConfigType* Config)
                 /* increament to save the number of occupied hardware objects */
                 UsedHWMessageObjt[controllerId]++;
 
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
-                if(UsedHWMessageObjt[controllerId] > CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
-                {
-                    /* Report error as the number of occupied hardware message objects exceeded limit 32 */
-                    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
-                }
-                else
-                {
-                    /* Do Nothing */
-                }
-#endif
+                #if(CanDevErrorDetect == STD_ON)
+                    if(UsedHWMessageObjt[controllerId] > CAN_HOH_NUMBER)
+                    {
+                       /* Report error as the number of occupied hardware message objects exceeded limit 32 */
+                       Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
+                    }
+                    else
+                    {
+                       /* Do Nothing */
+                    }
+                #endif
                 if(HwObjectCount == 0)  /* End of FIFO Reached */
                 {
                     /* Set cuurent hardware message as the last one in FIFO */
                     HWREG(BaseAddress + CAN_O_IF2MCTL) |= CAN_IF2MCTL_EOB ;
                     /* Map the Current Software HRH with its hardware messages used in the buffer */
-                    MessageObjAssignedToHRH[HOHCount].HRHId = Global_Config->CanHardwareObjectRef[HOHCount].CanObjectId;
+                    MessageObjAssignedToHRH[HRHCount].HRHId = Global_Config->CanHardwareObjectRef[HOHCount].CanObjectId;
                     /*Save the ID of the first hardware message object used in the FIFO*/
-                    MessageObjAssignedToHRH[HOHCount].StartMessageId = UsedHWMessageObjt[controllerId] - \
+                    MessageObjAssignedToHRH[HRHCount].StartMessageId = UsedHWMessageObjt[controllerId] - \
                             Global_Config->CanHardwareObjectRef[HOHCount].CanHwObjectCount + 1;
                     /* Save the ID of the last hardware message object used in the FIFO */
-                    MessageObjAssignedToHRH[HOHCount].EndMessageId = UsedHWMessageObjt[controllerId];
+                    MessageObjAssignedToHRH[HRHCount++].EndMessageId = UsedHWMessageObjt[controllerId];
                 }
                 /* Save the ID of the  hardware message object used in the register IF2CRQ */
                 HWREG(BaseAddress + CAN_O_IF2CRQ) = UsedHWMessageObjt[controllerId];
+
             }
         }
     }
@@ -516,7 +521,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 	ui32Base =
 			Global_Config->CanControllerCfgRef[Controller].CanControllerBaseAddress;
 
-#if(CAN_DEV_ERROR_DETECT == STD_ON) /* DET notifications */
+#if(CanDevErrorDetect == STD_ON) /* DET notifications */
 
 	/* [SWS_CAN_00492] If development error detection for the Can module is enabled
 	 The function Can_SetBaudrate shall raise the error CAN_E_UNINIT and return
@@ -662,7 +667,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 void Can_EnableControllerInterrupts(uint8 Controller) {
 	/* Critical Section to protect shared resources in a reentrant Function */
 	irq_Disable();
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
 	
 	/*  [SWS_Can_00209] The function Can_EnableControllerInterrupts shall raise the error CAN_E_UNINIT if
      *  the driver not yet initialized
@@ -724,7 +729,7 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
 void Can_DisableControllerInterrupts(uint8 Controller) {
 	/* Critical Section to protect shared resources in a reentrant Function */
 	irq_Disable();
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
 
     /*  [SWS_Can_00205] The function Can_DisableControllerInterrupts shall raise the error CAN_E_UNINIT if
      *  the driver not yet initialized
@@ -776,7 +781,7 @@ void Can_DeInit(void)
 {
 	uint8 ControllerIndex = 0 ;
 	
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
     /*   The function Can_DeInit shall raise the error CAN_E_TRANSITION if the driver is not
      *   in state CAN_READY [SWS_Can_91011]
      *   [SWS_BSW_00232] Call to De-Initialization functions :
@@ -833,8 +838,11 @@ void Can_MainFunction_Read(void)
     /*
      *   Loop all controllers to get the new data
      */
-    // TODO controlledID  base address not implemented here ?
-    uint8 controllerId = 0 ; /*variable to count controllers number*/
+    /*variable to count controllers number*/
+    uint8 controllerId = 0 ;
+
+    /*array to save received data*/
+     uint8 data[MAX_DTAT_LENGTH] ;
     for (controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER; controllerId++)
     {
         /*SWS_Can_00108*/
@@ -844,49 +852,58 @@ void Can_MainFunction_Read(void)
                     (TRUE == Global_Config->CanHardwareObjectRef[controllerId].CanHardwareObjectUsesPolling)
             ))
         {
-            uint8 obj_index;  /* variable to count object number */
-#if (CAN_DEV_ERROR_DETECT == STD_ON)
-        if (ControllerState[controllerId] == CAN_CS_UNINIT)
-        {
-                Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_MAIN_FUNCTION_READ_ID, CAN_E_UNINIT);
-        }//End if
-#endif //CanDevErrorDetect
-        /*
-         * loop for all the hardware object to get the only new avialables data in this object
-         */
-        // TODO psMsgObject shold be config inside init API
-        for(obj_index = 0; obj_index < NUM_OF_HOH; obj_index++)
-        {
-            if(Global_Config->CanHardwareObjectRef[obj_index].CanObjectType == RECEIVE)
-            {
-                /*
-                 * Reads a CAN message from one of the message object buffers.
-                 */
-                    CANMessageGet(Global_Config->CanControllerCfgRef[controllerId].CanControllerBaseAddress,
-                                  obj_index, psMsgObject[obj_index], bClrPendingInt);
-                // check if this object have new data avialables
-                if(( psMsgObject[obj_index]->ui32Flags & MSG_OBJ_NEW_DATA) == MSG_OBJ_NEW_DATA)
+            /* variable to count object number */
+            uint8 obj_index = 0;
+            uint8 HW_Obj_Index= 0 ;
+            #if (CanDevErrorDetect == STD_ON)
+                if (ControllerState[controllerId] == CAN_CS_UNINIT)
                 {
-                        Can_HwType Mailbox; // the varaible for Callback function RxIndication
-                        PduInfoType PduInfo;
-                    //message ID
-                    Mailbox.CanId = psMsgObject[obj_index]->ui32MsgID;
-                        //hardware object that has new data
-                    Mailbox.Hoh = obj_index;
-                    // controller ID
-                    Mailbox.ControllerId = controllerId;
-                        PduInfo.SduLength = psMsgObject[obj_index]->ui32MsgLen;
-                        PduInfo.SduDataPtr = psMsgObject[obj_index]->pui8MsgData;
-                    // 2. inform CanIf using API below.
-                        CanIf_RxIndication(&Mailbox, &PduInfo);
-                }// END IF
+                    Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_MAIN_FUNCTION_READ_ID, CAN_E_UNINIT);
+                }//End if
+            #endif //CanDevErrorDetect
+            /*
+             * loop for all the hardware object to get the only new avialables data in this object
+             */
+            // TODO psMsgObject shold be config inside init API
+            for(obj_index = 0; obj_index < CAN_HRH_NUMBER; obj_index++)
+            {
+                for(HW_Obj_Index = MessageObjAssignedToHRH[obj_index].StartMessageId;
+                    HW_Obj_Index <= MessageObjAssignedToHRH[obj_index].EndMessageId ; HW_Obj_Index++)
+                {
+                      /*Initialize data pointer */
+                       psMsgObject[HW_Obj_Index].pui8MsgData = data;
+
+                        /*
+                         * Reads a CAN message from one of the message object buffers.
+                         */
+                            CANMessageGet(Global_Config->CanHardwareObjectRef[obj_index].CanControllerRef->CanControllerBaseAddress,
+                                          HW_Obj_Index, &psMsgObject[HW_Obj_Index], ClrPendingInt);
+                        // check if this object have new data avialables
+                        if(( psMsgObject[HW_Obj_Index].ui32Flags & MSG_OBJ_NEW_DATA) == MSG_OBJ_NEW_DATA)
+                        {
+                            // mailbox for Callback function RxIndication
+                            Can_HwType Mailbox;
+                            PduInfoType PduInfo;
+                            //message ID
+                            Mailbox.CanId = psMsgObject[HW_Obj_Index].ui32MsgID;
+                            //hardware object that has new data
+                            Mailbox.Hoh = obj_index;
+                            // controller ID
+                            Mailbox.ControllerId = controllerId;
+                            //Save data length
+                            PduInfo.SduLength = psMsgObject[HW_Obj_Index].ui32MsgLen;
+                            //Save data
+                            PduInfo.SduDataPtr = psMsgObject[HW_Obj_Index].pui8MsgData;
+                            // 2. inform CanIf using API below.
+                            CanIf_RxIndication(&Mailbox, &PduInfo);
+                        }
+                    }
+                }
             }
-        }// end of object in this controller ID
-        }
         else
         {
         }
-    }// end loop for controllerId
+    }
 }
 
 /****************************************************************************************/
@@ -909,7 +926,7 @@ uint8 controllerId; /*variable to count controllers number*/
      */
     for (controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER;controllerId += 1)
     {
-#if (CAN_DEV_ERROR_DETECT == STD_ON)
+#if (CanDevErrorDetect == STD_ON)
         if (ControllerState[controllerId] == CAN_CS_UNINIT)
         {
             Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_MAIN_FUNCTION_BUS_OFF_ID, CAN_E_UNINIT);
@@ -949,17 +966,20 @@ uint8 controllerId; /*variable to count controllers number*/
 Std_ReturnType Can_write (
         Can_HwHandleType Hth,
         const Can_PduType * PduInfo
-
 )
 {
     Std_ReturnType returnVal = E_NOT_OK ;
 	
-#if (CanDevErrorDetect == STD_ON)
+
     if (CAN_UNINIT == ModuleState)
     {
-        returnVal = E_NOT_OK ;
-        // call Det function CAN_E_UNINIT
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_UNINIT);
+
+        #if (CanDevErrorDetect == STD_ON)
+            // call Det function CAN_E_UNINIT
+            Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_UNINIT);
+        #else
+            returnVal = E_NOT_OK ;
+        #endif
     }
     else if (NULL_PTR == PduInfo)
     {
@@ -968,8 +988,11 @@ Std_ReturnType Can_write (
          * Can_Write() shall raise CAN_E_PARAM_POINTER and shall return E_NOT_OK if the
          * parameter PduInfo is a null pointer.⌋
          */
-        returnVal = E_NOT_OK ;
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_POINTER);
+        #if (CanDevErrorDetect == STD_ON)
+		    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_POINTER);
+        #else
+		    returnVal = E_NOT_OK ;
+        #endif
     }
     else if (PduInfo->length > 8 )
     {
@@ -978,8 +1001,11 @@ Std_ReturnType Can_write (
          * development error detection for the CAN module is enabled shall raise the error
          * CAN_E_PARAM_DATA_LENGTH : if length is more that 8 bytes and Can controller is not CAN FD
          */
-        returnVal = E_NOT_OK ;
+        #if (CanDevErrorDetect == STD_ON)
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_DATA_LENGTH);
+        #else
+            returnVal = E_NOT_OK ;
+        #endif
     }
     else if (FALSE == CanTriggerTransmitEnable)
     {
@@ -998,8 +1024,7 @@ Std_ReturnType Can_write (
     else
 	{
 	}
-	
-#endif		/* end of CanDevErrorDetect */
+	/* end of CanDevErrorDetect */
 	/*
 	 * [SWS_Can_00212] ⌈ The function Can_Write shall perform following actions if the
 	 * hardware transmit object is free:
@@ -1057,117 +1082,121 @@ Std_ReturnType Can_write (
 
 	for (Hoh_count = 0 ; Hoh_count < NUM_OF_HOH  ; Hoh_count++)
 	{
-		if (Hth == Global_Config->CanHardwareObjectRef[Hoh_count].CanObjectId)
+	    if (Hth == Global_Config->CanHardwareObjectRef[Hoh_count].CanObjectId)
 		{
 			hth_index = Hoh_count ;
 		}
 	}
+        #if (CanDevErrorDetect == STD_ON)
+            /*
+             * [SWS_Can_00217] If development error detection for the Can module is enabled:
+             * The function Can_Write shall raise the error CAN_E_PARAM_HANDLE and shall
+             * return E_NOT_OK if the parameter Hth is not a configured Hardware Transmit
+             * Handle.⌋
+             */
+            if (Global_Config->CanHardwareObjectRef[hth_index].CanObjectType != TRANSMIT)
+            {
+                returnVal = E_NOT_OK ;
+                //det error CAN_E_PARAM_HANDLE
+                Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_HANDLE);
+            }
+            else
+            {
+                /*MISRA Rule*/
+            }
+        #endif
+        if (0 == HTH_Semaphore[hth_index])
+        {
+            HTH_Semaphore[hth_index] = 1 ;
 
-#if (CanDevErrorDetect == STD_ON)
-	/*
-	 * [SWS_Can_00217] If development error detection for the Can module is enabled:
-	 * The function Can_Write shall raise the error CAN_E_PARAM_HANDLE and shall
-	 * return E_NOT_OK if the parameter Hth is not a configured Hardware Transmit
-	 * Handle.⌋
-	 */
-	if (Global_Config->CanHardwareObjectRef[hth_index].CanObjectType != TRANSMIT)
-	{
-		returnVal = E_NOT_OK ;
-		//det error CAN_E_PARAM_HANDLE
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_HANDLE);
-	}
-	else
-	{
-	}
-#endif
-	if (0 == HTH_Semaphore[hth_index])
-	{
-		HTH_Semaphore[hth_index] = 1 ;
+            ui32Base = Global_Config->CanHardwareObjectRef[hth_index].CanControllerRef->CanControllerBaseAddress ;
+            /*
+             * check if hardware is busy
+             */
+            if(HWREG(ui32Base + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
+            {
+                /*
+                 * the hardware transmit object is busy
+                 * [SWS_Can_00213] ⌈ The function Can_Write shall perform no actions if the
+                 * hardware transmit object is busy with another transmit request for an L-PDU:
+                 * 1. The transmission of the other L-PDU shall not be cancelled and the function
+                 * Can_Write is left without any actions.
+                 * 2. The function Can_Write shall return CAN_BUSY. (SRS_Can_01049).
+                 */
+                returnVal = CAN_BUSY ;
+            }
+            else
+            {
+                ui16CmdMaskReg |= CAN_IF1CMSK_WRNRD | CAN_IF1CMSK_DATAA |
+                                  CAN_IF1CMSK_DATAB | CAN_IF1CMSK_CONTROL|
+                                  CAN_IF1CMSK_ARB ;
 
-		ui32Base = Global_Config->CanHardwareObjectRef[hth_index].CanControllerRef->CanControllerBaseAddress ;
-		/*
-		 * check if hardware is busy
-		 */
-		if(HWREG(ui32Base + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
-		{
-			/*
-			 * the hardware transmit object is busy
-			 * [SWS_Can_00213] ⌈ The function Can_Write shall perform no actions if the
-			 * hardware transmit object is busy with another transmit request for an L-PDU:
-			 * 1. The transmission of the other L-PDU shall not be cancelled and the function
-			 * Can_Write is left without any actions.
-			 * 2. The function Can_Write shall return CAN_BUSY. (SRS_Can_01049).
-			 */
-			returnVal = CAN_BUSY ;
-		}
-		else
-		{
-			ui16CmdMaskReg |= CAN_IF1CMSK_WRNRD | CAN_IF1CMSK_DATAA |
-							  CAN_IF1CMSK_DATAB | CAN_IF1CMSK_CONTROL|
-							  CAN_IF1CMSK_ARB ;
+                ui16ArbReg_2 = CAN_IF1ARB2_DIR;             /// transmit M.O.
 
-			ui16MsgCtrl |= CAN_IF1MCTL_TXRQST;          /// transmission request
-			ui16ArbReg_2 = CAN_IF1ARB2_DIR;             /// transmit M.O.
+                if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == EXTENDED)
+                {
+                    ui16ArbReg_1 |= PduInfo->id & CAN_IF1ARB1_ID_M ;
+                    ui16ArbReg_2 |= (PduInfo->id >> 16 ) & CAN_IF1ARB2_ID_M ;
+                    ui16ArbReg_2 |= CAN_IF1ARB2_MSGVAL | CAN_IF1ARB2_XTD ;
+                }
+                else if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == STANDARD)
+                {
+                    ui16ArbReg_1 &=~ CAN_IF1ARB2_MSGVAL ;
+                    ui16ArbReg_2 |= (  PduInfo->id  << 2 ) & CAN_IF1ARB2_ID_STAND ;
 
-			if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == EXTENDED)
-			{
-				ui16ArbReg_1 |= PduInfo->id & CAN_IF1ARB1_ID_M ;
-				ui16ArbReg_2 |= (PduInfo->id >> 16 ) & CAN_IF1ARB2_ID_M ;
-				ui16ArbReg_2 |= CAN_IF1ARB2_MSGVAL | CAN_IF1ARB2_XTD ;
-			}
-			else if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == STANDARD)
-			{
-				ui16ArbReg_2 |= (  PduInfo->id  << 2 ) & CAN_IF1ARB2_ID_M ;
-				ui16ArbReg_1 |= CAN_IF1ARB2_MSGVAL ;
-			}
-			else
-			{
-			}
-			ui16MsgCtrl |=  ( ( PduInfo->length ) & CAN_IF1MCTL_DLC_M ) ;
-			ui16MsgCtrl |= CAN_IF1MCTL_EOB  | CAN_IF1MCTL_TXIE ;
-			
-			CANDataRegWrite (
-					PduInfo->sdu,
-					(uint32 *)( ui32Base + CAN_O_IF1DA1 ),
-					PduInfo->length
-			);
-			
-			HWREG(ui32Base + CAN_O_IF1ARB2) &=~ CAN_IF1ARB2_MSGVAL;
-			HWREG(ui32Base + CAN_O_IF1CMSK) = ui16CmdMaskReg;
-			HWREG(ui32Base + CAN_O_IF1MSK1) = ui16MaskReg_1;
-			HWREG(ui32Base + CAN_O_IF1MSK2) = ui16MaskReg_2;
-			HWREG(ui32Base + CAN_O_IF1ARB1) = ui16ArbReg_1;
-			HWREG(ui32Base + CAN_O_IF1ARB2) = ui16ArbReg_2;
-			HWREG(ui32Base + CAN_O_IF1MCTL) = ui16MsgCtrl;
+                }
+                else
+                {
+                }
+                ui16MsgCtrl |=  ( ( PduInfo->length ) & CAN_IF1MCTL_DLC_M ) ;
+                ui16MsgCtrl |= CAN_IF1MCTL_EOB  | CAN_IF1MCTL_TXRQST ;
 
-		   for (Hth_count = 0 ; Hth_count < CAN_HTH_NUMBER  ; Hth_count++)
-			{
-				if (Hth ==  MessageObjAssignedToHTH[Hth_count].HTHId )
-				{
-					real_hwObjectId = MessageObjAssignedToHTH[Hth_count].MessageId ;
-				}
-			}
+                CANDataRegWrite (
+                        PduInfo->sdu,
+                        (uint32 *)( ui32Base + CAN_O_IF1DA1 ),
+                        PduInfo->length
+                );
 
-			HWREG(ui32Base + CAN_O_IF1CRQ) = real_hwObjectId ;
-			HTH_Semaphore[hth_index] = 0 ;
+                HWREG(ui32Base + CAN_O_IF1CMSK) = ui16CmdMaskReg;
+                HWREG(ui32Base + CAN_O_IF1MSK1) = ui16MaskReg_1;
+                HWREG(ui32Base + CAN_O_IF1MSK2) = ui16MaskReg_2;
+                HWREG(ui32Base + CAN_O_IF1ARB1) = ui16ArbReg_1;
+                HWREG(ui32Base + CAN_O_IF1ARB2) = ui16ArbReg_2;
+                HWREG(ui32Base + CAN_O_IF1ARB2) |= CAN_IF1ARB2_MSGVAL;
+                HWREG(ui32Base + CAN_O_IF1MCTL) = ui16MsgCtrl;
 
-			/*
-			 *  [SWS_Can_00276] ⌈ The function Can_Write shall store the swPduHandle that is
-				given inside the parameter PduInfo until the Can module calls the
-				CanIf_TxConfirmation for this request where the swPduHandle is given as
-				parameter.()
-			 */
-			swPduHandle = PduInfo->swPduHandle ;
+               for (Hth_count = 0 ; Hth_count < CAN_HTH_NUMBER  ; Hth_count++)
+                {
+                    if (Hth ==  MessageObjAssignedToHTH[Hth_count].HTHId )
+                    {
+                        real_hwObjectId = MessageObjAssignedToHTH[Hth_count].MessageId ;
+                        break ;
+                    }
+                }
+
+                HWREG(ui32Base + CAN_O_IF1CRQ) = real_hwObjectId ;
+                HTH_Semaphore[hth_index] = 0 ;
 
                 /*
-                 * (SRS_Can_01049)
+                 *  [SWS_Can_00276] ⌈ The function Can_Write shall store the swPduHandle that is
+                    given inside the parameter PduInfo until the Can module calls the
+                    CanIf_TxConfirmation for this request where the swPduHandle is given as
+                    parameter.()
                  */
-			returnVal = E_OK ;
-		}
-	}
-	else
-	{
-	}
+                swPduHandle = PduInfo->swPduHandle ;
+
+                    /*
+                     * (SRS_Can_01049)
+                     */
+                returnVal = E_OK ;
+            }
+        }
+        else
+        {
+               /*MISRA Rule*/
+        }
+
+
     return returnVal ;
 }
 
@@ -1175,21 +1204,21 @@ static void CANDataRegWrite ( uint8 * pui8Data, uint32 * pui32Register , uint8 u
 {
 
     uint8 index ;
-    uint32 ui32DataValue ;
+    uint16 ui16DataValue ;
 
 
     for (index = 0 ; index < ui8Size;)
     {
 
-        ui32DataValue = pui8Data[index++] ;
+        ui16DataValue = pui8Data[index++] ;
 
         if (index < ui8Size)
         {
-            ui32DataValue |= ( pui8Data[index++] << 8 ) ;
+            ui16DataValue |= ( pui8Data[index++] << 8 ) ;
         }
 
 
-        HWREG(pui32Register++) = ui32DataValue;
+        HWREG(pui32Register++) = ui16DataValue;
 
     }
 
@@ -1296,7 +1325,7 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
     development error CAN_E_UNINIT and return E_NOT_OK.*/
     if (CAN_UNINIT == ModuleState )
     {
-        #if (CAN_DEV_ERROR_DETECT == STD_ON)
+        #if (CanDevErrorDetect == STD_ON)
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SET_CONTROLLER_MODE, CAN_E_UNINIT);
         #endif
         ret = E_NOT_OK;
@@ -1308,7 +1337,7 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
                    E_NOT_OK.*/
     else if(Controller >= MAX_CONTROLLERS_NUMBER)
     {
-        #if (CAN_DEV_ERROR_DETECT == STD_ON)
+        #if (CanDevErrorDetect == STD_ON)
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SET_CONTROLLER_MODE, CAN_E_PARAM_CONTROLLER);
         #endif
         ret = E_NOT_OK;
@@ -1321,7 +1350,7 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
             ((Transition == CAN_CS_SLEEP) &&  (ControllerState[Controller]!= CAN_CS_STOPPED     ||
              ControllerState[Controller]!= CAN_CS_SLEEP)))
     {
-        #if (CAN_DEV_ERROR_DETECT == STD_ON)
+        #if (CanDevErrorDetect == STD_ON)
         Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID ,CAN_SET_CONTROLLER_MODE ,CAN_E_TRANSITION );
         #endif
         ret = E_NOT_OK;
@@ -1416,7 +1445,7 @@ Can_ErrorStateType   ErrorState = 0;
     */
     if(ModuleState == CAN_UNINIT)
     {
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
             Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_UNINIT);
         #else
             Return_type = E_NOT_OK;
@@ -1428,7 +1457,7 @@ Can_ErrorStateType   ErrorState = 0;
     */
     else if(ControllerId >= USED_CONTROLLERS_NUMBER )
     {
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
             Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_PARAM_CONTROLLER);
         #else
             Return_type = E_NOT_OK;
@@ -1441,7 +1470,7 @@ Can_ErrorStateType   ErrorState = 0;
     */
     else if(ErrorStatePtr == NULL_PTR)
     {
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
             Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_PARAM_POINTER);
         #else
             Return_type = E_NOT_OK;
@@ -1489,7 +1518,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
      */
 	if(ModuleState == CAN_UNINIT)
 	{
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
 	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_UNINIT);
         #else
 	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
@@ -1501,7 +1530,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	 */
 	else if(NUM_OF_CAN_CONTROLLERS <= Controller)
 	{
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
 	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_CONTROLLER);
         #else
 	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
@@ -1513,7 +1542,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	 */
 	else if(NULL_PTR == ControllerModePtr)
 	{
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
 	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_POINTER);
         #else
 	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;

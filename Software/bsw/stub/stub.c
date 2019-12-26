@@ -36,6 +36,7 @@
 #include "ComStack_Types.h"
 #include "CanIf_Cbk.h"
 
+uint8 ReadData=0;
 Std_ReturnType Det_ReportError(uint16 ModuleId, uint8 InstanceId, uint8 ApiId,
 		uint8 ErrorId)
 {
@@ -63,7 +64,7 @@ void CanIf_RxIndication
 )
 
 {
-
+        ReadData= *(PduInfoPtr->SduDataPtr);
 }
 
 void CanIf_ControllerBusOff(uint8 ControllerId)

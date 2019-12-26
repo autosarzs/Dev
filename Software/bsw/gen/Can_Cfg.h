@@ -43,11 +43,11 @@
 
 #define MAX_BAUDRATE_CONFIGS_CONTROLLER_0 	     (1U)
 #define MAX_BAUDRATE_CONFIGS_CONTROLLER_1	     (1U)
-#define USED_CONTROLLERS_NUMBER                  (2U)                /*number of can controllers in the ECU*/
+#define USED_CONTROLLERS_NUMBER                  (1U)                /*number of can controllers in the ECU*/
 #define CAN_HOH_NUMBER                           (2U)
 #define CAN_HRH_NUMBER                           (1U)
 #define CAN_HTH_NUMBER                           (1U)
-#define CLOCK                                    (50000000)            /*Can Clock in Hz*/
+#define CLOCK                                    (80000000)            /*Can Clock in Hz*/
 #define CONTROLLER_0_BDR_ID                      (0U)
 #define CONTROLLER0_ID                           (0U)
 #define DEFAULT_BAUDRATE_CONFIGRATION_ID         (0U)
@@ -105,8 +105,6 @@
   #error "The AR version of Std_Types.h does not match the expected version"
 #endif
 
-/* Switches the development error detection and notification on or off */
-#define CAN_DEV_ERROR_DETECT					STD_OFF
 
 /* Specifies the InstanceId of this module instance. If only one instance is
 present it shall have the Id 0.*/

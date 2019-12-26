@@ -13,12 +13,12 @@ McuClockReferencePoint Clk = CLOCK;
 CanControllerBaudrateConfig CanControllerBaudrateConf[] =
 {
     {
-        100,                                     /* BaudRate in Kbps    */
+        500,                                     /* BaudRate in Kbps    */
         CONTROLLER_0_BDR_ID,                     /* Baudrate Configuration ID   */
-        1,                                       /* propagation delay   */
-        4,                                       /* Phase1  */
-        4,                                       /* Phase2  */
-        4                                        /* SJW */
+        3,                                       /* propagation delay   */
+        10,                                      /* Phase1  */
+        2,                                       /* Phase2  */
+        2                                        /* SJW */
     }
 
 };
@@ -57,7 +57,7 @@ CanHwFilter CanHwFilterHTH[] =
 CanHwFilter CanHwFilterHRH[] =
 {
     {
-        2,               /*  ID  */
+        2,                  /*  ID  */
         0x7FF               /*  Mask filter */
     }
 };
@@ -80,7 +80,7 @@ CanHardwareObject HOHObj[CAN_HOH_NUMBER] =
         STANDARD,               /*  Arbitration ID type */
         HRH0_1,                 /*  HOH ID  */
         RECEIVE,                /*  HOH Type    */
-        &CanControllerCfg[1],   /*  Reference to the controller this HOH belongs to */
+        &CanControllerCfg[0],   /*  Reference to the controller this HOH belongs to */
         &CanHwFilterHRH[0],      /*  Reference to the Filter configuartion   */
         FALSE
     }

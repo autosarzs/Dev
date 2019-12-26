@@ -12,4 +12,5 @@
 	<createSlaveProjects value=""/>
 	<templateProperties value="id=com.ti.common.project.core.emptyProjectWithMainTemplate_gnu_arm"/>
 	<filesToOpen value="main.c"/>
+	<isTargetManual value="true"/>
 </projectOptions>

@@ -108,6 +108,7 @@ typedef uint8 Can_ServiceId;
 
 #define NULL_PTR  ((void*)0)
 
+#define MAX_DTAT_LENGTH         (8U)
 //*****************************************************************************
 //  Enables / disables API Can_MainFunction_BusOff() for
 //  handling Busoff events in polling mode.
@@ -373,6 +374,9 @@ void Can_Init(const Can_ConfigType* Config);
 Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID);
 
 void Can_DeInit(void);
+Std_ReturnType Can_write ( Can_HwHandleType Hth, const Can_PduType * PduInfo) ;
+Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType Transition ) ;
+void Can_MainFunction_Read(void) ;
 void Can_DisableControllerInterrupts(uint8 Controller);
 void Can_EnableControllerInterrupts(uint8 Controller);
 Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* ControllerModePtr);
