@@ -64,11 +64,11 @@
 //	parameter CAN_HANDLE_TYPE of the CAN Driver module via
 //	CANIF_HRH_HANDLETYPE_REF for at least one HRH.
 //*****************************************************************************
-typedef uint8 CANIF_PRIVATE_SOFTWARE_FILTER_TYPE;
-#define BINARY									((CANIF_PRIVATE_SOFTWARE_FILTER_TYPE)0x00)
-#define INDEX									((CANIF_PRIVATE_SOFTWARE_FILTER_TYPE)0x01)
-#define LINEAR									((CANIF_PRIVATE_SOFTWARE_FILTER_TYPE)0x02)
-#define TABLE									((CANIF_PRIVATE_SOFTWARE_FILTER_TYPE)0x03)
+typedef uint8 CanIfPrivateSoftwareFilterTypeType;
+#define BINARY									((CanIfPrivateSoftwareFilterTypeType)0x00)
+#define INDEX									((CanIfPrivateSoftwareFilterTypeType)0x01)
+#define LINEAR									((CanIfPrivateSoftwareFilterTypeType)0x02)
+#define TABLE									((CanIfPrivateSoftwareFilterTypeType)0x03)
 
 //*****************************************************************************
 //  Defines whether TTCAN is supported.
@@ -111,9 +111,9 @@ typedef uint8 CANIF_PRIVATE_SOFTWARE_FILTER_TYPE;
 //	hardware unit. For CAN hardware units with more than 255 HW objects
 //	the extended range shall be used (UINT16).
 //*****************************************************************************
-typedef uint16 CANIF_PUBLIC_HANDLE_TYPE_ENUM;
-#define UINT16 									((CANIF_PUBLIC_HANDLE_TYPE_ENUM)0xFFFF)
-#define UINT8									((CANIF_PUBLIC_HANDLE_TYPE_ENUM)0x0FF)
+typedef uint16 CanIfPublicHandleTypeEnumType;
+#define UINT16 									((CanIfPublicHandleTypeEnumType)0xFFFF)
+#define UINT8									((CanIfPublicHandleTypeEnumType)0x0FF)
 
 //*****************************************************************************
 //  Selects support of Pretended Network features in CanIf.
@@ -284,11 +284,11 @@ Range: 	EXTENDED_CAN CAN 		frame with extended identifier (29 bits)
 		EXTENDED_FD_CAN CAN FD 	frame with extended identifier (29 bits)
 		STANDARD_CAN CAN 		frame with standard identifier (11 bits)
 		STANDARD_FD_CAN CAN FD 	frame with standard identifier (11 bits)*/
-typedef uint8 CANIF_TX_PDU_CAN_ID_TYPE;
-#define EXTENDED_CAN							((CANIF_TX_PDU_CAN_ID_TYPE)0x00U)
-#define EXTENDED_FD_CAN							((CANIF_TX_PDU_CAN_ID_TYPE)0x01U)
-#define STANDARD_CAN							((CANIF_TX_PDU_CAN_ID_TYPE)0x02U)
-#define STANDARD_FD_CAN							((CANIF_TX_PDU_CAN_ID_TYPE)0x03U)
+typedef uint8 CanIfTxPduCanIdTypeType;
+#define EXTENDED_CAN							((CanIfTxPduCanIdTypeType)0x00U)
+#define EXTENDED_FD_CAN							((CanIfTxPduCanIdTypeType)0x01U)
+#define STANDARD_CAN							((CanIfTxPduCanIdTypeType)0x02U)
+#define STANDARD_FD_CAN							((CanIfTxPduCanIdTypeType)0x03U)
 
 /* ECU wide unique, symbolic handle for transmit CAN L-SDU.
 Range: 0..max. number of CantTxPduIds. Range: 0 - 4294967295*/
@@ -322,9 +322,9 @@ has to be either PDUR or CDD and CanIfTxPduUserTriggerTransmitName has to be spe
 /* Defines the type of each transmit CAN L-PDU.
 Range:	DYNAMIC 	CAN ID is defined at runtime.
 		STATIC 		CAN ID is defined at compile-time. */
-typedef uint8 CANIF_TX_PDU_TYPE;
-#define DYNAMIC									((CANIF_TX_PDU_TYPE)0x00U)
-#define STATIC									((CANIF_TX_PDU_TYPE)0x01U)
+typedef uint8 CanIfTxPduTypeType;
+#define DYNAMIC									((CanIfTxPduTypeType)0x00U)
+#define STATIC									((CanIfTxPduTypeType)0x01U)
 
 /* This parameter defines the upper layer (UL) module to which the confirmation of
 the successfully transmitted CANTXPDUID has to be routed via the <User_TxConfirmation>.
@@ -345,15 +345,15 @@ layer modules have to be configured for Trigger Transmit. Therefore,
 <User_TriggerTransmit>() will not be called and CanIfTxPduUserTxConfirmationUL
 as well as CanIfTxPduUserTriggerTransmitName need not to be configured. */
 #if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
-	typedef uint8 CANIF_TX_PDU_USER_TX_CONFIRMATION_UL;
-	#define CAN_NM								((CANIF_TX_PDU_USER_TX_CONFIRMATION_UL)0x00U)
-	#define CAN_TP								((CANIF_TX_PDU_USER_TX_CONFIRMATION_UL)0x01U)
-	#define CAN_TSYN							((CANIF_TX_PDU_USER_TX_CONFIRMATION_UL)0x02U)
-	#define CDD									((CANIF_TX_PDU_USER_TX_CONFIRMATION_UL)0x03U)
-	#define J1939NM								((CANIF_TX_PDU_USER_TX_CONFIRMATION_UL)0x04U)
-	#define J1939TP								((CANIF_TX_PDU_USER_TX_CONFIRMATION_UL)0x05U)
-	#define PDUR								((CANIF_TX_PDU_USER_TX_CONFIRMATION_UL)0x06U)
-	#define XCP									((CANIF_TX_PDU_USER_TX_CONFIRMATION_UL)0x07U)
+	typedef uint8 CanIfTxPduUserTxConfirmationULType;
+	#define CAN_NM								((CanIfTxPduUserTxConfirmationULType)0x00U)
+	#define CAN_TP								((CanIfTxPduUserTxConfirmationULType)0x01U)
+	#define CAN_TSYN							((CanIfTxPduUserTxConfirmationULType)0x02U)
+	#define CDD									((CanIfTxPduUserTxConfirmationULType)0x03U)
+	#define J1939NM								((CanIfTxPduUserTxConfirmationULType)0x04U)
+	#define J1939TP								((CanIfTxPduUserTxConfirmationULType)0x05U)
+	#define PDUR								((CanIfTxPduUserTxConfirmationULType)0x06U)
+	#define XCP									((CanIfTxPduUserTxConfirmationULType)0x07U)
 #endif
 
 /* This parameter defines the name of the <User_TriggerTransmit>. This parameter depends on the parameter
@@ -452,16 +452,16 @@ Range: 	EXTENDED_CAN 			CAN 2.0 or CAN FD frame with extended identifier (29 bit
 		STANDARD_FD_CAN 		CAN FD frame with standard identifier (11 bits)
 		STANDARD_NO_FD_CAN 		CAN 2.0 frame with standard identifier (11 bits)
 dependency: If CanIfRxPduDataLength > 8 then CanIfRxPduCanIdType must not be STANDARD_NO_FD_CAN or EXTENDED_NO_FD_CAN */
-typedef uint8 CANIF_RX_PDU_CAN_ID_TYPE;
-#define EXTENDED_CAN							((CANIF_RX_PDU_CAN_ID_TYPE)0x00U)
-#define EXTENDED_FD_CAN							((CANIF_RX_PDU_CAN_ID_TYPE)0x01U)
+typedef uint8 CanIfRxPduCanIdTypeType;
+#define EXTENDED_CAN							((CanIfRxPduCanIdTypeType)0x00U)
+#define EXTENDED_FD_CAN							((CanIfRxPduCanIdTypeType)0x01U)
 #if(CanIfRxPduDataLength <= 8)
-	#define EXTENDED_NO_FD_CAN					((CANIF_RX_PDU_CAN_ID_TYPE)0x02U)
+	#define EXTENDED_NO_FD_CAN					((CanIfRxPduCanIdTypeType)0x02U)
 #endif
-#define STANDARD_CAN							((CANIF_RX_PDU_CAN_ID_TYPE)0x03U)
-#define STANDARD_FD_CAN							((CANIF_RX_PDU_CAN_ID_TYPE)0x04U)
+#define STANDARD_CAN							((CanIfRxPduCanIdTypeType)0x03U)
+#define STANDARD_FD_CAN							((CanIfRxPduCanIdTypeType)0x04U)
 #if(CanIfRxPduDataLength <= 8)
-	#define STANDARD_NO_FD_CAN					((CANIF_RX_PDU_CAN_ID_TYPE)0x05U)
+	#define STANDARD_NO_FD_CAN					((CanIfRxPduCanIdTypeType)0x05U)
 #endif
 
 /* Data length of the received CAN L-PDUs used by the CAN Interface. This information is
@@ -512,15 +512,15 @@ Note: If receive indications are not necessary or no upper layer modules
 are configured for receive indications and thus <User_RxIndication>()
 shall not be called, CANIF_RXPDU_USERRXINDICATION_UL and
 CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
-typedef uint8 CANIF_RX_PDU_USER_RX_INDICATION_UL;
-#define CAN_NM									((CANIF_RX_PDU_USER_RX_INDICATION_UL)0x00U)
-#define CAN_TP									((CANIF_RX_PDU_USER_RX_INDICATION_UL)0x01U)
-#define CAN_TSYN								((CANIF_RX_PDU_USER_RX_INDICATION_UL)0x02U)
-#define CDD										((CANIF_RX_PDU_USER_RX_INDICATION_UL)0x03U)
-#define J1939NM									((CANIF_RX_PDU_USER_RX_INDICATION_UL)0x04U)
-#define J1939TP									((CANIF_RX_PDU_USER_RX_INDICATION_UL)0x05U)
-#define PDUR									((CANIF_RX_PDU_USER_RX_INDICATION_UL)0x06U)
-#define XCP										((CANIF_RX_PDU_USER_RX_INDICATION_UL)0x07U)
+typedef uint8 CanIfRxPduUserRxIndicationULType;
+#define CAN_NM									((CanIfRxPduUserRxIndicationULType)0x00U)
+#define CAN_TP									((CanIfRxPduUserRxIndicationULType)0x01U)
+#define CAN_TSYN								((CanIfRxPduUserRxIndicationULType)0x02U)
+#define CDD										((CanIfRxPduUserRxIndicationULType)0x03U)
+#define J1939NM									((CanIfRxPduUserRxIndicationULType)0x04U)
+#define J1939TP									((CanIfRxPduUserRxIndicationULType)0x05U)
+#define PDUR									((CanIfRxPduUserRxIndicationULType)0x06U)
+#define XCP										((CanIfRxPduUserRxIndicationULType)0x07U)
 
 /* This parameter defines the name of the <User_RxIndication>. This parameter depends
 on the parameter CanIfRxPduUserRxIndicationUL. If CanIfRxPduUserRxIndicationUL equals
@@ -562,9 +562,9 @@ Range: 0 - 536870911 */
 from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
 parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-	typedef uint8 CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_UL;
-	#define CAN_SM								((CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_UL)0x00)
-	#define CDD									((CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_UL)0x01)
+	typedef uint8 CanIfDispatchUserCheckTrcvWakeFlagIndicationULType;
+	#define CAN_SM								((CanIfDispatchUserCheckTrcvWakeFlagIndicationULType)0x00)
+	#define CDD									((CanIfDispatchUserCheckTrcvWakeFlagIndicationULType)0x01)
 #endif
 
 /* This parameter defines the name of <User_CheckTrcvWakeFlagIndication>. If
@@ -573,9 +573,9 @@ CanIfDispatchUserCheckTrcvWakeFlagIndicationUL equals CAN_SM the name of
 If CanIfPublicPnSupport equals False, this parameter shall not be configurable.
 dependency: CANIF_DISPATCH_USERCHECKTRCVWAKEFLAGINDICATION_UL, CANIF_PUBLIC_PN_SUPPORT */
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-	#if(CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_UL==CAN_SM)
+	#if(CanIfDispatchUserCheckTrcvWakeFlagIndicationUL==CAN_SM)
 		#define CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_NAME 	CanSM_CheckTrcvWakeFlagIndication
-	#else if(CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_UL==CDD)
+	#else if(CanIfDispatchUserCheckTrcvWakeFlagIndicationUL==CDD)
 		#define CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_NAME	Cdd_CheckTrcvWakeFlagIndication
 	#endif
 #endif
@@ -584,9 +584,9 @@ dependency: CANIF_DISPATCH_USERCHECKTRCVWAKEFLAGINDICATION_UL, CANIF_PUBLIC_PN_S
 from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
 parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-	typedef uint8 CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_UL;
-	#define CAN_SM								((CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_UL)0x00)
-	#define CDD									((CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_UL)0x01)
+	typedef uint8 CanIfDispatchUserClearTrcvWufFlagIndicationULType;
+	#define CAN_SM								((CanIfDispatchUserClearTrcvWufFlagIndicationULType)0x00)
+	#define CDD									((CanIfDispatchUserClearTrcvWufFlagIndicationULType)0x01)
 #endif
 
 /* This parameter defines the name of <User_ClearTrcvWufFlagIndication>. If
@@ -594,9 +594,9 @@ CanIfDispatchUserClearTrcvWufFlagIndicationUL equals CAN_SM the name of
 <User_ClearTrcvWufFlagIndication> is fixed. If it equals CDD, the name is selectable.
 If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurable. */
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-	#if(CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_UL==CAN_SM)
+	#if(CanIfDispatchUserClearTrcvWufFlagIndicationUL==CAN_SM)
 		#define CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_NAME		CanSM_ClearTrcvWufFlagIndication
-	#else if(CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_UL==CDD)
+	#else if(CanIfDispatchUserClearTrcvWufFlagIndicationUL==CDD)
 		#define CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_NAME		Cdd_ClearTrcvWufFlagIndication
 	#endif
 #endif
@@ -605,9 +605,9 @@ If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurabl
 from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
 parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-	typedef uint8 CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_UL;
-	#define CAN_SM								((CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_UL)0x00)
-	#define CDD									((CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_UL)0x01)
+	typedef uint8 CanIfDispatchUserConfirmPnAvailabilityULType;
+	#define CAN_SM								((CanIfDispatchUserConfirmPnAvailabilityULType)0x00)
+	#define CDD									((CanIfDispatchUserConfirmPnAvailabilityULType)0x01)
 #endif
 
 /* This parameter defines the name of <User_ConfirmPnAvailability>. If
@@ -615,9 +615,9 @@ CanIfDispatchUserConfirmPnAvailabilityUL equals CAN_SM the name of
 <User_ConfirmPnAvailability> is fixed. If it equals CDD, the name is selectable.
 If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurable. */
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-	#if(CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_UL==CAN_SM)
+	#if(CanIfDispatchUserConfirmPnAvailabilityUL==CAN_SM)
 		#define CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_NAME		CanSM_ConfirmPnAvailability
-	#else if(CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_UL==CDD)
+	#else if(CanIfDispatchUserConfirmPnAvailabilityUL==CDD)
 		#define CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_NAME		Cdd_ConfirmPnAvailability
 	#endif
 #endif
@@ -625,47 +625,47 @@ If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurabl
 /* This parameter defines the upper layer (UL) module to which the notifications of all
 ControllerBusOff events from the CAN Driver modules have to be routed via <User_ControllerBusOff>.
 There is no possibility to configure no upper layer (UL) module as the provider of <User_ControllerBusOff>. */
-typedef uint8 CANIF_DISPATCH_USER_CTRL_BUS_OFF_UL;
-#define CAN_SM									((CANIF_DISPATCH_USER_CTRL_BUS_OFF_UL)0x00)
-#define CDD										((CANIF_DISPATCH_USER_CTRL_BUS_OFF_UL)0x01)
+typedef uint8 CanIfDispatchUserCtrlBusOffULType;
+#define CAN_SM									((CanIfDispatchUserCtrlBusOffULType)0x00)
+#define CDD										((CanIfDispatchUserCtrlBusOffULType)0x01)
 
 /* This parameter defines the name of <User_ControllerBusOff>. This parameter depends on the parameter
 CANIF_USERCTRLBUSOFF_UL. If CANIF_USERCTRLBUSOFF_UL equals CAN_SM the name of <User_ControllerBusOff>
 is fixed. If CANIF_USERCTRLBUSOFF_UL equals CDD, the name of <User_ControllerBusOff> is selectable. */
-#if(CANIF_DISPATCH_USER_CTRL_BUS_OFF_UL==CAN_SM)
+#if(CanIfDispatchUserCtrlBusOffUL==CAN_SM)
 	#define CANIF_DISPATCH__USER_CTRL_BUS_OFF_NAME					CanSM_ControllerBusOff
-#else if(CANIF_DISPATCH_USER_CTRL_BUS_OFF_UL==CDD)
+#else if(CanIfDispatchUserCtrlBusOffUL==CDD)
 	#define CANIF_DISPATCH__USER_CTRL_BUS_OFF_NAME					Cdd_ControllerBusOff
 #endif
 
 /* This parameter defines the upper layer (UL) module to which the notifications of all ControllerTransition
 events from the CAN Driver modules have to be routed via <User_ControllerModeIndication>. */
-typedef uint8 CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_UL;
-#define CAN_SM									((CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_UL)0x00)
-#define CDD										((CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_UL)0x01)
+typedef uint8 CanIfDispatchUserCtrlModeIndicationULType;
+#define CAN_SM									((CanIfDispatchUserCtrlModeIndicationULType)0x00)
+#define CDD										((CanIfDispatchUserCtrlModeIndicationULType)0x01)
 
 /* This parameter defines the name of <User_ControllerModeIndication>. This parameter depends on the parameter
 CANIF_USERCTRLMODEINDICATION_UL. If CANIF_USERCTRLMODEINDICATION_UL equals CAN_SM the name of <User_ControllerModeIndication>
 is fixed. If CANIF_USERCTRLMODEINDICATION_UL equals CDD, the name of <User_ControllerModeIndication> is selectable. */
-#if(CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_UL==CAN_SM)
+#if(CanIfDispatchUserCtrlModeIndicationUL==CAN_SM)
 	#define CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_NAME			CanSM_ControllerModeIndication
-#else if(CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_UL==CDD)
+#else if(CanIfDispatchUserCtrlModeIndicationUL==CDD)
 	#define CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_NAME			Cdd_ControllerModeIndication
 #endif
 
 /* This parameter defines the upper layer (UL) module to which the notifications of all TransceiverTransition events from
 the CAN Transceiver Driver modules have to be routed via <User_TrcvModeIndication>. If no UL module is configured, no upper
 layer callback function will be called. */
-typedef uint8 CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_UL;
-#define CAN_SM									((CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_UL)0x00)
-#define CDD										((CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_UL)0x01)
+typedef uint8 CanIfDispatchUserTrcvModeIndicationULType;
+#define CAN_SM									((CanIfDispatchUserTrcvModeIndicationULType)0x00)
+#define CDD										((CanIfDispatchUserTrcvModeIndicationULType)0x01)
 
 /* This parameter defines the name of <User_TrcvModeIndication>. This parameter depends on the parameter
 CANIF_USERTRCVMODEINDICATION_UL. If CANIF_USERTRCVMODEINDICATION_UL equals CAN_SM the name of <User_TrcvModeIndication>
 is fixed. If CANIF_USERTRCVMODEINDICATION_UL equals CDD, the name of <User_TrcvModeIndication> is selectable. */
-#if(CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_UL==CAN_SM)
+#if(CanIfDispatchUserTrcvModeIndicationUL==CAN_SM)
 	#define CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_NAME			CanSM_TransceiverModeIndication
-#else if(CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_UL==CDD)
+#else if(CanIfDispatchUserTrcvModeIndicationUL==CDD)
 	#define CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_NAME			Cdd_TransceiverModeIndication
 #endif
 
@@ -673,9 +673,9 @@ is fixed. If CANIF_USERTRCVMODEINDICATION_UL equals CDD, the name of <User_TrcvM
 wake up sources have to be routed via <User_ValidateWakeupEvent>. If parameter CANIF_WAKEUP_CHECK_VALIDATION_API is
 disabled, this parameter cannot be configured. dependency: CANIF_WAKEUP_CHECK_VALIDATION_API */
 #if(CANIF_PUBLIC_WAKEUP_CHECK_VALID_SUPPORT==STD_ON)
-	typedef uint8 CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_UL;
-	#define ECUM								((CANIF_DISPATCH_USERVALIDATEWAKEUPEVENTUL)0x00)
-	#define CDD									((CANIF_DISPATCH_USERVALIDATEWAKEUPEVENTUL)0x01)
+	typedef uint8 CanIfDispatchUserValidateWakeupEventULType;
+	#define ECUM								((CanIfDispatchUserValidateWakeupEventULType)0x00)
+	#define CDD									((CanIfDispatchUserValidateWakeupEventULType)0x01)
 #endif
 
 /* This parameter defines the name of <User_ValidateWakeupEvent>. This parameter depends on the parameter
@@ -683,9 +683,9 @@ CANIF_USERVALIDATEWAKEUPEVENT_UL. CANIF_USERVALIDATEWAKEUPEVENT_UL equals ECUM t
 is fixed. CANIF_USERVALIDATEWAKEUPEVENT_UL equals CDD, the name of <User_ValidateWakeupEvent> is selectable. If parameter 
 CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, no <User_ValidateWakeupEvent> API can be configured. */
 #if(CANIF_PUBLIC_WAKEUP_CHECK_VALID_SUPPORT==STD_ON)
-	#if(CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_UL==ECUM)
+	#if(CanIfDispatchUserValidateWakeupEventUL==ECUM)
 		#define CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_NAME		EcuM_ValidateWakeupEvent
-	#else if(CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_UL==CDD)
+	#else if(CanIfDispatchUserValidateWakeupEventUL==CDD)
 		#define CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_NAME		Cdd_ValidateWakeupEvent
 	#endif
 #endif
@@ -744,9 +744,9 @@ definition, in which all CAN Ids shall pass the software filtering.*/
 masked ID range in which all CAN Ids shall pass the software filtering.
 The size of this parameter is limited by
 CanIfHrhRangeRxPduRangeCanIdType.*/
-typedef uint8 CANIF_HRH_RANGE_RX_PDU_RANGE_CAN_ID_TYPE;
-#define EXTENDED								((CANIF_HRH_RANGE_RX_PDU_RANGE_CAN_ID_TYPE)0x00)
-#define STANDARD								((CANIF_HRH_RANGE_RX_PDU_RANGE_CAN_ID_TYPE)0x01)
+typedef uint8 CanIfHrhRangeRxPduRangeCanIdTypeType;
+#define EXTENDED								((CanIfHrhRangeRxPduRangeCanIdTypeType)0x00)
+#define STANDARD								((CanIfHrhRangeRxPduRangeCanIdTypeType)0x01)
 
 /*Upper CAN Identifier of a receive CAN L-PDU for identifier range
 definition, in which all CAN Ids shall pass the software filtering.*/
