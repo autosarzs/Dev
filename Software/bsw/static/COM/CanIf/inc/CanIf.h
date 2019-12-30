@@ -72,7 +72,7 @@ typedef struct {
 						INDEX 	Selects Index Filter method.
 						LINEAR 	Selects Linear Filter method.
 						TABLE 	Selects Table Filter method.*/
-				CANIF_PRIVATE_SOFTWARE_FILTER_TYPE  CanIfPrivateSoftwareFilterType;
+				CanIfPrivateSoftwareFilterTypeType  CanIfPrivateSoftwareFilterType;
 }CanIfPrivateCfgType;
 
 typedef struct {
@@ -145,7 +145,7 @@ typedef struct {
 						EXTENDED_FD_CAN CAN FD 	frame with extended identifier (29 bits)
 						STANDARD_CAN CAN 		frame with standard identifier (11 bits)
 						STANDARD_FD_CAN CAN FD 	frame with standard identifier (11 bits) */
-				CANIF_TX_PDU_CAN_ID_TYPE CanIfTxPduCanIdType;
+				CanIfTxPduCanIdTypeType CanIfTxPduCanIdType;
 				
 				/* ECU wide unique, symbolic handle for transmit CAN L-SDU.
 				Range: 0..max. number of CantTxPduIds */
@@ -180,7 +180,7 @@ typedef struct {
 				/* Defines the type of each transmit CAN L-PDU.
 				Range:	DYNAMIC 	CAN ID is defined at runtime.
 						STATIC 		CAN ID is defined at compile-time. */
-				CANIF_TX_PDU_TYPE CanIfTxPduType;
+				CanIfTxPduTypeType CanIfTxPduType;
 				
 				/* This parameter defines the upper layer (UL) module to which the confirmation of
 				the successfully transmitted CANTXPDUID has to be routed via the <User_TxConfirmation>.
@@ -201,7 +201,7 @@ typedef struct {
 				<User_TriggerTransmit>() will not be called and CanIfTxPduUserTxConfirmationUL
 				as well as CanIfTxPduUserTriggerTransmitName need not to be configured. */
 				#if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
-					CANIF_TX_PDU_USER_TX_CONFIRMATION_UL CanIfTxPduUserTxConfirmationUL;
+					CanIfTxPduUserTxConfirmationULType CanIfTxPduUserTxConfirmationUL;
 				#endif
 				
 				/* Configurable reference to a CanIf buffer configuration. CanIfBufferCfg */
@@ -235,7 +235,7 @@ typedef struct{
 						STANDARD_CAN 			CAN 2.0 or CAN FD frame with standard identifier (11 bits)
 						STANDARD_FD_CAN 		CAN FD frame with standard identifier (11 bits)
 						STANDARD_NO_FD_CAN 		CAN 2.0 frame with standard identifier (11 bits) */
-				CANIF_RX_PDU_CAN_ID_TYPE CanIfRxPduCanIdType;
+				CanIfRxPduCanIdTypeType CanIfRxPduCanIdType;
 				
 				/* Data length of the received CAN L-PDUs used by the CAN Interface.
 				This information is used for Data Length Check. Additionally it might
@@ -281,7 +281,7 @@ typedef struct{
 				are configured for receive indications and thus <User_RxIndication>()
 				shall not be called, CANIF_RXPDU_USERRXINDICATION_UL and
 				CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
-				CANIF_RX_PDU_USER_RX_INDICATION_UL CanIfRxPduUserRxIndicationUL;
+				CanIfRxPduUserRxIndicationULType CanIfRxPduUserRxIndicationUL;
 				
 				/* The HRH to which Rx L-PDU belongs to, is referred through this parameter.
 				dependency: This information has to be derived from the CAN Driver configuration.*/
@@ -312,41 +312,41 @@ typedef struct{
 				from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
 				parameter shall not be configurable. */
 				#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-					CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_UL CanIfDispatchUserCheckTrcvWakeFlagIndicationUL;
+					CanIfDispatchUserCheckTrcvWakeFlagIndicationULType CanIfDispatchUserCheckTrcvWakeFlagIndicationUL;
 				#endif
 				
 				/* This parameter defines the upper layer module to which the ClearTrcvWufFlagIndication
 				from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
 				parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
 				#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-					CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_UL CanIfDispatchUserClearTrcvWufFlagIndicationUL;
+					CanIfDispatchUserClearTrcvWufFlagIndicationULType CanIfDispatchUserClearTrcvWufFlagIndicationUL;
 				#endif
 				
 				/* This parameter defines the upper layer module to which the ClearTrcvWufFlagIndication
 				from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
 				parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
 				#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-					CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_UL CanIfDispatchUserConfirmPnAvailabilityUL;
+					CanIfDispatchUserConfirmPnAvailabilityULType CanIfDispatchUserConfirmPnAvailabilityUL;
 				#endif
 				
 				/* This parameter defines the upper layer (UL) module to which the notifications of all
 				ControllerBusOff events from the CAN Driver modules have to be routed via <User_ControllerBusOff>.
 				There is no possibility to configure no upper layer (UL) module as the provider of <User_ControllerBusOff>.
 				dependency: CANIF_PUBLIC_PN_SUPPORT */
-				CANIF_DISPATCH_USER_CTRL_BUS_OFF_UL CanIfDispatchUserCtrlBusOffUL;
+				CanIfDispatchUserCtrlBusOffULType CanIfDispatchUserCtrlBusOffUL;
 				
 				/* This parameter defines the upper layer (UL) module to which the notifications of all ControllerTransition
 				events from the CAN Driver modules have to be routed via <User_ControllerModeIndication>. */
-				CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_UL CanIfDispatchUserCtrlModeIndicationUL;
+				CanIfDispatchUserCtrlModeIndicationULType CanIfDispatchUserCtrlModeIndicationUL;
 				
 				/* This parameter defines the upper layer (UL) module to which the notifications of all TransceiverTransition
 				events from	the CAN Transceiver Driver modules have to be routed via <User_TrcvModeIndication>. If no UL module is configured, no upper	layer callback function will be called. */
-				CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_UL CanIfDispatchUserTrcvModeIndicationUL;
+				CanIfDispatchUserTrcvModeIndicationULType CanIfDispatchUserTrcvModeIndicationUL;
 				
 				/* This parameter defines the upper layer (UL) module to which the notifications about positive former requested
 				wake up sources have to be routed via <User_ValidateWakeupEvent>. If parameter CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, this parameter cannot be configured. dependency: CANIF_WAKEUP_CHECK_VALIDATION_API */
 				#if(CANIF_PUBLIC_WAKEUP_CHECK_VALID_SUPPORT==STD_ON)
-					CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_UL CanIfDispatchUserValidateWakeupEventUL;
+					CanIfDispatchUserValidateWakeupEventULType CanIfDispatchUserValidateWakeupEventUL;
 				#endif
 }CanIfDispatchCfgType;
 
@@ -426,7 +426,7 @@ typedef struct {
 				/*Specifies whether a configured Range of CAN Ids shall only consider standard CAN Ids or extended CAN Id
 				Range: 		EXTENDED All the CANIDs are of type extended only (29 bit).
 							STANDARD All the CANIDs are of type standard only (11bit). */
-				CANIF_HRH_RANGE_RX_PDU_RANGE_CAN_ID_TYPE CanIfHrhRangeRxPduRangeCanIdType;
+				CanIfHrhRangeRxPduRangeCanIdTypeType CanIfHrhRangeRxPduRangeCanIdType;
 
 				/*Upper CAN Identifier of a receive CAN L-PDU for identifier range definition, in which all CAN Ids shall
 				pass the software filtering.*/
