@@ -5,7 +5,7 @@
 /**
  * main.c
  */
-#define LOOPBACK           STD_ON
+#define LOOPBACK           STD_OFF
 
 void Can_Port_Enable(void);
 void PLL_Init(void);
@@ -45,7 +45,7 @@ int main(void)
     {
          Test1_RxTx_Polling() ;
     }
-	return 0;
+    return 0;
 }
 
 
@@ -149,9 +149,5 @@ void Test1_RxTx_Polling(void)
         Can_write(HTH0_0, &PduInfo) ;
     }
 
-
-     if(CAN0_STS_R & CAN_STS_TXOK)
-     {
-         CAN0_STS_R &= ~ CAN_STS_TXOK;
-     }
+    Can_MainFunction_Write() ;
 }
