@@ -63,6 +63,10 @@
 
 #define CAN_polling_timout 300
 
+#define CanRxProcessing     MIXED_PROCESSING
+
+#define CanTxProcessing     MIXED_PROCESSING
+
 #define CAN_HWOBJECT_COUNT 12
 
 #define CanBusoffProcessing POLLING
@@ -116,15 +120,10 @@ present it shall have the Id 0.*/
 /* Selects support of Pretended Network features in Can driver. */
 #define CAN_PUBLIC_ICOM_SUPPORT 				STD_OFF
 
-/* Enables / disables API Can_MainFunction_Write() for handling PDU transmission
-events in polling mode. */
-typedef uint8 CanProcessingType;
-#define CAN_TX_PROCESSING_0 MIXED_PROCESSING
-#define CAN_TX_PROCESSING_1 MIXED_PROCESSING
 
 #define INTERRUPT_PROCESSING 0U   /* Interrupt Mode of operation*/
 #define MIXED_PROCESSING     1U   /* Mixed Mode of operation  */
-#define POLLING_PROCESSING  2U   /* Polling Mode of operation*/
+#define POLLING_PROCESSING   2U   /* Polling Mode of operation*/
 
 #define CAN_CONTROLLER_0_ACTIVATION STD_ON
 #define CAN_CONTROLLER_1_ACTIVATION STD_ON

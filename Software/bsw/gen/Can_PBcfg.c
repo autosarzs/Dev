@@ -28,16 +28,12 @@ CanController CanControllerCfg[] =
 {
     {
         0,                                  /*  Controller ID   */
-        POLLING_PROCESSING,                 /*  CanRxProcessing */
-        POLLING_PROCESSING,                 /*  CanTxProcessing */
         0x40040000,                         /*  BASE Address    */
         &Clk,                               /*  Reference to System clock in Hz */
         &CanControllerBaudrateConf[0]       /*  Reference to Baudrate configuration */
     },
     {
         1,                                  /*  Controller ID   */
-        POLLING_PROCESSING,                 /*  CanRxProcessing */
-        POLLING_PROCESSING,                 /*  CanTxProcessing */
         0x40041000,                         /*  BASE Address    */
         &Clk,                               /*  Reference to System clock in Hz */
         &CanControllerBaudrateConf[0]       /*  Reference to Baudrate configuration */
@@ -57,7 +53,7 @@ CanHwFilter CanHwFilterHTH[] =
 CanHwFilter CanHwFilterHRH[] =
 {
     {
-        2,                  /*  ID  */
+        5,                  /*  ID  */
         0x7FF               /*  Mask filter */
     }
 };
@@ -65,24 +61,24 @@ CanHwFilter CanHwFilterHRH[] =
 /*Configuration FOR all used Hardware objects*/
 CanHardwareObject HOHObj[CAN_HOH_NUMBER] =
 {
-    {   FULL,                   /*  Can controller type for tm4c123gh6pm    */
-        1,                      /*  Number of FIFO elements for this HOH    */
-        STANDARD,               /*  Arbitration ID type */
-        HTH0_0,                 /*  HOH ID  */
-        TRANSMIT,               /*  HOH Type    */
-        &CanControllerCfg[0],   /*  Reference to the controller this HOH belongs to */
+    {   FULL,                    /*  Can controller type for tm4c123gh6pm    */
+        1,                       /*  Number of FIFO elements for this HOH    */
+        STANDARD,                /*  Arbitration ID type */
+        HTH0_0,                  /*  HOH ID  */
+        TRANSMIT,                /*  HOH Type    */
+        &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
         &CanHwFilterHTH[0],      /*  Reference to the Filter configuartion   */
-        FALSE
+        TRUE                    /*  Enable or diasble using polling */
     },
     {
-        FULL,                   /*  Can controller type for tm4c123gh6pm    */
-        1,                      /*  Number of FIFO elements for this HOH    */
-        STANDARD,               /*  Arbitration ID type */
-        HRH0_1,                 /*  HOH ID  */
-        RECEIVE,                /*  HOH Type    */
-        &CanControllerCfg[0],   /*  Reference to the controller this HOH belongs to */
+        FULL,                    /*  Can controller type for tm4c123gh6pm    */
+        1,                       /*  Number of FIFO elements for this HOH    */
+        STANDARD,                /*  Arbitration ID type */
+        HRH0_1,                  /*  HOH ID  */
+        RECEIVE,                 /*  HOH Type    */
+        &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
         &CanHwFilterHRH[0],      /*  Reference to the Filter configuartion   */
-        FALSE
+        TRUE                    /*  Enable or diasble using polling */
     }
 };
 

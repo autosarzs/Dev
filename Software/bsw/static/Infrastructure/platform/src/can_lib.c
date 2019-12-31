@@ -271,8 +271,8 @@ _CANDataRegWrite(uint8 *pui8Data, uint32 *pui32Register, uint32 ui32Size)
 static void
 _CANDataRegRead( uint8 *pui8Data, uint32 *pui32Register, uint8 ui32Size)
 {
-    uint8 ui32Idx;
-    uint16 ui32Value;
+    uint8  ui32Idx;
+    uint16 ui16Value;
 
     //
     // Loop always copies 1 or 2 bytes per iteration.
@@ -283,19 +283,19 @@ _CANDataRegRead( uint8 *pui8Data, uint32 *pui32Register, uint8 ui32Size)
         // Read out the data 16 bits at a time since this is how the registers
         // are aligned in memory.
         //
-        ui32Value =(uint16) HWREG(pui32Register++);
+        ui16Value =(uint16) HWREG(pui32Register++);
 
         //
         // Store the first byte.
         //
-       *pui8Data = (uint8)ui32Value;
+       *pui8Data++ = (uint8)ui16Value;
 
         //
         // Only read the second byte if needed.
         //
         if(ui32Idx < ui32Size)
         {
-            pui8Data[++ui32Idx] = (uint8)(ui32Value >> 8);
+            pui8Data[ui32Idx++] = (uint8)(ui16Value >> 8);
         }
     }
 }
