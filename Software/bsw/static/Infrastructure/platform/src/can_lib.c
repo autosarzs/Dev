@@ -288,7 +288,7 @@ _CANDataRegRead( uint8 *pui8Data, uint32 *pui32Register, uint8 ui32Size)
         //
         // Store the first byte.
         //
-       *pui8Data++ = (uint8)ui16Value;
+        pui8Data[ui32Idx++] = (uint8)ui16Value;
 
         //
         // Only read the second byte if needed.
