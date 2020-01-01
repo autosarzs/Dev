@@ -77,8 +77,9 @@
 	is necessary for initialization.
 	The contents of the initialization data structure are CAN interface specific	
 */
-typedef struct CanIf_Config
+typedef struct 
 {
+			   CanIfType CanIfTypeObj;
 
 }CanIf_ConfigType;
 
