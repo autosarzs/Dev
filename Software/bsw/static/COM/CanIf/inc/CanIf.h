@@ -80,6 +80,12 @@ typedef struct {
 				case of CDDs. Range of characters is 1.. 32. 
 				Type: EcucStringParamDef*/
 				uint8 CanIfPublicCddHeaderFile[CANIF_PUBLIC_CDD_HEADER_FILE];
+				
+				/* This parameter is used to configure the Can_HwHandleType. The
+				Can_HwHandleType represents the hardware object handles of a CAN
+				hardware unit. For CAN hardware units with more than 255 HW objects
+				the extended range shall be used (UINT16). */
+				CanIfPublicHandleTypeEnumType CanIfPublicHandleTypeEnum;
 }CanIfPublicCfgType;
  
 typedef struct {
@@ -376,7 +382,7 @@ typedef struct {
 
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	
-				CanIfCtrlCfgType CanIfCtrlCfgObj;
+				CanIfCtrlCfgType CanIfCtrlCfgObj;//It should be CanIfCtrlCfgType CanIfCtrlCfgObj[MAX_CONFIGURABLE_CAN_CONTROLLERS];
 }CanIfCtrlDrvCfgType;
 
 typedef struct {
