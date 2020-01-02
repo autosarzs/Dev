@@ -44,7 +44,7 @@ typedef struct {
 
 				/*Configuration parameters for all the underlying CAN Driver modules are aggregated under this container.
 				For each CAN Driver module a seperate instance of this container has to be provided.*/
-				CanIfCtrlDrvCfgType 	CanIfCtrlDrvCfgObj;
+				CanIfCtrlDrvCfgType 	CanIfCtrlDrvCfgObj[CAN_DRIVER_NUM];
 				
 				/*Callback functions provided by upper layer modules of the CanIf. The callback functions defined in this
 				container are common to all configured CAN Driver / CAN Transceiver Driver modules.*/
@@ -61,7 +61,7 @@ typedef struct {
 
 				/*This container contains the configuration (parameters) of all addressed CAN transceivers by each underlying CAN
 				Transceiver Driver module. For each CAN transceiver Driver a seperate instance of this container shall be provided.*/            
-				CanIfTrcvDrvCfgType		CanIfTrcvDrvCfgObj;   
+				CanIfTrcvDrvCfgType		CanIfTrcvDrvCfgObj[CAN_TRANSCEIVER_NUM];   
 }CanIfType;
 
 typedef struct {
@@ -114,20 +114,20 @@ typedef struct {
 				/* This container contains the Txbuffer configuration. Multiple buffers with different sizes could be configured.
 				If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the CanIf Tx L-PDU only refers via this CanIfBufferCfg the
 				corresponding CanIfHthCfg. */
-				CanIfBufferCfgType	CanIfBufferCfgObj;
+				CanIfBufferCfgType	CanIfBufferCfgObj[BUFFERS_NUM];
 				
 				/* This container contains the references to the configuration setup of each underlying CAN Driver. */
-				CanIfInitHohCfgType	CanIfInitHohCfgObj;
+				CanIfInitHohCfgType	CanIfInitHohCfgObj[CAN_DRIVER_NUM];
 				
 				/* This container contains the configuration (parameters) of each receive CAN L-PDU. The SHORT-NAME of
 				"CanIfRxPduConfig" container itself represents the symolic name of Receive L-PDU. This L-SDU produces
 				a meta data item of type CAN_ID_32. */
-				CanIfRxPduCfgType	CanIfRxPduCfgObj;
+				CanIfRxPduCfgType	CanIfRxPduCfgObj[RX_CAN_L-PDU_NUM];
 				
 				/* This container contains the configuration (parameters) of a transmit CAN L-PDU. It has to be configured as
 				often as a transmit CAN L-PDU is needed. The SHORT-NAME of "CanIfTxPduConfig" container represents the symolic
 				name of Transmit L-PDU. This L-SDU consumes a meta data item of type CAN_ID_32. */
-				CanIfTxPduCfgType	CanIfTxPduCfgObj;
+				CanIfTxPduCfgType	CanIfTxPduCfgObj[TX_CAN_L-PDU_NUM];
 }CanIfInitCfgType;
 
 typedef struct {
@@ -401,7 +401,7 @@ typedef struct {
 typedef struct {
 				/*This container contains the configuration (parameters) of one addressed CAN transceiver by the underlying CAN
 				Transceiver Driver module. For each CAN transceiver a seperate instance of this container has to be provided. */
-				CanIfTrcvCfgType CanIfTrcvCfgObj;
+				CanIfTrcvCfgType CanIfTrcvCfgObj[CAN_TRANSCEIVER_NUM];
 }CanIfTrcvDrvCfgType;
 
 typedef struct {
@@ -447,15 +447,15 @@ typedef struct {
 				CanHardwareObjectType* CanIfHrhIdSymRef;
 	
 				/*Defines the parameters required for configurating multiple CANID ranges for a given same HRH.*/
-				CanIfHrhRangeCfgType CanIfHrhRangeCfgObj;
+				CanIfHrhRangeCfgType CanIfHrhRangeCfgObj[CANID_RANGES_NUM];
 }CanIfHrhCfgType;
 
 typedef struct{
 				/*This container contains configuration parameters for each hardware receive object (HRH).*/
-				CanIfHrhCfgType CanIfHrhCfgObj;
+				CanIfHrhCfgType CanIfHrhCfgObj[HRH_OBj_NUM];
 
 				/*This container contains parameters related to each HTH.*/
-				CanIfHthCfgType CanIfHthCfgObj;
+				CanIfHthCfgType CanIfHthCfgObj[HTH_OBj_NUM];
 }CanIfInitHohCfgType;
 
 typedef struct {
