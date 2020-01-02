@@ -375,19 +375,19 @@ the name of the API <User_TriggerTransmit>() has to be configured via parameter 
 #if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
 	#if(CanIfTxPduUserTxConfirmationUL==PDUR)
 		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	PduR_CanIfTriggerTransmit
-	#else if(CanIfTxPduUserTxConfirmationUL==CAN_NM)
+	#elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
 		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanNm_CanIfTriggerTransmit
-	#else if(CanIfTxPduUserTxConfirmationUL==J1939NM)
+	#elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
 		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Nm_CanIfTriggerTransmit
-	#else if(CanIfTxPduUserTxConfirmationUL==J1939TP)
+	#elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
 		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Tp_CanIfTriggerTransmit
-	#else if(CanIfTxPduUserTxConfirmationUL==CAN_TP)
+	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
 		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTp_CanIfTriggerTransmit
-	#else if(CanIfTxPduUserTxConfirmationUL==XCP)
+	#elif(CanIfTxPduUserTxConfirmationUL==XCP)
 		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Xcp_CanIfTriggerTransmit
-	#else if(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
+	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
 		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTSyn_CanIfTriggerTransmit
-	#else if(CanIfTxPduUserTxConfirmationUL==CDD)
+	#elif(CanIfTxPduUserTxConfirmationUL==CDD)
 		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Cdd_CanIfTriggerTransmit /* Selectable */
 	#endif	
 #endif
@@ -409,19 +409,19 @@ is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured
 #if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
 	#if(CanIfTxPduUserTxConfirmationUL==PDUR)
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	PduR_CanIfTxConfirmation
-	#else if(CanIfTxPduUserTxConfirmationUL==CAN_NM)
+	#elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanNm_TxConfirmation
-	#else if(CanIfTxPduUserTxConfirmationUL==J1939NM)
+	#elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Nm_TxConfirmation
-	#else if(CanIfTxPduUserTxConfirmationUL==J1939TP)
+	#elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Tp_TxConfirmation
-	#else if(CanIfTxPduUserTxConfirmationUL==CAN_TP)
+	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTp_TxConfirmation
-	#else if(CanIfTxPduUserTxConfirmationUL==XCP)
+	#elif(CanIfTxPduUserTxConfirmationUL==XCP)
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Xcp_CanIfTxConfirmation
-	#else if(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
+	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTSyn_CanIfTxConfirmation
-	#else if(CanIfTxPduUserTxConfirmationUL==CDD)
+	#elif(CanIfTxPduUserTxConfirmationUL==CDD)
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Cdd_CanIfTxConfirmation /* Selectable */
 	#endif	
 #endif
@@ -532,19 +532,19 @@ for receive indications and thus <User_RxIndication>() shall not be called, CANI
 and CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
 #if(CanIfRxPduUserRxIndicationUL==PDUR)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	PduR_CanIfRxIndication
-#else if(CanIfRxPduUserRxIndicationUL==CAN_NM)
+#elif(CanIfRxPduUserRxIndicationUL==CAN_NM)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	CanNm_RxIndication
-#else if(CanIfRxPduUserRxIndicationUL==J1939NM)
+#elif(CanIfRxPduUserRxIndicationUL==J1939NM)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	J1939Nm_RxIndication
-#else if(CanIfRxPduUserRxIndicationUL==J1939TP)
+#elif(CanIfRxPduUserRxIndicationUL==J1939TP)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	J1939Tp_RxIndication
-#else if(CanIfRxPduUserRxIndicationUL==CAN_TP)
+#elif(CanIfRxPduUserRxIndicationUL==CAN_TP)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	CanTp_RxIndication
-#else if(CanIfRxPduUserRxIndicationUL==XCP)
+#elif(CanIfRxPduUserRxIndicationUL==XCP)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	Xcp_CanIfRxIndication
-#else if(CanIfRxPduUserRxIndicationUL==CAN_TSYN)
+#elif(CanIfRxPduUserRxIndicationUL==CAN_TSYN)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	CanTSyn_CanIfRxIndication
-#else if(CanIfRxPduUserRxIndicationUL==CDD)
+#elif(CanIfRxPduUserRxIndicationUL==CDD)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	Cdd_CanIfRxIndication /* Selectable */
 #endif	
 
@@ -575,7 +575,7 @@ dependency: CANIF_DISPATCH_USERCHECKTRCVWAKEFLAGINDICATION_UL, CANIF_PUBLIC_PN_S
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
 	#if(CanIfDispatchUserCheckTrcvWakeFlagIndicationUL==CAN_SM)
 		#define CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_NAME 	CanSM_CheckTrcvWakeFlagIndication
-	#else if(CanIfDispatchUserCheckTrcvWakeFlagIndicationUL==CDD)
+	#elif(CanIfDispatchUserCheckTrcvWakeFlagIndicationUL==CDD)
 		#define CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_NAME	Cdd_CheckTrcvWakeFlagIndication
 	#endif
 #endif
@@ -596,7 +596,7 @@ If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurabl
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
 	#if(CanIfDispatchUserClearTrcvWufFlagIndicationUL==CAN_SM)
 		#define CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_NAME		CanSM_ClearTrcvWufFlagIndication
-	#else if(CanIfDispatchUserClearTrcvWufFlagIndicationUL==CDD)
+	#elif(CanIfDispatchUserClearTrcvWufFlagIndicationUL==CDD)
 		#define CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_NAME		Cdd_ClearTrcvWufFlagIndication
 	#endif
 #endif
@@ -617,7 +617,7 @@ If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurabl
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
 	#if(CanIfDispatchUserConfirmPnAvailabilityUL==CAN_SM)
 		#define CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_NAME		CanSM_ConfirmPnAvailability
-	#else if(CanIfDispatchUserConfirmPnAvailabilityUL==CDD)
+	#elif(CanIfDispatchUserConfirmPnAvailabilityUL==CDD)
 		#define CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_NAME		Cdd_ConfirmPnAvailability
 	#endif
 #endif
@@ -634,7 +634,7 @@ CANIF_USERCTRLBUSOFF_UL. If CANIF_USERCTRLBUSOFF_UL equals CAN_SM the name of <U
 is fixed. If CANIF_USERCTRLBUSOFF_UL equals CDD, the name of <User_ControllerBusOff> is selectable. */
 #if(CanIfDispatchUserCtrlBusOffUL==CAN_SM)
 	#define CANIF_DISPATCH__USER_CTRL_BUS_OFF_NAME					CanSM_ControllerBusOff
-#else if(CanIfDispatchUserCtrlBusOffUL==CDD)
+#elif(CanIfDispatchUserCtrlBusOffUL==CDD)
 	#define CANIF_DISPATCH__USER_CTRL_BUS_OFF_NAME					Cdd_ControllerBusOff
 #endif
 
@@ -649,7 +649,7 @@ CANIF_USERCTRLMODEINDICATION_UL. If CANIF_USERCTRLMODEINDICATION_UL equals CAN_S
 is fixed. If CANIF_USERCTRLMODEINDICATION_UL equals CDD, the name of <User_ControllerModeIndication> is selectable. */
 #if(CanIfDispatchUserCtrlModeIndicationUL==CAN_SM)
 	#define CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_NAME			CanSM_ControllerModeIndication
-#else if(CanIfDispatchUserCtrlModeIndicationUL==CDD)
+#elif(CanIfDispatchUserCtrlModeIndicationUL==CDD)
 	#define CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_NAME			Cdd_ControllerModeIndication
 #endif
 
@@ -665,7 +665,7 @@ CANIF_USERTRCVMODEINDICATION_UL. If CANIF_USERTRCVMODEINDICATION_UL equals CAN_S
 is fixed. If CANIF_USERTRCVMODEINDICATION_UL equals CDD, the name of <User_TrcvModeIndication> is selectable. */
 #if(CanIfDispatchUserTrcvModeIndicationUL==CAN_SM)
 	#define CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_NAME			CanSM_TransceiverModeIndication
-#else if(CanIfDispatchUserTrcvModeIndicationUL==CDD)
+#elif(CanIfDispatchUserTrcvModeIndicationUL==CDD)
 	#define CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_NAME			Cdd_TransceiverModeIndication
 #endif
 
@@ -685,7 +685,7 @@ CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, no <User_ValidateWakeupEvent> API
 #if(CANIF_PUBLIC_WAKEUP_CHECK_VALID_SUPPORT==STD_ON)
 	#if(CanIfDispatchUserValidateWakeupEventUL==ECUM)
 		#define CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_NAME		EcuM_ValidateWakeupEvent
-	#else if(CanIfDispatchUserValidateWakeupEventUL==CDD)
+	#elif(CanIfDispatchUserValidateWakeupEventUL==CDD)
 		#define CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_NAME		Cdd_ValidateWakeupEvent
 	#endif
 #endif
@@ -761,7 +761,7 @@ Txbuffer. If CanIfPublicTxBuffering equals False, this parameter equals
 FULL, this parameter equals 0 for this TxBuffer.*/
 #if(CANIF_PUBLIC_TX_BUFFERING==STD_OFF)
 	#define CANIF_BUFFER_SIZE                  (0U)
-#else if(CanHardwareObject.CanHandleType==FULL)
+#elif(CanHardwareObject.CanHandleType==FULL)
 	#define CANIF_BUFFER_SIZE                  (0U)
 #else	/* any value, implementation dependant */
 	#define CANIF_BUFFER_SIZE                  (255U)
