@@ -53,7 +53,12 @@ CanHwFilter CanHwFilterHTH[] =
 CanHwFilter CanHwFilterHRH[] =
 {
     {
-        5,                  /*  ID  */
+        2,                  /*  ID  */
+        0x7FF               /*  Mask filter */
+    }
+    ,
+    {
+        3,                  /*  ID  */
         0x7FF               /*  Mask filter */
     }
 };
@@ -71,13 +76,33 @@ CanHardwareObject HOHObj[CAN_HOH_NUMBER] =
         TRUE                    /*  Enable or diasble using polling */
     },
     {
+         FULL,                    /*  Can controller type for tm4c123gh6pm    */
+         1,                       /*  Number of FIFO elements for this HOH    */
+         STANDARD,                /*  Arbitration ID type */
+         HTH0_1,                  /*  HOH ID  */
+         TRANSMIT,                /*  HOH Type    */
+         &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
+         &CanHwFilterHTH[0],      /*  Reference to the Filter configuartion   */
+         TRUE                    /*  Enable or diasble using polling */
+    },
+    {
+         FULL,                    /*  Can controller type for tm4c123gh6pm    */
+         1,                       /*  Number of FIFO elements for this HOH    */
+         STANDARD,                /*  Arbitration ID type */
+         HRH0_0,                  /*  HOH ID  */
+         RECEIVE,                 /*  HOH Type    */
+         &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
+         &CanHwFilterHRH[0],      /*  Reference to the Filter configuartion   */
+         TRUE                    /*  Enable or diasble using polling */
+    },
+    {
         FULL,                    /*  Can controller type for tm4c123gh6pm    */
         1,                       /*  Number of FIFO elements for this HOH    */
         STANDARD,                /*  Arbitration ID type */
         HRH0_1,                  /*  HOH ID  */
         RECEIVE,                 /*  HOH Type    */
         &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
-        &CanHwFilterHRH[0],      /*  Reference to the Filter configuartion   */
+        &CanHwFilterHRH[1],      /*  Reference to the Filter configuartion   */
         TRUE                    /*  Enable or diasble using polling */
     }
 };

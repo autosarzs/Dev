@@ -63,6 +63,8 @@
 #define valid                     (1U)
 #define invalid                   (0U)
 #define MAX_CONTROLLERS_NUMBER    (2U)                  /*Number of controllers in TivaC */
+#define CAN0_BASE_ADDRESS         (0x40040000U)
+#define CAN1_BASE_ADDRESS         (0x40041000U)
 
 /*****************************************************************************************/
 /*                                   Local Definition                                    */
@@ -167,6 +169,59 @@ static tCANMsgObject psMsgObject[CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS];
 /*****************************************************************************************/
 static void CANDataRegWrite ( uint8 * pui8Data, uint32 * pui32Register , uint8 ui8Size);
 
+
+//*****************************************************************************
+//
+//! \internal
+//! Copies data from a buffer to the CAN Data registers.
+//!
+//! \param pui8Data is a pointer to the location to store the data read from
+//! the CAN controller's data registers.
+//! \param pui32Register is an uint32 pointer to the first register of the
+//! CAN controller's data registers.  For example, in order to use the IF1
+//! register set on CAN controller 1, the value would be: \b CAN0_BASE \b +
+//! \b CAN_O_IF1DA1.
+//! \param iSize is the number of bytes to copy from the CAN controller.
+//!
+//! This function takes the steps necessary to copy data to a contiguous buffer
+//! in memory from the non-contiguous data registers used by the CAN
+//! controller.  This function is rarely used outside of the CANMessageGet()
+//! function.
+//!
+//! \return None.
+//
+//*****************************************************************************
+static void
+_CANDataRegRead( uint8 *pui8Data, uint32 *pui32Register, uint8 ui32Size)
+{
+    uint8  ui32Idx;
+    uint16 ui16Value;
+
+    //
+    // Loop always copies 1 or 2 bytes per iteration.
+    //
+    for(ui32Idx = 0; ui32Idx < ui32Size; )
+    {
+        //
+        // Read out the data 16 bits at a time since this is how the registers
+        // are aligned in memory.
+        //
+        ui16Value =(uint16) HWREG(pui32Register++);
+
+        //
+        // Store the first byte.
+        //
+        pui8Data[ui32Idx++] = (uint8)ui16Value;
+
+        //
+        // Only read the second byte if needed.
+        //
+        if(ui32Idx < ui32Size)
+        {
+            pui8Data[ui32Idx++] = (uint8)(ui16Value >> 8);
+        }
+    }
+}
 /*****************************************************************************************/
 /*    Function Description    :  this function sets the baud rate                        */
 /*    Parameter in            :  BaseAddress : required controller base address 
@@ -360,7 +415,7 @@ void Can_Init( const Can_ConfigType* Config)
     }
 
     /* Loop to Configure Hardware message objects to be Transmit or receive */
-    for(HOHCount = 0; HOHCount < NUM_OF_HOH; HOHCount++)
+    for(HOHCount = 0; HOHCount < CAN_HOH_NUMBER; HOHCount++)
     {
         /* Save the BaseAddress of the controller this Hardware Object Belongs to */
         BaseAddress = Global_Config->CanHardwareObjectRef[HOHCount].CanControllerRef->CanControllerBaseAddress;
@@ -1058,7 +1113,7 @@ Std_ReturnType Can_write (
 	 */
 	uint8 real_hwObjectId = 0 ;
 
-	for (Hoh_count = 0 ; Hoh_count < NUM_OF_HOH  ; Hoh_count++)
+	for (Hoh_count = 0 ; Hoh_count < CAN_HOH_NUMBER  ; Hoh_count++)
 	{
 	    if (Hth == Global_Config->CanHardwareObjectRef[Hoh_count].CanObjectId)
 		{
@@ -1590,16 +1645,18 @@ void Can_MainFunction_Write(void)
                     /**MISRA Rule**/
                 }
                 /*Read Status register to check TXOK transmitted message successfully*/
-                Read_STS_register = HWREG(BaseAddress + CAN_O_STS) ;
+                Read_STS_register = HWREG(BaseAddress + CAN_O_STS) & CAN_STS_TXOK;
 
                 /*If TXOK and message request has been cleared and Call Tx_Confirmation*/
-                if((Read_STS_register&CAN_STS_TXOK) && \
-                  !(Read_TXRQ_register &(1<<(MessageObjAssignedToHTH[counter].MessageId-1))))
+                if(!(Read_TXRQ_register &(1<<(MessageObjAssignedToHTH[counter].MessageId-1))))
                 {
                     /*Reset Tx_Request flag*/
                     MessageObjAssignedToHTH[counter].Tx_Request = FALSE ;
                     /*Reset TXOK bit*/
+                    if(Read_STS_register)
+                    {
                     HWREG(BaseAddress + CAN_O_STS) &= ~CAN_STS_TXOK ;
+                    }
                     /*Call Tx_Confirmation indication for successful transmission */
                     CanIf_TxConfirmation(swPduHandle[counter]);
                 }
@@ -1608,6 +1665,103 @@ void Can_MainFunction_Write(void)
     }
 }
 #endif
+
+
+
+#if( CanTxProcessing == MIXED_PROCESSING || CanTxProcessing == INTERRUPT_PROCESSING ||\
+     CanRxProcessing == MIXED_PROCESSING || CanRxProcessing == INTERRUPT_PROCESSING )
+static void Serve_Interrupts(uint32 BaseAddress)
+{
+    uint8 count = 0;
+    uint8 index = 0;
+    uint32 Read_INTPND_Register = 0 ;
+
+
+    Read_INTPND_Register = HWREG(BaseAddress + CAN_O_MSG1INT ) ;
+    Read_INTPND_Register |=(HWREG(BaseAddress + CAN_O_MSG1INT )<<16) ;
+
+    for(count=0 ;count< CAN_HTH_NUMBER ;count++ )
+    {
+        index = MessageObjAssignedToHTH[count].HTHIndex ;
+        if(Global_Config->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling == FALSE)
+        {
+            if(Read_INTPND_Register &(1<<(MessageObjAssignedToHTH[count].MessageId-1)))
+            {
+                HWREG(BaseAddress + CAN_O_IF1MCTL) &= ~ CAN_IF1MCTL_INTPND ;
+                HWREG(BaseAddress + CAN_O_IF1CRQ)   = MessageObjAssignedToHTH[count].MessageId ;
+                HWREG(BaseAddress + CAN_O_STS) &= ~CAN_STS_TXOK ;
+                CanIf_TxConfirmation(swPduHandle[count]);
+            }
+        }
+    }
+    for(count=0 ;count< CAN_HRH_NUMBER ;count++ )
+    {
+        index = MessageObjAssignedToHRH[count].HRHIndex ;
+        if(Global_Config->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling == FALSE)
+        {
+            if(Read_INTPND_Register &(1<<(MessageObjAssignedToHRH[count].StartMessageId)))
+            {
+                HWREG(BaseAddress + CAN_O_IF2CMSK) = (CAN_IF2CMSK_DATAA | CAN_IF1CMSK_DATAB |\
+                                                      CAN_IF2CMSK_CONTROL | CAN_IF1CMSK_MASK|\
+                                                      CAN_IF2CMSK_ARB);
+                HWREG(BaseAddress + CAN_O_IF2CRQ)   =  MessageObjAssignedToHTH[count].MessageId ;
+                // mailbox for Callback function RxIndication
+                Can_HwType Mailbox;
+                PduInfoType PduInfo;
+                uint8 Data[MAX_DATA_LENGTH];
+
+                //message ID
+                if(Global_Config->CanHardwareObjectRef[index].CanIdType == STANDARD)
+                {
+                    Mailbox.CanId = (HWREG(BaseAddress + CAN_O_IF2ARB2) & CAN_IF2ARB2_ID_STANDARD) >>2 ;
+                }
+                else
+                {
+                    Mailbox.CanId = HWREG(BaseAddress + CAN_O_IF2ARB1) |
+                                    ((HWREG(BaseAddress + CAN_O_IF2ARB2) & CAN_IF2ARB2_ID_M)<<16) ;
+                }
+                //hardware object that has new data
+                Mailbox.Hoh = Global_Config->CanHardwareObjectRef[index].CanObjectId;
+                // controller ID
+                Mailbox.ControllerId = Global_Config->CanHardwareObjectRef[index].CanControllerRef->CanControllerId;
+                //Save data length
+                PduInfo.SduLength = HWREG(BaseAddress + CAN_O_IF2MCTL) & CAN_IF2MCTL_DLC_M ;
+                //Save data
+                _CANDataRegRead( Data ,(uint32*) BaseAddress+CAN_O_IF2DA1, PduInfo.SduLength) ;
+                PduInfo.SduDataPtr = Data;
+                // 2. inform CanIf using API below.
+                CanIf_RxIndication(&Mailbox, &PduInfo);
+                HWREG(BaseAddress + CAN_O_IF2CMSK) = CAN_IF2CMSK_WRNRD |CAN_IF2CMSK_CONTROL ;
+                HWREG(BaseAddress + CAN_O_IF2MCTL) &= ~ CAN_IF1MCTL_INTPND ;
+                HWREG(BaseAddress + CAN_O_STS) &= ~CAN_STS_RXOK ;
+                HWREG(BaseAddress + CAN_O_IF2CRQ)   =  MessageObjAssignedToHTH[count].MessageId ;
+            }
+        }
+    }
+}
+
+#endif
+
+void CAN0_Handler(void)
+{
+#if( CanTxProcessing == MIXED_PROCESSING || CanTxProcessing == INTERRUPT_PROCESSING ||\
+     CanRxProcessing == MIXED_PROCESSING || CanRxProcessing == INTERRUPT_PROCESSING )
+    Serve_Interrupts(CAN0_BASE_ADDRESS) ;
+#endif
+
+}
+
+void CAN1_Handler(void)
+{
+#if( CanTxProcessing == MIXED_PROCESSING || CanTxProcessing == INTERRUPT_PROCESSING ||\
+     CanRxProcessing == MIXED_PROCESSING || CanRxProcessing == INTERRUPT_PROCESSING )
+    Serve_Interrupts(CAN1_BASE_ADDRESS) ;
+#endif
+}
+
+
+
+
 
 /* Prototype for the function that is called when an invalid argument is passed
  * to an API.  This is only used when doing a DEBUG build.

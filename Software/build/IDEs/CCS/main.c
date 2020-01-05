@@ -11,18 +11,27 @@ void Can_Port_Enable(void);
 void PLL_Init(void);
 void PortF_Init(void);
 void Test1_RxTx_Polling(void) ;
+void Test2_TX_2_Objs_RX_2_Objs(void) ;
+void Test3_RxTx_Interrupt(void) ;
 
 extern uint8 ReadData;
-uint8 WriteData;
+static uint8 WriteData1,WriteData2;
 extern const Can_ConfigType Can_Configurations ;
-//static uint8 dataT[]={0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55} ;
-static Can_PduType  PduInfo=
-                            {
-                             1,
+
+static Can_PduType  PduInfo[]=
+{                           {
+                             1,     /*SwHandle*/
                              1,     /*Length*/
-                             0x2,   /*ID*/
-                             &WriteData
-                            } ;
+                             0x5,   /*ID*/
+                             &WriteData1
+                            },
+                            {
+                             2,     /*SwHandle*/
+                             2,     /*Length*/
+                             0x6,   /*ID*/
+                             &WriteData2
+                            }
+};
 
 //static uint8 counter=0;
 volatile uint32 SW1=0,SW2=0;
@@ -40,11 +49,7 @@ int main(void)
     #endif
     /*Start Controller 0 */
     Can_SetControllerMode(CONTROLLER0_ID, CAN_CS_STARTED);
-
-    while(1)
-    {
-         Test1_RxTx_Polling() ;
-    }
+    Test3_RxTx_Interrupt();
     return 0;
 }
 
@@ -134,20 +139,114 @@ void Test1_RxTx_Polling(void)
 
     if(!SW1 )
     {
-       WriteData = 0x2 ;
-       Can_write(HTH0_0, &PduInfo) ;
+       WriteData1 = 0x2 ;
+       Can_write(HTH0_0, &PduInfo[0]) ;
     }
      if(!SW2)
     {
-        WriteData = 0x4 ;
-        Can_write(HTH0_0, &PduInfo) ;
+        WriteData1 = 0x4 ;
+        Can_write(HTH0_0, &PduInfo[0]) ;
     }
 
     if(SW1==0x10 && SW2==0x01)
     {
-        WriteData = 0x0 ;
-        Can_write(HTH0_0, &PduInfo) ;
+        WriteData1 = 0x0 ;
+        Can_write(HTH0_0, &PduInfo[0]) ;
     }
 
     Can_MainFunction_Write() ;
+}
+
+void Test2_TX_2_Objs_RX_2_Objs(void)
+{
+    Can_MainFunction_Read() ;
+    SW1 = GPIO_PORTF_DATA_R&0x10;     // read PF4 into SW1
+    SW2 = GPIO_PORTF_DATA_R&0x01;     // read PF0 into SW2
+
+    if(ReadData==2)
+    {
+        GPIO_PORTF_DATA_R &= ~0xF;
+        GPIO_PORTF_DATA_R |= ReadData ;
+    }
+     if(ReadData==4)
+    {
+        GPIO_PORTF_DATA_R &= ~0xF;
+        GPIO_PORTF_DATA_R |= ReadData ;
+    }
+     if(ReadData==8)
+    {
+        GPIO_PORTF_DATA_R &= ~0xF;
+        GPIO_PORTF_DATA_R |= ReadData ;
+    }
+    if(ReadData==0)
+    {
+        GPIO_PORTF_DATA_R &= ~0xF;
+        GPIO_PORTF_DATA_R |= ReadData ;
+    }
+    if(!SW1 )
+    {
+       WriteData1 = 0x2 ;
+       Can_write(HTH0_0, &PduInfo[0]) ;
+    }
+     if(!SW2)
+    {
+        WriteData2 = 0x4 ;
+        Can_write(HTH0_1, &PduInfo[1]) ;
+    }
+
+    if(SW1==0x10 && SW2==0x01)
+    {
+        WriteData1 = 0x0 ;
+        Can_write(HTH0_0, &PduInfo[0]) ;
+    }
+
+    Can_MainFunction_Write() ;
+}
+
+void Test3_RxTx_Interrupt(void)
+{
+    Can_EnableControllerInterrupts(CONTROLLER0_ID);
+    while(1)
+    {
+        SW1 = GPIO_PORTF_DATA_R&0x10;     // read PF4 into SW1
+        SW2 = GPIO_PORTF_DATA_R&0x01;     // read PF0 into SW2
+
+        if(ReadData==2)
+        {
+            GPIO_PORTF_DATA_R &= ~0xF;
+            GPIO_PORTF_DATA_R |= ReadData ;
+        }
+         if(ReadData==4)
+        {
+            GPIO_PORTF_DATA_R &= ~0xF;
+            GPIO_PORTF_DATA_R |= ReadData ;
+        }
+         if(ReadData==8)
+        {
+            GPIO_PORTF_DATA_R &= ~0xF;
+            GPIO_PORTF_DATA_R |= ReadData ;
+        }
+        if(ReadData==0)
+        {
+            GPIO_PORTF_DATA_R &= ~0xF;
+            GPIO_PORTF_DATA_R |= ReadData ;
+        }
+
+        if(!SW1 )
+        {
+           WriteData1 = 0x2 ;
+           Can_write(HTH0_0, &PduInfo[0]) ;
+        }
+         if(!SW2)
+        {
+            WriteData1 = 0x4 ;
+            Can_write(HTH0_0, &PduInfo[0]) ;
+        }
+
+        if(SW1==0x10 && SW2==0x01)
+        {
+            WriteData1 = 0x0 ;
+            Can_write(HTH0_0, &PduInfo[0]) ;
+        }
+    }
 }
