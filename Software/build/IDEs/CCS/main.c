@@ -13,6 +13,7 @@ void PortF_Init(void);
 void Test1_RxTx_Polling(void) ;
 void Test2_TX_2_Objs_RX_2_Objs(void) ;
 void Test3_RxTx_Interrupt(void) ;
+void irq_Enable(void);
 
 extern uint8 ReadData;
 static uint8 WriteData1,WriteData2;
@@ -49,7 +50,10 @@ int main(void)
     #endif
     /*Start Controller 0 */
     Can_SetControllerMode(CONTROLLER0_ID, CAN_CS_STARTED);
-    Test3_RxTx_Interrupt();
+
+    /*Test*/
+   Test3_RxTx_Interrupt();
+//  Test1_RxTx_Polling();
     return 0;
 }
 
@@ -112,100 +116,102 @@ void PLL_Init(void){
 void Test1_RxTx_Polling(void)
 {
 
-    Can_MainFunction_Read() ;
-    SW1 = GPIO_PORTF_DATA_R&0x10;     // read PF4 into SW1
-    SW2 = GPIO_PORTF_DATA_R&0x01;     // read PF0 into SW2
+    while(1)
+    {
+        Can_MainFunction_Read() ;
+           SW1 = GPIO_PORTF_DATA_R&0x10;     // read PF4 into SW1
+           SW2 = GPIO_PORTF_DATA_R&0x01;     // read PF0 into SW2
 
-    if(ReadData==2)
-    {
-        GPIO_PORTF_DATA_R &= ~0xF;
-        GPIO_PORTF_DATA_R |= ReadData ;
-    }
-     if(ReadData==4)
-    {
-        GPIO_PORTF_DATA_R &= ~0xF;
-        GPIO_PORTF_DATA_R |= ReadData ;
-    }
-     if(ReadData==8)
-    {
-        GPIO_PORTF_DATA_R &= ~0xF;
-        GPIO_PORTF_DATA_R |= ReadData ;
-    }
-    if(ReadData==0)
-    {
-        GPIO_PORTF_DATA_R &= ~0xF;
-        GPIO_PORTF_DATA_R |= ReadData ;
-    }
+           if(ReadData==2)
+           {
+               GPIO_PORTF_DATA_R &= ~0xF;
+               GPIO_PORTF_DATA_R |= ReadData ;
+           }
+            if(ReadData==4)
+           {
+               GPIO_PORTF_DATA_R &= ~0xF;
+               GPIO_PORTF_DATA_R |= ReadData ;
+           }
+            if(ReadData==8)
+           {
+               GPIO_PORTF_DATA_R &= ~0xF;
+               GPIO_PORTF_DATA_R |= ReadData ;
+           }
+           if(ReadData==0)
+           {
+               GPIO_PORTF_DATA_R &= ~0xF;
+               GPIO_PORTF_DATA_R |= ReadData ;
+           }
 
-    if(!SW1 )
-    {
-       WriteData1 = 0x2 ;
-       Can_write(HTH0_0, &PduInfo[0]) ;
-    }
-     if(!SW2)
-    {
-        WriteData1 = 0x4 ;
-        Can_write(HTH0_0, &PduInfo[0]) ;
-    }
+           if(!SW1 )
+           {
+              WriteData1 = 0x2 ;
+              Can_write(HTH0_0, &PduInfo[0]) ;
+           }
+            if(!SW2)
+           {
+               WriteData1 = 0x4 ;
+               Can_write(HTH0_0, &PduInfo[0]) ;
+           }
 
-    if(SW1==0x10 && SW2==0x01)
-    {
-        WriteData1 = 0x0 ;
-        Can_write(HTH0_0, &PduInfo[0]) ;
-    }
+           Can_MainFunction_Write() ;
 
-    Can_MainFunction_Write() ;
-}
+    }
+   }
 
 void Test2_TX_2_Objs_RX_2_Objs(void)
 {
-    Can_MainFunction_Read() ;
-    SW1 = GPIO_PORTF_DATA_R&0x10;     // read PF4 into SW1
-    SW2 = GPIO_PORTF_DATA_R&0x01;     // read PF0 into SW2
+    while(1)
+    {
+        Can_MainFunction_Read() ;
+           SW1 = GPIO_PORTF_DATA_R&0x10;     // read PF4 into SW1
+           SW2 = GPIO_PORTF_DATA_R&0x01;     // read PF0 into SW2
 
-    if(ReadData==2)
-    {
-        GPIO_PORTF_DATA_R &= ~0xF;
-        GPIO_PORTF_DATA_R |= ReadData ;
-    }
-     if(ReadData==4)
-    {
-        GPIO_PORTF_DATA_R &= ~0xF;
-        GPIO_PORTF_DATA_R |= ReadData ;
-    }
-     if(ReadData==8)
-    {
-        GPIO_PORTF_DATA_R &= ~0xF;
-        GPIO_PORTF_DATA_R |= ReadData ;
-    }
-    if(ReadData==0)
-    {
-        GPIO_PORTF_DATA_R &= ~0xF;
-        GPIO_PORTF_DATA_R |= ReadData ;
-    }
-    if(!SW1 )
-    {
-       WriteData1 = 0x2 ;
-       Can_write(HTH0_0, &PduInfo[0]) ;
-    }
-     if(!SW2)
-    {
-        WriteData2 = 0x4 ;
-        Can_write(HTH0_1, &PduInfo[1]) ;
-    }
+           if(ReadData==2)
+           {
+               GPIO_PORTF_DATA_R &= ~0xF;
+               GPIO_PORTF_DATA_R |= ReadData ;
+           }
+            if(ReadData==4)
+           {
+               GPIO_PORTF_DATA_R &= ~0xF;
+               GPIO_PORTF_DATA_R |= ReadData ;
+           }
+            if(ReadData==8)
+           {
+               GPIO_PORTF_DATA_R &= ~0xF;
+               GPIO_PORTF_DATA_R |= ReadData ;
+           }
+           if(ReadData==0)
+           {
+               GPIO_PORTF_DATA_R &= ~0xF;
+               GPIO_PORTF_DATA_R |= ReadData ;
+           }
+           if(!SW1 )
+           {
+              WriteData1 = 0x2 ;
+              Can_write(HTH0_0, &PduInfo[0]) ;
+           }
+            if(!SW2)
+           {
+               WriteData2 = 0x4 ;
+               Can_write(HTH0_1, &PduInfo[1]) ;
+           }
 
-    if(SW1==0x10 && SW2==0x01)
-    {
-        WriteData1 = 0x0 ;
-        Can_write(HTH0_0, &PduInfo[0]) ;
-    }
+           if(SW1==0x10 && SW2==0x01)
+           {
+               WriteData1 = 0x0 ;
+               Can_write(HTH0_0, &PduInfo[0]) ;
+           }
 
-    Can_MainFunction_Write() ;
+           Can_MainFunction_Write() ;
+    }
 }
 
 void Test3_RxTx_Interrupt(void)
 {
-    Can_EnableControllerInterrupts(CONTROLLER0_ID);
+    irq_Enable();
+
     while(1)
     {
         SW1 = GPIO_PORTF_DATA_R&0x10;     // read PF4 into SW1
@@ -243,10 +249,6 @@ void Test3_RxTx_Interrupt(void)
             Can_write(HTH0_0, &PduInfo[0]) ;
         }
 
-        if(SW1==0x10 && SW2==0x01)
-        {
-            WriteData1 = 0x0 ;
-            Can_write(HTH0_0, &PduInfo[0]) ;
-        }
+
     }
 }

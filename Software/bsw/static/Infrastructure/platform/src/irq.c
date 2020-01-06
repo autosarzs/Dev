@@ -44,11 +44,14 @@
 /* Enable all interrupts */
 __attribute__((naked)) void irq_Enable(void)
 {
-	__asm("CPSIE i");
+	__asm(" CPSIE I");
+	__asm(" BX LR") ;
 }
 
 /* Disable all interrupts */
+
 __attribute__((naked)) void irq_Disable(void)
 {
-    __asm("CPSID i");
+    __asm(" CPSID I");
+    __asm(" BX LR") ;
 }

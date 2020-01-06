@@ -404,6 +404,15 @@ void Can_Init( const Can_ConfigType* Config)
         */
         HWREG(BaseAddress + CAN_O_CTL) = (CAN_CTL_INIT);
 
+        /*[SRS_Can_01062] Each possible event of each CAN Controller shall be Pre-Compile-Time
+         *  configurable to be in one of the following two modes Polling or Interrupt driven
+         */
+#if( CanTxProcessing == MIXED_PROCESSING || CanTxProcessing == INTERRUPT_PROCESSING ||\
+     CanRxProcessing == MIXED_PROCESSING || CanRxProcessing == INTERRUPT_PROCESSING )
+        /*Enable interrupt for the controller*/
+        HWREG(BaseAddress + CAN_O_CTL) |= CAN_CTL_IE ;
+#endif
+
         /* Set Baud rate fo each controller */
         /* Save current baudrate Configurations */
         BRConfig = &(Global_Config->CanControllerCfgRef[controllerId].\
@@ -427,7 +436,10 @@ void Can_Init( const Can_ConfigType* Config)
         if(Global_Config->CanHardwareObjectRef[HOHCount].CanObjectType == TRANSMIT)
         {
             HWREG(BaseAddress + CAN_O_IF1ARB2) &= ~CAN_IF1ARB2_MSGVAL;              /* must be cleared before configuration */
-            HWREG(BaseAddress + CAN_O_IF1MCTL) |= (CAN_IF1MCTL_TXIE );
+            if(Global_Config->CanHardwareObjectRef[HOHCount].CanHardwareObjectUsesPolling == FALSE)
+            {
+                HWREG(BaseAddress + CAN_O_IF1MCTL) |= (CAN_IF1MCTL_TXIE );          /*Enable transmission interrupt for this HTH*/
+            }
             HWREG(BaseAddress + CAN_O_IF1ARB2) |= CAN_IF1ARB2_DIR;                  /* transmit */
             
             /* Configuration for 11-bits Standard ID type */
@@ -476,7 +488,12 @@ void Can_Init( const Can_ConfigType* Config)
             while(HwObjectCount--)
             {
                 HWREG(BaseAddress + CAN_O_IF2CMSK) |= (CAN_IF2CMSK_WRNRD | CAN_IF2CMSK_ARB | CAN_IF2CMSK_CONTROL | CAN_IF2CMSK_MASK);
-                HWREG(BaseAddress + CAN_O_IF2MCTL) |= (CAN_IF2MCTL_UMASK |CAN_IF2MCTL_RXIE|CAN_IF2MCTL_DLC_M);
+                HWREG(BaseAddress + CAN_O_IF2MCTL) |= (CAN_IF2MCTL_UMASK |CAN_IF2MCTL_DLC_M);
+                if(Global_Config->CanHardwareObjectRef[HOHCount].CanHardwareObjectUsesPolling == FALSE)
+                {
+                    HWREG(BaseAddress + CAN_O_IF2MCTL) |= (CAN_IF2MCTL_RXIE );          /*Enable transmission interrupt for this HRH*/
+                }
+
                 /* must be cleared before configuration */
                 HWREG(BaseAddress + CAN_O_IF2ARB2) &= ~CAN_IF2ARB2_MSGVAL;
                 /* Receive */
@@ -761,7 +778,7 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
          */
 		/*  Enable the specified CAN Controller Interrupts */
 		CANIntEnable(Global_Config->CanHardwareObjectRef[Controller].CanControllerRef->CanControllerBaseAddress,
-				CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
+				 CAN_CTL_IE);
     }
 	else
 	{
@@ -814,7 +831,7 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
          */
         /*  Disable the specified CAN Controller Interrupts */
 		CANIntDisable(Global_Config->CanHardwareObjectRef[Controller].CanControllerRef->CanControllerBaseAddress,
-				CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
+				 CAN_CTL_IE);
     }
     DisableCnt[Controller]++;
 
@@ -1197,7 +1214,7 @@ Std_ReturnType Can_write (
                 HWREG(ui32Base + CAN_O_IF1ARB1) = ui16ArbReg_1;
                 HWREG(ui32Base + CAN_O_IF1ARB2) = ui16ArbReg_2;
                 HWREG(ui32Base + CAN_O_IF1ARB2) |= CAN_IF1ARB2_MSGVAL;
-                HWREG(ui32Base + CAN_O_IF1MCTL) = ui16MsgCtrl;
+                HWREG(ui32Base + CAN_O_IF1MCTL) |= ui16MsgCtrl;
 
                for (Hth_count = 0 ; Hth_count < CAN_HTH_NUMBER  ; Hth_count++)
                 {
@@ -1677,8 +1694,8 @@ static void Serve_Interrupts(uint32 BaseAddress)
     uint32 Read_INTPND_Register = 0 ;
 
 
-    Read_INTPND_Register = HWREG(BaseAddress + CAN_O_MSG1INT ) ;
-    Read_INTPND_Register |=(HWREG(BaseAddress + CAN_O_MSG1INT )<<16) ;
+    Read_INTPND_Register = HWREG(BaseAddress + CAN_O_MSG1INT ) & CAN_MSG1INT_INTPND_M;
+    Read_INTPND_Register |=((HWREG(BaseAddress + CAN_O_MSG2INT )&CAN_MSG1INT_INTPND_M)<<16) ;
 
     for(count=0 ;count< CAN_HTH_NUMBER ;count++ )
     {
@@ -1687,11 +1704,15 @@ static void Serve_Interrupts(uint32 BaseAddress)
         {
             if(Read_INTPND_Register &(1<<(MessageObjAssignedToHTH[count].MessageId-1)))
             {
+                HWREG(BaseAddress + CAN_O_IF1CMSK) = CAN_IF1CMSK_CLRINTPND ;
                 HWREG(BaseAddress + CAN_O_IF1MCTL) &= ~ CAN_IF1MCTL_INTPND ;
                 HWREG(BaseAddress + CAN_O_IF1CRQ)   = MessageObjAssignedToHTH[count].MessageId ;
-                HWREG(BaseAddress + CAN_O_STS) &= ~CAN_STS_TXOK ;
+                HWREG(BaseAddress + CAN_O_STS) &=~CAN_STS_TXOK ;
+                /*Reset Tx_Request flag*/
+                MessageObjAssignedToHTH[count].Tx_Request = FALSE ;
                 CanIf_TxConfirmation(swPduHandle[count]);
             }
+
         }
     }
     for(count=0 ;count< CAN_HRH_NUMBER ;count++ )
@@ -1699,42 +1720,47 @@ static void Serve_Interrupts(uint32 BaseAddress)
         index = MessageObjAssignedToHRH[count].HRHIndex ;
         if(Global_Config->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling == FALSE)
         {
-            if(Read_INTPND_Register &(1<<(MessageObjAssignedToHRH[count].StartMessageId)))
+            for(uint8 HW_Obj_Index = MessageObjAssignedToHRH[count].StartMessageId;
+                      HW_Obj_Index <= MessageObjAssignedToHRH[count].EndMessageId ; HW_Obj_Index++)
             {
-                HWREG(BaseAddress + CAN_O_IF2CMSK) = (CAN_IF2CMSK_DATAA | CAN_IF1CMSK_DATAB |\
-                                                      CAN_IF2CMSK_CONTROL | CAN_IF1CMSK_MASK|\
-                                                      CAN_IF2CMSK_ARB);
-                HWREG(BaseAddress + CAN_O_IF2CRQ)   =  MessageObjAssignedToHTH[count].MessageId ;
-                // mailbox for Callback function RxIndication
-                Can_HwType Mailbox;
-                PduInfoType PduInfo;
-                uint8 Data[MAX_DATA_LENGTH];
+                if(Read_INTPND_Register &(1<<(HW_Obj_Index-1)))
+                {
+                    HWREG(BaseAddress + CAN_O_IF2CMSK) = (CAN_IF2CMSK_DATAA | CAN_IF1CMSK_DATAB |\
+                                                          CAN_IF2CMSK_CONTROL | CAN_IF1CMSK_MASK|\
+                                                          CAN_IF2CMSK_ARB);
+                    HWREG(BaseAddress + CAN_O_IF2CRQ)   =  HW_Obj_Index ;
+                    // mailbox for Callback function RxIndication
+                    Can_HwType Mailbox;
+                    PduInfoType PduInfo;
+                    uint8 Data[MAX_DATA_LENGTH];
 
-                //message ID
-                if(Global_Config->CanHardwareObjectRef[index].CanIdType == STANDARD)
-                {
-                    Mailbox.CanId = (HWREG(BaseAddress + CAN_O_IF2ARB2) & CAN_IF2ARB2_ID_STANDARD) >>2 ;
+                    //message ID
+                    if(Global_Config->CanHardwareObjectRef[index].CanIdType == STANDARD)
+                    {
+                        Mailbox.CanId = (HWREG(BaseAddress + CAN_O_IF2ARB2) & CAN_IF2ARB2_ID_STANDARD) >>2 ;
+                    }
+                    else
+                    {
+                        Mailbox.CanId = HWREG(BaseAddress + CAN_O_IF2ARB1) |
+                                        ((HWREG(BaseAddress + CAN_O_IF2ARB2) & CAN_IF2ARB2_ID_M)<<16) ;
+                    }
+                    //hardware object that has new data
+                    Mailbox.Hoh = Global_Config->CanHardwareObjectRef[index].CanObjectId;
+                    // controller ID
+                    Mailbox.ControllerId = Global_Config->CanHardwareObjectRef[index].CanControllerRef->CanControllerId;
+                    //Save data length
+                    PduInfo.SduLength = HWREG(BaseAddress + CAN_O_IF2MCTL) & CAN_IF2MCTL_DLC_M ;
+                    //Save data
+                    _CANDataRegRead( Data ,(uint32*)( BaseAddress+CAN_O_IF2DA1), PduInfo.SduLength) ;
+                    PduInfo.SduDataPtr = Data;
+                    // 2. inform CanIf using API below.
+                    CanIf_RxIndication(&Mailbox, &PduInfo);
+                    HWREG(BaseAddress + CAN_O_IF2MCTL) &= ~ CAN_IF1MCTL_INTPND ;
+                    HWREG(BaseAddress + CAN_O_IF2CMSK) = CAN_IF2CMSK_CLRINTPND ;
+                    HWREG(BaseAddress + CAN_O_STS) &=~CAN_STS_RXOK;
+                    HWREG(BaseAddress + CAN_O_IF2CRQ)   = HW_Obj_Index ;
+
                 }
-                else
-                {
-                    Mailbox.CanId = HWREG(BaseAddress + CAN_O_IF2ARB1) |
-                                    ((HWREG(BaseAddress + CAN_O_IF2ARB2) & CAN_IF2ARB2_ID_M)<<16) ;
-                }
-                //hardware object that has new data
-                Mailbox.Hoh = Global_Config->CanHardwareObjectRef[index].CanObjectId;
-                // controller ID
-                Mailbox.ControllerId = Global_Config->CanHardwareObjectRef[index].CanControllerRef->CanControllerId;
-                //Save data length
-                PduInfo.SduLength = HWREG(BaseAddress + CAN_O_IF2MCTL) & CAN_IF2MCTL_DLC_M ;
-                //Save data
-                _CANDataRegRead( Data ,(uint32*) BaseAddress+CAN_O_IF2DA1, PduInfo.SduLength) ;
-                PduInfo.SduDataPtr = Data;
-                // 2. inform CanIf using API below.
-                CanIf_RxIndication(&Mailbox, &PduInfo);
-                HWREG(BaseAddress + CAN_O_IF2CMSK) = CAN_IF2CMSK_WRNRD |CAN_IF2CMSK_CONTROL ;
-                HWREG(BaseAddress + CAN_O_IF2MCTL) &= ~ CAN_IF1MCTL_INTPND ;
-                HWREG(BaseAddress + CAN_O_STS) &= ~CAN_STS_RXOK ;
-                HWREG(BaseAddress + CAN_O_IF2CRQ)   =  MessageObjAssignedToHTH[count].MessageId ;
             }
         }
     }

@@ -64,7 +64,7 @@ CanHwFilter CanHwFilterHRH[] =
 };
 
 /*Configuration FOR all used Hardware objects*/
-CanHardwareObject HOHObj[CAN_HOH_NUMBER] =
+CanHardwareObject HOHObj[] =
 {
     {   FULL,                    /*  Can controller type for tm4c123gh6pm    */
         1,                       /*  Number of FIFO elements for this HOH    */
@@ -73,17 +73,7 @@ CanHardwareObject HOHObj[CAN_HOH_NUMBER] =
         TRANSMIT,                /*  HOH Type    */
         &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
         &CanHwFilterHTH[0],      /*  Reference to the Filter configuartion   */
-        TRUE                    /*  Enable or diasble using polling */
-    },
-    {
-         FULL,                    /*  Can controller type for tm4c123gh6pm    */
-         1,                       /*  Number of FIFO elements for this HOH    */
-         STANDARD,                /*  Arbitration ID type */
-         HTH0_1,                  /*  HOH ID  */
-         TRANSMIT,                /*  HOH Type    */
-         &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
-         &CanHwFilterHTH[0],      /*  Reference to the Filter configuartion   */
-         TRUE                    /*  Enable or diasble using polling */
+         FALSE                   /*  Enable or diasble using polling */
     },
     {
          FULL,                    /*  Can controller type for tm4c123gh6pm    */
@@ -93,6 +83,16 @@ CanHardwareObject HOHObj[CAN_HOH_NUMBER] =
          RECEIVE,                 /*  HOH Type    */
          &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
          &CanHwFilterHRH[0],      /*  Reference to the Filter configuartion   */
+         FALSE                    /*  Enable or diasble using polling */
+    },
+    {
+         FULL,                    /*  Can controller type for tm4c123gh6pm    */
+         1,                       /*  Number of FIFO elements for this HOH    */
+         STANDARD,                /*  Arbitration ID type */
+         HTH0_1,                  /*  HOH ID  */
+         TRANSMIT,                /*  HOH Type    */
+         &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
+         &CanHwFilterHTH[0],      /*  Reference to the Filter configuartion   */
          TRUE                    /*  Enable or diasble using polling */
     },
     {
