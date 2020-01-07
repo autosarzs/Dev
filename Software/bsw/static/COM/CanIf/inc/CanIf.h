@@ -37,6 +37,7 @@
 
 #include "CanIf_Types.h"
 #include "CanIf_Cfg.h"
+#include "Can.h"
 
 
 
@@ -382,7 +383,7 @@ typedef struct {
 
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	
-				CanIfCtrlCfgType CanIfCtrlCfgObj;//It should be CanIfCtrlCfgType CanIfCtrlCfgObj[MAX_CONFIGURABLE_CAN_CONTROLLERS];
+				CanIfCtrlCfgType CanIfCtrlCfgObj;//To Do: It should be CanIfCtrlCfgType CanIfCtrlCfgObj[USED_CONTROLLERS_NUMBER];
 }CanIfCtrlDrvCfgType;
 
 typedef struct {
