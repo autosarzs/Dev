@@ -759,10 +759,11 @@ perform Txbuffering for the CanIf Tx L-PDUs which are assigned to this
 Txbuffer. If CanIfPublicTxBuffering equals False, this parameter equals
 0 for all TxBuffer. If the CanHandleType of the referred HTH equals
 FULL, this parameter equals 0 for this TxBuffer.*/
+/*TODO check this parameter later */
 #if(CANIF_PUBLIC_TX_BUFFERING==STD_OFF)
 	#define CANIF_BUFFER_SIZE                  (0U)
-#elif(CanHardwareObject.CanHandleType==FULL)
-	#define CANIF_BUFFER_SIZE                  (0U)
+//#elif(CanHardwareObject.CanHandleType==FULL)
+//	#define CANIF_BUFFER_SIZE                  (0U)
 #else	/* any value, implementation dependant */
 	#define CANIF_BUFFER_SIZE                  (255U)
 #endif
