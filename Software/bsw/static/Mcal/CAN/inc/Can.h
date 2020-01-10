@@ -95,19 +95,20 @@ typedef uint8 Can_ServiceId;
 #define  Can_GetVersionInfo_Id                ((Can_ServiceId)0x07)
 #define  Can_DeInit_Id                        ((Can_ServiceId)0x10)
 #define  CAN_SETBAUDRATE_API_ID               ((Can_ServiceId)0x0f)
-#define  CAN_SET_CONTROLLER_MODE                ((Can_ServiceId)0x03)
+#define  CAN_SET_CONTROLLER_MODE              ((Can_ServiceId)0x03)
 #define  Can_DisableControllerInterrupts_Id   ((Can_ServiceId)0x04)
 #define  Can_EnableControllerInterrupts_Id    ((Can_ServiceId)0x05)
 #define  Can_CheckWakeup_Id                   ((Can_ServiceId)0x0b)
 #define  Can_GetControllerErrorState_Id       ((Can_ServiceId)0x11)
 #define  Can_GetControllerMode_Id             ((Can_ServiceId)0x12)
 #define  Can_Write_Id                         ((Can_ServiceId)0x06)
-#define Can_MainFunction_Write_SID            (uint8)(0x01)
-#define  CAN_MAIN_FUNCTION_READ_ID            ((Can_ServiceId)0x01)
+#define  Can_MainFunction_Write_ID            ((Can_ServiceId)0x01)
+#define  CAN_MAIN_FUNCTION_READ_ID            ((Can_ServiceId)0x08)
 #define  CAN_MAIN_FUNCTION_BUS_OFF_ID         ((Can_ServiceId)0x02)
 
 #define NULL_PTR  ((void*)0)
 
+#define MAX_DATA_LENGTH         (8U)
 //*****************************************************************************
 //  Enables / disables API Can_MainFunction_BusOff() for
 //  handling Busoff events in polling mode.
@@ -201,14 +202,7 @@ typedef struct {
     *   Driver. The value for this parameter starts with 0 and continue without any gaps.
     */
     uint8   CanControllerId;
-    /* [ECUC_Can_00317] Enables / disables API Can_MainFunction_Read() 
-    *    for handling PDU receiption events in polling mode
-    */
-    uint8 CanRxProcessing;
-    /* [ECUC_Can_00318] Enables / disables API Can_MainFunction_Write() 
-     * for handling PDU transmission events in polling mode.
-     */
-    uint8 CanTxProcessing;
+
     /*
     *   Specifies the CAN controller base address.
     */
@@ -373,8 +367,12 @@ void Can_Init(const Can_ConfigType* Config);
 Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID);
 
 void Can_DeInit(void);
+Std_ReturnType Can_write ( Can_HwHandleType Hth, const Can_PduType * PduInfo) ;
+Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType Transition ) ;
+void Can_MainFunction_Read(void) ;
 void Can_DisableControllerInterrupts(uint8 Controller);
 void Can_EnableControllerInterrupts(uint8 Controller);
 Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* ControllerModePtr);
 void Can_MainFunction_Write(void);
+
 #endif /* CAN_H_ */

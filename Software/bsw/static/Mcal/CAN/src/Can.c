@@ -63,6 +63,8 @@
 #define valid                     (1U)
 #define invalid                   (0U)
 #define MAX_CONTROLLERS_NUMBER    (2U)                  /*Number of controllers in TivaC */
+#define CAN0_BASE_ADDRESS         (0x40040000U)
+#define CAN1_BASE_ADDRESS         (0x40041000U)
 
 /*****************************************************************************************/
 /*                                   Local Definition                                    */
@@ -76,23 +78,24 @@
 
 /*    Type Description      : 	Struct to map each receive software meesage object with the number
  its configured hardware message objects in the HW FIFO
- HRHId     	: 	SW meesage objectId from CANIF
+ HRHIndex        : 	HRH index in the CanHardwareObject array
  StartMessageId  : 	ID of the first hardware message object in the HW FIFO
  StartMessageId  : 	ID of the last  hardware message object in the HW FIFO    */
 typedef struct {
-	uint8 HRHId;
+	uint8 HRHIndex;
 	uint8 StartMessageId;
 	uint8 EndMessageId;
 } str_MessageObjAssignedToHRH;
 
 /*    Type Description      : 	Struct to map each transmit software meesage object with the number
                                 its configured hardware message objects in the HW FIFO 
-		        HTHId     	: 	SW message objectId from CANIF
+            HTHIndex        :  HTH index in the CanHardwareObject array
+		    Tx_Request      :   Flag to indicate transmission request
 			StartMessageId  : 	ID of the  hardware meesage object in the HW    */
 typedef struct
 {
-	uint8 HTHId;  
-	uint8 StartMessageId;
+	uint8 HTHIndex;
+	uint8 Tx_Request;
 	uint8 MessageId;      
 }str_MessageObjAssignedToHTH;
 /*****************************************************************************************/
@@ -142,7 +145,7 @@ static str_MessageObjAssignedToHTH MessageObjAssignedToHTH[CAN_HTH_NUMBER];
  * swPduHandle is a global variable updated in CAN_Write function from PduInfo pointer
  *  and saved to be passed to CanIf_TxConfirmation
  */
-static PduIdType swPduHandle;
+static PduIdType swPduHandle[CAN_HTH_NUMBER];
 
 /*
  *  global variable used to protect the Hth in CAN_Write function
@@ -150,13 +153,11 @@ static PduIdType swPduHandle;
 static uint8 HTH_Semaphore[MAX_NO_OF_OBJECTS] = {0};
 
 /** ***************************************************************************************/
-static uint32 CAN_CONTROLLER_ACTIVATION[]={STD_ON , STD_ON};
+
+static uint8 ClrPendingInt = 0;
 
 
-static uint8 bClrPendingInt;
-
-
-static tCANMsgObject *psMsgObject[CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS];
+static tCANMsgObject psMsgObject[CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS];
 
 
 /*****************************************************************************************/
@@ -168,6 +169,58 @@ static tCANMsgObject *psMsgObject[CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS];
 /*****************************************************************************************/
 static void CANDataRegWrite ( uint8 * pui8Data, uint32 * pui32Register , uint8 ui8Size);
 
+
+//*****************************************************************************
+//
+//! \internal
+//! Copies data from a buffer to the CAN Data registers.
+//!
+//! \param pui8Data is a pointer to the location to store the data read from
+//! the CAN controller's data registers.
+//! \param pui32Register is an uint32 pointer to the first register of the
+//! CAN controller's data registers.  For example, in order to use the IF1
+//! register set on CAN controller 1, the value would be: \b CAN0_BASE \b +
+//! \b CAN_O_IF1DA1.
+//! \param iSize is the number of bytes to copy from the CAN controller.
+//!
+//! This function takes the steps necessary to copy data to a contiguous buffer
+//! in memory from the non-contiguous data registers used by the CAN
+//! controller.  This function is rarely used outside of the CANMessageGet()
+//! function.
+//!
+//! \return None.
+//
+//*****************************************************************************
+static void
+_CANDataRegRead( uint8 *pui8Data, uint32 *pui32Register, uint8 ui32Size)
+{
+    uint32_t ui32Idx, ui32Value;
+
+    //
+    // Loop always copies 1 or 2 bytes per iteration.
+    //
+    for(ui32Idx = 0; ui32Idx < ui32Size; )
+    {
+        //
+        // Read out the data 16 bits at a time since this is how the registers
+        // are aligned in memory.
+        //
+        ui32Value = HWREG(pui32Register++);
+
+        //
+        // Store the first byte.
+        //
+        pui8Data[ui32Idx++] = (uint8_t)ui32Value;
+
+        //
+        // Only read the second byte if needed.
+        //
+        if(ui32Idx < ui32Size)
+        {
+            pui8Data[ui32Idx++] = (uint8_t)(ui32Value >> 8);
+        }
+    }
+}
 /*****************************************************************************************/
 /*    Function Description    :  this function sets the baud rate                        */
 /*    Parameter in            :  BaseAddress : required controller base address 
@@ -295,6 +348,10 @@ void Can_Init( const Can_ConfigType* Config)
     uint8   controllerId;
     /* variable to count SW HOH number                                  */
     uint8   HOHCount;
+    /* variable to count SW HRH number                                  */
+    uint8   HRHCount = 0 ;
+    /* variable to count SW HRH number                                  */
+     uint8  HTHCount = 0 ;
     /* variable to save controller BaseAddres                           */
     uint32  BaseAddress;
     /* variable to save the number of hardware messages n each SW HOH   */
@@ -306,7 +363,7 @@ void Can_Init( const Can_ConfigType* Config)
     CanControllerBaudrateConfig* BRConfig;
 
 
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
     /* Report error CAN_E_PARAM_POINTER API called with wrong parameter */
     if(Config == NULL_PTR)
     {
@@ -328,7 +385,7 @@ void Can_Init( const Can_ConfigType* Config)
     /* Loop to initialize all controllers configured to be used in the Module   */
     for(controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER; controllerId++)
     {
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
         /*
         * The function Can_Init shall raise the error CAN_E_TRANSITION
         * if the Can controller is not in state CAN_CS_UNINIT [SWS_Can_00408]
@@ -346,6 +403,15 @@ void Can_Init( const Can_ConfigType* Config)
         */
         HWREG(BaseAddress + CAN_O_CTL) = (CAN_CTL_INIT);
 
+        /*[SRS_Can_01062] Each possible event of each CAN Controller shall be Pre-Compile-Time
+         *  configurable to be in one of the following two modes Polling or Interrupt driven
+         */
+#if( CanTxProcessing == MIXED_PROCESSING || CanTxProcessing == INTERRUPT_PROCESSING ||\
+     CanRxProcessing == MIXED_PROCESSING || CanRxProcessing == INTERRUPT_PROCESSING )
+        /*Enable interrupt for the controller*/
+        HWREG(BaseAddress + CAN_O_CTL) |= CAN_CTL_IE ;
+#endif
+
         /* Set Baud rate fo each controller */
         /* Save current baudrate Configurations */
         BRConfig = &(Global_Config->CanControllerCfgRef[controllerId].\
@@ -357,7 +423,7 @@ void Can_Init( const Can_ConfigType* Config)
     }
 
     /* Loop to Configure Hardware message objects to be Transmit or receive */
-    for(HOHCount = 0; HOHCount < NUM_OF_HOH; HOHCount++)
+    for(HOHCount = 0; HOHCount < CAN_HOH_NUMBER; HOHCount++)
     {
         /* Save the BaseAddress of the controller this Hardware Object Belongs to */
         BaseAddress = Global_Config->CanHardwareObjectRef[HOHCount].CanControllerRef->CanControllerBaseAddress;
@@ -369,7 +435,10 @@ void Can_Init( const Can_ConfigType* Config)
         if(Global_Config->CanHardwareObjectRef[HOHCount].CanObjectType == TRANSMIT)
         {
             HWREG(BaseAddress + CAN_O_IF1ARB2) &= ~CAN_IF1ARB2_MSGVAL;              /* must be cleared before configuration */
-            HWREG(BaseAddress + CAN_O_IF1MCTL) |= (CAN_IF1MCTL_TXIE );
+            if(Global_Config->CanHardwareObjectRef[HOHCount].CanHardwareObjectUsesPolling == FALSE)
+            {
+                HWREG(BaseAddress + CAN_O_IF1MCTL) |= (CAN_IF1MCTL_TXIE );          /*Enable transmission interrupt for this HTH*/
+            }
             HWREG(BaseAddress + CAN_O_IF1ARB2) |= CAN_IF1ARB2_DIR;                  /* transmit */
             
             /* Configuration for 11-bits Standard ID type */
@@ -391,19 +460,19 @@ void Can_Init( const Can_ConfigType* Config)
             /* increament to save the number of occupied hardware objects */
             UsedHWMessageObjt[controllerId]++;
 
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
-            if(UsedHWMessageObjt[controllerId] > CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
-            {
-                /* Report error as number of used hardware message objects exceeded limit */
-                Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
-            }
-            else
-            {
-                /* Do Nothing */
-            }
-#endif
-            MessageObjAssignedToHTH[HOHCount].HTHId = Global_Config->CanHardwareObjectRef[HOHCount].CanObjectId ;
-            MessageObjAssignedToHTH[HOHCount].MessageId = UsedHWMessageObjt[controllerId];
+            #if(CanDevErrorDetect == STD_ON)
+                if(UsedHWMessageObjt[controllerId] > CAN_HOH_NUMBER)
+                {
+                   /* Report error as the number of occupied hardware message objects exceeded limit 32 */
+                   Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
+                }
+                else
+                {
+                   /* Do Nothing */
+                }
+            #endif
+            MessageObjAssignedToHTH[HTHCount].HTHIndex = HOHCount;
+            MessageObjAssignedToHTH[HTHCount++].MessageId = UsedHWMessageObjt[controllerId];
             HWREG(BaseAddress + CAN_O_IF1CRQ)   = UsedHWMessageObjt[controllerId];
         }
         /* Configuration for receive message object type HRH */
@@ -418,7 +487,12 @@ void Can_Init( const Can_ConfigType* Config)
             while(HwObjectCount--)
             {
                 HWREG(BaseAddress + CAN_O_IF2CMSK) |= (CAN_IF2CMSK_WRNRD | CAN_IF2CMSK_ARB | CAN_IF2CMSK_CONTROL | CAN_IF2CMSK_MASK);
-                HWREG(BaseAddress + CAN_O_IF2MCTL) |= (CAN_IF2MCTL_UMASK |CAN_IF2MCTL_RXIE|CAN_IF2MCTL_DLC_M);
+                HWREG(BaseAddress + CAN_O_IF2MCTL) |= (CAN_IF2MCTL_UMASK |CAN_IF2MCTL_DLC_M);
+                if(Global_Config->CanHardwareObjectRef[HOHCount].CanHardwareObjectUsesPolling == FALSE)
+                {
+                    HWREG(BaseAddress + CAN_O_IF2MCTL) |= (CAN_IF2MCTL_RXIE );          /*Enable transmission interrupt for this HRH*/
+                }
+
                 /* must be cleared before configuration */
                 HWREG(BaseAddress + CAN_O_IF2ARB2) &= ~CAN_IF2ARB2_MSGVAL;
                 /* Receive */
@@ -457,31 +531,32 @@ void Can_Init( const Can_ConfigType* Config)
                 /* increament to save the number of occupied hardware objects */
                 UsedHWMessageObjt[controllerId]++;
 
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
-                if(UsedHWMessageObjt[controllerId] > CAN_CONTROLLER_ALLOWED_MESSAGE_OBJECTS)
-                {
-                    /* Report error as the number of occupied hardware message objects exceeded limit 32 */
-                    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
-                }
-                else
-                {
-                    /* Do Nothing */
-                }
-#endif
+                #if(CanDevErrorDetect == STD_ON)
+                    if(UsedHWMessageObjt[controllerId] > CAN_HOH_NUMBER)
+                    {
+                       /* Report error as the number of occupied hardware message objects exceeded limit 32 */
+                       Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_INIT_FAILED);
+                    }
+                    else
+                    {
+                       /* Do Nothing */
+                    }
+                #endif
                 if(HwObjectCount == 0)  /* End of FIFO Reached */
                 {
                     /* Set cuurent hardware message as the last one in FIFO */
                     HWREG(BaseAddress + CAN_O_IF2MCTL) |= CAN_IF2MCTL_EOB ;
                     /* Map the Current Software HRH with its hardware messages used in the buffer */
-                    MessageObjAssignedToHRH[HOHCount].HRHId = Global_Config->CanHardwareObjectRef[HOHCount].CanObjectId;
+                    MessageObjAssignedToHRH[HRHCount].HRHIndex = HOHCount;
                     /*Save the ID of the first hardware message object used in the FIFO*/
-                    MessageObjAssignedToHRH[HOHCount].StartMessageId = UsedHWMessageObjt[controllerId] - \
+                    MessageObjAssignedToHRH[HRHCount].StartMessageId = UsedHWMessageObjt[controllerId] - \
                             Global_Config->CanHardwareObjectRef[HOHCount].CanHwObjectCount + 1;
                     /* Save the ID of the last hardware message object used in the FIFO */
-                    MessageObjAssignedToHRH[HOHCount].EndMessageId = UsedHWMessageObjt[controllerId];
+                    MessageObjAssignedToHRH[HRHCount++].EndMessageId = UsedHWMessageObjt[controllerId];
                 }
                 /* Save the ID of the  hardware message object used in the register IF2CRQ */
                 HWREG(BaseAddress + CAN_O_IF2CRQ) = UsedHWMessageObjt[controllerId];
+
             }
         }
     }
@@ -516,7 +591,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 	ui32Base =
 			Global_Config->CanControllerCfgRef[Controller].CanControllerBaseAddress;
 
-#if(CAN_DEV_ERROR_DETECT == STD_ON) /* DET notifications */
+#if(CanDevErrorDetect == STD_ON) /* DET notifications */
 
 	/* [SWS_CAN_00492] If development error detection for the Can module is enabled
 	 The function Can_SetBaudrate shall raise the error CAN_E_UNINIT and return
@@ -662,7 +737,7 @@ Std_ReturnType Can_SetBaudrate(uint8 Controller, uint16 BaudRateConfigID) {
 void Can_EnableControllerInterrupts(uint8 Controller) {
 	/* Critical Section to protect shared resources in a reentrant Function */
 	irq_Disable();
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
 	
 	/*  [SWS_Can_00209] The function Can_EnableControllerInterrupts shall raise the error CAN_E_UNINIT if
      *  the driver not yet initialized
@@ -702,7 +777,7 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
          */
 		/*  Enable the specified CAN Controller Interrupts */
 		CANIntEnable(Global_Config->CanHardwareObjectRef[Controller].CanControllerRef->CanControllerBaseAddress,
-				CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
+				 CAN_CTL_IE);
     }
 	else
 	{
@@ -724,7 +799,7 @@ void Can_EnableControllerInterrupts(uint8 Controller) {
 void Can_DisableControllerInterrupts(uint8 Controller) {
 	/* Critical Section to protect shared resources in a reentrant Function */
 	irq_Disable();
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
 
     /*  [SWS_Can_00205] The function Can_DisableControllerInterrupts shall raise the error CAN_E_UNINIT if
      *  the driver not yet initialized
@@ -755,7 +830,7 @@ void Can_DisableControllerInterrupts(uint8 Controller) {
          */
         /*  Disable the specified CAN Controller Interrupts */
 		CANIntDisable(Global_Config->CanHardwareObjectRef[Controller].CanControllerRef->CanControllerBaseAddress,
-				CAN_CTL_EIE | CAN_CTL_SIE | CAN_CTL_IE);
+				 CAN_CTL_IE);
     }
     DisableCnt[Controller]++;
 
@@ -776,7 +851,7 @@ void Can_DeInit(void)
 {
 	uint8 ControllerIndex = 0 ;
 	
-#if(CAN_DEV_ERROR_DETECT == STD_ON)
+#if(CanDevErrorDetect == STD_ON)
     /*   The function Can_DeInit shall raise the error CAN_E_TRANSITION if the driver is not
      *   in state CAN_READY [SWS_Can_91011]
      *   [SWS_BSW_00232] Call to De-Initialization functions :
@@ -830,63 +905,54 @@ void Can_DeInit(void)
 void Can_MainFunction_Read(void) 
 {
 
+/*variable to get HRH index in the HWObject array */
+ uint8 index = 0 ;
+/*array to save received data*/
+ uint8 data[MAX_DATA_LENGTH] ;
+
     /*
-     *   Loop all controllers to get the new data
+     * loop for all the hardware object to get the only new avialables data in this object
      */
-    // TODO controlledID  base address not implemented here ?
-    uint8 controllerId = 0 ; /*variable to count controllers number*/
-    for (controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER; controllerId++)
+
+    for(uint8 obj_index = 0; obj_index < CAN_HRH_NUMBER; obj_index++)
     {
-        /*SWS_Can_00108*/
-        if ((POLLING_PROCESSING == Global_Config->CanHardwareObjectRef[controllerId].CanControllerRef->CanRxProcessing) ||
-            (
-                    (MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[controllerId].CanControllerRef->CanRxProcessing) &&
-                    (TRUE == Global_Config->CanHardwareObjectRef[controllerId].CanHardwareObjectUsesPolling)
-            ))
-        {
-            uint8 obj_index;  /* variable to count object number */
-#if (CAN_DEV_ERROR_DETECT == STD_ON)
-        if (ControllerState[controllerId] == CAN_CS_UNINIT)
-        {
-                Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_MAIN_FUNCTION_READ_ID, CAN_E_UNINIT);
-        }//End if
-#endif //CanDevErrorDetect
-        /*
-         * loop for all the hardware object to get the only new avialables data in this object
-         */
-        // TODO psMsgObject shold be config inside init API
-        for(obj_index = 0; obj_index < NUM_OF_HOH; obj_index++)
-        {
-            if(Global_Config->CanHardwareObjectRef[obj_index].CanObjectType == RECEIVE)
+        index = MessageObjAssignedToHRH[obj_index].HRHIndex ;
+       if(TRUE == Global_Config->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
+       {
+            for(uint8 HW_Obj_Index = MessageObjAssignedToHRH[obj_index].StartMessageId;
+                HW_Obj_Index <= MessageObjAssignedToHRH[obj_index].EndMessageId ; HW_Obj_Index++)
             {
+                /*Initialize data pointer */
+                 psMsgObject[HW_Obj_Index].pui8MsgData = data;
+
                 /*
                  * Reads a CAN message from one of the message object buffers.
                  */
-                    CANMessageGet(Global_Config->CanControllerCfgRef[controllerId].CanControllerBaseAddress,
-                                  obj_index, psMsgObject[obj_index], bClrPendingInt);
-                // check if this object have new data avialables
-                if(( psMsgObject[obj_index]->ui32Flags & MSG_OBJ_NEW_DATA) == MSG_OBJ_NEW_DATA)
+                    CANMessageGet(Global_Config->CanHardwareObjectRef[obj_index].CanControllerRef->CanControllerBaseAddress,
+                                  HW_Obj_Index, &psMsgObject[HW_Obj_Index], ClrPendingInt);
+                // check if this object have new data available
+                if(( psMsgObject[HW_Obj_Index].ui32Flags & MSG_OBJ_NEW_DATA) == MSG_OBJ_NEW_DATA)
                 {
-                        Can_HwType Mailbox; // the varaible for Callback function RxIndication
-                        PduInfoType PduInfo;
+                    // mailbox for Callback function RxIndication
+                    Can_HwType Mailbox;
+                    PduInfoType PduInfo;
                     //message ID
-                    Mailbox.CanId = psMsgObject[obj_index]->ui32MsgID;
-                        //hardware object that has new data
+                    Mailbox.CanId = psMsgObject[HW_Obj_Index].ui32MsgID;
+                    //hardware object that has new data
                     Mailbox.Hoh = obj_index;
                     // controller ID
-                    Mailbox.ControllerId = controllerId;
-                        PduInfo.SduLength = psMsgObject[obj_index]->ui32MsgLen;
-                        PduInfo.SduDataPtr = psMsgObject[obj_index]->pui8MsgData;
+                    Mailbox.ControllerId = Global_Config->CanHardwareObjectRef[index].CanControllerRef->CanControllerId;
+                    //Save data length
+                    PduInfo.SduLength = psMsgObject[HW_Obj_Index].ui32MsgLen;
+                    //Save data
+                    PduInfo.SduDataPtr = psMsgObject[HW_Obj_Index].pui8MsgData;
                     // 2. inform CanIf using API below.
-                        CanIf_RxIndication(&Mailbox, &PduInfo);
-                }// END IF
+                    CanIf_RxIndication(&Mailbox, &PduInfo);
+                }
+
             }
-        }// end of object in this controller ID
-        }
-        else
-        {
-        }
-    }// end loop for controllerId
+       }
+    }
 }
 
 /****************************************************************************************/
@@ -909,7 +975,7 @@ uint8 controllerId; /*variable to count controllers number*/
      */
     for (controllerId = 0; controllerId < USED_CONTROLLERS_NUMBER;controllerId += 1)
     {
-#if (CAN_DEV_ERROR_DETECT == STD_ON)
+#if (CanDevErrorDetect == STD_ON)
         if (ControllerState[controllerId] == CAN_CS_UNINIT)
         {
             Det_ReportError( CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_MAIN_FUNCTION_BUS_OFF_ID, CAN_E_UNINIT);
@@ -949,17 +1015,20 @@ uint8 controllerId; /*variable to count controllers number*/
 Std_ReturnType Can_write (
         Can_HwHandleType Hth,
         const Can_PduType * PduInfo
-
 )
 {
     Std_ReturnType returnVal = E_NOT_OK ;
 	
-#if (CanDevErrorDetect == STD_ON)
+
     if (CAN_UNINIT == ModuleState)
     {
-        returnVal = E_NOT_OK ;
-        // call Det function CAN_E_UNINIT
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_UNINIT);
+
+        #if (CanDevErrorDetect == STD_ON)
+            // call Det function CAN_E_UNINIT
+            Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_UNINIT);
+        #else
+            returnVal = E_NOT_OK ;
+        #endif
     }
     else if (NULL_PTR == PduInfo)
     {
@@ -968,8 +1037,11 @@ Std_ReturnType Can_write (
          * Can_Write() shall raise CAN_E_PARAM_POINTER and shall return E_NOT_OK if the
          * parameter PduInfo is a null pointer.⌋
          */
-        returnVal = E_NOT_OK ;
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_POINTER);
+        #if (CanDevErrorDetect == STD_ON)
+		    Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_POINTER);
+        #else
+		    returnVal = E_NOT_OK ;
+        #endif
     }
     else if (PduInfo->length > 8 )
     {
@@ -978,8 +1050,11 @@ Std_ReturnType Can_write (
          * development error detection for the CAN module is enabled shall raise the error
          * CAN_E_PARAM_DATA_LENGTH : if length is more that 8 bytes and Can controller is not CAN FD
          */
-        returnVal = E_NOT_OK ;
+        #if (CanDevErrorDetect == STD_ON)
 		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_DATA_LENGTH);
+        #else
+            returnVal = E_NOT_OK ;
+        #endif
     }
     else if (FALSE == CanTriggerTransmitEnable)
     {
@@ -998,8 +1073,7 @@ Std_ReturnType Can_write (
     else
 	{
 	}
-	
-#endif		/* end of CanDevErrorDetect */
+	/* end of CanDevErrorDetect */
 	/*
 	 * [SWS_Can_00212] ⌈ The function Can_Write shall perform following actions if the
 	 * hardware transmit object is free:
@@ -1055,119 +1129,126 @@ Std_ReturnType Can_write (
 	 */
 	uint8 real_hwObjectId = 0 ;
 
-	for (Hoh_count = 0 ; Hoh_count < NUM_OF_HOH  ; Hoh_count++)
+	for (Hoh_count = 0 ; Hoh_count < CAN_HOH_NUMBER  ; Hoh_count++)
 	{
-		if (Hth == Global_Config->CanHardwareObjectRef[Hoh_count].CanObjectId)
+	    if (Hth == Global_Config->CanHardwareObjectRef[Hoh_count].CanObjectId)
 		{
 			hth_index = Hoh_count ;
+			break ;
 		}
 	}
+        #if (CanDevErrorDetect == STD_ON)
+            /*
+             * [SWS_Can_00217] If development error detection for the Can module is enabled:
+             * The function Can_Write shall raise the error CAN_E_PARAM_HANDLE and shall
+             * return E_NOT_OK if the parameter Hth is not a configured Hardware Transmit
+             * Handle.⌋
+             */
+            if (Global_Config->CanHardwareObjectRef[hth_index].CanObjectType != TRANSMIT)
+            {
+                returnVal = E_NOT_OK ;
+                //det error CAN_E_PARAM_HANDLE
+                Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_HANDLE);
+            }
+            else
+            {
+                /*MISRA Rule*/
+            }
+        #endif
+        if (0 == HTH_Semaphore[hth_index])
+        {
+            HTH_Semaphore[hth_index] = 1 ;
 
-#if (CanDevErrorDetect == STD_ON)
-	/*
-	 * [SWS_Can_00217] If development error detection for the Can module is enabled:
-	 * The function Can_Write shall raise the error CAN_E_PARAM_HANDLE and shall
-	 * return E_NOT_OK if the parameter Hth is not a configured Hardware Transmit
-	 * Handle.⌋
-	 */
-	if (Global_Config->CanHardwareObjectRef[hth_index].CanObjectType != TRANSMIT)
-	{
-		returnVal = E_NOT_OK ;
-		//det error CAN_E_PARAM_HANDLE
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_Write_Id, CAN_E_PARAM_HANDLE);
-	}
-	else
-	{
-	}
-#endif
-	if (0 == HTH_Semaphore[hth_index])
-	{
-		HTH_Semaphore[hth_index] = 1 ;
+            ui32Base = Global_Config->CanHardwareObjectRef[hth_index].CanControllerRef->CanControllerBaseAddress ;
+            /*
+             * check if hardware is busy
+             */
+            if(HWREG(ui32Base + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
+            {
+                /*
+                 * the hardware transmit object is busy
+                 * [SWS_Can_00213] ⌈ The function Can_Write shall perform no actions if the
+                 * hardware transmit object is busy with another transmit request for an L-PDU:
+                 * 1. The transmission of the other L-PDU shall not be cancelled and the function
+                 * Can_Write is left without any actions.
+                 * 2. The function Can_Write shall return CAN_BUSY. (SRS_Can_01049).
+                 */
+                returnVal = CAN_BUSY ;
+            }
+            else
+            {
+                ui16CmdMaskReg |= CAN_IF1CMSK_WRNRD | CAN_IF1CMSK_DATAA |
+                                  CAN_IF1CMSK_DATAB | CAN_IF1CMSK_CONTROL|
+                                  CAN_IF1CMSK_ARB ;
 
-		ui32Base = Global_Config->CanHardwareObjectRef[hth_index].CanControllerRef->CanControllerBaseAddress ;
-		/*
-		 * check if hardware is busy
-		 */
-		if(HWREG(ui32Base + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
-		{
-			/*
-			 * the hardware transmit object is busy
-			 * [SWS_Can_00213] ⌈ The function Can_Write shall perform no actions if the
-			 * hardware transmit object is busy with another transmit request for an L-PDU:
-			 * 1. The transmission of the other L-PDU shall not be cancelled and the function
-			 * Can_Write is left without any actions.
-			 * 2. The function Can_Write shall return CAN_BUSY. (SRS_Can_01049).
-			 */
-			returnVal = CAN_BUSY ;
-		}
-		else
-		{
-			ui16CmdMaskReg |= CAN_IF1CMSK_WRNRD | CAN_IF1CMSK_DATAA |
-							  CAN_IF1CMSK_DATAB | CAN_IF1CMSK_CONTROL|
-							  CAN_IF1CMSK_ARB ;
+                ui16ArbReg_2 = CAN_IF1ARB2_DIR;             /// transmit M.O.
 
-			ui16MsgCtrl |= CAN_IF1MCTL_TXRQST;          /// transmission request
-			ui16ArbReg_2 = CAN_IF1ARB2_DIR;             /// transmit M.O.
+                if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == EXTENDED)
+                {
+                    ui16ArbReg_1 |= PduInfo->id & CAN_IF1ARB1_ID_M ;
+                    ui16ArbReg_2 |= (PduInfo->id >> 16 ) & CAN_IF1ARB2_ID_M ;
+                    ui16ArbReg_2 |= CAN_IF1ARB2_MSGVAL | CAN_IF1ARB2_XTD ;
+                }
+                else if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == STANDARD)
+                {
+                    ui16ArbReg_1 &=~ CAN_IF1ARB2_MSGVAL ;
+                    ui16ArbReg_2 |= (  PduInfo->id  << 2 ) & CAN_IF1ARB2_ID_STAND ;
 
-			if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == EXTENDED)
-			{
-				ui16ArbReg_1 |= PduInfo->id & CAN_IF1ARB1_ID_M ;
-				ui16ArbReg_2 |= (PduInfo->id >> 16 ) & CAN_IF1ARB2_ID_M ;
-				ui16ArbReg_2 |= CAN_IF1ARB2_MSGVAL | CAN_IF1ARB2_XTD ;
-			}
-			else if (Global_Config->CanHardwareObjectRef[hth_index].CanIdType == STANDARD)
-			{
-				ui16ArbReg_2 |= (  PduInfo->id  << 2 ) & CAN_IF1ARB2_ID_M ;
-				ui16ArbReg_1 |= CAN_IF1ARB2_MSGVAL ;
-			}
-			else
-			{
-			}
-			ui16MsgCtrl |=  ( ( PduInfo->length ) & CAN_IF1MCTL_DLC_M ) ;
-			ui16MsgCtrl |= CAN_IF1MCTL_EOB  | CAN_IF1MCTL_TXIE ;
-			
-			CANDataRegWrite (
-					PduInfo->sdu,
-					(uint32 *)( ui32Base + CAN_O_IF1DA1 ),
-					PduInfo->length
-			);
-			
-			HWREG(ui32Base + CAN_O_IF1ARB2) &=~ CAN_IF1ARB2_MSGVAL;
-			HWREG(ui32Base + CAN_O_IF1CMSK) = ui16CmdMaskReg;
-			HWREG(ui32Base + CAN_O_IF1MSK1) = ui16MaskReg_1;
-			HWREG(ui32Base + CAN_O_IF1MSK2) = ui16MaskReg_2;
-			HWREG(ui32Base + CAN_O_IF1ARB1) = ui16ArbReg_1;
-			HWREG(ui32Base + CAN_O_IF1ARB2) = ui16ArbReg_2;
-			HWREG(ui32Base + CAN_O_IF1MCTL) = ui16MsgCtrl;
+                }
+                else
+                {
+                }
+                ui16MsgCtrl |=  ( ( PduInfo->length ) & CAN_IF1MCTL_DLC_M ) ;
+                ui16MsgCtrl |= CAN_IF1MCTL_EOB  | CAN_IF1MCTL_TXRQST ;
 
-		   for (Hth_count = 0 ; Hth_count < CAN_HTH_NUMBER  ; Hth_count++)
-			{
-				if (Hth ==  MessageObjAssignedToHTH[Hth_count].HTHId )
-				{
-					real_hwObjectId = MessageObjAssignedToHTH[Hth_count].MessageId ;
-				}
-			}
+                CANDataRegWrite (
+                        PduInfo->sdu,
+                        (uint32 *)( ui32Base + CAN_O_IF1DA1 ),
+                        PduInfo->length
+                );
 
-			HWREG(ui32Base + CAN_O_IF1CRQ) = real_hwObjectId ;
-			HTH_Semaphore[hth_index] = 0 ;
+                HWREG(ui32Base + CAN_O_IF1CMSK) = ui16CmdMaskReg;
+                HWREG(ui32Base + CAN_O_IF1MSK1) = ui16MaskReg_1;
+                HWREG(ui32Base + CAN_O_IF1MSK2) = ui16MaskReg_2;
+                HWREG(ui32Base + CAN_O_IF1ARB1) = ui16ArbReg_1;
+                HWREG(ui32Base + CAN_O_IF1ARB2) = ui16ArbReg_2;
+                HWREG(ui32Base + CAN_O_IF1ARB2) |= CAN_IF1ARB2_MSGVAL;
+                HWREG(ui32Base + CAN_O_IF1MCTL) |= ui16MsgCtrl;
 
-			/*
-			 *  [SWS_Can_00276] ⌈ The function Can_Write shall store the swPduHandle that is
-				given inside the parameter PduInfo until the Can module calls the
-				CanIf_TxConfirmation for this request where the swPduHandle is given as
-				parameter.()
-			 */
-			swPduHandle = PduInfo->swPduHandle ;
+               for (Hth_count = 0 ; Hth_count < CAN_HTH_NUMBER  ; Hth_count++)
+                {
+                    uint8 index = MessageObjAssignedToHTH[Hth_count].HTHIndex ;
+                    if (Hth ==  Global_Config->CanHardwareObjectRef[index].CanObjectId)
+                    {
+                        real_hwObjectId = MessageObjAssignedToHTH[Hth_count].MessageId ;
+                        MessageObjAssignedToHTH[Hth_count].Tx_Request = TRUE ;
+                        break ;
+                    }
+                }
+
+                HWREG(ui32Base + CAN_O_IF1CRQ) = real_hwObjectId ;
+                HTH_Semaphore[hth_index] = 0 ;
 
                 /*
-                 * (SRS_Can_01049)
+                 *  [SWS_Can_00276] ⌈ The function Can_Write shall store the swPduHandle that is
+                    given inside the parameter PduInfo until the Can module calls the
+                    CanIf_TxConfirmation for this request where the swPduHandle is given as
+                    parameter.()
                  */
-			returnVal = E_OK ;
-		}
-	}
-	else
-	{
-	}
+                swPduHandle[Hth_count] = PduInfo->swPduHandle ;
+
+                    /*
+                     * (SRS_Can_01049)
+                     */
+                returnVal = E_OK ;
+            }
+        }
+        else
+        {
+               /*MISRA Rule*/
+        }
+
+
     return returnVal ;
 }
 
@@ -1175,21 +1256,21 @@ static void CANDataRegWrite ( uint8 * pui8Data, uint32 * pui32Register , uint8 u
 {
 
     uint8 index ;
-    uint32 ui32DataValue ;
+    uint16 ui16DataValue ;
 
 
     for (index = 0 ; index < ui8Size;)
     {
 
-        ui32DataValue = pui8Data[index++] ;
+        ui16DataValue = pui8Data[index++] ;
 
         if (index < ui8Size)
         {
-            ui32DataValue |= ( pui8Data[index++] << 8 ) ;
+            ui16DataValue |= ( pui8Data[index++] << 8 ) ;
         }
 
 
-        HWREG(pui32Register++) = ui32DataValue;
+        HWREG(pui32Register++) = ui16DataValue;
 
     }
 
@@ -1296,7 +1377,7 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
     development error CAN_E_UNINIT and return E_NOT_OK.*/
     if (CAN_UNINIT == ModuleState )
     {
-        #if (CAN_DEV_ERROR_DETECT == STD_ON)
+        #if (CanDevErrorDetect == STD_ON)
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SET_CONTROLLER_MODE, CAN_E_UNINIT);
         #endif
         ret = E_NOT_OK;
@@ -1308,7 +1389,7 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
                    E_NOT_OK.*/
     else if(Controller >= MAX_CONTROLLERS_NUMBER)
     {
-        #if (CAN_DEV_ERROR_DETECT == STD_ON)
+        #if (CanDevErrorDetect == STD_ON)
         Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_SET_CONTROLLER_MODE, CAN_E_PARAM_CONTROLLER);
         #endif
         ret = E_NOT_OK;
@@ -1321,7 +1402,7 @@ Std_ReturnType Can_SetControllerMode( uint8 Controller, Can_ControllerStateType 
             ((Transition == CAN_CS_SLEEP) &&  (ControllerState[Controller]!= CAN_CS_STOPPED     ||
              ControllerState[Controller]!= CAN_CS_SLEEP)))
     {
-        #if (CAN_DEV_ERROR_DETECT == STD_ON)
+        #if (CanDevErrorDetect == STD_ON)
         Det_ReportError( CAN_MODULE_ID ,CAN_INSTANCE_ID ,CAN_SET_CONTROLLER_MODE ,CAN_E_TRANSITION );
         #endif
         ret = E_NOT_OK;
@@ -1416,7 +1497,7 @@ Can_ErrorStateType   ErrorState = 0;
     */
     if(ModuleState == CAN_UNINIT)
     {
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
             Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_UNINIT);
         #else
             Return_type = E_NOT_OK;
@@ -1428,7 +1509,7 @@ Can_ErrorStateType   ErrorState = 0;
     */
     else if(ControllerId >= USED_CONTROLLERS_NUMBER )
     {
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
             Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_PARAM_CONTROLLER);
         #else
             Return_type = E_NOT_OK;
@@ -1441,7 +1522,7 @@ Can_ErrorStateType   ErrorState = 0;
     */
     else if(ErrorStatePtr == NULL_PTR)
     {
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
             Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_PARAM_POINTER);
         #else
             Return_type = E_NOT_OK;
@@ -1489,7 +1570,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
      */
 	if(ModuleState == CAN_UNINIT)
 	{
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
 	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, Can_GetControllerErrorState_Id, CAN_E_UNINIT);
         #else
 	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
@@ -1501,7 +1582,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	 */
 	else if(NUM_OF_CAN_CONTROLLERS <= Controller)
 	{
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
 	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_CONTROLLER);
         #else
 	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
@@ -1513,7 +1594,7 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	 */
 	else if(NULL_PTR == ControllerModePtr)
 	{
-        #if(CAN_DEV_ERROR_DETECT == STD_ON)
+        #if(CanDevErrorDetect == STD_ON)
 	        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID,Can_GetControllerMode_Id, CAN_E_PARAM_POINTER);
         #else
 	        Loc_Can_GetControllerMode_Ret = E_NOT_OK;
@@ -1530,111 +1611,182 @@ Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* C
 	return Loc_Can_GetControllerMode_Ret;
 }
 
+#if(CanTxProcessing == MIXED_PROCESSING || CanTxProcessing == POLLING_PROCESSING)
 /*
  *	[SRS_Can_01051] The CAN Driver shall provide a transmission
  *	confirmation service
  */
 void Can_MainFunction_Write(void) 
 {
-	uint8 ControllerIndex=0; 
-	
-	for(ControllerIndex=0 ; ControllerIndex < USED_CONTROLLERS_NUMBER; ControllerIndex++)
-	{
-		if ((POLLING_PROCESSING ==	Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing)
-			|| (MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing))
-		{
-			uint8 index;
-			PduIdType PduId = swPduHandle ; /* Stub variable */
+	uint8  counter= 0;
+	uint8  index = 0;
+	uint32 BaseAddress = 0 ;
+	uint32 Read_TXRQ_register = 0 ;
+	uint8  Read_STS_register  = 0 ;
 
-			if (STD_ON == CAN_CONTROLLER_ACTIVATION[ControllerIndex])
-			{
-				
-				/* Transfer the data in the CAN message object specified by
-					the MNUM field in the CANIFnCRQ register into the CANIFn
-					registers*/
-				CLR_BIT_PERPHBAND(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1CMSK, CAN_IF1CMSK_WRNRD);
-				
-				for (index = 0; index < NUM_OF_HOH; index++) 
-				{
-					if (TRANSMIT == Global_Config->CanHardwareObjectRef[index].CanObjectType)
-					{
-						if (&Global_Config->CanControllerCfgRef[ControllerIndex] == Global_Config->CanHardwareObjectRef[index].CanControllerRef)
-						{
-							if (POLLING_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing )
-							{
-								HWREG(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1CRQ) =
-								MessageObjAssignedToHTH[index].StartMessageId;
+    /*
+    * Search only in the Transmit objects array
+    * */
+    for (counter = 0; counter < CAN_HTH_NUMBER; counter++)
+    {
 
-								if(GET_BIT_PERPHBAND(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1MCTL , CAN_IF1MCTL_TXRQST) == (uint32)0)
-								{
-									CanIf_TxConfirmation(PduId);
+        /*Get HTH index in the CanHardwareObject array */
+        index = MessageObjAssignedToHTH[counter].HTHIndex ;
 
-									/*The Can module shall call CanIf_TxConfirmation to indicate a
-									 successful transmission.It shall either called by the TX-interrupt service routine
-									 of the corresponding HW resource or inside the Can_MainFunction_Write in case of
-									 polling mode.*/
-								}
+        /*Only check messages that were polling enabled */
+        if (TRUE == Global_Config->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling )
+        {
+            /**Save Message controller BaseAddress */
+            BaseAddress = Global_Config->CanHardwareObjectRef[index].CanControllerRef->CanControllerBaseAddress ;
+            /*Check if the message had a transmit request */
+            if(MessageObjAssignedToHTH[counter].Tx_Request == TRUE)
+            {
 
-								else
-								{
-									/* Do Nothing */
-								}
-							}
-							else if(MIXED_PROCESSING == Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanTxProcessing)
-							{
-								if ( STD_ON == Global_Config->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling)
-								{
-																
-									HWREG(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1CRQ) =
-									MessageObjAssignedToHTH[index].MessageId;
+                /*The CANTXRQ1 and CANTXRQ2 registers hold the TXRQST bits of the 32 message objects.
+                 *  By reading out these bits,the CPU can check which message object
+                 *  has a transmission request pending.*/
 
-									if(GET_BIT_PERPHBAND(Global_Config->CanHardwareObjectRef[ControllerIndex].CanControllerRef->CanControllerBaseAddress + CAN_O_IF1MCTL , CAN_IF1MCTL_TXRQST) == (uint32)0)
-									{
-										//CanIf_TxConfirmation(PduId);
+                /*The CANTXRQ1 holds the first 16 messages*/
+                if(MessageObjAssignedToHTH[counter].MessageId<= 16 )
+                {
+                    Read_TXRQ_register = HWREG(BaseAddress + CAN_O_TXRQ1) ;
+                }
+                /*The CANTXRQ2 holds the last 16 messages*/
+                else if(MessageObjAssignedToHTH[counter].MessageId<=32)
+                {
+                    Read_TXRQ_register = HWREG(BaseAddress + CAN_O_TXRQ2)<<16 ;
+                }
+                else
+                {
+                    /**MISRA Rule**/
+                }
+                /*Read Status register to check TXOK transmitted message successfully*/
+                Read_STS_register = HWREG(BaseAddress + CAN_O_STS) & CAN_STS_TXOK;
 
-										/*The Can module shall call CanIf_TxConfirmation to indicate a
-										 successful transmission.It shall either called by the TX-interrupt service routine
-										 of the corresponding HW resource or inside the Can_MainFunction_Write in case of
-										 polling mode.*/
-									}
-
-									else 
-									{
-										/* Do Nothing */
-									}
-								}
-								else 
-								{
-									/*Do Nothing */
-								}
-							}
-							else 
-							{
-								/*Do Nothing */
-							}	
-						}
-						else
-						{
-								/* Do Nothing */
-						}
-					}
-					else
-					{
-						/* Do Nothing */
-					}
-				}
-			}
-			else
-			{
-					/* Do Nothing */
-			}
-		}
-		else
-		{
-				/* Do Nothing */
-		}
-	}
+                /*If TXOK and message request has been cleared and Call Tx_Confirmation*/
+                if(!(Read_TXRQ_register &(1<<(MessageObjAssignedToHTH[counter].MessageId-1))))
+                {
+                    /*Reset Tx_Request flag*/
+                    MessageObjAssignedToHTH[counter].Tx_Request = FALSE ;
+                    /*Reset TXOK bit*/
+                    if(Read_STS_register)
+                    {
+                    HWREG(BaseAddress + CAN_O_STS) &= ~CAN_STS_TXOK ;
+                    }
+                    /*Call Tx_Confirmation indication for successful transmission */
+                    CanIf_TxConfirmation(swPduHandle[counter]);
+                }
+            }
+        }
+    }
 }
+#endif
+
+
+
+#if( CanTxProcessing == MIXED_PROCESSING || CanTxProcessing == INTERRUPT_PROCESSING ||\
+     CanRxProcessing == MIXED_PROCESSING || CanRxProcessing == INTERRUPT_PROCESSING )
+static void Serve_Interrupts(uint32 BaseAddress)
+{
+    uint8 count = 0;
+    uint8 index = 0;
+    uint32 Read_INTPND_Register = 0 ;
+
+
+    Read_INTPND_Register = HWREG(BaseAddress + CAN_O_MSG1INT ) & CAN_MSG1INT_INTPND_M;
+    Read_INTPND_Register |=((HWREG(BaseAddress + CAN_O_MSG2INT )&CAN_MSG1INT_INTPND_M)<<16) ;
+
+    for(count=0 ;count< CAN_HTH_NUMBER ;count++ )
+    {
+        index = MessageObjAssignedToHTH[count].HTHIndex ;
+        if(Global_Config->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling == FALSE)
+        {
+            if(Read_INTPND_Register &(1<<(MessageObjAssignedToHTH[count].MessageId-1)))
+            {
+                HWREG(BaseAddress + CAN_O_IF1CMSK) = CAN_IF1CMSK_CLRINTPND ;
+                HWREG(BaseAddress + CAN_O_IF1MCTL) &= ~ CAN_IF1MCTL_INTPND ;
+                HWREG(BaseAddress + CAN_O_IF1CRQ)   = MessageObjAssignedToHTH[count].MessageId ;
+                HWREG(BaseAddress + CAN_O_STS) &=~CAN_STS_TXOK ;
+                /*Reset Tx_Request flag*/
+                MessageObjAssignedToHTH[count].Tx_Request = FALSE ;
+                CanIf_TxConfirmation(swPduHandle[count]);
+            }
+
+        }
+    }
+    for(count=0 ;count< CAN_HRH_NUMBER ;count++ )
+    {
+        index = MessageObjAssignedToHRH[count].HRHIndex ;
+        if(Global_Config->CanHardwareObjectRef[index].CanHardwareObjectUsesPolling == FALSE)
+        {
+            for(uint8 HW_Obj_Index = MessageObjAssignedToHRH[count].StartMessageId;
+                      HW_Obj_Index <= MessageObjAssignedToHRH[count].EndMessageId ; HW_Obj_Index++)
+            {
+                if(Read_INTPND_Register &(1<<(HW_Obj_Index-1)))
+                {
+                    HWREG(BaseAddress + CAN_O_IF2CMSK) = (CAN_IF2CMSK_DATAA | CAN_IF1CMSK_DATAB |\
+                                                          CAN_IF2CMSK_CONTROL | CAN_IF1CMSK_MASK|\
+                                                          CAN_IF2CMSK_ARB);
+                    HWREG(BaseAddress + CAN_O_IF2CRQ)   =  HW_Obj_Index ;
+                    // mailbox for Callback function RxIndication
+                    Can_HwType Mailbox;
+                    PduInfoType PduInfo;
+                    uint8 Data[MAX_DATA_LENGTH];
+
+                    //message ID
+                    if(Global_Config->CanHardwareObjectRef[index].CanIdType == STANDARD)
+                    {
+                        Mailbox.CanId = (HWREG(BaseAddress + CAN_O_IF2ARB2) & CAN_IF2ARB2_ID_STANDARD) >>2 ;
+                    }
+                    else
+                    {
+                        Mailbox.CanId = HWREG(BaseAddress + CAN_O_IF2ARB1) |
+                                        ((HWREG(BaseAddress + CAN_O_IF2ARB2) & CAN_IF2ARB2_ID_M)<<16) ;
+                    }
+                    //hardware object that has new data
+                    Mailbox.Hoh = Global_Config->CanHardwareObjectRef[index].CanObjectId;
+                    // controller ID
+                    Mailbox.ControllerId = Global_Config->CanHardwareObjectRef[index].CanControllerRef->CanControllerId;
+                    //Save data length
+                    PduInfo.SduLength = HWREG(BaseAddress + CAN_O_IF2MCTL) & CAN_IF2MCTL_DLC_M ;
+                    //Save data
+                    _CANDataRegRead( Data ,(uint32*)( BaseAddress+CAN_O_IF2DA1), PduInfo.SduLength) ;
+                    PduInfo.SduDataPtr = Data;
+                    // 2. inform CanIf using API below.
+                    CanIf_RxIndication(&Mailbox, &PduInfo);
+                    HWREG(BaseAddress + CAN_O_IF2MCTL) &= ~ CAN_IF1MCTL_INTPND ;
+                    HWREG(BaseAddress + CAN_O_IF2CMSK) = CAN_IF2CMSK_CLRINTPND ;
+                    HWREG(BaseAddress + CAN_O_STS) &=~CAN_STS_RXOK;
+                    HWREG(BaseAddress + CAN_O_IF2CRQ)   = HW_Obj_Index ;
+
+                }
+            }
+        }
+    }
+}
+
+#endif
+
+void CAN0_Handler(void)
+{
+#if( CanTxProcessing == MIXED_PROCESSING || CanTxProcessing == INTERRUPT_PROCESSING ||\
+     CanRxProcessing == MIXED_PROCESSING || CanRxProcessing == INTERRUPT_PROCESSING )
+    Serve_Interrupts(CAN0_BASE_ADDRESS) ;
+#endif
+
+}
+
+void CAN1_Handler(void)
+{
+#if( CanTxProcessing == MIXED_PROCESSING || CanTxProcessing == INTERRUPT_PROCESSING ||\
+     CanRxProcessing == MIXED_PROCESSING || CanRxProcessing == INTERRUPT_PROCESSING )
+    Serve_Interrupts(CAN1_BASE_ADDRESS) ;
+#endif
+}
+
+
+
+
 
 /* Prototype for the function that is called when an invalid argument is passed
  * to an API.  This is only used when doing a DEBUG build.
