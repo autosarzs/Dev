@@ -181,7 +181,7 @@ typedef struct
     //
     //! This is a pointer to the message object's data.
     //
-    uint8 *pui8MsgData;
+     uint8 *pui8MsgData;
 }
 tCANMsgObject;
 

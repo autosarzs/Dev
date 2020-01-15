@@ -72,8 +72,8 @@ typedef uint8 Can_ControllerStateType;
 */
 typedef uint8 Can_ErrorStateType ;
 #define CAN_ERRORSTATE_ACTIVE  ((Can_ErrorStateType) 0x00U)  
-#define CAN_ERRORSTATE_PASSIVE ((Can_ErrorStateType) 0x01U)  
-#define CAN_ERRORSTATE_BUSOFF  ((Can_ErrorStateType) 0x02U)  
+#define CAN_ERRORSTATE_PASSIVE ((Can_ErrorStateType) 0x20U)
+#define CAN_ERRORSTATE_BUSOFF  ((Can_ErrorStateType) 0xA0U)
 
 
 /*
