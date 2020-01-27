@@ -10,7 +10,7 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : CanIf.c         			                                  **
+**  FILENAME     : CanIf.c         			                                      **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
@@ -18,16 +18,16 @@
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                              **
+**  PLATFORM     : TIVA C		                                                  **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                      **
+**  AUTHOR       : AUTOSarZs-DevTeam	                                        **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                          **
+**  VENDOR       : AUTOSarZs OLC	                                            **
 **                                                                            **
 **                                                                            **
-**  DESCRIPTION  : CAN Driver source file                                     **
+**  DESCRIPTION  : CAN Interface source file                                  **
 **                                                                            **
-**  SPECIFICATION(S) : Specification of CAN Driver, AUTOSAR Release 4.3.1     **
+**  SPECIFICATION(S) : Specification of CAN Interface, AUTOSAR Release 4.3.1  **
 **                                                                            **
 **  MAY BE CHANGED BY USER : no                                               **
 **                                                                            **
