@@ -1,6 +1,6 @@
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                  **
+**  Copyright (C) AUTOSarZs olc (2020)		                                  **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -14,7 +14,7 @@
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
-**  DATE         : 2019-09-22                                                 **
+**  DATE         : 2020-01-26                                                 **
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
