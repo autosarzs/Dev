@@ -39,3 +39,10 @@
 #include"Det.h"
 #include"Dem.h"
 #include"MemMap.h"
+
+
+
+Std_ReturnType CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
+{
+	
+}
