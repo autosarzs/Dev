@@ -10,7 +10,7 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : CanIf.c         			                                      **
+**  FILENAME     : CanIf.c         			                                  **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
@@ -18,11 +18,11 @@
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                                  **
+**  PLATFORM     : TIVA C		                                              **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                        **
+**  AUTHOR       : AUTOSarZs-DevTeam	                                      **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                            **
+**  VENDOR       : AUTOSarZs OLC	                                          **
 **                                                                            **
 **                                                                            **
 **  DESCRIPTION  : CAN Interface source file                                  **
@@ -34,15 +34,68 @@
 *******************************************************************************/
 
 
-#include"CanIf.h"
-#include"CanIf_Cbk.h"
-#include"Det.h"
-#include"Dem.h"
-#include"MemMap.h"
+#include "CanIf.h"
+#include "CanIf_Cbk.h"
 
+#if (CANIF_DEV_ERROR_DETECT == STD_ON)
+#include "Det.h"
+/* AUTOSAR version checking */
+#if ((DET_AR_RELEASE_MAJOR_VERSION != CANIF_AR_RELEASE_MAJOR_VERSION)\
+ ||  (DET_AR_RELEASE_MINOR_VERSION != CANIF_AR_RELEASE_MINOR_VERSION)\
+ ||  (DET_AR_RELEASE_PATCH_VERSION != CANIF_AR_RELEASE_PATCH_VERSION))
+#error "The AR version of Det.h does not match the expected version"
+#endif /* AUTOSAR version checking */
 
+/* SW module version checking */
+#if ((DET_MAJOR_VERSION != CANIF_SW_MAJOR_VERSION)\
+ ||  (DET_MINOR_VERSION != CANIF_SW_MINOR_VERSION)\
+ ||  (DET_PATCH_VERSION != CANIF_SW_PATCH_VERSION))
+#error "The AR version of Det.h does not match the expected version"
+#endif /* SW module version checking */
+#endif 
 
-Std_ReturnType CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr)
+#include "Dem.h"
+#include "MemMap.h"
+
+/*
+    Private global variables
+*/
+STATIC uint8 CanIf_InitStatus = CANIF_NOT_INITIALIZED;
+
+/*******************************************************************************
+*                    Functions Definitions                                     *
+********************************************************************************/
+/*            CanIf_GetControllerErrorState service definition                 */
+Std_ReturnType 
+CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr)
 {
-	
+    boolean error = FALSE;
+    Std_ReturnType ret_status = E_OK;
+
+    /* Report errors */
+#if (CANIF_DEV_ERROR_DETECT == STD_ON)
+
+    /* [SWS_CANIF_00661] */
+    if (CANIF_NOT_INITIALIZED == CanIf_InitStatus)
+    {
+        ret_status = Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
+            CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_UNINIT);
+        error = TRUE;
+    }
+    /* [SWS_CANIF_00898] */
+    if (ControllerId > USED_CONTROLLERS_NUMBER)
+    {
+        ret_status = Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
+            CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_PARAM_CONTROLLERID);
+        error = TRUE;
+    }
+    /* [SWS_CANIF_00899] */
+    if (NULL_PTR == ErrorStatePtr)
+    {
+        ret_status = Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
+            CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_PARAM_POINTER);
+        error = TRUE;
+    }
+#endif /* (CANIF_DEV_ERROR_DETECT == STD_ON) */
+
 }
