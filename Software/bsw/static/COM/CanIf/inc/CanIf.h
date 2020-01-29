@@ -38,7 +38,7 @@
 #include "CanIf_Types.h"
 #include "CanIf_Cfg.h"
 
-
+Std_ReturnType CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr);
 
 
 #endif /* __CANIF_H__ */
