@@ -38,7 +38,7 @@
 #include "CanIf_Types.h"
 #include "CanIf_Cfg.h"
 
-
+Std_ReturnType CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr);
 
 
 #endif /* __CANIF_H__ */
