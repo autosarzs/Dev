@@ -38,7 +38,7 @@
 #include "CanIf_Types.h"
 #include "CanIf_Cfg.h"
 
-
+Std_ReturnType CanIf_SetControllerMode(uint8 ControllerId, Can_ControllerStateType ControllerMode);
 
 
 #endif /* __CANIF_H__ */
