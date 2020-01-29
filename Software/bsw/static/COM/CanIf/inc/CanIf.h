@@ -58,6 +58,12 @@
 #define CANIF_AR_RELEASE_MINOR_VERSION    (3U)
 #define CANIF_AR_RELEASE_PATCH_VERSION    (1U)
 
+/*
+    CanIf initialisation status codes
+*/
+#define CANIF_INITIALIZED                 (1U)
+#define CANIF_NOT_INITIALIZED             (0U)
+
 /******************************************************************************
 *                             DET Error Codes                                 *
 *******************************************************************************/
@@ -89,7 +95,34 @@
 
 
 #include "CanIf_Types.h"
+/* AUTOSAR version checking */
+#if ((CANIF_AR_RELEASE_MAJOR_VERSION != CANIF_TYPES_AR_RELEASE_MAJOR_VERSION)\
+ ||  (CANIF_AR_RELEASE_MINOR_VERSION != CANIF_TYPES_AR_RELEASE_MINOR_VERSION)\
+ ||  (CANIF_AR_RELEASE_PATCH_VERSION != CANIF_TYPES_AR_RELEASE_PATCH_VERSION))
+#error "The AR version of Det.h does not match the expected version"
+#endif /* AUTOSAR version checking */
+
+/* SW module version checking */
+#if ((CANIF_SW_MAJOR_VERSION != CANIF_TYPES_SW_MAJOR_VERSION)\
+ ||  (CANIF_SW_MINOR_VERSION != CANIF_TYPES_SW_MINOR_VERSION)\
+ ||  (CANIF_SW_PATCH_VERSION != CANIF_TYPES_SW_PATCH_VERSION))
+#error "The AR version of Det.h does not match the expected version"
+#endif /* SW module version checking */
+
 #include "CanIf_Cfg.h"
+/* AUTOSAR version checking */
+#if ((CANIF_AR_RELEASE_MAJOR_VERSION != CANIF_CFG_AR_RELEASE_MAJOR_VERSION)\
+ ||  (CANIF_AR_RELEASE_MINOR_VERSION != CANIF_CFG_AR_RELEASE_MINOR_VERSION)\
+ ||  (CANIF_AR_RELEASE_PATCH_VERSION != CANIF_CFG_AR_RELEASE_PATCH_VERSION))
+#error "The AR version of Det.h does not match the expected version"
+#endif /* AUTOSAR version checking */
+
+/* SW module version checking */
+#if ((CANIF_SW_MAJOR_VERSION != CANIF_CFG_SW_MAJOR_VERSION)\
+ ||  (CANIF_SW_MINOR_VERSION != CANIF_CFG_SW_MINOR_VERSION)\
+ ||  (CANIF_SW_PATCH_VERSION != CANIF_CFG_SW_PATCH_VERSION))
+#error "The AR version of Det.h does not match the expected version"
+#endif /* SW module version checking */
 
 
 /*******************************************************************************
