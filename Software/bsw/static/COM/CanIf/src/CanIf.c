@@ -39,3 +39,10 @@
 #include"Det.h"
 #include"Dem.h"
 #include"MemMap.h"
+
+
+
+Std_ReturnType CanIf_SetControllerMode(uint8 ControllerId, Can_ControllerStateType ControllerMode)
+{
+	
+}
