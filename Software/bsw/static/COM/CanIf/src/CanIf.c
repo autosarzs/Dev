@@ -39,3 +39,10 @@
 #include"Det.h"
 #include"Dem.h"
 #include"MemMap.h"
+
+
+
+Std_ReturnType CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr)
+{
+	
+}
