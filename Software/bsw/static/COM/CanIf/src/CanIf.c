@@ -106,8 +106,7 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
 #endif /* (CANIF_DEV_ERROR_DETECT == STD_ON) */
 
 	/* Get current Controller BaseAddress */
-	BaseAddress = CanIf_Global_Config->CanIfCtrlDrvCfgObj[0].CanIfCtrlCfgObj.CanIfCtrlCanCtrlRef->CanControllerBaseAddress;
-	/* 0 is the Can Driver used, i need to figure out it's macro*/
+	BaseAddress = CanIf_Global_Config->CanIfCtrlDrvCfgObj[ControllerId].CanIfCtrlCfgObj.CanIfCtrlCanCtrlRef->CanControllerBaseAddress;
 	
 	/* Error State can be BussOff OR Error Active state Or Error Passive state */
 	ErrorState  = (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_BOFF ) | \
