@@ -218,7 +218,7 @@ typedef struct {
     *   Reference to baudrate configuration container configured for the Can    Controller.
     */
     CanControllerBaudrateConfig* CanControllerDefaultBaudrate;
-} CanController;
+} CanControllerType;
 
 //*****************************************************************************
 //  This container is only valid for HRHs and contains the configuration
