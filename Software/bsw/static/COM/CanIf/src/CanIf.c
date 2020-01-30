@@ -62,6 +62,8 @@
 */
 STATIC uint8 CanIf_InitStatus = CANIF_NOT_INITIALIZED;
 
+CanIf_ConfigType* CanIf_Global_Config;
+
 /*******************************************************************************
 *                    Functions Definitions                                     *
 ********************************************************************************/
@@ -71,6 +73,8 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
 {
     boolean error = FALSE;
     Std_ReturnType ret_status = E_OK;
+	Can_ErrorStateType ErrorState = 0;
+	uint32 BaseAddress = 0;
 
     /* Report errors */
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
@@ -78,24 +82,45 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
     /* [SWS_CANIF_00661] */
     if (CANIF_NOT_INITIALIZED == CanIf_InitStatus)
     {
-        ret_status = Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
             CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_UNINIT);
         error = TRUE;
+		ret_status= E_NOT_OK;
     }
     /* [SWS_CANIF_00898] */
-    if (ControllerId > USED_CONTROLLERS_NUMBER)
+    if (ControllerId >= USED_CONTROLLERS_NUMBER)
     {
-        ret_status = Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
             CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_PARAM_CONTROLLERID);
         error = TRUE;
+		ret_status= E_NOT_OK;
     }
     /* [SWS_CANIF_00899] */
     if (NULL_PTR == ErrorStatePtr)
     {
-        ret_status = Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
             CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_PARAM_POINTER);
         error = TRUE;
+		ret_status= E_NOT_OK;
     }
 #endif /* (CANIF_DEV_ERROR_DETECT == STD_ON) */
+
+	/* Get current Controller BaseAddress */
+	BaseAddress = CanIf_Global_Config->CanIfCtrlDrvCfgObj[0].CanIfCtrlCfgObj.CanIfCtrlCanCtrlRef->CanControllerBaseAddress;
+	/* 0 is the Can Driver used, i need to figure out it's macro*/
+	
+	/* Error State can be BussOff OR Error Active state Or Error Passive state */
+	ErrorState  = (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_BOFF ) | \
+                  (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_EPASS) ;
+	if(ErrorState == CAN_ERRORSTATE_ACTIVE)
+		*ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
+	else if(ErrorState == CAN_ERRORSTATE_PASSIVE)
+		*ErrorStatePtr = CAN_ERRORSTATE_PASSIVE;
+	else if(ErrorState == CAN_ERRORSTATE_BUSOFF)
+		*ErrorStatePtr = CAN_ERRORSTATE_BUSOFF;
+	else
+		ret_status = E_NOT_OK;
+
+return ret_status;
 
 }
