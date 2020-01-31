@@ -128,7 +128,8 @@
 /*******************************************************************************
  *                           API Service ID Macros                             *
 ********************************************************************************/
-#define CANIF_GET_CONTROLLER_ERROR_STATE_SID                   ((uint8)0x4b)
+typedef uint8 CanIf_ServiceId;
+#define CANIF_GET_CONTROLLER_ERROR_STATE_SID                   ((CanIf_ServiceId)0x4b)
 
 /*******************************************************************************
 * Service Name:       CanIf_GetControllerErrorState
