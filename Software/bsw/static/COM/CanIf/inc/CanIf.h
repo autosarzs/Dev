@@ -51,9 +51,9 @@
 #define CANIF_SW_MINOR_VERSION             (0U)
 #define CANIF_SW_PATCH_VERSION             (0U)
 
- /*
-  * AUTOSAR Version is 4.3.1 compatible
-  */
+/*
+ * AUTOSAR Version is 4.3.1 compatible
+ */
 #define CANIF_AR_RELEASE_MAJOR_VERSION    (4U) 
 #define CANIF_AR_RELEASE_MINOR_VERSION    (3U)
 #define CANIF_AR_RELEASE_PATCH_VERSION    (1U)
@@ -85,9 +85,9 @@
 #define CANIF_E_INVALID_TXPDUID            ((uint8)50)
 #define CANIF_E_INVALID_RXPDUID            ((uint8)60)
 #define CANIF_E_INIT_FAILED                ((uint8)80)
-  /*
-      Runtime Errors.
-  */
+/*
+    Runtime Errors.
+*/
 #define CANIF_E_INVALID_DATA_LENGTH        ((uint8)61)
 #define CANIF_E_DATA_LENGTH_MISMATCH       ((uint8)62)
 #define CANIF_E_STOPPED                    ((uint8)70)
@@ -129,7 +129,28 @@
  *                           API Service ID Macros                             *
 ********************************************************************************/
 typedef uint8 CanIf_ServiceId;
-#define CANIF_GET_PDU_MODE_SID                   ((CanIf_ServiceId)0x0a)
+#define CANIF_SET_PDU_MODE_SID                   ((CanIf_ServiceId)0x09)
+#define CANIF_GET_PDU_MODE_SID                   ((CanIf_ServiceId)0x0a) 
+
+/*******************************************************************************
+* Service Name:       CanIf_SetPduMode
+* Service ID[hex]:    0x09
+* Sync/Async:         Synchronous
+* Reentrancy:         Non Reentrant
+* Parameters (in):    ControllerId All PDUs of the own ECU connected to the corre-
+                      sponding CanIf ControllerId, which is assigned to a physical 
+                      CAN controller are addressed.
+                      PduModeRequest Requested PDU mode change
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       Std_ReturnType E_OK: PDU mode request has been accepted
+                                     E_NOT_OK: PDU mode request has not been
+                                     ac-cepted.
+* Description:        This service sets the requested mode at the L-PDUs of a predefined
+                      logical PDU channel.
+***********************************************************************************/
+Std_ReturnType 
+CanIf_SetPduMode(uint8 ControllerId, CanIf_PduModeType PduModeRequest);
 
 /*******************************************************************************
 * Service Name:       CanIf_GetPduMode
