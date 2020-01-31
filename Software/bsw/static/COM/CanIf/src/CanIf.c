@@ -61,16 +61,17 @@
     Private global variables
 */
 
-//******************************************************************************
-// CanIf_ModuleState: it's a variable to store the CanIf module state
-// CanIf_ModuleStateType:
-// CANIF_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT and also CANIF will be in CANIF_UNINT.
-// CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
-//******************************************************************************
-static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+/******************************************************************************
+ CanIf_ModuleState: it's a variable to store the CanIf module state
+ CanIf_ModuleStateType:
+ CANIF_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT 
+ and also CANIF will be in CANIF_UNINT.
+ CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
+******************************************************************************/
+STATIC CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
 /* a pointer to the CanIf_ConfigType main Structure for the module to work on */
-static CanIf_ConfigType* CanIf_Global_Config;
+STATIC CanIf_ConfigType* CanIf_Global_Config;
 
 /*******************************************************************************
 *                    Functions Definitions                                     *
