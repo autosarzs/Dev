@@ -60,9 +60,17 @@
 /*
     Private global variables
 */
-STATIC uint8 CanIf_InitStatus = CANIF_NOT_INITIALIZED;
 
-CanIf_ConfigType* CanIf_Global_Config;
+//******************************************************************************
+// CanIf_ModuleState: it's a variable to store the CanIf module state
+// CanIf_ModuleStateType:
+// CANIF_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT and also CANIF will be in CANIF_UNINT.
+// CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
+//******************************************************************************
+static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+
+/* a pointer to the CanIf_ConfigType main Structure for the module to work on */
+static CanIf_ConfigType* CanIf_Global_Config;
 
 /*******************************************************************************
 *                    Functions Definitions                                     *
@@ -71,7 +79,6 @@ CanIf_ConfigType* CanIf_Global_Config;
 Std_ReturnType 
 CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr)
 {
-    boolean error             = FALSE;
     Std_ReturnType ret_status = E_OK;
 	Can_ErrorStateType ErrorState = 0;
 
@@ -79,11 +86,10 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
 
     /* [SWS_CANIF_00661] */
-    if (CANIF_NOT_INITIALIZED == CanIf_InitStatus)
+    if (CANIF_UNINT == CanIf_ModuleState)
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
             CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_UNINIT);
-        error = TRUE;
 		ret_status= E_NOT_OK;
     }
     /* [SWS_CANIF_00898] */
@@ -91,7 +97,6 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
             CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_PARAM_CONTROLLERID);
-        error = TRUE;
 		ret_status= E_NOT_OK;
     }
     /* [SWS_CANIF_00899] */
@@ -99,14 +104,13 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
             CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_PARAM_POINTER);
-        error = TRUE;
 		ret_status= E_NOT_OK;
     }
 #endif /* (CANIF_DEV_ERROR_DETECT == STD_ON) */
 
-    if (FALSE == error)
+    if (ret_status == E_OK) /* if (ret_status == E_OK) */
     {
-        /* Get controller error code */
+        ret_status = Can_GetControllerErrorState(ControllerId, ErrorStatePtr);
     }
     return ret_status;
 }
