@@ -71,10 +71,9 @@ CanIf_ConfigType* CanIf_Global_Config;
 Std_ReturnType 
 CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr)
 {
-    boolean error = FALSE;
+    boolean error             = FALSE;
     Std_ReturnType ret_status = E_OK;
 	Can_ErrorStateType ErrorState = 0;
-	uint32 BaseAddress = 0;
 
     /* Report errors */
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
@@ -105,21 +104,9 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
     }
 #endif /* (CANIF_DEV_ERROR_DETECT == STD_ON) */
 
-	/* Get current Controller BaseAddress */
-	BaseAddress = CanIf_Global_Config->CanIfCtrlDrvCfgObj[ControllerId].CanIfCtrlCfgObj.CanIfCtrlCanCtrlRef->CanControllerBaseAddress;
-	
-	/* Error State can be BussOff OR Error Active state Or Error Passive state */
-	ErrorState  = (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_BOFF ) | \
-                  (HWREG(BaseAddress + CAN_O_STS) & CAN_STS_EPASS) ;
-	if(ErrorState == CAN_ERRORSTATE_ACTIVE)
-		*ErrorStatePtr = CAN_ERRORSTATE_ACTIVE;
-	else if(ErrorState == CAN_ERRORSTATE_PASSIVE)
-		*ErrorStatePtr = CAN_ERRORSTATE_PASSIVE;
-	else if(ErrorState == CAN_ERRORSTATE_BUSOFF)
-		*ErrorStatePtr = CAN_ERRORSTATE_BUSOFF;
-	else
-		ret_status = E_NOT_OK;
-
-return ret_status;
-
+    if (FALSE == error)
+    {
+        /* Get controller error code */
+    }
+    return ret_status;
 }
