@@ -269,7 +269,7 @@ _CANDataRegWrite(uint8 *pui8Data, uint32 *pui32Register, uint32 ui32Size)
 //
 //*****************************************************************************
 static void
-_CANDataRegRead(uint8 *pui8Data, uint32 *pui32Register, uint32 ui32Size)
+_CANDataRegRead( uint8 *pui8Data, uint32 *pui32Register, uint8 ui32Size)
 {
     uint32 ui32Idx, ui32Value;
 
@@ -1880,8 +1880,8 @@ CANMessageGet(uint32 ui32Base, uint32 ui32ObjID,
     //
     // Read out the IF Registers.
     //
-    ui16MaskReg0 = HWREG(ui32Base + CAN_O_IF2MSK1);
-    ui16MaskReg1 = HWREG(ui32Base + CAN_O_IF2MSK2);
+    ui16MaskReg0 =HWREG(ui32Base + CAN_O_IF2MSK1);
+    ui16MaskReg1 =HWREG(ui32Base + CAN_O_IF2MSK2);
     ui16ArbReg0 = HWREG(ui32Base + CAN_O_IF2ARB1);
     ui16ArbReg1 = HWREG(ui32Base + CAN_O_IF2ARB2);
     ui16MsgCtrl = HWREG(ui32Base + CAN_O_IF2MCTL);
@@ -2011,7 +2011,6 @@ CANMessageGet(uint32 ui32Base, uint32 ui32ObjID,
         // Get the amount of data needed to be read.
         //
         psMsgObject->ui32MsgLen = (ui16MsgCtrl & CAN_IF1MCTL_DLC_M);
-
         //
         // Don't read any data for a remote frame, there is nothing valid in
         // that buffer anyway.
