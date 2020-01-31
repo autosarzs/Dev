@@ -60,18 +60,28 @@
 /*
     Private global variables
 */
+/* Holding the CanIf module current state. Initially, CANIF_UNINT. */
 STATIC CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
-
+/* CanIf PDU current mode. Initially, CANIF_OFFLINE [SWS_CANIF_00864]. */
+STATIC CanIf_PduModeType CanIf_PduMode = CANIF_OFFLINE;
 
 /*******************************************************************************
 *                    Functions Definitions                                     *
 ********************************************************************************/
+/*                  CanIf_SetPduMode service definition                        */
+Std_ReturnType
+CanIf_SetPduMode(uint8 ControllerId, CanIf_PduModeType PduModeRequest)
+{
+    CanIf_PduMode = PduModeRequest;
+    /* Implementation here */
+}
+
+/*******************************************************************************/
 /*                  CanIf_GetPduMode service definition                        */
 Std_ReturnType 
 CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
 {
     Std_ReturnType ret_status = E_OK;
-    Can_ErrorStateType ErrorState = 0;
 
     /* Report errors */
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
@@ -83,14 +93,14 @@ CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
             CANIF_GET_PDU_MODE_SID, CANIF_E_UNINIT);
         ret_status = E_NOT_OK;
     }
-    /* [SWS_CANIF_00898] */
+    /* [SWS_CANIF_00346] */
     if (ControllerId >= USED_CONTROLLERS_NUMBER)
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
             CANIF_GET_PDU_MODE_SID, CANIF_E_PARAM_CONTROLLERID);
         ret_status = E_NOT_OK;
     }
-    /* [SWS_CANIF_00899] */
+    /* [SWS_CANIF_00657]  */
     if (NULL_PTR == PduModePtr)
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
@@ -99,5 +109,7 @@ CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
     }
 #endif /* (CANIF_DEV_ERROR_DETECT == STD_ON) */
 
-	
+    /* Pass the current PDU mode to PduModePtr */
+    * PduModePtr = CanIf_PduMode;
+    return ret_status;
 }
