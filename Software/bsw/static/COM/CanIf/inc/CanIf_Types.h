@@ -73,6 +73,15 @@
   #error "The AR version of Std_Types.h does not match the expected version"
 #endif
 
+//******************************************************************************
+// CanIf_ModuleStateType
+// CANIF_UNINIT : After power-up/reset, the Can module shall be in the state 
+// CAN_UNINIT and also CANIF will be in CANIF_UNINT.
+// CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
+//******************************************************************************
+typedef uint8 CanIf_ModuleStateType;
+#define CANIF_UNINT			((CanIf_ModuleStatusType)0x00)
+#define CANIF_READY			((CanIf_ModuleStatusType)0x01)
 
 //*****************************************************************************
 //  Selects the desired software filter mechanism for reception only. Each
@@ -263,6 +272,19 @@ CanIfHrhRangeRxPduRangeCanIdType.*/
 typedef uint8 CanIfHrhRangeRxPduRangeCanIdTypeType;
 #define EXTENDED_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x00)
 #define STANDARD_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x01)
+
+/*
+	CanIf_PduModeType
+	[SWS_CANIF_00137] 
+	The PduMode of a channel defines its transmit or receive activity.
+	Communication direction (transmission and/or reception) of the channel can
+	be controlled separately or together by upper layers.
+*/
+typedef uint8 CanIf_PduModeType;
+#define CANIF_OFFLINE                                       ((CanIf_PduModeType)0x00)
+#define CANIF_TX_OFFLINE                                    ((CanIf_PduModeType)0x01)
+#define CANIF_TX_OFFLINE_ACTIVE                             ((CanIf_PduModeType)0x02)
+#define CANIF_ONLINE                                        ((CanIf_PduModeType)0x03)
 
 typedef struct {
 				/*This parameter abstracts from the CAN Driver specific parameter
