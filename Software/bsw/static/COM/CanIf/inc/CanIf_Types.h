@@ -283,7 +283,9 @@ typedef uint8 CanIfHrhRangeRxPduRangeCanIdTypeType;
 typedef uint8 CanIf_PduModeType;
 #define CANIF_OFFLINE                                       ((CanIf_PduModeType)0x00)
 #define CANIF_TX_OFFLINE                                    ((CanIf_PduModeType)0x01)
-#define CANIF_TX_OFFLINE_ACTIVE                             ((CanIf_PduModeType)0x02)
+#if (CANIF_TX_OFFLINE_ACTIVE_SUPPORT == STD_ON)
+	#define CANIF_TX_OFFLINE_ACTIVE                         ((CanIf_PduModeType)0x02)
+#endif /* CanIfTxOfflineActiveSupport = TRUE */
 #define CANIF_ONLINE                                        ((CanIf_PduModeType)0x03)
 
 typedef struct {
