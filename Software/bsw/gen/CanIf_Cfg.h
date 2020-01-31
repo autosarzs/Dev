@@ -66,7 +66,7 @@
 //  false: detection and notification is disabled.
 //  Default Value: false
 //*****************************************************************************
-#define CANIF_DEV_ERROR_DETECT                 	STD_OFF
+#define CANIF_DEV_ERROR_DETECT                 	STD_ON
 
 //*****************************************************************************
 //  Enable support for dynamic ID handling using L-SDU MetaData.
