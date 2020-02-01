@@ -60,7 +60,6 @@
 /*
     Private global variables
 */
-
 /******************************************************************************
  CanIf_ModuleState: it's a variable to store the CanIf module state
  CanIf_ModuleStateType:
@@ -70,9 +69,6 @@
 ******************************************************************************/
 STATIC CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
-/* a pointer to the CanIf_ConfigType main Structure for the module to work on */
-STATIC CanIf_ConfigType* CanIf_Global_Config;
-
 /*******************************************************************************
 *                    Functions Definitions                                     *
 ********************************************************************************/
@@ -81,7 +77,6 @@ Std_ReturnType
 CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr)
 {
     Std_ReturnType ret_status = E_OK;
-	Can_ErrorStateType ErrorState = 0;
 
     /* Report errors */
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
