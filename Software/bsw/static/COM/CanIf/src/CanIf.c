@@ -67,10 +67,10 @@
  and also CANIF will be in CANIF_UNINT.
  CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
 ******************************************************************************/
-STATIC CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
 /* a pointer to the CanIf_ConfigType main Structure for the module to work on */
-STATIC CanIf_ConfigType* CanIf_Global_Config;
+static CanIf_ConfigType* CanIf_Global_Config;
 
 /*******************************************************************************
 *                    Functions Definitions                                     *
