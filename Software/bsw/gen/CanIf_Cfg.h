@@ -35,6 +35,15 @@
 #ifndef __CANIF_CFG_H__
 #define __CANIF_CFG_H__
 
+/* Module Version 1.0.0 */
+#define CANIF_CFG_SW_MAJOR_VERSION           (1U)
+#define CANIF_CFG_SW_MINOR_VERSION           (0U)
+#define CANIF_CFG_SW_PATCH_VERSION           (0U)
+
+/* AUTOSAR Version 4.3.1 */
+#define CANIF_CFG_AR_RELEASE_MAJOR_VERSION   (4U)
+#define CANIF_CFG_AR_RELEASE_MINOR_VERSION   (3U)
+#define CANIF_CFG_AR_RELEASE_PATCH_VERSION   (1U)
 
 //*****************************************************************************
 //  This parameter defines if the buffer element length shall be fixed to 8
@@ -66,7 +75,7 @@
 //  false: detection and notification is disabled.
 //  Default Value: false
 //*****************************************************************************
-#define CANIF_DEV_ERROR_DETECT                 	STD_OFF
+#define CANIF_DEV_ERROR_DETECT                 	STD_ON
 
 //*****************************************************************************
 //  Enable support for dynamic ID handling using L-SDU MetaData.
@@ -585,13 +594,13 @@ FULL, this parameter equals 0 for this TxBuffer.*/
 
 /* CAN_DRIVER_NUM is a size of array to define the number of underlying CAN Driver modules*/
 /* It defines muliplicity of CanIfCtrlDrvCfg & CanIfInitHohCfg containers */
-#define  CAN_DRIVER_NUM                             3
+#define  CAN_DRIVER_NUM                             (1U)
 
 /*CAN_TRANSCEIVER_NUM is used to specify the number of containers contains the configuration (parameters)
 of all addressed CAN transceivers by each underlying
 CAN Transceiver Driver module*/
 /*It defines muliplicity of CanIfTrcvDrvCfg & CanIfTrcvCfg containers */
-#define CAN_TRANSCEIVER_NUM                         1
+#define CAN_TRANSCEIVER_NUM                         (1U)
 
 /*BUFFERS_NUM is a size of array to define the number of containers contain the Txbuffer configuration.
 Multiple buffers with different sizes could be configured.
@@ -599,32 +608,32 @@ If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the
 CanIf Tx L-PDU only refers via this CanIfBufferCfg the
 corresponding CanIfHthCfg.*/
 /*It defines muliplicity of CanIfBufferCfg container*/
-#define  BUFFERS_NUM                                10
+#define  BUFFERS_NUM                                (10U)
 
 /* RX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
 of each receive CAN L-PDU.*/
 /*It defines muliplicity of CanIfRxPduCfg container*/
-#define RX_CAN_L_PDU_NUM                            10
+#define RX_CAN_L_PDU_NUM                            (10U)
 
 /*TX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
 of each transmit CAN L-PDU.*/
 /*It defines muliplicity of CanIfTxPduCfg container*/
-#define TX_CAN_L_PDU_NUM                            10 
+#define TX_CAN_L_PDU_NUM                            (10U) 
 
 /*HRH_OBj_NUM is used to specify the number of containers contains configuration parameters for
 each hardware receive object (HRH).*/
 /*It defines muliplicity of CanIfHrhCfg container*/
-#define HRH_OBj_NUM                                 2
+#define HRH_OBj_NUM                                 (2U)
 
 /*HTH_OBj_NUM is used to specify the number of containers contains configuration parameters for
 each hardware transmit object (HTH).*/
 /*It defines muliplicity of CanIfHthCfg container*/
-#define HTH_OBj_NUM                                 2
+#define HTH_OBj_NUM                                 (2U)
 
 /*CANID_RANGES_NUM is used to specify the number of containers Defines the parameters required for configurating
 multiple CANID ranges for a given same HRH*/
 /*It defines muliplicity of CanIfHrhRangeCfg container*/
-#define CANID_RANGES_NUM                           16    
+#define CANID_RANGES_NUM                            (16U)    
 
 
 #endif /* __CANIF_CFG_H__ */

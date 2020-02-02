@@ -73,6 +73,14 @@
   #error "The AR version of Std_Types.h does not match the expected version"
 #endif
 
+//******************************************************************************
+// CanIf_ModuleStateType
+// CANIF_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT and also CANIF will be in CANIF_UNINT.
+// CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
+//******************************************************************************
+typedef uint8 CanIf_ModuleStateType;
+#define CANIF_UNINT			((CanIf_ModuleStatusType)0x00)
+#define CANIF_READY			((CanIf_ModuleStatusType)0x01)
 
 //*****************************************************************************
 //  Selects the desired software filter mechanism for reception only. Each
