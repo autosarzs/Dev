@@ -24,7 +24,7 @@ CanControllerBaudrateConfig CanControllerBaudrateConf[] =
 };
 
 /*  Controller0 Configuration   */
-CanController CanControllerCfg[] =
+CanControllerType CanControllerCfg[] =
 {
     {
         0,                                  /*  Controller ID   */
