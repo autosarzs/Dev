@@ -64,7 +64,7 @@ CanHwFilter CanHwFilterHRH[] =
 };
 
 /*Configuration FOR all used Hardware objects*/
-CanHardwareObject HOHObj[] =
+CanHardwareObjectType HOHObj[] =
 {
     {   FULL,                    /*  Can controller type for tm4c123gh6pm    */
         1,                       /*  Number of FIFO elements for this HOH    */
