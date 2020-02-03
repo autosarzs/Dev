@@ -289,7 +289,7 @@ typedef struct
     *   Enables polling of this hardware object.
     */
     boolean    CanHardwareObjectUsesPolling;
-} CanHardwareObject;
+} CanHardwareObjectType;
 
 
 /*
@@ -314,7 +314,7 @@ typedef struct
     /*Reference to CAN Controller to which the HOH is associated to.*/
     CanControllerType *CanControllerRef;
     /*This container contains the configuration (parameters) of CAN Hardware Objects. */
-    CanHardwareObject *CanHardwareObjectRef;
+    CanHardwareObjectType *CanHardwareObjectRef;
 } CanConfigSet;
 
 //*****************************************************************************
@@ -327,7 +327,7 @@ typedef struct
     *   containers of the AUTOSAR Can module...Multiplicity =1
     */
     CanControllerType* CanControllerCfgRef;
-    CanHardwareObject* CanHardwareObjectRef;
+    CanHardwareObjectType* CanHardwareObjectRef;
 
 } Can_ConfigType;
 /* -------------------------------------------------------------------------- */
