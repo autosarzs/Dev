@@ -106,7 +106,7 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
 
     if (ret_status == E_OK) /* if (ret_status == E_OK) */
     {
-        ret_status = Can_GetControllerErrorState(ControllerId, ErrorStatePtr);
+        ret_status = Can_GetControllerErrorState(CanIf_AbstractedIds[ControllerId], ErrorStatePtr);
     }
     return ret_status;
 }
