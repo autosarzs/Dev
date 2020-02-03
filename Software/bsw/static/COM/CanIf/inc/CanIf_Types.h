@@ -79,8 +79,8 @@
 // CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
 //******************************************************************************
 typedef uint8 CanIf_ModuleStateType;
-#define CANIF_UNINT			((CanIf_ModuleStatusType)0x00)
-#define CANIF_READY			((CanIf_ModuleStatusType)0x01)
+#define CANIF_UNINT			((CanIf_ModuleStateType)0x00)
+#define CANIF_READY			((CanIf_ModuleStateType)0x01)
 
 //*****************************************************************************
 //  Selects the desired software filter mechanism for reception only. Each
