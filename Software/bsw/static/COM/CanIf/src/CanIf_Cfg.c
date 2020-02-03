@@ -42,7 +42,7 @@
 	The indexing of the array is the CanIf Ids, while values of the array are the
 	the CAN controllers Ids - onchip/offchip hardware.
 */
-Can_IdType CanIf_AbstractedIds[] =
+uint8 CanIf_AbstractedIds[] =
 {
 	CONTROLLER_0_ID, CONTROLLER_1_ID
 };
