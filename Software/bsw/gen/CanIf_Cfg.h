@@ -626,5 +626,8 @@ multiple CANID ranges for a given same HRH*/
 /*It defines muliplicity of CanIfHrhRangeCfg container*/
 #define CANID_RANGES_NUM                           16    
 
+/* CAN_CONTROLLERID_COUNT is a size of array to define the number of controller IDs seen by user*/
+/* It defines muliplicity of CanIfCtrlCanCtrlRef container */
+#define  CAN_CONTROLLERID_COUNT                    1
 
 #endif /* __CANIF_CFG_H__ */
