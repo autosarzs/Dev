@@ -638,7 +638,7 @@ multiple CANID ranges for a given same HRH*/
 /*
 	Mapping array of CAN Ids.
 */
-extern Can_IdType CanIf_AbstractedIds[];
+extern uint8 CanIf_AbstractedIds[];
 
 
 #endif /* __CANIF_CFG_H__ */
