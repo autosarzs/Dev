@@ -70,7 +70,7 @@
 static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
 /* a pointer to the CanIf_ConfigType main Structure for the module to work on */
-static CanIf_ConfigType* CanIf_Global_Config;
+static CanIf_ConfigType* CanIf_ConfigPtr;
 
 /*******************************************************************************
 *                    Functions Definitions                                     *
