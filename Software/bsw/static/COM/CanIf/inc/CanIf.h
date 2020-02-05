@@ -37,8 +37,12 @@
 
 #include "CanIf_Types.h"
 #include "CanIf_Cfg.h"
+#include "Can.h"
+#include "Can_GeneralTypes.h"
+#include "Platform_Types.h"
+#include "CanIf_Types.h"
 
 
-
+Std_ReturnType CanIf_ReadRxPduData(PduIdType CanIfRxSduId,PduInfoType* CanIfRxInfoPtr);
 
 #endif /* __CANIF_H__ */
