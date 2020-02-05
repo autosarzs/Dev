@@ -35,7 +35,6 @@
 #ifndef __CANIF_TYPES_H__
 #define __CANIF_TYPES_H__
 
-#include "Can.h"
 #include "CanIf_Cfg.h"
 #include "Stub.h"
 
@@ -63,14 +62,6 @@
  ||  (CAN_GENERAL_TYPES_AR_RELEASE_MINOR_VERSION != CANIF_TYPES_AR_RELEASE_MINOR_VERSION)\
  ||  (CAN_GENERAL_TYPES_AR_RELEASE_PATCH_VERSION != CANIF_TYPES_AR_RELEASE_PATCH_VERSION))
   #error "The AR version of Can_GeneralTypes.h does not match the expected version"
-#endif
-
-#include "Std_Types.h"
-/* AUTOSAR checking between Std_Types and CanIf_Types Modules */
-#if ((STD_TYPES_AR_RELEASE_MAJOR_VERSION != CANIF_TYPES_AR_RELEASE_MAJOR_VERSION)\
- ||  (STD_TYPES_AR_RELEASE_MINOR_VERSION != CANIF_TYPES_AR_RELEASE_MINOR_VERSION)\
- ||  (STD_TYPES_AR_RELEASE_PATCH_VERSION != CANIF_TYPES_AR_RELEASE_PATCH_VERSION))
-  #error "The AR version of Std_Types.h does not match the expected version"
 #endif
 
 
@@ -263,6 +254,26 @@ CanIfHrhRangeRxPduRangeCanIdType.*/
 typedef uint8 CanIfHrhRangeRxPduRangeCanIdTypeType;
 #define EXTENDED_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x00)
 #define STANDARD_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x01)
+
+
+/*This parameter references to the logical handle of the underlying CAN
+				controller from the CAN Driver module to be served by the CAN
+				Interface module. The following parameters of CanController config
+				container shall be referenced by this link: CanControllerId, CanWakeupSourceRef
+				Range: 0..max. number of underlying supported CAN controllers*/
+typedef CanController CanControllerType;
+
+/*CAN Interface Driver Reference.
+				This reference can be used to get any information (Ex. Driver Name, Vendor ID) from
+				the CAN driver. The CAN Driver name can be derived from the ShortName of the CAN driver module.*/
+typedef uint32 CanGeneral; //stub of CanGeneral Container in CanDrv.
+typedef CanGeneral CanGeneralType;
+
+/*The parameter refers to a particular HTH object in the CanDrv configuration (see CanHardwareObject
+				ECUC_Can_00324). CanIf receives the following information of the CanDrv module by this reference:
+				- CanHandleType (see ECUC_Can_00323)
+				- CanObjectId (see ECUC_Can_00326) */
+typedef CanHardwareObject CanHardwareObjectType;
 
 typedef struct {
 				/*This parameter abstracts from the CAN Driver specific parameter

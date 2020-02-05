@@ -33,6 +33,8 @@
 **                                                                            **
 *******************************************************************************/
 
+#include "CanIf.h"
+
 #if (CANIF_SET_BAUDRATE_API == STD_ON)
 
 Std_ReturnType CanIf_SetBaudrate( uint8 ControllerId, uint16 BaudRateConfigID )
