@@ -176,7 +176,7 @@
 //  is not supported
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_SET_BAUDRATE_API                 	STD_OFF
+#define CANIF_SET_BAUDRATE_API                 	STD_ON
 
 //*****************************************************************************
 //  Enables the CanIf_TriggerTransmit API at Pre-Compile-Time.
