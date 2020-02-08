@@ -279,6 +279,9 @@ has to be either PDUR or CDD and CanIfTxPduUserTriggerTransmitName has to be spe
 /* Enables/disables truncation of PDUs that exceed the configured size. */
 #define CANIF_TX_PDU_TRUNCATION					STD_ON
 
+
+#define CanIfTxOfflineActiveSupport   STD_ON
+
 /* This parameter defines the name of the <User_TriggerTransmit>. This parameter depends on the parameter
 CanIfTxPduUserTxConfirmationUL. If CanIfTxPduUserTxConfirmationUL equals CAN_TP, CAN_NM, PDUR,
 XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_TriggerTransmit> is fixed. If CanIfTxPduUserTxConfirmationUL

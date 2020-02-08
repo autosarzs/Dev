@@ -41,6 +41,7 @@
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.INCLUDE_PATH.1072065126" name="Include paths (-I)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.INCLUDE_PATH" valueType="includePath">
 									<listOptionValue builtIn="false" value="${PROJECT_ROOT}"/>
+									<listOptionValue builtIn="false" value="D:\Autozar\CANIF\Dev\Software\bsw\static\COM\CanIf\inc"/>
 									<listOptionValue builtIn="false" value="C:\Users\fayed\Desktop\canif\Dev\Software\bsw\static\COM\CanIf\inc"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/gen"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Infrastructure/inc"/>
