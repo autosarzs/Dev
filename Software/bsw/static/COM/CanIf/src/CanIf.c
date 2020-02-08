@@ -62,5 +62,7 @@ Can_ControllerStateType* ControllerModePtr
 	}
 
 	Can_GetControllerMode(ControllerId, ControllerModePtr);
+
+	return E_OK;
 }
 
