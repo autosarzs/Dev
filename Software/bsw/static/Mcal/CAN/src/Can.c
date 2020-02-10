@@ -375,7 +375,7 @@ void Can_Init( const Can_ConfigType* Config)
     */
     if(ModuleState != CAN_UNINIT)
     {
-        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CANIF_INIT_API_ID, CAN_E_TRANSITION);
+        Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CAN_INIT_API_ID, CAN_E_TRANSITION);
     }
 #endif
 

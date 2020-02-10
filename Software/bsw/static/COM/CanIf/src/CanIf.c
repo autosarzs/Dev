@@ -163,11 +163,11 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
                 /*
                  * Initialize all PDUs information
                  */
-                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef->CanId   = 0 ;
-                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef->TxPduId = 0 ;
-                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef->TxPduInfo->MetaDataPtr = NULL_PTR ;
-                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef->TxPduInfo->SduDataPtr  = NULL_PTR ;
-                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef->TxPduInfo->SduLength   = 0 ;
+                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].CanId   = 0 ;
+                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].TxPduId = 0 ;
+                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].TxPduInfo->MetaDataPtr = NULL_PTR ;
+                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].TxPduInfo->SduDataPtr  = NULL_PTR ;
+                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].TxPduInfo->SduLength   = 0 ;
              }
          }
      #endif
