@@ -18,11 +18,11 @@
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                                  **
+**  PLATFORM     : TIVA C		                                              **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                        **
+**  AUTHOR       : AUTOSarZs-DevTeam	                                      **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                            **
+**  VENDOR       : AUTOSarZs OLC	                                          **
 **                                                                            **
 **                                                                            **
 **  DESCRIPTION  : CAN Interface source file                                  **
