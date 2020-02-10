@@ -39,6 +39,18 @@
 #include "CanIf_Cfg.h"
 
 
+/* CANIF Module Id */
+#define CANIF_MODULE_ID        (60U)
 
+/* CANIf Instance Id */
+#define CANIF_INSTANCE_ID      (0U)
+
+/*CANIF Services Ids*/
+
+#define CANIF_INIT_API_ID      (1U)
+
+/*CanIF_DetErrorType*/
+
+#define CANIF_E_PARAM_POINTER  (20U)
 
 #endif /* __CANIF_H__ */

@@ -141,7 +141,7 @@
 //  CanDrv) within the CAN Interface module.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_TX_BUFFERING             	STD_OFF
+#define CANIF_PUBLIC_TX_BUFFERING             	STD_ON
 
 //*****************************************************************************
 //  Configuration parameter to enable/disable the API to poll for Tx
@@ -626,5 +626,6 @@ multiple CANID ranges for a given same HRH*/
 /*It defines muliplicity of CanIfHrhRangeCfg container*/
 #define CANID_RANGES_NUM                           16    
 
-
+/*number of logical controllers */
+#define CANIF_CONTROLLERS_NUM                      2
 #endif /* __CANIF_CFG_H__ */

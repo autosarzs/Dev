@@ -74,6 +74,16 @@
 #endif
 
 
+//******************************************************************************
+// CanIf_ModuleStateType
+// CANIF_UNINIT : After power-up/reset, the Can module shall be in the state
+// CAN_UNINIT and also CANIF will be in CANIF_UNINT.
+// CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
+//******************************************************************************
+typedef uint8 CanIf_ModuleStateType;
+#define CANIF_UNINT         ((CanIf_ModuleStateType)0x00)
+#define CANIF_READY         ((CanIf_ModuleStateType)0x01)
+
 //*****************************************************************************
 //  Selects the desired software filter mechanism for reception only. Each
 //  implemented software filtering method is identified by this enumeration
@@ -264,6 +274,21 @@ typedef uint8 CanIfHrhRangeRxPduRangeCanIdTypeType;
 #define EXTENDED_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x00)
 #define STANDARD_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x01)
 
+
+/*
+    CanIf_PduModeType
+    [SWS_CANIF_00137]
+    The PduMode of a channel defines its transmit or receive activity.
+    Communication direction (transmission and/or reception) of the channel can
+    be controlled separately or together by upper layers.
+*/
+typedef uint8 CanIf_PduModeType;
+#define CANIF_OFFLINE                                       ((CanIf_PduModeType)0x00)
+#define CANIF_TX_OFFLINE                                    ((CanIf_PduModeType)0x01)
+#if (CANIF_TX_OFFLINE_ACTIVE_SUPPORT == STD_ON)
+    #define CANIF_TX_OFFLINE_ACTIVE                         ((CanIf_PduModeType)0x02)
+#endif /* CanIfTxOfflineActiveSupport = TRUE */
+#define CANIF_ONLINE                                        ((CanIf_PduModeType)0x03)
 typedef struct {
 				/*This parameter abstracts from the CAN Driver specific parameter
 				Controller. Each controller of all connected CAN Driver modules shall
@@ -303,6 +328,44 @@ typedef struct {
 				not. Each HTH shall not be assigned to more than one buffer*/
 				CanIfHthCfgType* CanIfBufferHthRef;
 }CanIfBufferCfgType;
+
+/*
+ *  The following types are only used if Tx buffering is enabled
+ */
+#if(CANIF_PUBLIC_TX_BUFFERING==STD_ON)
+/*
+ *  Type Description : Struct to save the L-PDU information in a TxBuffer
+ */
+typedef struct
+{
+              /*Variables of this type shall be used to store
+                the basic information about a PDU of any type, namely a pointer variable
+                pointing to its SDU (payload), a pointer to Meta Data of the PDU,
+                and the corresponding length of the SDU in bytes.
+               */
+                PduInfoType*     TxPduInfo ;
+
+              /*Id of this L-PDU*/
+                PduIdType        TxPduId;
+              /*[SWS_CANIF_00849]  For dynamic Transmit L-PDUs,
+                 also the CanId has to be stored in the CanIfTxBuffer.
+               */
+                Can_IdType       CanId  ;
+
+}CanIfPduInfoCfgType;
+
+typedef struct
+{
+       /*
+        * Pointer to all Pdus saved in this buffer
+        */
+       CanIfPduInfoCfgType* CanIfPduInfoRef;
+      /*
+       * Pointer to Txbuffer configurations
+       */
+      CanIfBufferCfgType* CanIfBufferRef ;
+}CanIfPduTxBufferCfgType;
+#endif
 
 typedef struct {
 				/* CAN Identifier of transmit CAN L-PDUs used by the CAN Driver for
@@ -659,7 +722,7 @@ typedef struct {
 				CanIfDispatchCfgType	CanIfDispatchCfgObj;
 								
 				/*This container contains the init parameters of the CAN Interface.*/
-				CanIfInitCfgType		CanIfInitCfgObj;
+				CanIfInitCfgType*		CanIfInitCfgObj;
 				
 				/* This parameter is used to configure the Can_HwHandleType. The
 				Can_HwHandleType represents the hardware object handles of a CAN
@@ -679,6 +742,14 @@ typedef struct {
 				/*This container contains the configuration (parameters) of all addressed CAN transceivers by each underlying CAN
 				Transceiver Driver module. For each CAN transceiver Driver a seperate instance of this container shall be provided.*/            
 				CanIfTrcvDrvCfgType		CanIfTrcvDrvCfgObj[CAN_TRANSCEIVER_NUM];   
+
+                #if(CANIF_PUBLIC_TX_BUFFERING==STD_ON)
+				/*
+				 *Array of pointer to struct to save pointers of all TxBuffers of different sizes
+				 *To save L-Pdus information
+				 */
+				CanIfPduTxBufferCfgType CanIfPduTxBuffers[BUFFERS_NUM] ;
+                #endif
 }CanIf_ConfigType;
 
 
