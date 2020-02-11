@@ -264,6 +264,8 @@ typedef uint8 CanIfHrhRangeRxPduRangeCanIdTypeType;
 #define EXTENDED_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x00)
 #define STANDARD_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x01)
 
+
+
 typedef struct {
 				/*This parameter abstracts from the CAN Driver specific parameter
 				Controller. Each controller of all connected CAN Driver modules shall
