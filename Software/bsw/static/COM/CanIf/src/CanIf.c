@@ -182,3 +182,47 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
      /*Set module to Ready state*/
      CanIf_ModuleState = CANIF_READY ;
  }
+
+ /****************************************************************************************/
+  /*    Function Description    : This function De-initializes the CanIf module.          */
+  /*    Parameter in            : none                                                    */
+  /*    Parameter inout         : none                                                    */
+  /*    Parameter out           : none                                                    */
+  /*    Return value            : none                                                    */
+  /*    Requirement             : SWS_CANIF_91002                                         */
+  /*    Notes                   : Caller of the CanIf_DeInit() function has to be sure    */
+  /*                              there are no on-going transmissions/receptions          */
+  /*                              , nor any pending transmission confirmations.           */
+  /*                            :[SWS_BSW_00152] Call to De-Initialization functions is   */
+  /*                             restricted Only the ECU State Manager and                */
+  /*                             Basic Software Mode Manager are allowed to call          */
+  /*                            :[SWS_BSW_00072] Module state after De-Initialization     */
+  /*                             function The state of a BSW Module shall be set          */
+  /*                             accordingly at the beginning of the DeInitialization     */
+  /*                             function.                                                */
+  /*                            :[SWS_BSW_00233] Multiple calls to De-Initialization      */
+  /*                              functions The module De-Initialization function shall be*/
+  /*                              called only if the module was initialized before        */
+  /*                              (initialization function was called)                    */
+  /*                            :[SWS_BSW_00233] Multiple calls to De-Initialization      */
+  /*                              functions The module De-Initialization function shall   */
+  /*                              be called more than one time after the module           */
+  /*****************************************************************************************/
+  void CanIf_DeInit(void){
+
+      /*Report module without initialization parameter error*/
+ #if (CANIF_DEV_ERROR_DETECT == STD_ON)
+       if (CanIf_ModuleState != CANIF_READY)
+          {
+          Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_DENIT_API_ID,CANIF_E_UNINIT);
+          }
+
+ #endif
+
+       /*Set the Pointer to configuration parameters to null pointer*/
+      CanIf_ConfigPtr = NULL_PTR;
+      /*Set the module state to uninit state*/
+      CanIf_ModuleState = CANIF_UNINT ;
+
+  }
+
