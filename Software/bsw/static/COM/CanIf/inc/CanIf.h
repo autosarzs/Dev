@@ -1,6 +1,7 @@
+
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                  **
+**  Copyright (C) AUTOSarZs olc (2019)                                        **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -10,7 +11,7 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : CanIf			                                      **
+**  FILENAME     : CanIf                                                      **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
@@ -18,11 +19,11 @@
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                              **
+**  PLATFORM     : TIVA C                                                     **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                      **
+**  AUTHOR       : AUTOSarZs-DevTeam                                          **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                          **
+**  VENDOR       : AUTOSarZs OLC                                              **
 **                                                                            **
 **                                                                            **
 **  DESCRIPTION  : CAN Interface source file                                  **
@@ -35,13 +36,23 @@
 #ifndef __CANIF_H__
 #define __CANIF_H__
 
+#include "CanIf_Types.h"
+#include "CanIf_Cfg.h"
 
 
+/* CANIF Module Id */
+#define CANIF_MODULE_ID        (60U)
 
+/* CANIf Instance Id */
+#define CANIF_INSTANCE_ID      (0U)
 
+/*CANIF Services Ids*/
 
+#define CANIF_INIT_API_ID      (1U)
+#define CANIF_DENIT_API_ID     (2U)
 
+/*CanIF_DetErrorType*/
 
-
-
+#define CANIF_E_PARAM_POINTER  (20U)
+#define CANIF_E_UNINIT         (30U)
 #endif /* __CANIF_H__ */
