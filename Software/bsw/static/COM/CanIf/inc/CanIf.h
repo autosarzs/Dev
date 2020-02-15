@@ -40,13 +40,13 @@
 #include "Can.h"
 
 /* Can_DetErrorType ENUM */
-typedef uint8 Can_DetErrorType;
+//typedef uint8 Can_DetErrorType;
 
 #define CANIF_E_PARAM_CONTROLLERID 		((Can_DetErrorType)0x0F)
 #define CANIF_E_PARAM_POINTER			((Can_DetErrorType)0x14)
 
 /* Can_ServiceId ENUM  */
-typedef uint8 Can_ServiceId;
+//typedef uint8 Can_ServiceId;
 #define CanIf_GetControllerMode_Id 		((Can_ServiceId)0x04)
 
 
