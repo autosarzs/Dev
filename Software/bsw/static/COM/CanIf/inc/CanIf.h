@@ -38,7 +38,10 @@
 //#include "CanIf_Types.h"
 #include "CanIf_Cfg.h"
 #include "Can.h"
-
+/* CAN Module Id */
+#define CANIF_MODULE_ID    (60U)
+/* CAN Instance Id */
+#define CANIF_INSTANCE_ID  (0U)
 /* Can_DetErrorType ENUM */
 //typedef uint8 Can_DetErrorType;
 
@@ -46,8 +49,8 @@
 #define CANIF_E_PARAM_POINTER			((Can_DetErrorType)0x14)
 
 /* Can_ServiceId ENUM  */
-//typedef uint8 Can_ServiceId;
+//t typedef uint8 Can_ServiceId;
 #define CanIf_GetControllerMode_Id 		((Can_ServiceId)0x04)
-
+#define CanIf_CancelTransmit_Id         ((Can_ServiceId)0x4A)
 
 #endif /* __CANIF_H__ */

@@ -99,7 +99,7 @@ Can_ControllerStateType* ControllerModePtr
 	error code CANIF_E_PARAM_POINTER to the Det_ReportError service of
 	the DET, when CanIf_GetControllerMode() is called. c(SRS_BSW_00323)*/
 	if(ControllerModePtr == 0){
-		Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CanIf_GetControllerMode_Id, CANIF_E_PARAM_POINTER);
+		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CanIf_GetControllerMode_Id, CANIF_E_PARAM_POINTER);
 
 		return E_NOT_OK;
 	}
@@ -147,7 +147,7 @@ PduIdType TxPduId
     // Report the DET Error
     if (RET_Status != E_OK )
     {
-       // Det_ReportError(CANIF_E_INVALID_TXPDUID);
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CanIf_CancelTransmit_Id, CANIF_E_PARAM_POINTER);
     }
     return RET_Status;
 
