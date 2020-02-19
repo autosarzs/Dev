@@ -56,4 +56,4 @@
 #define CANIF_E_UNINIT         (30U)
 #endif /* __CANIF_H__ */
 
-#endif /* __CANIF_H__ */
+
