@@ -104,6 +104,20 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 /*                                   Local Function Definition                           */
 /*****************************************************************************************/
 
+/****************************************************************************************/
+ /*    Function Description    : This service Initializes internal and external          */
+/*                               interfaces of the CAN Interface for the further         */
+/*                               processing.                                             */
+ /*    Parameter in            : Pointer to configuration parameter set                  */
+ /*    Parameter inout         : none                                                    */
+ /*    Parameter out           : none                                                    */
+ /*    Return value            : none                                                    */
+ /*    Requirement             : SWS_CANIF_00001                                         */
+ /*    Notes                   : All underlying CAN controllers and transceivers still   */
+ /*                             remain not operational.
+ /*                            : The service CanIf_Init() is called only by the EcuM.    */
+ /*                                                                                      */
+ /*****************************************************************************************/
 
 
 
