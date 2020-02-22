@@ -105,9 +105,7 @@ Can_ControllerStateType* ControllerModePtr
 		return E_NOT_OK;
 	}
 
-	Can_GetControllerMode(ControllerId, ControllerModePtr);
-
-	return E_OK;
+	return Can_GetControllerMode(ControllerId, ControllerModePtr);
 }
 
 /*************************************************************************************************/
