@@ -276,7 +276,7 @@ typedef struct {
 				Interface module. The following parameters of CanController config
 				container shall be referenced by this link: CanControllerId, CanWakeupSourceRef
 				Range: 0..max. number of underlying supported CAN controllers*/
-				CanControllerType* CanIfCtrlCanCtrlRef;
+				CanController* CanIfCtrlCanCtrlRef;
 }CanIfCtrlCfgType;
 
 typedef struct {
@@ -287,7 +287,7 @@ typedef struct {
 				ECUC_Can_00324). CanIf receives the following information of the CanDrv module by this reference:
 				- CanHandleType (see ECUC_Can_00323)
 				- CanObjectId (see ECUC_Can_00326) */
-				CanHardwareObjectType* CanIfHthIdSymRef;
+				CanHardwareObject* CanIfHthIdSymRef;
 }CanIfHthCfgType;
 
 typedef struct {
@@ -433,7 +433,7 @@ typedef struct {
 				CanIfCtrlCfgType* CanIfHrhCanCtrlIdRef;
 
 				/*The parameter refers to a particular HRH object in the CanDrv configuration*/	
-				CanHardwareObjectType* CanIfHrhIdSymRef;
+				CanHardwareObject* CanIfHrhIdSymRef;
 	
 				/*Defines the parameters required for configurating multiple CANID ranges for a given same HRH.*/
 				CanIfHrhRangeCfgType CanIfHrhRangeCfgObj[CANID_RANGES_NUM];
@@ -622,7 +622,7 @@ typedef struct {
 				/*CAN Interface Driver Reference.
 				This reference can be used to get any information (Ex. Driver Name, Vendor ID) from
 				the CAN driver. The CAN Driver name can be derived from the ShortName of the CAN driver module.*/
-				CanGeneralType* CanIfCtrlDrvNameRef;
+				//CanGeneral* CanIfCtrlDrvNameRef;
 
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	

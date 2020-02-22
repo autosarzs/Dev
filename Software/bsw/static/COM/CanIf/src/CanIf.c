@@ -59,9 +59,10 @@ typedef struct
 /*****************************************************************************************/
 
 /*Array of struct to map CanIds to a specific L-PDU of type dynamic*/
-static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
+//static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
-
+/*Pointer to save configuration parameters set */
+static CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
 
 
 /********************************************************************************************/
@@ -138,7 +139,7 @@ PduIdType TxPduId
     for(pduid_counter = 0 ; pduid_counter < TX_CAN_L_PDU_NUM ; pduid_counter++ )
     {
         // check the PDU ID
-        if (MapCanIdToPdu[pduid_counter].PduId == TxPduId)
+        if ((CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[pduid_counter].CanIfTxPduId) == TxPduId)
         {
             RET_Status = E_OK;
             break;
@@ -147,10 +148,83 @@ PduIdType TxPduId
     // Report the DET Error
     if (RET_Status != E_OK )
     {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CanIf_CancelTransmit_Id, CANIF_E_PARAM_POINTER);
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CanIf_CancelTransmit_Id, CANIF_E_INVALID_TXPDUID);
     }
     return RET_Status;
 
 }
 #endif
+
+/**********************************************************************************************************/
+/*    Function Description    : Requests transmission of a PDU.                                           */
+/*    Parameter in            : TxPduId Identifier of the PDU to be transmitted
+                                PduInfoPtr Length of and pointer to the PDU data and pointer to MetaData. */
+/*    Parameter INOUT         : none                                                                      */
+/*    Parameter out           : none                                                                      */
+/*    Return value            : Std_ReturnType
+ *                              E_OK: Transmit request has been accepted.
+                                E_NOT_OK: Transmit request has not been accepted.                         */
+/*    Requirement             : SWS_CANIF_00005                                                           */
+/*                                                                                                        */
+/*                                                                                                        */
+/**********************************************************************************************************/
+
+Std_ReturnType CanIf_Transmit(
+PduIdType TxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+    uint8 pduid_counter = 0, TX_PDU_CANIF_Controller;
+    Can_ControllerStateType Controller_mode;
+    Std_ReturnType state, RET_Status = E_NOT_OK ;
+    Can_HwHandleType Hth;
+    Can_PduType TX_message;
+    /*
+     * check the TxPduId is in the MapCanIdToPdu to complete the cancellation process
+     */
+    for(pduid_counter = 0 ; pduid_counter < TX_CAN_L_PDU_NUM ; pduid_counter++ )
+    {
+        // check the PDU ID
+        if ((CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[pduid_counter].CanIfTxPduId) == TxPduId)
+        {
+            RET_Status = E_OK;
+            break;
+        }
+    }
+    if (RET_Status != E_OK )
+    {
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CanIf_TRansmit_Id, CANIF_E_INVALID_TXPDUID);
+        return RET_Status;
+    }
+
+
+//    The service CanIf_Transmit() shall not accept a transmit request,
+//     if the controller mode referenced by ControllerId is different to
+//    CAN_CS_STARTED
+    TX_PDU_CANIF_Controller = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[TxPduId].CanIfTxPduBufferRef->CanIfBufferHthRef->CanIfHthCanCtrlIdRef->CanIfCtrlCanCtrlRef->CanControllerId;
+    state = CanIf_GetControllerMode(TX_PDU_CANIF_Controller, &Controller_mode);
+    if(Controller_mode != CAN_CS_STARTED && state != E_OK )
+    {
+        RET_Status = E_NOT_OK ;
+        return  RET_Status ;
+    }
+
+    Hth = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[TxPduId].CanIfTxPduBufferRef->CanIfBufferHthRef->CanIfHthIdSymRef->CanObjectId;
+
+    TX_message.id = TxPduId;
+    TX_message.length = PduInfoPtr->SduLength;
+    TX_message.sdu = PduInfoPtr->SduDataPtr;
+    TX_message.swPduHandle =  CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[TxPduId].CanIfTxPduCanId;
+
+    state = Can_write ( Hth, &TX_message);
+
+    if(state != E_OK )
+    {
+        RET_Status = E_NOT_OK ;
+        return  RET_Status ;
+    }
+
+
+        return  RET_Status ;
+}
 
