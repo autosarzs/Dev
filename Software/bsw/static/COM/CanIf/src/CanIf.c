@@ -179,6 +179,15 @@ const PduInfoType* PduInfoPtr
     Std_ReturnType state, RET_Status = E_NOT_OK ;
     Can_HwHandleType Hth;
     Can_PduType TX_message;
+
+    if(PduInfoPtr->SduDataPtr == 0x0)
+      {
+	if(CANIF_TX_PDU_TRIGGER_TRANSMIT != STD_ON)
+	  {
+	    return E_NOT_OK;
+	  }
+      }
+
     /*
      * check the TxPduId is in the MapCanIdToPdu to complete the cancellation process
      */
