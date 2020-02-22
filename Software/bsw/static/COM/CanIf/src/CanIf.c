@@ -178,6 +178,11 @@ const PduInfoType* PduInfoPtr
     Can_HwHandleType Hth;
     Can_PduType TX_message;
 
+    /*
+      [SWS_CANIF_00882] CanIf_Transmit() shall accept a NULL pointer as
+      PduInfoPtr->SduDataPtr, if the PDU is configured for triggered transmission:
+      CanIfTxPduTriggerTransmit = TRUE.
+     */
     if(PduInfoPtr->SduDataPtr == 0x0)
       {
 	if(CANIF_TX_PDU_TRIGGER_TRANSMIT != STD_ON)
@@ -218,8 +223,36 @@ const PduInfoType* PduInfoPtr
 
     Hth = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[TxPduId].CanIfTxPduBufferRef->CanIfBufferHthRef->CanIfHthIdSymRef->CanObjectId;
 
+    /*
+    [SWS_CANIF_00894] When CanIf_Transmit() is called with PduInfoPtr-
+    >SduLength exceeding the maximum length of the PDU referenced by TxPduId and
+    CanIfTxPduTruncation is enabled, CanIf shall transmit as much data as possible
+    and discard the rest.
+
+    [SWS_CANIF_00900] When CanIf_Transmit() is called with PduInfoPtr-
+    >SduLength exceeding the maximum length of the PDU referenced by TxPduId
+    and CanIfTxPduTruncation is disabled, CanIf shall report the runtime error
+    CANIF_E_TXPDU_LENGTH_EXCEEDED and return E_NOT_OK without further actions
+   */
+    if (PduInfoPtr->SduLength > 8)
+      {
+	if(CANIF_TX_PDU_TRUNCATION == STD_ON)
+	  {
+	    TX_message.length = 8;
+	  }
+	else
+	  {
+	    /* Where is the prototype of this function? */
+	    //Det_ReportRuntimeError(CANIF_E_TXPDU_LENGTH_EXCEEDED)
+	    return E_NOT_OK;
+	  }
+      }
+    else
+      {
+	TX_message.length = PduInfoPtr->SduLength;
+      }
+
     TX_message.id = TxPduId;
-    TX_message.length = PduInfoPtr->SduLength;
     TX_message.sdu = PduInfoPtr->SduDataPtr;
     TX_message.swPduHandle =  CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[TxPduId].CanIfTxPduCanId;
 
