@@ -35,7 +35,7 @@
 #include "..\inc\CanIf.h"
 
 static CanIf_ConfigType * Global_Config= NULL ;
-CanIf_PduModeType PduMode =CANIF_OFFLINE;
+CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
 
 Std_ReturnType CanIf_SetPduMode(uint8 ControllerId,CanIf_PduModeType PduModeRequest)
 {
@@ -49,7 +49,7 @@ CANIF_E_PARAM_CONTROLLERID to the Det_ReportError service of the
 DET module. c(SRS_BSW_00323)*/
 
 
-    if (ControllerId > 5 )
+    if (ControllerId > CANIF_CONTROLLERS_NUM )
     {
 #if ( DevError == STD_ON )
         Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CanIf_SetPduMode, CANIF_E_PARAM_CONTROLLERID );
@@ -98,12 +98,13 @@ is not in state CAN_CS_STARTED. c()*/
     case CANIF_TX_OFFLINE_ACTIVE:
 #endif
 
-        if(PduMode==CANIF_ONLINE)
+        if(CanIf_PduMode[ControllerId]==CANIF_ONLINE)
         {
             /* [SWS_CANIF_00865] dIf CanIf_SetControllerMode(ControllerId, CAN_-
                      CS_SLEEP)*/
             for(counterpduId=0;counterpduId<TX_CAN_L_PDU_NUM;counterpduId++)
             {
+                //waiting to discuss about the global buffer
                 Global_Config->CanIfInitCfgObj.CanIfTxPduCfgObj[counterpduId].CanIfTxPduBufferRef=NULL;
             }
 
@@ -111,14 +112,14 @@ is not in state CAN_CS_STARTED. c()*/
         switch(PduModeRequest)
         {
         case CANIF_OFFLINE:
-            PduMode=CANIF_OFFLINE;
+            CanIf_PduMode[ControllerId]=CANIF_OFFLINE;
             break;
         case CANIF_TX_OFFLINE:
-            PduMode=CANIF_TX_OFFLINE;
+            CanIf_PduMode[ControllerId]=CANIF_TX_OFFLINE;
             break;
 #if (CanIfTxOfflineActiveSupport ==STD_ON)
         case CANIF_TX_OFFLINE_ACTIVE:
-            PduMode=CANIF_TX_OFFLINE_ACTIVE;
+            CanIf_PduMode[ControllerId]=CANIF_TX_OFFLINE_ACTIVE;
             break;
 #endif
         default:
@@ -128,7 +129,7 @@ is not in state CAN_CS_STARTED. c()*/
         break;
 
         case CANIF_ONLINE:
-            PduMode=CANIF_ONLINE;
+            CanIf_PduMode[ControllerId]=CANIF_ONLINE;
             break;
         default:
             break;

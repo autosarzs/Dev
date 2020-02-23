@@ -48,7 +48,7 @@ typedef uint8 CanIf_PduModeType;
 #define CANIF_ONLINE            ((CanIf_PduModeType)0x03U)
 
 #define MAX_PDU_REQUEST  4
-
+#define CANIF_CONTROLLERS_NUM 10
 Std_ReturnType CanIf_SetPduMode(uint8 ControllerId,CanIf_PduModeType PduModeRequest);
 Std_ReturnType CanIf_ReadRxPduData(PduIdType CanIfRxSduId,PduInfoType* CanIfRxInfoPtr);
 
