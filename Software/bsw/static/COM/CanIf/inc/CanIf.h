@@ -77,7 +77,8 @@
 #define CANIF_E_TXPDU_LENGTH_EXCEEDED 	(90U)
 
 
-#define CANIF_SETBAUDRATE_API_ID		(0x27)
+#define CANIF_SETBAUDRATE_API_ID		(0x27U)
+#define CANIF_RX_INDCIATION_API_ID		(0x14U)
 
 
 extern Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID);

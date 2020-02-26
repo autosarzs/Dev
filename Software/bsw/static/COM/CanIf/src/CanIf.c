@@ -133,6 +133,90 @@ else
 
 void CanIf_RxIndication( const Can_HwType* Mailbox, const PduInfoType* PduInfoPtr )
 {
-	
+#if(TRUE == STD_ON)
+
+	/*SWS_CANIF_00419] d If parameter PduInfoPtr or Mailbox of
+	CanIf_RxIndication() has an invalid value, CanIf shall report development
+	error code CANIF_E_PARAM_POINTER to the Det_ReportError service of the DET
+	module, when CanIf_RxIndication() is called.
+	*/
+	if(NULL_PTR == PduInfoPtr)
+	{
+		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+						CANIF_E_PARAM_POINTER);
+	}
+	else
+	{
+
+	}
+
+	if(NULL_PTR == Mailbox)
+	{
+		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+						CANIF_E_PARAM_POINTER);
+	}
+	else
+	{
+
+	}
+
+	/*[SWS_CANIF_00416] d If parameter Mailbox->Hoh of CanIf_RxIndication()
+	has an invalid value, CanIf shall report development error code
+	CANIF_E_PARAM_HOH to the Det_ReportError service of the DET module,
+	when CanIf_RxIndication() is called.*/
+	if(Mailbox->Hoh > HRH_OBj_NUM)
+	{
+		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+							CANIF_E_PARAM_HOH);
+	}
+	/*[SWS_CANIF_00417] d If parameter Mailbox->CanId of
+	CanIf_RxIndication() has an invalid value, CanIf shall report development
+	error code CANIF_E_PARAM_CANID to the Det_ReportError service of the DET
+	module, when CanIf_RxIndication() is called.*/
+
+	/*check can msg id when it's in standard frame
+	 msb = 0 > standard (11bit)
+	 msb = 1 > extended (29bit)*/
+	if(!(Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x000007FFU))
+	{
+		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+						CANIF_E_PARAM_CANID);
+	}
+	/*If extended frame*/
+	else if((Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x1FFFFFFFU))
+	{
+		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+								CANIF_E_PARAM_CANID);
+	}
+
+	/*If CanIf_RxIndication() is called with invalid PduInfoPtr-
+	>SduLength, runtime error CANIF_E_INVALID_DATA_LENGTH is reported (see
+	[SWS_CANIF_00168]).*/
+
+	/*Should add MACRO definition for MAX CAN Data Length*/
+	if(PduInfoPtr->SduLength > 8U)
+	{
+		//TODO
+		//report "RUN TIME ERROR"
+	}
+	else
+	{
+
+	}
+	/*
+	[SWS_CANIF_00421] If CanIf was not initialized before calling
+	CanIf_RxIndication(), CanIf shall not execute Rx indication handling, when
+	CanIf_RxIndication(), is called.
+	 */
+	if(0)
+	{
+
+	}
+	else
+	{
+
+	}
+#endif
+
 }
 
