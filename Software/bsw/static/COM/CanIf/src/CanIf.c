@@ -108,8 +108,8 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
 /****************************************************************************************/
  /*    Function Description    : This service Initializes internal and external          */
- /*                                 interfaces of the CAN Interface for the further      */
- /*                                  processing                                          */
+ /*                              interfaces of the CAN Interface for the further         */
+ /*                              processing                                              */
  /*    Parameter in            : ConfigPtr                                               */
  /*    Parameter inout         : none                                                    */
  /*    Parameter out           : none                                                    */
@@ -122,13 +122,13 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
  /*                              initializes the CanIds of the dynamic Transmit L-PDUs   */
  /*                              with CanIfTxPduType to the value configured via         */
  /*                              CanIfTxPduCanId.                                        */
- /*                              [SWS_CANIF_00387]  When function CanIf_Init() is called,
- /*                              CanIf shall initialize every Transmit L-PDU Buffer assigned
- /*                              to CanIf.The requirement [SWS_CANIF_00387] is necessary
- /*                              to prevent transmission of old data after restart of the
- /*                              CAN Controller                                         */
- /*                              [SWS_CANIF_00864]  During initialization CanIf shall   */
- /*                              switch every channel to CANIF_OFFLINE                  */
+ /*                              [SWS_CANIF_00387]  When function CanIf_Init() is called,*/
+ /*                              CanIf shall initialize every Transmit L-PDU Buffer      */
+ /*                              assigned to CanIf.The requirement [SWS_CANIF_00387] is  */
+ /*                              necessary to prevent transmission of old data after     */
+ /*                              restart of the CAN Controller                           */
+ /*                              [SWS_CANIF_00864]  During initialization CanIf shall    */
+ /*                              switch every channel to CANIF_OFFLINE                   */
  /*****************************************************************************************/
  void CanIf_Init( const CanIf_ConfigType* ConfigPtr )
  {
