@@ -48,9 +48,12 @@
 /*CANIF Services Ids*/
 
 #define CANIF_INIT_API_ID      (1U)
+#define CANIF_DENIT_API_ID     (2U)
 
 /*CanIF_DetErrorType*/
 
 #define CANIF_E_PARAM_POINTER  (20U)
-
+#define CANIF_E_UNINIT         (30U)
 #endif /* __CANIF_H__ */
+
+
