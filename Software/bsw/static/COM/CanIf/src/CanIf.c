@@ -60,10 +60,57 @@
 /*
     Private global variables
 */
-/* Holding the CanIf module current state. Initially, CANIF_UNINT. */
-STATIC CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+/******************************************************************************
+ CanIf_ModuleState: it's a variable to store the CanIf module state
+ CanIf_ModuleStateType:
+ CANIF_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT 
+ and also CANIF will be in CANIF_UNINT.
+ CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
+******************************************************************************/
+static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+
+static CanIf_ControllerStateType CanIf_ControllerState[CANIF_CONTROLLERS_NUM];
+
 /* CanIf PDU current mode. Initially, CANIF_OFFLINE [SWS_CANIF_00864]. */
-STATIC CanIf_PduModeType CanIf_PduMode = CANIF_OFFLINE;
+static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] = {CANIF_OFFLINE};// Init them all by CANIF_OFFLINE as default is CANIF_OFFLINE
+
+/* a pointer to the CanIf_ConfigType main Structure for the module to work on */
+static CanIf_ConfigType* CanIf_ConfigPtr;
+
+/*******************************************************************************
+*           CAN, CAN IF Controller ID Mapping Functions Definitions            *
+*******************************************************************************/
+uint8 CanIf_GetCanController_Mapping(uint8 CanIfControllerId)// has CanController logical Id and want to get the physical Id
+{
+	for(uint8 CanDrvNum = 0; CanDrvNum < CAN_DRIVER_NUM; CanDrvNum++)
+	{
+		for(uint8 CanIfCtrlNum = 0; CanIfCtrlNum < CANIF_CONTROLLERS_NUM; CanIfCtrlNum++)
+		{
+			if((CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CanDrvNum].CanIfCtrlCfgObj[CanIfCtrlNum].CanIfCtrlId) == CanIfControllerId)
+			{
+				uint8 ret = CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CanDrvNum].CanIfCtrlCfgObj[CanIfCtrlNum].CanIfCtrlCanCtrlRef->CanControllerId;
+			}
+		}
+	}
+	return ret;
+}
+
+uint8 Can_GetCanIfController_Mapping(uint8 CanCtrlId, uint8 CanCtrlBaseAddr)// has CanController physical Id and want to get the logical Id
+{
+	for(uint8 CanDrvNum = 0; CanDrvNum < CAN_DRIVER_NUM; CanDrvNum++)
+	{
+		for(uint8 CanCtrlNum = 0; CanCtrlNum < CANIF_CONTROLLERS_NUM; CanCtrlNum++)
+		{
+			if((CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CanDrvNum].CanIfCtrlCfgObj[CanCtrlNum].CanIfCtrlCanCtrlRef->CanControllerId) == CanCtrlId \
+			&& (CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CanDrvNum].CanIfCtrlCfgObj[CanCtrlNum].CanIfCtrlCanCtrlRef->CanControllerBaseAddress) == CanCtrlBaseAddr)
+			{
+				uint8 ret = CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CanDrvNum].CanIfCtrlCfgObj[CanCtrlNum].CanIfCtrlId;
+			}
+			
+		}
+	}
+	return ret;
+}
 
 /*******************************************************************************
 *                    Functions Definitions                                     *
@@ -72,6 +119,20 @@ STATIC CanIf_PduModeType CanIf_PduMode = CANIF_OFFLINE;
 Std_ReturnType
 CanIf_SetPduMode(uint8 ControllerId, CanIf_PduModeType PduModeRequest)
 {
+	uint8 CanCtrlId = CanIf_GetCanController_Mapping(ControllerId);
+	if(CanIf_ControllerState[CanCtrlId]==CAN_CS_STARTED)
+	{
+		
+		// CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[ControllerId].CanIfCtrlCfgObj[ControllerId].CanIfCtrlCanCtrlRef->CanControllerId;
+		// /* Pass the current PDU mode to PduModePtr */
+		// *PduModePtr = CanIf_PduMode;
+	}
+	else
+	{
+		
+	}
+	
+	
     CanIf_PduMode = PduModeRequest;
     /* Implementation here */
 }
@@ -94,7 +155,7 @@ CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
         ret_status = E_NOT_OK;
     }
     /* [SWS_CANIF_00346] */
-    if (ControllerId >= USED_CONTROLLERS_NUMBER)
+    if (ControllerId >= USED_CONTROLLERS_NUMBER)// shouldn't it be CANIF_CONTROLLERS_NUM instead of USED_CONTROLLERS_NUMBER
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
             CANIF_GET_PDU_MODE_SID, CANIF_E_PARAM_CONTROLLERID);
@@ -108,8 +169,10 @@ CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
         ret_status = E_NOT_OK;
     }
 #endif /* (CANIF_DEV_ERROR_DETECT == STD_ON) */
-
+	
+	/* Here we get the Can Controller physical ID */
+	uint8 CanCtrlId = CanIf_GetCanController_Mapping(ControllerId); // maybe we don't need this line here, only in SetPduMode
     /* Pass the current PDU mode to PduModePtr */
-    * PduModePtr = CanIf_PduMode;
+    *PduModePtr = CanIf_PduMode[ControllerId];
     return ret_status;
 }
