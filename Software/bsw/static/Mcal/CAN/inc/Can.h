@@ -289,7 +289,7 @@ typedef struct
     *   Enables polling of this hardware object.
     */
     boolean    CanHardwareObjectUsesPolling;
-} CanHardwareObject;
+} CanHardwareObjectType;
 
 
 /*
