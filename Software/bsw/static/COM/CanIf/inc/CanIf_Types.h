@@ -294,7 +294,11 @@ typedef struct {
 				be assigned to one specific ControllerId of the CanIf. 
 				Range: 0..number of configured controllers of all CAN Driver modules	*/
 				uint8 CanIfCtrlId;
-
+				
+				/* This parameter defines if a respective controller of the referenced CAN 
+				Driver modules is queriable for wake up events (Supports Wakeup Event or not). For Each CanIf Controller */
+				uint8 CanIfCtrlWakeupSupport;
+				
 				/*This parameter references to the logical handle of the underlying CAN
 				controller from the CAN Driver module to be served by the CAN
 				Interface module. The following parameters of CanController config
@@ -650,7 +654,7 @@ typedef struct {
 
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	
-				CanIfCtrlCfgType CanIfCtrlCfgObj;//To Do: It should be CanIfCtrlCfgType CanIfCtrlCfgObj[USED_CONTROLLERS_NUMBER];
+				CanIfCtrlCfgType CanIfCtrlCfgObj[CANIF_CONTROLLERS_NUM];//To Do: It should be CanIfCtrlCfgType CanIfCtrlCfgObj[USED_CONTROLLERS_NUMBER];
 }CanIfCtrlDrvCfgType;
 
 typedef struct {
