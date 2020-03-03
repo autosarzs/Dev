@@ -35,16 +35,12 @@
 #ifndef __CANIF_CFG_H__
 #define __CANIF_CFG_H__
 
-/*
- * SW Module Version is 1.0.0
- */
+/* SW Module Version is 1.0.0 */
 #define CANIF_CFG_SW_MAJOR_VERSION             (1U)
 #define CANIF_CFG_SW_MINOR_VERSION             (0U)
 #define CANIF_CFG_SW_PATCH_VERSION             (0U)
 
- /*
-  * AUTOSAR Version is 4.3.1 compatible
-  */
+ /* AUTOSAR Version is 4.3.1 compatible */
 #define CANIF_CFG_AR_RELEASE_MAJOR_VERSION    (4U) 
 #define CANIF_CFG_AR_RELEASE_MINOR_VERSION    (3U)
 #define CANIF_CFG_AR_RELEASE_PATCH_VERSION    (1U)
@@ -525,12 +521,14 @@ CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, no <User_ValidateWakeupEvent> API
 Controller. Each controller of all connected CAN Driver modules shall
 be assigned to one specific ControllerId of the CanIf. Range:
 0..number of configured controllers of all CAN Driver modules*/
-#define CANIF_CTRL_ID							(255U)
+#define CANIF_CTRL_ID_0							(0U)
+#define CANIF_CTRL_ID_1							(1U)
 
 /*This parameter defines if a respective controller of the referenced CAN
 Driver modules is queriable for wake up events.
 True: Enabled False: Disabled*/
-#define CANIF_CTRL_WAKEUP_SUPPORT				STD_OFF
+#define CANIF_CTRL_0_WAKEUP_SUPPORT				STD_OFF
+#define CANIF_CTRL_1_WAKEUP_SUPPORT				STD_OFF
 
 /*This parameter abstracts from the CAN Transceiver Driver specific
 parameter Transceiver. Each transceiver of all connected CAN
@@ -598,13 +596,13 @@ FULL, this parameter equals 0 for this TxBuffer.*/
 
 /* CAN_DRIVER_NUM is a size of array to define the number of underlying CAN Driver modules*/
 /* It defines muliplicity of CanIfCtrlDrvCfg & CanIfInitHohCfg containers */
-#define  CAN_DRIVER_NUM                             3
+#define  CAN_DRIVER_NUM                             (1U)
 
 /*CAN_TRANSCEIVER_NUM is used to specify the number of containers contains the configuration (parameters)
 of all addressed CAN transceivers by each underlying
 CAN Transceiver Driver module*/
 /*It defines muliplicity of CanIfTrcvDrvCfg & CanIfTrcvCfg containers */
-#define CAN_TRANSCEIVER_NUM                         1
+#define CAN_TRANSCEIVER_NUM                         (1U)
 
 /*BUFFERS_NUM is a size of array to define the number of containers contain the Txbuffer configuration.
 Multiple buffers with different sizes could be configured.
@@ -612,32 +610,73 @@ If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the
 CanIf Tx L-PDU only refers via this CanIfBufferCfg the
 corresponding CanIfHthCfg.*/
 /*It defines muliplicity of CanIfBufferCfg container*/
-#define  BUFFERS_NUM                                10
+#define  BUFFERS_NUM                                (10U)
 
 /* RX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
 of each receive CAN L-PDU.*/
 /*It defines muliplicity of CanIfRxPduCfg container*/
-#define RX_CAN_L_PDU_NUM                            10
+#define RX_CAN_L_PDU_NUM                            (10U)
 
 /*TX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
 of each transmit CAN L-PDU.*/
 /*It defines muliplicity of CanIfTxPduCfg container*/
-#define TX_CAN_L_PDU_NUM                            10 
+#define TX_CAN_L_PDU_NUM                            (10U) 
 
 /*HRH_OBj_NUM is used to specify the number of containers contains configuration parameters for
 each hardware receive object (HRH).*/
 /*It defines muliplicity of CanIfHrhCfg container*/
-#define HRH_OBj_NUM                                 2
+#define HRH_OBj_NUM                                 (2U)
 
 /*HTH_OBj_NUM is used to specify the number of containers contains configuration parameters for
 each hardware transmit object (HTH).*/
 /*It defines muliplicity of CanIfHthCfg container*/
-#define HTH_OBj_NUM                                 2
+#define HTH_OBj_NUM                                 (2U)
 
 /*CANID_RANGES_NUM is used to specify the number of containers Defines the parameters required for configurating
 multiple CANID ranges for a given same HRH*/
 /*It defines muliplicity of CanIfHrhRangeCfg container*/
-#define CANID_RANGES_NUM                           16    
+#define CANID_RANGES_NUM                            (16U)    
 
+/* Num of logical CAN controllers with respect to CanIf */
+#define CANIF_CONTROLLERS_NUM						(1U)
+
+/*******************************************************************************
+*                    CANIF, CAN Controller ID Mapping                          *
+*******************************************************************************/
+#define CANIF_CAN_CONTROLLER_MAPPING(CANIF_CONTROLLER_ID, CAN_CTRL_ID, CAN_DRV_ID) switch(CAN_DRV_ID)\
+{\
+	case CAN0_ID:\
+	switch(CANIF_CONTROLLER_ID)\
+	{\
+		case CANIF_CTRL_ID_0:\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN0_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_0].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN0_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_0].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		break;\
+		case CANIF_CTRL_ID_1:\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN0_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_1].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN0_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_1].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		break;\
+		default:\
+		break;\
+	}\
+	break;\
+	case CAN1_ID:\
+	switch(CANIF_CONTROLLER_ID)\
+	{\
+		case CANIF_CTRL_ID_0:\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN1_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_0].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN1_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_0].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		break;\
+		case CANIF_CTRL_ID_1:\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN1_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_1].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN1_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_1].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		break;\
+		default:\
+		break;\
+	}\
+	break;\
+	default:\
+	break;\
+}
 
 #endif /* __CANIF_CFG_H__ */
