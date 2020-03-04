@@ -639,5 +639,9 @@ multiple CANID ranges for a given same HRH*/
 /*It defines muliplicity of CanIfHrhRangeCfg container*/
 #define CANID_RANGES_NUM                           16    
 
+/*
+	Mapping array of CAN Ids.
+*/
+extern uint8 CanIf_AbstractedIds[];
 
 #endif /* __CANIF_CFG_H__ */
