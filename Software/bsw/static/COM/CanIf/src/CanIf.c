@@ -41,6 +41,10 @@
 /*private function IDs*/
 #define CANIF_CHECK_DLC_API_ID	(0xAA)
 
+
+//Temp canif config variable.
+static CanIf_ConfigType * CanIf_ConfigPtr = NULL_PTR;
+
 /*****************************************************************************************/
 /*                                   Local Function Definition                           */
 /*****************************************************************************************/
@@ -54,7 +58,7 @@
  *  */
 /******************************************************************************/
 #if (CANIF_PRIVATE_DATA_LENGTH_CHECK == STD_ON)
-static Std_ReturnType CanIfCheckDLC(const CanIfRxPduCfgType * const pPduCfg, const PduInfoType * pPduInfo)
+static Std_ReturnType CanIf_CheckDLC(const CanIfRxPduCfgType * const pPduCfg, const PduInfoType * pPduInfo)
 {
 	Std_ReturnType return_val = E_OK;
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
@@ -86,6 +90,47 @@ static Std_ReturnType CanIfCheckDLC(const CanIfRxPduCfgType * const pPduCfg, con
 	return return_val;
 }
 #endif
+
+/******************************************************************************/
+/*
+ * Brief				Performs Software filtering on recieved Pdus.
+ *						it is recommended to offer several search algorithms like
+ *						linear search, table search and/or hash search variants to provide the most optimal
+ *						solution for most use cases.
+ * Param-Name[in]      	pPduCfg: Pointer to configured PDU struct.
+ * 						Mailbox: Revcieved Pdu from CanDrv.
+ * Return              	Std_ReturnType
+ *  */
+/******************************************************************************/
+static Std_ReturnType CanIf_SW_Filter(const CanIfRxPduCfgType * const pPduCfg, const Can_HwType * Mailbox )
+{
+	Std_ReturnType ret_val = E_OK;
+	//Configured sw algorithm is binary.
+	if(BINARY == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+	{
+
+	}
+	//Configured sw algorithm is index
+	else if(INDEX == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+	{
+
+	}
+	//Configured sw algorithm is Linear
+	else if(LINEAR == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+	{
+
+	}
+	//Configured sw algorithm is Table
+	else if(TABLE == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+	{
+
+	}
+	else
+	{
+		ret_val = E_NOT_OK;
+	}
+	return ret_val;
+}
 
 
 #if (CANIF_SET_BAUDRATE_API == STD_ON)
@@ -133,7 +178,7 @@ else
 
 void CanIf_RxIndication( const Can_HwType* Mailbox, const PduInfoType* PduInfoPtr )
 {
-#if(TRUE == STD_ON)
+#if(CANIF_DEV_ERROR_DETECT == STD_ON)
 
 	/*SWS_CANIF_00419] d If parameter PduInfoPtr or Mailbox of
 	CanIf_RxIndication() has an invalid value, CanIf shall report development
