@@ -133,12 +133,6 @@ typedef uint8 CanIf_ServiceId;
 #define CANIF_GET_PDU_MODE_SID                   ((CanIf_ServiceId)0x0a) 
 
 /*******************************************************************************
-*           CAN, CAN IF Controller ID Mapping Functions Declarations           *
-*******************************************************************************/
-uint8 CanIf_GetCanController_Mapping(uint8 CanIfControllerId);
-uint8 Can_GetCanIfController_Mapping(uint8 CanCtrlId, uint8 CanCtrlBaseAddr);
-
-/*******************************************************************************
 * Service Name:       CanIf_SetPduMode
 * Service ID[hex]:    0x09
 * Sync/Async:         Synchronous
