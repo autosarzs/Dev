@@ -358,7 +358,6 @@ is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured
 	#endif	
 #endif
 
-
 /* CAN Identifier of Receive CAN L-PDUs used by the CAN Interface.
 Exa: Software Filtering. This parameter is used if exactly one Can
 Identifier is assigned to the Pdu. If a range is assigned then the
@@ -521,12 +520,14 @@ CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, no <User_ValidateWakeupEvent> API
 Controller. Each controller of all connected CAN Driver modules shall
 be assigned to one specific ControllerId of the CanIf. Range:
 0..number of configured controllers of all CAN Driver modules*/
+
 #define CANIF_CTRL_ID_0							(0U)
 #define CANIF_CTRL_ID_1							(1U)
 
 /*This parameter defines if a respective controller of the referenced CAN
 Driver modules is queriable for wake up events.
 True: Enabled False: Disabled*/
+
 #define CANIF_CTRL_0_WAKEUP_SUPPORT				STD_OFF
 #define CANIF_CTRL_1_WAKEUP_SUPPORT				STD_OFF
 
@@ -595,6 +596,7 @@ FULL, this parameter equals 0 for this TxBuffer.*/
 *************************************************************************************************************/
 
 /* CAN_DRIVER_NUM is a size of array to define the number of underlying CAN Driver modules*/
+
 /* It defines multiplicity of CanIfCtrlDrvCfg & CanIfInitHohCfg containers */
 #define  CAN_DRIVER_NUM                             (1U)
 
@@ -602,6 +604,7 @@ FULL, this parameter equals 0 for this TxBuffer.*/
 of all addressed CAN transceivers by each underlying
 CAN Transceiver Driver module*/
 /*It defines muliplicity of CanIfTrcvDrvCfg & CanIfTrcvCfg containers */
+
 #define CAN_TRANSCEIVER_NUM                         (1U)
 
 /*BUFFERS_NUM is a size of array to define the number of containers contain the Txbuffer configuration.
@@ -610,31 +613,37 @@ If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the
 CanIf Tx L-PDU only refers via this CanIfBufferCfg the
 corresponding CanIfHthCfg.*/
 /*It defines muliplicity of CanIfBufferCfg container*/
+
 #define  BUFFERS_NUM                                (10U)
 
 /* RX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
 of each receive CAN L-PDU.*/
 /*It defines muliplicity of CanIfRxPduCfg container*/
+
 #define RX_CAN_L_PDU_NUM                            (10U)
 
 /*TX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
 of each transmit CAN L-PDU.*/
 /*It defines muliplicity of CanIfTxPduCfg container*/
+
 #define TX_CAN_L_PDU_NUM                            (10U) 
 
 /*HRH_OBj_NUM is used to specify the number of containers contains configuration parameters for
 each hardware receive object (HRH).*/
 /*It defines muliplicity of CanIfHrhCfg container*/
+
 #define HRH_OBj_NUM                                 (2U)
 
 /*HTH_OBj_NUM is used to specify the number of containers contains configuration parameters for
 each hardware transmit object (HTH).*/
 /*It defines muliplicity of CanIfHthCfg container*/
+
 #define HTH_OBj_NUM                                 (2U)
 
 /*CANID_RANGES_NUM is used to specify the number of containers Defines the parameters required for configurating
 multiple CANID ranges for a given same HRH*/
 /*It defines muliplicity of CanIfHrhRangeCfg container*/
+
 #define CANID_RANGES_NUM                            (16U)    
 
 /* Num of logical CAN controllers with respect to CanIf */
