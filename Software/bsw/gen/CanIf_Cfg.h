@@ -595,7 +595,7 @@ FULL, this parameter equals 0 for this TxBuffer.*/
 *************************************************************************************************************/
 
 /* CAN_DRIVER_NUM is a size of array to define the number of underlying CAN Driver modules*/
-/* It defines muliplicity of CanIfCtrlDrvCfg & CanIfInitHohCfg containers */
+/* It defines multiplicity of CanIfCtrlDrvCfg & CanIfInitHohCfg containers */
 #define  CAN_DRIVER_NUM                             (1U)
 
 /*CAN_TRANSCEIVER_NUM is used to specify the number of containers contains the configuration (parameters)
@@ -649,12 +649,12 @@ multiple CANID ranges for a given same HRH*/
 	switch(CANIF_CONTROLLER_ID)\
 	{\
 		case CANIF_CTRL_ID_0:\
-		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN0_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_0].CanIfCtrlId=CANIF_CONTROLLER_ID;\
-		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN0_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_0].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
 		break;\
 		case CANIF_CTRL_ID_1:\
-		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN0_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_1].CanIfCtrlId=CANIF_CONTROLLER_ID;\
-		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN0_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_1].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
 		break;\
 		default:\
 		break;\
@@ -664,12 +664,12 @@ multiple CANID ranges for a given same HRH*/
 	switch(CANIF_CONTROLLER_ID)\
 	{\
 		case CANIF_CTRL_ID_0:\
-		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN1_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_0].CanIfCtrlId=CANIF_CONTROLLER_ID;\
-		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN1_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_0].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
 		break;\
 		case CANIF_CTRL_ID_1:\
-		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN1_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_1].CanIfCtrlId=CANIF_CONTROLLER_ID;\
-		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN1_ID].CanIfCtrlCfgObj[CANIF_CTRL_ID_1].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
 		break;\
 		default:\
 		break;\
