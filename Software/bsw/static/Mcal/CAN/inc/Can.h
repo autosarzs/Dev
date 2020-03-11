@@ -277,6 +277,7 @@ typedef struct
     /*
     *   Reference to CAN Controller to which the HOH is associated to.
     */
+
     CanControllerType*      CanControllerRef;
 
     /*
@@ -289,6 +290,7 @@ typedef struct
     *   Enables polling of this hardware object.
     */
     boolean    CanHardwareObjectUsesPolling;
+
 } CanHardwareObjectType;
 
 
@@ -312,8 +314,10 @@ typedef struct Can_Pdu
 typedef struct 
 {
     /*Reference to CAN Controller to which the HOH is associated to.*/
+
     CanControllerType *CanControllerRef;
     /*This container contains the configuration (parameters) of CAN Hardware Objects. */
+
     CanHardwareObjectType *CanHardwareObjectRef;
 } CanConfigSet;
 
@@ -326,9 +330,8 @@ typedef struct
     *   This container contains the configuration parameters and sub
     *   containers of the AUTOSAR Can module...Multiplicity =1
     */
-    CanControllerType* CanControllerCfgRef;
-    CanHardwareObjectType* CanHardwareObjectRef;
-
+CanControllerType* CanControllerCfgRef;
+CanHardwareObjectType* CanHardwareObjectRef;
 } Can_ConfigType;
 /* -------------------------------------------------------------------------- */
 /*                             Functions Prototype                            */
