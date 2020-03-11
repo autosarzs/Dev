@@ -650,6 +650,7 @@ typedef struct {
 				This reference can be used to get any information (Ex. Driver Name, Vendor ID) from
 				the CAN driver. The CAN Driver name can be derived from the ShortName of the CAN driver module.*/
 				//CanGeneralType* CanIfCtrlDrvNameRef; //Won't be Used, as CanGeneralType isn't implemented as struct in Can Driver Module
+				
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	
 				CanIfCtrlCfgType CanIfCtrlCfgObj[CANIF_CONTROLLERS_NUM];
