@@ -40,12 +40,10 @@
 #define CANIF_CFG_SW_MINOR_VERSION             (0U)
 #define CANIF_CFG_SW_PATCH_VERSION             (0U)
 
- /* AUTOSAR Version is 4.3.1 compatible */
-#define CANIF_CFG_AR_RELEASE_MAJOR_VERSION    (4U) 
-#define CANIF_CFG_AR_RELEASE_MINOR_VERSION    (3U)
-#define CANIF_CFG_AR_RELEASE_PATCH_VERSION    (1U)
-
-//*****************************************************************************
+/* AUTOSAR Version 4.3.1 */
+#define CANIF_CFG_AR_RELEASE_MAJOR_VERSION   (4U)
+#define CANIF_CFG_AR_RELEASE_MINOR_VERSION   (3U)
+#define CANIF_CFG_AR_RELEASE_PATCH_VERSION   (1U)//*****************************************************************************
 //  This parameter defines if the buffer element length shall be fixed to 8
 //  Bytes for buffers to which only PDUs < 8 Bytes are assigned.
 //  TRUE: Minimum buffer element length is fixed to 8 Bytes. FALSE:
@@ -75,6 +73,7 @@
 //  false: detection and notification is disabled.
 //  Default Value: false
 //*****************************************************************************
+
 #define CANIF_DEV_ERROR_DETECT                 	STD_ON
 
 //*****************************************************************************
@@ -357,7 +356,6 @@ is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Cdd_CanIfTxConfirmation /* Selectable */
 	#endif	
 #endif
-
 /* CAN Identifier of Receive CAN L-PDUs used by the CAN Interface.
 Exa: Software Filtering. This parameter is used if exactly one Can
 Identifier is assigned to the Pdu. If a range is assigned then the

@@ -93,9 +93,8 @@
 #define CANIF_E_STOPPED                    ((uint8)70)
 #define CANIF_E_TXPDU_LENGTH_EXCEEDED      ((uint8)90)
 
-
 #include "CanIf_Types.h"
-  /* AUTOSAR version checking */
+/* AUTOSAR version checking */
 #if ((CANIF_AR_RELEASE_MAJOR_VERSION != CANIF_TYPES_AR_RELEASE_MAJOR_VERSION)\
  ||  (CANIF_AR_RELEASE_MINOR_VERSION != CANIF_TYPES_AR_RELEASE_MINOR_VERSION)\
  ||  (CANIF_AR_RELEASE_PATCH_VERSION != CANIF_TYPES_AR_RELEASE_PATCH_VERSION))
@@ -108,7 +107,6 @@
  ||  (CANIF_SW_PATCH_VERSION != CANIF_TYPES_SW_PATCH_VERSION))
 #error "The AR version of Det.h does not match the expected version"
 #endif /* SW module version checking */
-
 #include "CanIf_Cfg.h"
 /* AUTOSAR version checking */
 #if ((CANIF_AR_RELEASE_MAJOR_VERSION != CANIF_CFG_AR_RELEASE_MAJOR_VERSION)\
@@ -126,11 +124,30 @@
 
 
 /*******************************************************************************
- *                           API Service ID Macros                             *
+*                           API Service ID Macros                              *
 *******************************************************************************/
 typedef uint8 CanIf_ServiceId;
+#define CANIF_GET_CONTROLLER_ERROR_STATE_SID     ((CanIf_ServiceId)0x4b)
 #define CANIF_SET_PDU_MODE_SID                   ((CanIf_ServiceId)0x09)
-#define CANIF_GET_PDU_MODE_SID                   ((CanIf_ServiceId)0x0a) 
+#define CANIF_GET_PDU_MODE_SID                   ((CanIf_ServiceId)0x0a)
+
+/*******************************************************************************
+* Service Name:       CanIf_GetControllerErrorState
+* Service ID[hex]:    0x4b
+* Sync/Async:         Synchronous
+* Reentrancy:         Non Reentrant for the same ControllerId
+* Parameters (in):    ControllerId Abstracted CanIf ControllerId which is assigned to a
+                      CAN controller, which is requested for ErrorState.
+* Parameters (inout): None
+* Parameters (out):   ErrorStatePtr Pointer to a memory location, where the error state
+                      of the CAN controller will be stored.
+* Return value:       Std_ReturnType E_OK: Error state request has been accepted.
+                      E_NOT_OK: Error state request has not been accepted.
+* Description:        This service calls the corresponding CAN Driver service for 
+                      obtaining the error state of the CAN controller.
+***********************************************************************************/
+Std_ReturnType 
+CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr);
 
 /*******************************************************************************
 * Service Name:       CanIf_SetPduMode

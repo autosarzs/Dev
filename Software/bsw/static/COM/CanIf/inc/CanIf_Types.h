@@ -75,13 +75,12 @@
 
 //******************************************************************************
 // CanIf_ModuleStateType
-// CANIF_UNINIT : After power-up/reset, the Can module shall be in the state 
-// CAN_UNINIT and also CANIF will be in CANIF_UNINT.
+// CANIF_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT and also CANIF will be in CANIF_UNINT.
 // CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
 //******************************************************************************
 typedef uint8 CanIf_ModuleStateType;
-#define CANIF_UNINT			((CanIf_ModuleStatusType)0x00)
-#define CANIF_READY			((CanIf_ModuleStatusType)0x01)
+#define CANIF_UNINT			((CanIf_ModuleStateType)0x00)
+#define CANIF_READY			((CanIf_ModuleStateType)0x01)
 
 //*****************************************************************************
 //  Selects the desired software filter mechanism for reception only. Each
@@ -650,8 +649,7 @@ typedef struct {
 				/*CAN Interface Driver Reference.
 				This reference can be used to get any information (Ex. Driver Name, Vendor ID) from
 				the CAN driver. The CAN Driver name can be derived from the ShortName of the CAN driver module.*/
-				//CanGeneralType* CanIfCtrlDrvNameRef;//Won't be Used, as CanGeneralType isn't implemented as struct in Can Driver Module
-
+				//CanGeneralType* CanIfCtrlDrvNameRef; //Won't be Used, as CanGeneralType isn't implemented as struct in Can Driver Module
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	
 				CanIfCtrlCfgType CanIfCtrlCfgObj[CANIF_CONTROLLERS_NUM];

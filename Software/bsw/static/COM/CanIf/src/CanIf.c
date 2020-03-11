@@ -146,7 +146,7 @@ static uint8 Can_GetCanIfController_Mapping(uint8 CanCtrlId, uint8 CanDrvId)// h
 	{
 		if((CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CanDrvId].CanIfCtrlCfgObj[CanIfCtrlNum].CanIfCtrlCanCtrlRef->CanControllerId) == CanCtrlId)
 		{
-			return (CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CanDrvId].CanIfCtrlCfgObj[CanCtrlNum].CanIfCtrlId);
+			return (CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CanDrvId].CanIfCtrlCfgObj[CanIfCtrlNum].CanIfCtrlId);
 		}
 	}
 	/*
