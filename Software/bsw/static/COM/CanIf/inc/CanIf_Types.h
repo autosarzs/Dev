@@ -272,13 +272,32 @@ typedef uint8 CanIfHrhRangeRxPduRangeCanIdTypeType;
 #define EXTENDED_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x00)
 #define STANDARD_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x01)
 
+/*
+	CanIf_PduModeType
+	[SWS_CANIF_00137] 
+	The PduMode of a channel defines its transmit or receive activity.
+	Communication direction (transmission and/or reception) of the channel can
+	be controlled separately or together by upper layers.
+*/
+typedef uint8 CanIf_PduModeType;
+#define CANIF_OFFLINE                                       ((CanIf_PduModeType)0x00)
+#define CANIF_TX_OFFLINE                                    ((CanIf_PduModeType)0x01)
+#if (CANIF_TX_OFFLINE_ACTIVE_SUPPORT == STD_ON)
+	#define CANIF_TX_OFFLINE_ACTIVE                         ((CanIf_PduModeType)0x02)
+#endif /* CanIfTxOfflineActiveSupport = TRUE */
+#define CANIF_ONLINE                                        ((CanIf_PduModeType)0x03)
+
 typedef struct {
 				/*This parameter abstracts from the CAN Driver specific parameter
 				Controller. Each controller of all connected CAN Driver modules shall
 				be assigned to one specific ControllerId of the CanIf. 
 				Range: 0..number of configured controllers of all CAN Driver modules	*/
 				uint8 CanIfCtrlId;
-
+				
+				/* This parameter defines if a respective controller of the referenced CAN 
+				Driver modules is queriable for wake up events (Supports Wakeup Event or not). For Each CanIf Controller */
+				uint8 CanIfCtrlWakeupSupport;
+				
 				/*This parameter references to the logical handle of the underlying CAN
 				controller from the CAN Driver module to be served by the CAN
 				Interface module. The following parameters of CanController config
@@ -630,11 +649,11 @@ typedef struct {
 				/*CAN Interface Driver Reference.
 				This reference can be used to get any information (Ex. Driver Name, Vendor ID) from
 				the CAN driver. The CAN Driver name can be derived from the ShortName of the CAN driver module.*/
-				CanGeneralType* CanIfCtrlDrvNameRef;
-
+				//CanGeneralType* CanIfCtrlDrvNameRef; //Won't be Used, as CanGeneralType isn't implemented as struct in Can Driver Module
+				
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	
-				CanIfCtrlCfgType CanIfCtrlCfgObj;//To Do: It should be CanIfCtrlCfgType CanIfCtrlCfgObj[USED_CONTROLLERS_NUMBER];
+				CanIfCtrlCfgType CanIfCtrlCfgObj[CANIF_CONTROLLERS_NUM];
 }CanIfCtrlDrvCfgType;
 
 typedef struct {
