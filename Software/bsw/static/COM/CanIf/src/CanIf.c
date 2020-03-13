@@ -325,8 +325,8 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
 
     if (ret_status == E_OK) /* if (ret_status == E_OK) */
     {
-        uint8 mapped_id = CanIf_AbstractedIds[ControllerId];
-        ret_status = Can_GetControllerErrorState(mapped_id, ErrorStatePtr);
+        uint8 CanCtrlId = CanIf_GetCanController_Mapping(ControllerId);
+        ret_status = Can_GetControllerErrorState(CanCtrlId, ErrorStatePtr);
     }
     return ret_status;
 }
