@@ -51,9 +51,9 @@
 #define CANIF_SW_MINOR_VERSION             (0U)
 #define CANIF_SW_PATCH_VERSION             (0U)
 
- /*
-  * AUTOSAR Version is 4.3.1 compatible
-  */
+/*
+ * AUTOSAR Version is 4.3.1 compatible
+ */
 #define CANIF_AR_RELEASE_MAJOR_VERSION    (4U) 
 #define CANIF_AR_RELEASE_MINOR_VERSION    (3U)
 #define CANIF_AR_RELEASE_PATCH_VERSION    (1U)
@@ -93,7 +93,6 @@
 #define CANIF_E_STOPPED                    ((uint8)70)
 #define CANIF_E_TXPDU_LENGTH_EXCEEDED      ((uint8)90)
 
-
 #include "CanIf_Types.h"
 /* AUTOSAR version checking */
 #if ((CANIF_AR_RELEASE_MAJOR_VERSION != CANIF_TYPES_AR_RELEASE_MAJOR_VERSION)\
@@ -108,7 +107,6 @@
  ||  (CANIF_SW_PATCH_VERSION != CANIF_TYPES_SW_PATCH_VERSION))
 #error "The AR version of Det.h does not match the expected version"
 #endif /* SW module version checking */
-
 #include "CanIf_Cfg.h"
 /* AUTOSAR version checking */
 #if ((CANIF_AR_RELEASE_MAJOR_VERSION != CANIF_CFG_AR_RELEASE_MAJOR_VERSION)\
@@ -126,10 +124,12 @@
 
 
 /*******************************************************************************
- *                           API Service ID Macros                             *
-********************************************************************************/
+*                           API Service ID Macros                              *
+*******************************************************************************/
 typedef uint8 CanIf_ServiceId;
-#define CANIF_GET_CONTROLLER_ERROR_STATE_SID                   ((CanIf_ServiceId)0x4b)
+#define CANIF_GET_CONTROLLER_ERROR_STATE_SID     ((CanIf_ServiceId)0x4b)
+#define CANIF_SET_PDU_MODE_SID                   ((CanIf_ServiceId)0x09)
+#define CANIF_GET_PDU_MODE_SID                   ((CanIf_ServiceId)0x0a)
 
 /*******************************************************************************
 * Service Name:       CanIf_GetControllerErrorState
@@ -148,6 +148,45 @@ typedef uint8 CanIf_ServiceId;
 ***********************************************************************************/
 Std_ReturnType 
 CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr);
+
+/*******************************************************************************
+* Service Name:       CanIf_SetPduMode
+* Service ID[hex]:    0x09
+* Sync/Async:         Synchronous
+* Reentrancy:         Non Reentrant
+* Parameters (in):    ControllerId All PDUs of the own ECU connected to the corre-
+                      sponding CanIf ControllerId, which is assigned to a physical 
+                      CAN controller are addressed.
+                      PduModeRequest Requested PDU mode change
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       Std_ReturnType E_OK: PDU mode request has been accepted
+                                     E_NOT_OK: PDU mode request has not been
+                                     ac-cepted.
+* Description:        This service sets the requested mode at the L-PDUs of a predefined
+                      logical PDU channel.
+***********************************************************************************/
+Std_ReturnType 
+CanIf_SetPduMode(uint8 ControllerId, CanIf_PduModeType PduModeRequest);
+
+/*******************************************************************************
+* Service Name:       CanIf_GetPduMode
+* Service ID[hex]:    0x0a
+* Sync/Async:         Synchronous
+* Reentrancy:         Reentrant (Not for the same channel)
+* Parameters (in):    ControllerId All PDUs of the own ECU connected to the corre-
+                      sponding CanIf ControllerId, which is assigned to a physical 
+                      CAN controller are addressed.
+* Parameters (inout): None
+* Parameters (out):   PduModePtr Pointer to a memory location, where the current
+                      mode of the logical PDU channel will be stored.                      
+* Return value:       Std_ReturnType E_OK: PDU mode request has been accepted
+                                     E_NOT_OK: PDU mode request has not been 
+                                     ac-cepted.                      
+* Description:        This service reports the current mode of a requested PDU channel.
+***********************************************************************************/
+Std_ReturnType 
+CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr);
 
 
 #endif /* __CANIF_H__ */
