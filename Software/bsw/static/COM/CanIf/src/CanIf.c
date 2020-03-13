@@ -62,7 +62,7 @@
 */
 /******************************************************************************
  CanIf_ModuleState: it's a variable to store the CanIf module state
- CanIf_ModuleStateType:
+ CanIf_ModuleStateType: a Data Type that can be one of the following
  CANIF_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT 
  and also CANIF will be in CANIF_UNINT.
  CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
@@ -290,8 +290,8 @@ CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
     return ret_status;
 }
 
-********************************************************************************/
-/*            CanIf_GetControllerErrorState service definition                 */
+/********************************************************************************/
+/*             CanIf_GetControllerErrorState service definition                 */
 Std_ReturnType 
 CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr)
 {
@@ -323,7 +323,7 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
     }
 #endif /* (CANIF_DEV_ERROR_DETECT == STD_ON) */
 
-    if (ret_status == E_OK) /* if (ret_status == E_OK) */
+    if (ret_status == E_OK)
     {
         uint8 CanCtrlId = CanIf_GetCanController_Mapping(ControllerId);
         ret_status = Can_GetControllerErrorState(CanCtrlId, ErrorStatePtr);
