@@ -358,7 +358,6 @@ is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured
 	#endif	
 #endif
 
-
 /* CAN Identifier of Receive CAN L-PDUs used by the CAN Interface.
 Exa: Software Filtering. This parameter is used if exactly one Can
 Identifier is assigned to the Pdu. If a range is assigned then the
@@ -521,12 +520,14 @@ CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, no <User_ValidateWakeupEvent> API
 Controller. Each controller of all connected CAN Driver modules shall
 be assigned to one specific ControllerId of the CanIf. Range:
 0..number of configured controllers of all CAN Driver modules*/
-#define CANIF_CTRL_ID							(255U)
+#define CANIF_CTRL_ID_0							(0U)
+#define CANIF_CTRL_ID_1							(1U)
 
 /*This parameter defines if a respective controller of the referenced CAN
 Driver modules is queriable for wake up events.
 True: Enabled False: Disabled*/
-#define CANIF_CTRL_WAKEUP_SUPPORT				STD_OFF
+#define CANIF_CTRL_0_WAKEUP_SUPPORT				STD_OFF
+#define CANIF_CTRL_1_WAKEUP_SUPPORT				STD_OFF
 
 /*This parameter abstracts from the CAN Transceiver Driver specific
 parameter Transceiver. Each transceiver of all connected CAN
@@ -635,10 +636,46 @@ multiple CANID ranges for a given same HRH*/
 /*It defines muliplicity of CanIfHrhRangeCfg container*/
 #define CANID_RANGES_NUM                            (16U)    
 
-/*
-	Mapping array of CAN Ids.
-*/
-extern uint8 CanIf_AbstractedIds[];
+/* Num of logical CAN controllers with respect to CanIf */
+#define CANIF_CONTROLLERS_NUM						(1U)
 
 
+/*******************************************************************************
+*                    CANIF, CAN Controller ID Mapping                          *
+*******************************************************************************/
+#define CANIF_CAN_CONTROLLER_MAPPING(CANIF_CONTROLLER_ID, CAN_CTRL_ID, CAN_DRV_ID) switch(CAN_DRV_ID)\
+{\
+	case CAN0_ID:\
+	switch(CANIF_CONTROLLER_ID)\
+	{\
+		case CANIF_CTRL_ID_0:\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		break;\
+		case CANIF_CTRL_ID_1:\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		break;\
+		default:\
+		break;\
+	}\
+	break;\
+	case CAN1_ID:\
+	switch(CANIF_CONTROLLER_ID)\
+	{\
+		case CANIF_CTRL_ID_0:\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		break;\
+		case CANIF_CTRL_ID_1:\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlId=CANIF_CONTROLLER_ID;\
+		CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[CAN_DRV_ID].CanIfCtrlCfgObj[CANIF_CONTROLLER_ID].CanIfCtrlCanCtrlRef->CanControllerId=CAN_CTRL_ID;\
+		break;\
+		default:\
+		break;\
+	}\
+	break;\
+	default:\
+	break;\
+}
 #endif /* __CANIF_CFG_H__ */
