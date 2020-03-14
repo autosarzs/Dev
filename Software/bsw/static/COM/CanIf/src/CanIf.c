@@ -178,34 +178,23 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
          */
          for(counter = 0 ; counter<BUFFERS_NUM;counter++)
          {
-             /*[SWS_CANIF_00835]
-              * CanIfTxBuffer is only configurable bigger than zero if the CanIfTxBuffer is
-              * not assigned to a FullCAN HTH (see CanIfBufferSize).
-              * If the CanHandleType of the referred HTH equals FULL, this parameter equals 0 for this TxBuffer.
-              * */
-             /*Check if HTH of type FULLCAN to Set buffer size to zero*/
-              if(CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfBufferRef->\
-                      CanIfBufferHthRef->CanIfHthIdSymRef->CanHandleType == FULL_CAN)
-              {
-                  CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfBufferRef->CanIfBufferSize = 0 ;
-              }
-              else
-              {
-                 /*Get number of PDUs saved in this buffer*/
-                  TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfBufferRef->CanIfBufferSize;
+             /*Get number of PDUs saved in this buffer*/
+              TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfBufferRef->CanIfBufferSize;
 
-                 /*Loop to initialize all PDUs saved in this buffer */
-                 for(PduCounter =0;PduCounter<TxBufferSize;PduCounter++)
-                 {
-                    /*
-                     * Initialize all PDUs information
-                     */
-                     CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].CanId   = 0 ;
-                     CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].TxPduId = 0 ;
-                     CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].TxPduInfo->MetaDataPtr = NULL_PTR ;
-                     CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].TxPduInfo->SduDataPtr  = NULL_PTR ;
-                     CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].TxPduInfo->SduLength   = 0 ;
-                 }
+             /*Loop to initialize all PDUs saved in this buffer */
+             for(PduCounter =0;PduCounter<TxBufferSize;PduCounter++)
+             {
+                /*
+                 * Initialize all PDUs information
+                 */
+                 /*Init dynamic CanId with 0*/
+                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].CanId   = 0 ;
+                 /*Init PDU Id with 0*/
+                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].TxPduId = 0 ;
+                 /*Init all sduDataBuffer elements with 0 by casting the array address as uint64* */
+                 *((uint64*)CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)= 0;
+                 /*Init SduLength with 0 */
+                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduLength = 0 ;
              }
          }
      #endif
@@ -221,32 +210,31 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
      CanIf_ModuleState = CANIF_READY ;
  }
 
-
- /****************************************************************************************/
-   /*    Function Description    : This function De-initializes the CanIf module.          */
-   /*    Parameter in            : none                                                    */
-   /*    Parameter inout         : none                                                    */
-   /*    Parameter out           : none                                                    */
-   /*    Return value            : none                                                    */
-   /*    Requirement             : SWS_CANIF_91002                                         */
-   /*    Notes                   : Caller of the CanIf_DeInit() function has to be sure    */
-   /*                              there are no on-going transmissions/receptions          */
-   /*                              , nor any pending transmission confirmations.           */
-   /*                            :[SWS_BSW_00152] Call to De-Initialization functions is   */
-   /*                             restricted Only the ECU State Manager and                */
-   /*                             Basic Software Mode Manager are allowed to call          */
-   /*                            :[SWS_BSW_00072] Module state after De-Initialization     */
-   /*                             function The state of a BSW Module shall be set          */
-   /*                             accordingly at the beginning of the DeInitialization     */
-   /*                             function.                                                */
-   /*                            :[SWS_BSW_00233] Multiple calls to De-Initialization      */
-   /*                              functions The module De-Initialization function shall be*/
-   /*                              called only if the module was initialized before        */
-   /*                              (initialization function was called)                    */
-   /*                            :[SWS_BSW_00233] Multiple calls to De-Initialization      */
-   /*                              functions The module De-Initialization function shall   */
-   /*                              be called more than one time after the module           */
-   /*****************************************************************************************/
+/****************************************************************************************/
+/*    Function Description    : This function De-initializes the CanIf module.          */
+/*    Parameter in            : none                                                    */
+/*    Parameter inout         : none                                                    */
+/*    Parameter out           : none                                                    */
+/*    Return value            : none                                                    */
+/*    Requirement             : SWS_CANIF_91002                                         */
+/*    Notes                   : Caller of the CanIf_DeInit() function has to be sure    */
+/*                              there are no on-going transmissions/receptions          */
+/*                              , nor any pending transmission confirmations.           */
+/*                            :[SWS_BSW_00152] Call to De-Initialization functions is   */
+/*                             restricted Only the ECU State Manager and                */
+/*                             Basic Software Mode Manager are allowed to call          */
+/*                            :[SWS_BSW_00072] Module state after De-Initialization     */
+/*                             function The state of a BSW Module shall be set          */
+/*                             accordingly at the beginning of the DeInitialization     */
+/*                             function.                                                */
+/*                            :[SWS_BSW_00233] Multiple calls to De-Initialization      */
+/*                              functions The module De-Initialization function shall be*/
+/*                              called only if the module was initialized before        */
+/*                              (initialization function was called)                    */
+/*                            :[SWS_BSW_00233] Multiple calls to De-Initialization      */
+/*                              functions The module De-Initialization function shall   */
+/*                              be called more than one time after the module           */
+/*****************************************************************************************/
    void CanIf_DeInit(void){
 
        /*Report module without initialization parameter error*/

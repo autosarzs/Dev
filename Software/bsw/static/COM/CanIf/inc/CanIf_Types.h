@@ -338,32 +338,29 @@ typedef struct {
  */
 typedef struct
 {
-              /*Variables of this type shall be used to store
-                the basic information about a PDU of any type, namely a pointer variable
-                pointing to its SDU (payload), a pointer to Meta Data of the PDU,
-                and the corresponding length of the SDU in bytes.
-               */
-                PduInfoType*     TxPduInfo ;
-
+              /*Buffer To save PDU data with the max Can message data size */
+               uint8      SduDatabuffer[MAX_DATA_LENGTH]    ;
+              /*PDU Data length*/
+               uint8       SduLength   ;
               /*Id of this L-PDU*/
-                PduIdType        TxPduId;
+                PduIdType  TxPduId;
               /*[SWS_CANIF_00849]  For dynamic Transmit L-PDUs,
                  also the CanId has to be stored in the CanIfTxBuffer.
                */
-                Can_IdType       CanId  ;
+                Can_IdType    CanId  ;
 
 }CanIfPduInfoCfgType;
 
 typedef struct
 {
-       /*
-        * Pointer to all Pdus saved in this buffer
-        */
-       CanIfPduInfoCfgType* CanIfPduInfoRef;
-      /*
-       * Pointer to Txbuffer configurations
-       */
-      CanIfBufferCfgType* CanIfBufferRef ;
+   /*
+    * Pointer to all Pdus saved in this buffer
+    */
+    CanIfPduInfoCfgType* CanIfPduInfoRef;
+   /*
+    * Pointer to Txbuffer configurations
+    */
+    CanIfBufferCfgType* CanIfBufferRef ;
 }CanIfPduTxBufferCfgType;
 #endif
 
