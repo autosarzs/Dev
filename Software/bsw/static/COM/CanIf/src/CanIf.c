@@ -182,15 +182,27 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
     /*[SWS_CANIF_00417] d If parameter Mailbox->CanId of
 	CanIf_RxIndication() has an invalid value, CanIf shall report development
 	error code CANIF_E_PARAM_CANID to the Det_ReportError service of the DET
-	module, when CanIf_RxIndication() is called.*/
-    if (Mailbox->CanId > 3U)
-    {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
-                        CANIF_E_PARAM_CANID);
-    }
-    else
-    {
-    }
+	module, when CanIf_RxIndication() is called.
+
+	check can msg id when it's in standard frame
+	 msb = 0 > standard (11bit)
+	 msb = 1 > extended (29bit)*/
+	if(!(Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x000007FFU))
+	{
+		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+						CANIF_E_PARAM_CANID);
+	}
+	/*If extended frame*/
+	else if((Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x1FFFFFFFU))
+	{
+		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+								CANIF_E_PARAM_CANID);
+	}
+	else
+	{
+		
+	}
+	
 
     /*SWS_CANIF_00419] d If parameter PduInfoPtr or Mailbox of
 	CanIf_RxIndication() has an invalid value, CanIf shall report development
