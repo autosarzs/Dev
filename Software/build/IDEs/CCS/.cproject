@@ -48,7 +48,6 @@
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Infrastructure/platform/inc"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Mcal/CAN/inc"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/stub"/>
-									<listOptionValue builtIn="false" value="../../bsw/static/Infrastructure/platform/inc"/>
 									<listOptionValue builtIn="false" value="${CG_TOOL_INCLUDE_PATH}"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.OPT_LEVEL.173839305" name="Optimization Level" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.OPT_LEVEL.OPT_FOR_DEBUG" valueType="enumerated"/>
