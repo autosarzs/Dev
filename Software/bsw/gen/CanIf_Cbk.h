@@ -2,6 +2,7 @@
 #define __CANIF_CBK_H__
 
 #include "Can_GeneralTypes.h"
+#include "CanIf_Cfg.h"
 
 /* Module Version 1.0.0 */
 #define CAN_IF_TYPES_SW_MAJOR_VERSION           (1U)
