@@ -628,4 +628,13 @@ multiple CANID ranges for a given same HRH*/
 
 /*number of logical controllers */
 #define CANIF_CONTROLLERS_NUM                      2
+
+/*
+ * CanIfTriggerTransmitSupport [ECUC_CanIf_00844]
+ * Enables the CanIf_TriggerTransmit API at Pre-Compile-Time.
+ * Therefore, this parameter defines if there shall be support for trigger
+ * transmit transmissions. TRUE: Enabled FALSE: Disabled
+ */
+#define CanIfTriggerTransmitSupport                 STD_ON
+
 #endif /* __CANIF_CFG_H__ */
