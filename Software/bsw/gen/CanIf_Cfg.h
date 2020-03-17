@@ -223,53 +223,53 @@
 case of post-build loadable implementation using static memory
 allocation.
 Range: 0..18446744073709551615 */
-#define CANIF_MAX_BUFFER_SIZE					(18446744073709551615)
+//#define CANIF_MAX_BUFFER_SIZE					(18446744073709551615) /* Link Time or PostBuild parameter */
 
 /* Maximum number of Pdus. This parameter is needed only in case of
 post-build loadable implementation using static memory allocation.
 Range: 0..18446744073709551615 */
-#define CANIF_MAX_RX_PDU_CFG					(18446744073709551615)
+//#define CANIF_MAX_RX_PDU_CFG					(18446744073709551615) /* Link Time or PostBuild parameter */
 
 /* Maximum number of Pdus. This parameter is needed only in case of
 post-build loadable implementation using static memory allocation.
 Range: 0..18446744073709551615 */
-#define CANIF_MAX_TX_PDU_CFG					(18446744073709551615)
+//#define CANIF_MAX_TX_PDU_CFG					(18446744073709551615) /* Link Time or PostBuild parameter */
 
 /* CAN Identifier of transmit CAN L-PDUs used by the CAN Driver for
 CAN L-PDU transmission. Range: 11 Bit For Standard CAN Identifier
 ... 29 Bit For Extended CAN identifier
 The CAN Identifier may be omitted for dynamic transmit L-PDUs. */
-#define CANIF_TX_PDU_CAN_ID0					(0U)
-#define CANIF_TX_PDU_CAN_ID1					(1U)
+//#define CANIF_TX_PDU_CAN_ID0					(0U)	/* Link Time or PostBuild parameter */
+//#define CANIF_TX_PDU_CAN_ID1					(1U)	/* Link Time or PostBuild parameter */
 
 /* Identifier mask which denotes relevant bits in the CAN Identifier. This
 parameter may be used to keep parts of the CAN Identifier of dynamic
 transmit L-PDUs static. Range: 11 bits for Standard CAN Identifier, 29
 bits for Extended CAN Identifier.
 Range: 0 .. 536870911 */
-#define CANIF_TX_PDU_CAN_ID_MASK0				(1<<(uint32)0)
-#define CANIF_TX_PDU_CAN_ID_MASK1				(1<<(uint32)1)
+//#define CANIF_TX_PDU_CAN_ID_MASK0				(1<<(uint32)0) /* Link Time or PostBuild parameter */
+//#define CANIF_TX_PDU_CAN_ID_MASK1				(1<<(uint32)1) /* Link Time or PostBuild parameter */
 
 /* ECU wide unique, symbolic handle for transmit CAN L-SDU.
 Range: 0..max. number of CantTxPduIds. Range: 0 - 4294967295*/
-#define CANIF_TX_PDU_ID							(4294967295U)
+//#define CANIF_TX_PDU_ID							(4294967295U) /* Link Time or PostBuild parameter */
 
 /* If CanIfPublicPnFilterSupport is enabled, by this parameter PDUs
 could be configured which will pass the CanIfPnFilter.
 If there is no CanIfTxPduPnFilterPdu configured per controller,
 the corresponding controller applies no CanIfPnFilter.
 dependency: This parameter shall only be configurable if CanIfPublicPnSupport equals True. */
-#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-	#define CANIF_TX_PDU_PN_FILTER_PDU			STD_OFF
-#endif
+//#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
+//	#define CANIF_TX_PDU_PN_FILTER_PDU			STD_OFF 		/* Link Time or PostBuild parameter */
+//#endif
 
 /* Enables and disables transmit confirmation for each transmit CAN
 L-SDU for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
-	#define CANIF_TX_PDU_READ_NOTIFY_STATUS		STD_OFF
-#endif
+//#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
+//	#define CANIF_TX_PDU_READ_NOTIFY_STATUS		STD_OFF			/* Link Time or PostBuild parameter */
+//#endif
 
 /* Determines if or if not CanIf shall use the trigger transmit API for this PDU.
 dependency: If CanIfTxPduTriggerTransmit is TRUE then CanIfTxPduUserTxConfirmationUL 
@@ -384,17 +384,17 @@ dependency: CANIF_CANPDUID_READDATA_API must be enabled */
 /* Enables and disables the Rx buffering for reading of received L-SDU
 data. True: Enabled False: Disabled
 dependency: CANIF_CANPDUID_READDATA_API must be enabled */
-#if(CANIF_CAN_PDU_ID_READ_DATA_API==STD_ON)
-	#define CANIF_RX_PDU_READ_DATA				(STD_OFF)
-#endif
+//#if(CANIF_CAN_PDU_ID_READ_DATA_API==STD_ON)
+//	#define CANIF_RX_PDU_READ_DATA				(STD_OFF)	/* Link Time or PostBuild parameter */
+//#endif
 
 /* Enables and disables receive indication for each receive CAN L-SDU
 for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
-#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
-	#define CANIF_RX_PDU_READ_NOTIFY_STATUS		(STD_OFF)
-#endif
+//#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
+//	#define CANIF_RX_PDU_READ_NOTIFY_STATUS		(STD_OFF)	/* Link Time or PostBuild parameter */
+//#endif
 
 /* This parameter defines the name of the <User_RxIndication>. This parameter depends
 on the parameter CanIfRxPduUserRxIndicationUL. If CanIfRxPduUserRxIndicationUL equals
