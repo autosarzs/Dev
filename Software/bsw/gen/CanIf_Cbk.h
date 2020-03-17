@@ -41,5 +41,8 @@ extern void CanIf_RxIndication
     const PduInfoType * PduInfoPtr
 );
 
+#if(CanIfTriggerTransmitSupport==STD_ON)
+Std_ReturnType CanIf_TriggerTransmit( PduIdType TxPduId, PduInfoType* PduInfoPtr);
+#endif
 
 #endif //__CANIF_CBK_H__
