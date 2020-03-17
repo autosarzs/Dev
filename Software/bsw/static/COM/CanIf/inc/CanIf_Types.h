@@ -73,6 +73,14 @@
   #error "The AR version of Std_Types.h does not match the expected version"
 #endif
 
+//******************************************************************************
+// CanIf_ModuleStateType
+// CANIF_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT and also CANIF will be in CANIF_UNINT.
+// CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
+//******************************************************************************
+typedef uint8 CanIf_ModuleStateType;
+#define CANIF_UNINT			((CanIf_ModuleStateType)0x00)
+#define CANIF_READY			((CanIf_ModuleStateType)0x01)
 
 //*****************************************************************************
 //  Selects the desired software filter mechanism for reception only. Each
@@ -264,13 +272,32 @@ typedef uint8 CanIfHrhRangeRxPduRangeCanIdTypeType;
 #define EXTENDED_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x00)
 #define STANDARD_HRH_RANGE									((CanIfHrhRangeRxPduRangeCanIdTypeType)0x01)
 
+/*
+	CanIf_PduModeType
+	[SWS_CANIF_00137] 
+	The PduMode of a channel defines its transmit or receive activity.
+	Communication direction (transmission and/or reception) of the channel can
+	be controlled separately or together by upper layers.
+*/
+typedef uint8 CanIf_PduModeType;
+#define CANIF_OFFLINE                                       ((CanIf_PduModeType)0x00)
+#define CANIF_TX_OFFLINE                                    ((CanIf_PduModeType)0x01)
+#if (CANIF_TX_OFFLINE_ACTIVE_SUPPORT == STD_ON)
+	#define CANIF_TX_OFFLINE_ACTIVE                         ((CanIf_PduModeType)0x02)
+#endif /* CanIfTxOfflineActiveSupport = TRUE */
+#define CANIF_ONLINE                                        ((CanIf_PduModeType)0x03)
+
 typedef struct {
 				/*This parameter abstracts from the CAN Driver specific parameter
 				Controller. Each controller of all connected CAN Driver modules shall
 				be assigned to one specific ControllerId of the CanIf. 
 				Range: 0..number of configured controllers of all CAN Driver modules	*/
 				uint8 CanIfCtrlId;
-
+				
+				/* This parameter defines if a respective controller of the referenced CAN 
+				Driver modules is queriable for wake up events (Supports Wakeup Event or not). For Each CanIf Controller */
+				uint8 CanIfCtrlWakeupSupport;
+				
 				/*This parameter references to the logical handle of the underlying CAN
 				controller from the CAN Driver module to be served by the CAN
 				Interface module. The following parameters of CanController config
@@ -345,7 +372,7 @@ typedef struct {
 				L-SDU for reading its notification status.
 				True: Enabled False: Disabled
 				dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-				#if(CANIF_TX_PDU_READ_NOTIFY_STATUS==STD_ON)
+				#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
 					uint8 CanIfTxPduReadNotifyStatus;
 				#endif
 				
@@ -436,7 +463,7 @@ typedef struct {
 				CanHardwareObjectType* CanIfHrhIdSymRef;
 	
 				/*Defines the parameters required for configurating multiple CANID ranges for a given same HRH.*/
-				CanIfHrhRangeCfgType CanIfHrhRangeCfgObj[CANID_RANGES_NUM];
+				CanIfHrhRangeCfgType*	CanIfHrhRangeCfgRef; // will have an Object of [CANID_RANGES_NUM] (multiplicity 0..*) in PBcfg or Lcfg files
 }CanIfHrhCfgType;
 
 typedef struct{
@@ -519,15 +546,15 @@ typedef struct{
 				will be configured in implementation */
 				
 				/* Optional container that allows to map a range of CAN Ids to one PduId. */
-				CanIfRxPduCanIdRangeType CanIfRxPduCanIdRangeObj;
+				CanIfRxPduCanIdRangeType* CanIfRxPduCanIdRangeRef;
 }CanIfRxPduCfgType;
 
 typedef struct{
 				/*This container contains configuration parameters for each hardware receive object (HRH).*/
-				CanIfHrhCfgType CanIfHrhCfgObj[HRH_OBj_NUM];
+				CanIfHrhCfgType*	CanIfHrhCfgRef; // will have an Object of [HRH_OBj_NUM] in PBcfg or Lcfg files
 
 				/*This container contains parameters related to each HTH.*/
-				CanIfHthCfgType CanIfHthCfgObj[HTH_OBj_NUM];
+				CanIfHthCfgType*	CanIfHthCfgRef; // will have an Object of [HTH_OBj_NUM] in PBcfg or Lcfg files
 }CanIfInitHohCfgType;
 
 typedef struct {
@@ -556,20 +583,20 @@ typedef struct {
 				/* This container contains the Txbuffer configuration. Multiple buffers with different sizes could be configured.
 				If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the CanIf Tx L-PDU only refers via this CanIfBufferCfg the
 				corresponding CanIfHthCfg. */
-				CanIfBufferCfgType	CanIfBufferCfgObj[BUFFERS_NUM];
+				CanIfBufferCfgType*		CanIfBufferCfgRef; // will have an Object of [BUFFERS_NUM] in PBcfg or Lcfg files
 				
 				/* This container contains the references to the configuration setup of each underlying CAN Driver. */
-				CanIfInitHohCfgType	CanIfInitHohCfgObj[CAN_DRIVER_NUM];
+				CanIfInitHohCfgType*	CanIfInitHohCfgRef; // will have an Object of [CAN_DRIVER_NUM] in PBcfg or Lcfg files
 				
 				/* This container contains the configuration (parameters) of each receive CAN L-PDU. The SHORT-NAME of
 				"CanIfRxPduConfig" container itself represents the symolic name of Receive L-PDU. This L-SDU produces
 				a meta data item of type CAN_ID_32. */
-				CanIfRxPduCfgType	CanIfRxPduCfgObj[RX_CAN_L_PDU_NUM];
+				CanIfRxPduCfgType*	CanIfRxPduCfgRef; // will have an Object of [RX_CAN_L_PDU_NUM] in PBcfg or Lcfg file
 				
 				/* This container contains the configuration (parameters) of a transmit CAN L-PDU. It has to be configured as
 				often as a transmit CAN L-PDU is needed. The SHORT-NAME of "CanIfTxPduConfig" container represents the symolic
 				name of Transmit L-PDU. This L-SDU consumes a meta data item of type CAN_ID_32. */
-				CanIfTxPduCfgType	CanIfTxPduCfgObj[TX_CAN_L_PDU_NUM];
+				CanIfTxPduCfgType*	CanIfTxPduCfgRef; // will have an Object of [TX_CAN_L_PDU_NUM] in PBcfg or Lcfg file
 }CanIfInitCfgType;
 
 typedef struct{
@@ -622,11 +649,11 @@ typedef struct {
 				/*CAN Interface Driver Reference.
 				This reference can be used to get any information (Ex. Driver Name, Vendor ID) from
 				the CAN driver. The CAN Driver name can be derived from the ShortName of the CAN driver module.*/
-				CanGeneralType* CanIfCtrlDrvNameRef;
-
+				//CanGeneralType* CanIfCtrlDrvNameRef; //Won't be Used, as CanGeneralType isn't implemented as struct in Can Driver Module
+				
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	
-				CanIfCtrlCfgType CanIfCtrlCfgObj;//To Do: It should be CanIfCtrlCfgType CanIfCtrlCfgObj[USED_CONTROLLERS_NUMBER];
+				CanIfCtrlCfgType*	CanIfCtrlCfgRef; // will have an Object of [CANIF_CONTROLLERS_NUM] in the PBcfg or Lcfg file
 }CanIfCtrlDrvCfgType;
 
 typedef struct {
@@ -645,21 +672,21 @@ typedef struct {
 typedef struct {
 				/*This container contains the configuration (parameters) of one addressed CAN transceiver by the underlying CAN
 				Transceiver Driver module. For each CAN transceiver a seperate instance of this container has to be provided. */
-				CanIfTrcvCfgType CanIfTrcvCfgObj[CAN_TRANSCEIVER_NUM];
+				CanIfTrcvCfgType*	CanIfTrcvCfgRef; // will have an object of[CAN_TRANSCEIVER_NUM] in PBcfg or Lcfg file
 }CanIfTrcvDrvCfgType;
 
 typedef struct {
 
 				/*Configuration parameters for all the underlying CAN Driver modules are aggregated under this container.
 				For each CAN Driver module a seperate instance of this container has to be provided.*/
-				CanIfCtrlDrvCfgType 	CanIfCtrlDrvCfgObj[CAN_DRIVER_NUM];
+				CanIfCtrlDrvCfgType* 	CanIfCtrlDrvCfgRef; // will have an object of[CAN_DRIVER_NUM] in PBcfg or Lcfg file
 				
 				/*Callback functions provided by upper layer modules of the CanIf. The callback functions defined in this
 				container are common to all configured CAN Driver / CAN Transceiver Driver modules.*/
-				CanIfDispatchCfgType	CanIfDispatchCfgObj;
+				CanIfDispatchCfgType*	CanIfDispatchCfgRef;
 								
 				/*This container contains the init parameters of the CAN Interface.*/
-				CanIfInitCfgType		CanIfInitCfgObj;
+				CanIfInitCfgType*		CanIfInitCfgRef;
 				
 				/* This parameter is used to configure the Can_HwHandleType. The
 				Can_HwHandleType represents the hardware object handles of a CAN
@@ -678,7 +705,7 @@ typedef struct {
 
 				/*This container contains the configuration (parameters) of all addressed CAN transceivers by each underlying CAN
 				Transceiver Driver module. For each CAN transceiver Driver a seperate instance of this container shall be provided.*/            
-				CanIfTrcvDrvCfgType		CanIfTrcvDrvCfgObj[CAN_TRANSCEIVER_NUM];   
+				CanIfTrcvDrvCfgType*	CanIfTrcvDrvCfgRef;// will have an object of[CAN_TRANSCEIVER_NUM] in PBcfg or Lcfg file
 }CanIf_ConfigType;
 
 
