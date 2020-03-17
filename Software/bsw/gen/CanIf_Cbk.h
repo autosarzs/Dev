@@ -42,6 +42,21 @@ extern void CanIf_RxIndication
 );
 
 #if(CanIfTriggerTransmitSupport==STD_ON)
+/******************************************************************************************/
+/*    Function name           : CanIf_TriggerTransmit                                     */
+/*    Function Description    :Within this API, the upper layer module (called module)    */
+/*                             shall check whether the available data fits into the buffer*/
+/*                             size reported by PduInfoPtr->SduLength. If it fits, it     */
+/*                             shall copy its data into the buffer provided by            */
+/*                             PduInfoPtr->SduDataPtr and update the length of the actual */
+/*                             copied data PduInfoPtr->SduLength. If not, it returns      */
+/*                              E_NOT_OK without changing PduInfoPtr                      */
+/*    Parameter in            : PduIdType TxPduId, PduInfoType* PduInfoPtr                */
+/*    Parameter inout         : none                                                      */
+/*    Parameter out           : none                                                      */
+/*    Return value            : Std_ReturnType                                            */
+/*    Requirment              : SWS_CANIF_00883                                           */
+/******************************************************************************************/
 Std_ReturnType CanIf_TriggerTransmit( PduIdType TxPduId, PduInfoType* PduInfoPtr);
 #endif
 
