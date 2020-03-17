@@ -14,7 +14,7 @@
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
-**  DATE         : 2019-10-20                                                 **
+**  DATE         : 2020-03-17                                                 **
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
@@ -25,7 +25,7 @@
 **  VENDOR       : AUTOSarZs OLC	                                          **
 **                                                                            **
 **                                                                            **
-**  DESCRIPTION  : CAN Interface LinkTime Source file                         **
+**  DESCRIPTION  : CAN Interface Link Time Source file                        **
 **                                                                            **
 **  SPECIFICATION(S) : Specification of CAN Inteface, AUTOSAR Release 4.3.1   **
 **                                                                            **
