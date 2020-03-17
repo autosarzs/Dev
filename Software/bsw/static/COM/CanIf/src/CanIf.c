@@ -89,31 +89,36 @@ static Std_ReturnType CanIf_CheckDLC(const CanIfRxPduCfgType *const pPduCfg, con
  * Return              	Std_ReturnType
  *  */
 /******************************************************************************/
-static Std_ReturnType CanIf_SW_Filter(const CanIfRxPduCfgType *const pPduCfg, const Can_HwType *Mailbox)
+static Std_ReturnType CanIf_SW_Filter(CanIfRxPduCfgType *TempCanIfRxPduCfgptr)
 {
     Std_ReturnType ret_val = E_OK;
-#if (CANIF_HRH_SOFTWARE_FILTER == STD_ON)
-    //Configured sw algorithm is binary.
-    if (BINARY == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+    if (TempCanIfRxPduCfgptr->CanIfRxPduHrhIdRef->CanIfHrhSoftwareFilter == STD_ON)
     {
-    }
-    //Configured sw algorithm is index
-    else if (INDEX == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-    {
-    }
-    //Configured sw algorithm is Linear
-    else if (LINEAR == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-    {
-    }
-    //Configured sw algorithm is Table
-    else if (TABLE == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-    {
+        //Configured sw algorithm is binary.
+        if (BINARY == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+        {
+        }
+        //Configured sw algorithm is index
+        else if (INDEX == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+        {
+        }
+        //Configured sw algorithm is Linear
+        else if (LINEAR == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+        {
+        }
+        //Configured sw algorithm is Table
+        else if (TABLE == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+        {
+        }
+        else
+        {
+            ret_val = E_NOT_OK;
+        }
     }
     else
     {
-        ret_val = E_NOT_OK;
+        /* code */
     }
-#endif
     return ret_val;
 }
 
@@ -165,7 +170,7 @@ Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID)
 	*/
 void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr)
 {
-    CanIfRxPduCfgType *TempCanIfRxPduCfgptr;
+    static CanIfRxPduCfgType *TempCanIfRxPduCfgptr;
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
     /*[SWS_CANIF_00416] d If parameter Mailbox->Hoh of CanIf_RxIndication()
 	has an invalid value, CanIf shall report development error code
@@ -187,22 +192,20 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 	check can msg id when it's in standard frame
 	 msb = 0 > standard (11bit)
 	 msb = 1 > extended (29bit)*/
-	if(!(Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x000007FFU))
-	{
-		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
-						CANIF_E_PARAM_CANID);
-	}
-	/*If extended frame*/
-	else if((Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x1FFFFFFFU))
-	{
-		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
-								CANIF_E_PARAM_CANID);
-	}
-	else
-	{
-		
-	}
-	
+    if (!(Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x000007FFU))
+    {
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+                        CANIF_E_PARAM_CANID);
+    }
+    /*If extended frame*/
+    else if ((Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x1FFFFFFFU))
+    {
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+                        CANIF_E_PARAM_CANID);
+    }
+    else
+    {
+    }
 
     /*SWS_CANIF_00419] d If parameter PduInfoPtr or Mailbox of
 	CanIf_RxIndication() has an invalid value, CanIf shall report development
@@ -224,10 +227,9 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 	CanIf_RxIndication(), CanIf shall not execute Rx indication handling, when
 	CanIf_RxIndication(), is called.
 	 */
-    if (CanIf_ModuleState == CANIF_READY) 
+    if (CanIf_ModuleState == CANIF_READY)
     {
-        // todo maping ...
-        if (CanIf_SW_Filter(Mailbox, PduInfoPtr) == E_OK)
+        if (CanIf_SW_Filter(TempCanIfRxPduCfgptr) == E_OK)
         {
             if (CanIf_CheckDLC(TempCanIfRxPduCfgptr, PduInfoPtr) == E_OK)
             {
@@ -282,5 +284,6 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
     }
     else
     {
+        /* code */
     }
 }

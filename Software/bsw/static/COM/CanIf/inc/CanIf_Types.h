@@ -451,6 +451,13 @@ typedef struct
 
 typedef struct
 {
+	/*
+	Selects the hardware receive objects by using the HRH range/list from
+	CAN Driver configuration to define, for which HRH a software filtering
+	has to be performed at during receive processing
+	*/
+	uint8 CanIfHrhSoftwareFilter;
+
 	/*Reference to controller Id to which the HRH belongs to. A controller can contain one or more HRHs.*/
 	CanIfCtrlCfgType *CanIfHrhCanCtrlIdRef;
 
@@ -501,17 +508,16 @@ typedef struct
 /* Enables and disables the Rx buffering for reading of received L-SDU
 				data. True: Enabled False: Disabled
 				dependency: CANIF_CANPDUID_READDATA_API must be enabled */
-#if (CANIF_CAN_PDU_ID_READ_DATA_API == STD_ON)
+
 	uint8 CanIfRxPduReadData;
-#endif
 
 /* Enables and disables receive indication for each receive CAN L-SDU
 				for reading its notification status.
 				True: Enabled False: Disabled
 				dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
-#if (CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API == STD_ON)
+
 	uint8 CanIfRxPduReadNotifyStatus;
-#endif
+
 
 	/* This parameter defines the upper layer (UL) module to which the indication of
 				the successfully received CANRXPDUID has to be routed via <User_RxIndication>.
