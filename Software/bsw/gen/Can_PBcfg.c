@@ -73,7 +73,7 @@ CanHardwareObject HOHObj[] =
         TRANSMIT,                /*  HOH Type    */
         &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
         &CanHwFilterHTH[0],      /*  Reference to the Filter configuartion   */
-         FALSE                   /*  Enable or diasble using polling */
+         TRUE                    /*  Enable or diasble using polling */
     },
     {
          FULL,                    /*  Can controller type for tm4c123gh6pm    */
@@ -83,7 +83,7 @@ CanHardwareObject HOHObj[] =
          RECEIVE,                 /*  HOH Type    */
          &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
          &CanHwFilterHRH[0],      /*  Reference to the Filter configuartion   */
-         FALSE                    /*  Enable or diasble using polling */
+         TRUE                     /*  Enable or diasble using polling */
     },
     {
          FULL,                    /*  Can controller type for tm4c123gh6pm    */
