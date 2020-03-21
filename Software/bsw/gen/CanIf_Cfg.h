@@ -141,7 +141,7 @@
 //  CanDrv) within the CAN Interface module.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_TX_BUFFERING             	STD_OFF
+#define CANIF_PUBLIC_TX_BUFFERING             	STD_ON
 
 //*****************************************************************************
 //  Configuration parameter to enable/disable the API to poll for Tx

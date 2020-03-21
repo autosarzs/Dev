@@ -32,15 +32,27 @@
  **  MAY BE CHANGED BY USER : no                                               **
  **                                                                            **
  *******************************************************************************/
-#include "..\inc\CanIf.h"
+#include "CanIf.h"
+/*
+ *  Type Description : Struct to save recieved  PDUs (in case of enable CanIf_ReadRxPduData API un configuration) .
+ */
+typedef struct
+{
+   PduInfoType *     PduInfoPtr;
+   PduIdType      PduId;
+}str_MapRXPdu ;
 
-static CanIf_ConfigType * Global_Config= NULL ;
+static str_MapRXPdu  MapRXPdu[RX_CAN_L_PDU_NUM] = {0};
+/*Pointer to save configuration parameters set */
+static CanIf_ConfigType*    CanIf_ConfigPtr = NULL;
 CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
 
 Std_ReturnType CanIf_SetPduMode(uint8 ControllerId,CanIf_PduModeType PduModeRequest)
 {
-    uint8 counterpduId;
-    Can_ControllerStateType Loc_Controller_Mode;
+    uint8 PduCounter=0;
+    uint8 counter=0;
+    uint8 TxBufferSize = 0;
+    Can_ControllerStateType Loc_Controller_Mode=0;
     Std_ReturnType Loc_CanIf_SetPduMode_Ret = E_OK ;
 
     /*[SWS_CANIF_00341] If CanIf_SetPduMode() is called with invalid
@@ -94,7 +106,7 @@ is not in state CAN_CS_STARTED. c()*/
 
     case CANIF_OFFLINE:
     case CANIF_TX_OFFLINE:
-#if (CanIfTxOfflineActiveSupport ==STD_ON)
+#if (CANIF_TX_OFFLINE_ACTIVE_SUPPORT == STD_ON)
     case CANIF_TX_OFFLINE_ACTIVE:
 #endif
 
@@ -102,11 +114,24 @@ is not in state CAN_CS_STARTED. c()*/
         {
             /* [SWS_CANIF_00865] dIf CanIf_SetControllerMode(ControllerId, CAN_-
                      CS_SLEEP)*/
-            for(counterpduId=0;counterpduId<TX_CAN_L_PDU_NUM;counterpduId++)
-            {
-                //waiting to discuss about the global buffer
-                Global_Config->CanIfInitCfgObj.CanIfTxPduCfgObj[counterpduId].CanIfTxPduBufferRef=NULL;
-            }
+#if(CANIF_PUBLIC_TX_BUFFERING==STD_ON)
+
+
+     for(counter = 0 ; counter<BUFFERS_NUM;counter++)
+     {
+         /*Get number of PDUs saved in this buffer*/
+          TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfBufferRef->CanIfBufferSize;
+
+         /*Loop to clear all TX Buffers */
+         for(PduCounter =0;PduCounter<TxBufferSize;PduCounter++)
+         {
+
+             *((uint64*)CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)= 0;
+
+             CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduLength = 0 ;
+         }
+     }
+ #endif
 
         }
         switch(PduModeRequest)
@@ -135,21 +160,22 @@ is not in state CAN_CS_STARTED. c()*/
             break;
     }
 
-
+return Loc_CanIf_SetPduMode_Ret;
 }
 
 
 Std_ReturnType CanIf_ReadRxPduData(PduIdType CanIfRxSduId,PduInfoType*CanIfRxInfoPtr)
 {
     Std_ReturnType Loc_CanIf_ReadRxPduData_Ret =E_OK ;
-    Can_ControllerStateType Loc_Controller_Mode;
+    Can_ControllerStateType Loc_Controller_Mode=0;
     uint8 Loc_Controller_Id;
+    uint8 PDUCounter=0;
     /*[SWS_CANIF_00324] d The function CanIf_ReadRxPduData() shall not accept a
 request and return E_NOT_OK, if the corresponding controller mode refrenced by Con�trollerId is different to CAN_CS_STARTED and the channel mode is in the receive
 path online.
      */
 
-    Loc_Controller_Id=Global_Config->CanIfInitCfgObj.CanIfRxPduCfgObj[CanIfRxSduId].CanIfRxPduHrhIdRef->CanIfHrhCanCtrlIdRef->CanIfCtrlId;
+    Loc_Controller_Id=CanIf_ConfigPtr->CanIfInitCfgObj->CanIfRxPduCfgObj[CanIfRxSduId].CanIfRxPduHrhIdRef->CanIfHrhCanCtrlIdRef->CanIfCtrlId;
 
     Loc_CanIf_ReadRxPduData_Ret=CanIf_GetControllerMode(Loc_Controller_Id,&Loc_Controller_Mode );
     if (Loc_CanIf_ReadRxPduData_Ret==E_OK )
@@ -192,10 +218,21 @@ the DET module, when CanIf_ReadRxPduData() is called*/
 Note: During the call of CanIf_ReadRxPduData() the buffer of CanIfRxInfoPtr is
 controlled by CanIf and this buffer should not be accessed for read/write from another
 call context. After return of this call the ownership changes to the upper layer*/
-
-    // CanIfRxInfoPtr->SduDataPtr=Global_Config->CanIfInitCfgObj.CanIfRxPduCfgObj[CanIfRxSduId].CanIfRxPduBuf;  //will be defined in
-
-    CanIfRxInfoPtr->SduLength=Global_Config->CanIfInitCfgObj.CanIfRxPduCfgObj[CanIfRxSduId].CanIfRxPduDataLength;
+  for(PDUCounter=0;PDUCounter<RX_CAN_L_PDU_NUM;PDUCounter++)
+  {
+      if(MapRXPdu->PduId==CanIfRxSduId)
+      {
+          CanIfRxInfoPtr->SduDataPtr=MapRXPdu->PduInfoPtr->SduDataPtr;
+          CanIfRxInfoPtr->SduLength=MapRXPdu->PduInfoPtr->SduLength;
+                  break;
+      }
+  }
     return Loc_CanIf_ReadRxPduData_Ret;
 
 }
+//Stub
+Std_ReturnType CanIf_GetControllerMode(uint8 ControllerId,Can_ControllerStateType*ControllerModePtr)
+{
+    return E_OK;
+}
+
