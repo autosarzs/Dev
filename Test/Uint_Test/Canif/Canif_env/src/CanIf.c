@@ -36,6 +36,7 @@
 #include "CanIf.h"
 #include "Det.h"
 #include "MemMap.h"
+#include "CanIf_Types.h"
 
 /*private function IDs*/
 #define CANIF_CHECK_DLC_API_ID (0xAA)
@@ -89,12 +90,14 @@ static Std_ReturnType CanIf_CheckDLC(const CanIfRxPduCfgType *const pPduCfg, con
  * Return              	Std_ReturnType
  *  */
 /******************************************************************************/
+
+
 static Std_ReturnType CanIf_SW_Filter(CanIfRxPduCfgType *TempCanIfRxPduCfgptr)
 {
     Std_ReturnType ret_val = E_OK;
     if (TempCanIfRxPduCfgptr->CanIfRxPduHrhIdRef->CanIfHrhSoftwareFilter == STD_ON)
     {
-        //Configured sw algorithm is binary.
+   /*     //Configured sw algorithm is binary.
         if (BINARY == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
         {
         }
@@ -114,6 +117,7 @@ static Std_ReturnType CanIf_SW_Filter(CanIfRxPduCfgType *TempCanIfRxPduCfgptr)
         {
             ret_val = E_NOT_OK;
         }
+    */
     }
     else
     {
@@ -162,12 +166,6 @@ Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID)
         return_val = E_OK;
     }
     return return_val;
-}
-#endif
-
-#if (CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
-static void Canif_CopyData(uint8 *dest, uint8 *Src, uint8 Len)
-{
 }
 #endif
 /*
@@ -239,9 +237,6 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
         {
             if (CanIf_CheckDLC(TempCanIfRxPduCfgptr, PduInfoPtr) == E_OK)
             {
-#if (CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
-
-#endif
                 // call user
                 switch (TempCanIfRxPduCfgptr->CanIfRxPduUserRxIndicationUL)
                 {

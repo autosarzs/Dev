@@ -113,7 +113,7 @@
 //  received L-SDU data.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READ_RX_PDU_DATA_API     	STD_ON
+#define CANIF_PUBLIC_READ_RX_PDU_DATA_API     	STD_OFF
 
 //*****************************************************************************
 //  Enables and disables the API for reading the notification status of
