@@ -218,7 +218,7 @@ typedef struct {
     *   Reference to baudrate configuration container configured for the Can    Controller.
     */
     CanControllerBaudrateConfig* CanControllerDefaultBaudrate;
-} CanController;
+} CanControllerType;
 
 //*****************************************************************************
 //  This container is only valid for HRHs and contains the configuration
@@ -277,7 +277,7 @@ typedef struct
     /*
     *   Reference to CAN Controller to which the HOH is associated to.
     */
-    CanController*      CanControllerRef;
+    CanControllerType*      CanControllerRef;
 
     /*
     *   This container is only valid for HRHs and contains the
@@ -289,7 +289,7 @@ typedef struct
     *   Enables polling of this hardware object.
     */
     boolean    CanHardwareObjectUsesPolling;
-} CanHardwareObject;
+} CanHardwareObjectType;
 
 
 /*
@@ -312,9 +312,9 @@ typedef struct Can_Pdu
 typedef struct 
 {
     /*Reference to CAN Controller to which the HOH is associated to.*/
-    CanController *CanControllerRef;
+    CanControllerType *CanControllerRef;
     /*This container contains the configuration (parameters) of CAN Hardware Objects. */
-    CanHardwareObject *CanHardwareObjectRef;
+    CanHardwareObjectType *CanHardwareObjectRef;
 } CanConfigSet;
 
 //*****************************************************************************
@@ -326,8 +326,8 @@ typedef struct
     *   This container contains the configuration parameters and sub
     *   containers of the AUTOSAR Can module...Multiplicity =1
     */
-    CanController* CanControllerCfgRef;
-    CanHardwareObject* CanHardwareObjectRef;
+    CanControllerType* CanControllerCfgRef;
+    CanHardwareObjectType* CanHardwareObjectRef;
 
 } Can_ConfigType;
 /* -------------------------------------------------------------------------- */
