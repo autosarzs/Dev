@@ -144,7 +144,7 @@ CanIfHrhCfgType CanIfHrhCfgObj[] /* array of [HRH_OBj_NUM] */
 	}
 };
 
-CanIfRxPduCfgType CanIfRxPduCfgObj[]
+CanIfRxPduCfgType CanIfRxPduCfgObj[RX_CAN_L_PDU_NUM]
 {
 	{
 		0x700,							/* CAN ID of Receive CAN L-PDUs used by the CAN Interface (physical) */
@@ -215,7 +215,7 @@ CanIfTrcvDrvCfgType CanIfTrcvDrvCfgObj[]
 
 const CanIf_ConfigType CanIf_ConfigObj
 {
-	&CanIfCtrlDrvCfgObj[0],
+	&CanIfCtrlDrvCfgObj[0],`
 	&CanIfDispatchCfgObj[0],
 	&CanIfInitCfgObj[0],
 	UINT8,

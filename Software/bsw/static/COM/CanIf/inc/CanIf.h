@@ -83,7 +83,7 @@
 
 extern Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID);
 extern void CanIf_RxIndication(const Can_HwType* Mailbox, const PduInfoType* PduInfoPtr);
-
+Std_ReturnType CanIf_GetPduMode(uint8 ControllerId,CanIf_PduModeType* PduModePtr);
 /*******************************************************************************
  * PBconfigs shall be extern'ed here CanIf users are not responsible to extern pbcfgs.
  * CANIF users only need to include Canif.h

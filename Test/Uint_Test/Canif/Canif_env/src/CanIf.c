@@ -237,6 +237,7 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
         {
             if (CanIf_CheckDLC(TempCanIfRxPduCfgptr, PduInfoPtr) == E_OK)
             {
+                
                 // call user
                 switch (TempCanIfRxPduCfgptr->CanIfRxPduUserRxIndicationUL)
                 {

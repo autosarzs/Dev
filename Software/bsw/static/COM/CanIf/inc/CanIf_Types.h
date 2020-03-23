@@ -35,8 +35,8 @@
 #ifndef __CANIF_TYPES_H__
 #define __CANIF_TYPES_H__
 
-#include "CanIf_Cfg.h"
-#include "Stub.h"
+#include "ComStack_Types.h"
+#include "Can_GeneralTypes.h"
 
 /* Module Version 1.0.0 */
 #define CANIF_TYPES_SW_MAJOR_VERSION (1U)
@@ -295,6 +295,11 @@ typedef struct
 	CanControllerType *CanIfCtrlCanCtrlRef;
 } CanIfCtrlCfgType;
 
+typedef uint8 CanIf_PduModeType;
+#define CANIF_OFFLINE  				0x00
+#define CANIF_TX_OFFLINE			0x01
+#define CANIF_TX_OFFLINE_ACTIVE		0x02
+#define CANIF_ONLINE				0x03
 typedef struct
 {
 	/*Reference to controller Id to which the HTH belongs to. A controller can contain one or more HTHs.*/

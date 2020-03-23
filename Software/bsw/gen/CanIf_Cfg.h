@@ -115,6 +115,7 @@
 //*****************************************************************************
 #define CANIF_PUBLIC_READ_RX_PDU_DATA_API     	STD_ON
 
+
 //*****************************************************************************
 //  Enables and disables the API for reading the notification status of
 //  receive L-PDU.True: Enabled False: Disabled
@@ -626,5 +627,6 @@ multiple CANID ranges for a given same HRH*/
 /*It defines muliplicity of CanIfHrhRangeCfg container*/
 #define CANID_RANGES_NUM                           16    
 
-
+extern  CanIf_ConfigType CanIf_ConfigObj;
+extern  CanIfRxPduCfgType CanIfRxPduCfgObj[RX_CAN_L_PDU_NUM];
 #endif /* __CANIF_CFG_H__ */

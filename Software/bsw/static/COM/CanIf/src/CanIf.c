@@ -36,13 +36,14 @@
 #include "CanIf.h"
 #include "Det.h"
 #include "MemMap.h"
+#include "CanIf_Cbk.h"
 
 /*private function IDs*/
 #define CANIF_CHECK_DLC_API_ID (0xAA)
 
 //Temp canif config variable.
-static CanIf_ConfigType CanIf_Config;
 static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+static const CanIf_ConfigType *CanIf_ConfigPtr = &CanIf_ConfigObj[0];
 
 /*****************************************************************************************/
 /*                                   Local Function Definition                           */
@@ -56,7 +57,7 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
  * Return              	Std_ReturnType
  *  */
 /******************************************************************************/
-static Std_ReturnType CanIf_CheckDLC(const CanIfRxPduCfgType *const pPduCfg, const PduInfoType *pPduInfo)
+static Std_ReturnType CanIf_CheckDLC(const PduInfoType *pPduInfo)
 {
     Std_ReturnType return_val = E_OK;
 #if (CANIF_PRIVATE_DATA_LENGTH_CHECK == STD_ON)
@@ -89,35 +90,62 @@ static Std_ReturnType CanIf_CheckDLC(const CanIfRxPduCfgType *const pPduCfg, con
  * Return              	Std_ReturnType
  *  */
 /******************************************************************************/
-static Std_ReturnType CanIf_SW_Filter(CanIfRxPduCfgType *TempCanIfRxPduCfgptr)
+static Std_ReturnType CanIf_SW_Filter(Can_IdType CanId, Can_HwHandleType Hoh, uint32 *CanIfRxPduId_ptr)
 {
+    CanIfHrhCfgType *Hrhcfg_Ptr = CanIf_ConfigPtr->CanIfInitCfgObj->CanIfInitHohCfgObj->CanIfHrhCfgObj;
+
     Std_ReturnType ret_val = E_OK;
-    if (TempCanIfRxPduCfgptr->CanIfRxPduHrhIdRef->CanIfHrhSoftwareFilter == STD_ON)
+    for (uint8 i = 0; i < HRH_OBj_NUM; i++)
     {
-        //Configured sw algorithm is binary.
-        if (BINARY == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+        if ((Hrhcfg_Ptr->CanIfHrhIdSymRef->CanObjectId == Hoh)&&
+            (Hrhcfg_Ptr->CanIfHrhIdSymRef->CanObjectType == RECEIVE)&&
+            (Hrhcfg_Ptr->CanIfHrhCanCtrlIdRef->CanIfCtrlId == RECEIVE))
+        )
         {
-        }
-        //Configured sw algorithm is index
-        else if (INDEX == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-        {
-        }
-        //Configured sw algorithm is Linear
-        else if (LINEAR == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-        {
-        }
-        //Configured sw algorithm is Table
-        else if (TABLE == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-        {
+            if (Hrhcfg_Ptr->CanIfHrhSoftwareFilter == STD_ON)
+            {
+                if (Hrhcfg_Ptr->CanIfHrhIdSymRef->CanHandleType == BASIC)
+                {
+                    //Configured sw algorithm is binary.
+                    if (BINARY == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+                    {
+
+                    }
+                    //Configured sw algorithm is index
+                    else if (INDEX == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+                    {
+
+                    }
+                    //Configured sw algorithm is Linear
+                    else if (LINEAR == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+                    {
+
+                    }
+                    //Configured sw algorithm is Table
+                    else if (TABLE == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+                    {
+                    }
+                    else
+                    {
+                        ret_val = E_NOT_OK;
+                    }
+                }
+                else
+                {
+                    /* FULL Hrh get pdu id and out */
+                    break;
+                }
+            }
+            else
+            {
+                /* Filter disabled*/
+                break;
+            }
         }
         else
         {
-            ret_val = E_NOT_OK;
+            /* code */
         }
-    }
-    else
-    {
-        /* code */
     }
     return ret_val;
 }
@@ -144,10 +172,8 @@ Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID)
     {
     }
 #endif
-
     /*  Reentrant for different ControllerIds. Non reentrant for the same ControllerId.
 	*/
-
     if (ControllerId == current_ControllerId)
     {
         /* E_NOT_OK: Service request not accepted */
@@ -168,15 +194,36 @@ Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID)
 #if (CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
 static void Canif_CopyData(uint8 *dest, uint8 *Src, uint8 Len)
 {
+    uint8 counter_index;
+    for (counter_index = 0; counter_index < Len; counter_index++)
+    {
+        dest[counter_index] = Src[counter_index];
+    }
 }
 #endif
+
+uint8 Map_CanifID_canDriverID(uint8 CanCntrlId)
+{
+    for (uint8 i = 0; i < CAN_DRIVER_NUM; i++)
+    {
+        if(CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[i])
+        {
+            //enough 😅 
+        }
+    }
+    Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+                        CANIF_E_PARAM_CONTROLLERID);
+}
 /*
 	[SWS_CANIF_00415] d Within the service CanIf_RxIndication() the CanIf
 	routes this indication to the configured upper layer target service(s). c()
 	*/
 void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr)
 {
-    static CanIfRxPduCfgType *TempCanIfRxPduCfgptr;
+    static CanIf_PduModeType temp_Mode;
+    static uint32 temp_CanIfRxPduId;
+     uint8 CanifCntrlID = Map_CanifID_canDriverID(Mailbox->ControllerId);
+
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
     /*[SWS_CANIF_00416] d If parameter Mailbox->Hoh of CanIf_RxIndication()
 	has an invalid value, CanIf shall report development error code
@@ -233,52 +280,68 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 	CanIf_RxIndication(), CanIf shall not execute Rx indication handling, when
 	CanIf_RxIndication(), is called.
 	 */
+
     if (CanIf_ModuleState == CANIF_READY)
     {
-        if (CanIf_SW_Filter(TempCanIfRxPduCfgptr) == E_OK)
+        if (CanIf_GetPduMode(Mailbox->ControllerId, &temp_Mode) == E_OK)
         {
-            if (CanIf_CheckDLC(TempCanIfRxPduCfgptr, PduInfoPtr) == E_OK)
+            if (temp_Mode == CANIF_ONLINE)
             {
-#if (CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
-
-#endif
-                // call user
-                switch (TempCanIfRxPduCfgptr->CanIfRxPduUserRxIndicationUL)
+                if (CanIf_SW_Filter(Mailbox->CanId, Mailbox->Hoh, &temp_CanIfRxPduId) == E_OK)
                 {
-                case CAN_NM_RX_INDICATION:
-                    /* code */
-                    break;
+                    if (CanIf_CheckDLC(PduInfoPtr) == E_OK)
+                    {
+#if (CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
+                        // Call copy_Data
+                        //Set flag
+#endif
+                        // call user
+                        switch (Temp_CanIfRxPduConfigPtr->CanIfRxPduUserRxIndicationUL)
+                        {
+                        case CAN_NM_RX_INDICATION:
+                            /* code */
+                            break;
 
-                case CAN_TP_RX_INDICATION:
-                    /* code */
-                    break;
+                        case CAN_TP_RX_INDICATION:
+                            /* code */
+                            break;
 
-                case CAN_TSYN_RX_INDICATION:
-                    /* code */
-                    break;
+                        case CAN_TSYN_RX_INDICATION:
+                            /* code */
+                            break;
 
-                case CDD_RX_INDICATION:
-                    /* code */
-                    break;
+                        case CDD_RX_INDICATION:
+                            /* code */
+                            break;
 
-                case J1939NM_RX_INDICATION:
-                    /* code */
-                    break;
+                        case J1939NM_RX_INDICATION:
+                            /* code */
+                            break;
 
-                case J1939TP_RX_INDICATION:
-                    /* code */
-                    break;
+                        case J1939TP_RX_INDICATION:
+                            /* code */
+                            break;
 
-                case PDUR_RX_INDICATION:
-                    /* code */
-                    break;
+                        case PDUR_RX_INDICATION:
+                            /* code */
+                            break;
 
-                case XCP_RX_INDICATION:
-                    /* code */
-                    break;
+                        case XCP_RX_INDICATION:
+                            /* code */
+                            break;
 
-                default:
-                    break;
+                        default:
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        /* code */
+                    }
+                }
+                else
+                {
+                    /* code */
                 }
             }
             else
