@@ -90,36 +90,46 @@ static Std_ReturnType CanIf_CheckDLC(const PduInfoType *pPduInfo)
  * Return              	Std_ReturnType
  *  */
 /******************************************************************************/
-static Std_ReturnType CanIf_SW_Filter(Can_IdType CanId, Can_HwHandleType Hoh, uint32 *CanIfRxPduId_ptr)
+static Std_ReturnType CanIf_SW_Filter(const Can_HwType *Mailbox, uint32 *CanIfRxPduId_ptr)
 {
     CanIfHrhCfgType *Hrhcfg_Ptr = CanIf_ConfigPtr->CanIfInitCfgObj->CanIfInitHohCfgObj->CanIfHrhCfgObj;
-
+    CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfRxPduCfgObj;
     Std_ReturnType ret_val = E_OK;
     for (uint8 i = 0; i < HRH_OBj_NUM; i++)
     {
-        if ((Hrhcfg_Ptr->CanIfHrhIdSymRef->CanObjectId == Hoh)&&
-            (Hrhcfg_Ptr->CanIfHrhIdSymRef->CanObjectType == RECEIVE)&&
-            (Hrhcfg_Ptr->CanIfHrhCanCtrlIdRef->CanIfCtrlId == RECEIVE))
-        )
+        if ((Hrhcfg_Ptr[i].CanIfHrhIdSymRef->CanObjectId == Mailbox->Hoh) &&
+            (Hrhcfg_Ptr[i].CanIfHrhIdSymRef->CanObjectType == RECEIVE) &&
+            (Hrhcfg_Ptr[i].CanIfHrhCanCtrlIdRef->CanIfCtrlId == Mailbox->ControllerId))
         {
-            if (Hrhcfg_Ptr->CanIfHrhSoftwareFilter == STD_ON)
+            if (Hrhcfg_Ptr[i].CanIfHrhSoftwareFilter == STD_ON)
             {
-                if (Hrhcfg_Ptr->CanIfHrhIdSymRef->CanHandleType == BASIC)
+                if (Hrhcfg_Ptr[i].CanIfHrhIdSymRef->CanHandleType == BASIC)
                 {
                     //Configured sw algorithm is binary.
                     if (BINARY == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
                     {
-
                     }
                     //Configured sw algorithm is index
                     else if (INDEX == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
                     {
-
                     }
                     //Configured sw algorithm is Linear
                     else if (LINEAR == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
                     {
-
+                        if ((Mailbox->CanId & Hrhcfg_Ptr[i].CanIfHrhRangeCfgObj->CanIfHrhRangeBaseId) ==
+                        (Mailbox->CanId & Hrhcfg_Ptr[i].CanIfHrhRangeCfgObj->CanIfHrhRangeMask))
+                        {
+                            for (uint64 j = 0; j < RX_CAN_L_PDU_NUM; j++)
+                            {
+                                if((Mailbox->CanId & PduCfg_ptr[j].CanIfRxPduCanId)==
+                                (Mailbox->CanId & PduCfg_ptr[j].CanIfRxPduCanIdMask))
+                                {
+                                    *CanIfRxPduId_ptr =  PduCfg_ptr[j].CanIfRxPduId;
+                                    ret_val = E_OK;
+                                }
+                            }
+                            
+                        }
                     }
                     //Configured sw algorithm is Table
                     else if (TABLE == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
@@ -202,18 +212,6 @@ static void Canif_CopyData(uint8 *dest, uint8 *Src, uint8 Len)
 }
 #endif
 
-uint8 Map_CanifID_canDriverID(uint8 CanCntrlId)
-{
-    for (uint8 i = 0; i < CAN_DRIVER_NUM; i++)
-    {
-        if(CanIf_ConfigPtr->CanIfCtrlDrvCfgObj[i])
-        {
-            //enough 😅 
-        }
-    }
-    Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
-                        CANIF_E_PARAM_CONTROLLERID);
-}
 /*
 	[SWS_CANIF_00415] d Within the service CanIf_RxIndication() the CanIf
 	routes this indication to the configured upper layer target service(s). c()
@@ -222,7 +220,7 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 {
     static CanIf_PduModeType temp_Mode;
     static uint32 temp_CanIfRxPduId;
-     uint8 CanifCntrlID = Map_CanifID_canDriverID(Mailbox->ControllerId);
+    uint8 CanifCntrlID = Map_CanifID_canDriverID(Mailbox->ControllerId);
 
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
     /*[SWS_CANIF_00416] d If parameter Mailbox->Hoh of CanIf_RxIndication()
@@ -287,7 +285,7 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
         {
             if (temp_Mode == CANIF_ONLINE)
             {
-                if (CanIf_SW_Filter(Mailbox->CanId, Mailbox->Hoh, &temp_CanIfRxPduId) == E_OK)
+                if (CanIf_SW_Filter(Mailbox, &temp_CanIfRxPduId) == E_OK)
                 {
                     if (CanIf_CheckDLC(PduInfoPtr) == E_OK)
                     {

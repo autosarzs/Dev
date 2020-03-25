@@ -470,7 +470,7 @@ typedef struct
 	CanHardwareObjectType *CanIfHrhIdSymRef;
 
 	/*Defines the parameters required for configurating multiple CANID ranges for a given same HRH.*/
-	CanIfHrhRangeCfgType CanIfHrhRangeCfgObj[CANID_RANGES_NUM];
+	CanIfHrhRangeCfgType CanIfHrhRangeCfgObj[];
 } CanIfHrhCfgType;
 
 typedef struct

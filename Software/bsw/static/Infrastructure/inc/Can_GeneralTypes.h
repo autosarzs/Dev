@@ -109,7 +109,7 @@ typedef struct Can_Hw
 {
   Can_IdType CanId ; // Standard/Extended CAN ID of CAN L-PDU
   Can_HwHandleType Hoh ; // ID of the corresponding Hardware Object Range
-  uint8 ControllerId ; // ControllerId provided by CanIf clearly identify the corresponding controller
+  uint8 ControllerId; // ControllerId provided by CanIf clearly identify the corresponding controller
 }Can_HwType;
 
 
