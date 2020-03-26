@@ -37,9 +37,8 @@
 #include "CanIf.h"
 
 
-extern CanIfHthCfgType CanIfHthCfgObj[] ;
-extern CanIfHrhCfgType CanIfHrhCfgObj[] ;
-extern CanIfInitHohCfgType CanIfInitHohCfgObj[] ;
+extern  CanHardwareObjectType       HOHObj[]  ;
+extern  CanIfCtrlCfgType   CanIfCtrlCfgObj[];
 
 void CanIfRxPduUserRxIndication( PduIdType RxPduId, const PduInfoType* PduInfoPtr ) ;
 void CanIfTxPduUserTxConfirmation(PduIdType TxPduId, Std_ReturnType result );
@@ -66,6 +65,55 @@ CanIfHrhRangeCfgType CanIfHrhRangeCfgObj[CANIF_HRH_OBj_NUM] =
         0x05                            /* Upper CAN Identifier of a receive CAN L-PDU */
     }
 };
+
+
+/* [ECUC_CanIf_00258]
+ * This Object contains configuration parameters related to each CanIf_HTH.
+ */
+CanIfHthCfgType CanIfHthCfgObj[CANIF_HTH_OBj_NUM] = /* array of [HTH_OBJ_NUM] */
+{
+    {
+        &CanIfCtrlCfgObj[0],            /* Reference to controller Id to which the HTH belongs */
+        &HOHObj[0]                      /* refers to a particular HTH object in the CanDrv configuration */
+    },
+    {
+        &CanIfCtrlCfgObj[0],            /* Reference to controller Id to which the HTH belongs */
+        &HOHObj[2]                      /* refers to a particular HTH object in the CanDrv configuration */
+    }
+};
+
+
+
+/* [ECUC_CanIf_00259]
+ * This Object contains configuration parameters related to each CanIf_HRH.
+ */
+CanIfHrhCfgType CanIfHrhCfgObj[CANIF_HRH_OBj_NUM] =      /* array of [HRH_OBJ_NUM] */
+{
+    {
+        TRUE,                           /* Software filtering is enabled False: Software filtering is enabled*/
+        &CanIfCtrlCfgObj[0],            /* Reference to controller Id to which the HTH belongs */
+        &HOHObj[0],                     /* refers to a particular HTH object in the CanDrv configuration */
+        &CanIfHrhRangeCfgObj[0]         /* Defines the parameters required for configurating multiple CANID ranges for a given same HRH. */
+    },
+    {
+        TRUE,                           /* Software filtering is enabled False: Software filtering is enabled*/
+        &CanIfCtrlCfgObj[0],            /* Reference to controller Id to which the HTH belongs */
+        &HOHObj[2],                     /* refers to a particular HTH object in the CanDrv configuration */
+        &CanIfHrhRangeCfgObj[1]         /* Defines the parameters required for configurating multiple CANID ranges for a given same HRH.*/
+    }
+};
+
+/*[ECUC_CanIf_00257]
+ * This container contains the references to the configuration setup of each underlying CAN Driver. */
+CanIfInitHohCfgType CanIfInitHohCfgObj[CAN_DRIVER_NUM] =
+{
+    {
+        CanIfHrhCfgObj,         /*Reference contains configuration parameters for each hardware receive object (HRH).*/
+        CanIfHthCfgObj          /*Reference contains parameters related to each HTH. */
+    }
+};
+
+
 
 /* [ECUC_CanIf_00832]
  * This container contains the Txbuffer configuration.

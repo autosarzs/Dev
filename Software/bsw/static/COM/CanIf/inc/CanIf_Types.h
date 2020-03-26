@@ -713,7 +713,7 @@ typedef struct{
 
 typedef struct {
 				/*Description Reference to the Init Hoh Configuration*/
-				CanIfInitHohCfgType* CanIfCtrlDrvInitHohConfigRef;
+				CanIfInitHohCfgType* CanIfCtrlInitHohRef;
 				
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
 				an underlying CAN Driver module. This container is configurable per CAN controller.*/	

@@ -36,6 +36,15 @@
 #define __CANIF_CFG_H__
 
 
+/* SW Module Version is 1.0.0 */
+#define CANIF_CFG_SW_MAJOR_VERSION             (1U)
+#define CANIF_CFG_SW_MINOR_VERSION             (0U)
+#define CANIF_CFG_SW_PATCH_VERSION             (0U)
+
+/* AUTOSAR Version 4.3.1 */
+#define CANIF_CFG_AR_RELEASE_MAJOR_VERSION     (4U)
+#define CANIF_CFG_AR_RELEASE_MINOR_VERSION     (3U)
+#define CANIF_CFG_AR_RELEASE_PATCH_VERSION     (1U)
 //*****************************************************************************
 //  This parameter defines if the buffer element length shall be fixed to 8
 //  Bytes for buffers to which only PDUs < 8 Bytes are assigned.
