@@ -540,6 +540,12 @@ has to be performed at during receive processing.
 True: Software filtering is enabled False: Software filtering is enabled*/
 #define CANIF_HRH_SOFTWARE_FILTER               STD_ON
 
+
+/*Selects the desired software filter mechanism for reception only. Each
+implemented software filtering method is identified by this enumeration
+number.*/
+#define CanIfPrivateSoftwareFilterValue			(LINEAR)
+
 /*CAN Identifier used as base value in combination with
 CanIfHrhRangeMask for a masked ID range in which all CAN Ids shall
 pass the software filtering. The size of this parameter is limited by

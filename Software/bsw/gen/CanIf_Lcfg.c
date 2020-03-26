@@ -219,6 +219,6 @@ const CanIf_ConfigType CanIf_ConfigObj
 	&CanIfDispatchCfgObj[0],
 	&CanIfInitCfgObj[0],
 	UINT8,
-	LINEAR,
+	CanIfPrivateSoftwareFilterValue,
 	&CanIfTrcvDrvCfgObj[0]
 };

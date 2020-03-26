@@ -94,67 +94,75 @@ static Std_ReturnType CanIf_SW_Filter(const Can_HwType *Mailbox, uint32 *CanIfRx
 {
     CanIfHrhCfgType *Hrhcfg_Ptr = CanIf_ConfigPtr->CanIfInitCfgObj->CanIfInitHohCfgObj->CanIfHrhCfgObj;
     CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfRxPduCfgObj;
-    Std_ReturnType ret_val = E_OK;
+    CanIfHrhRangeRxPduRangeCanIdTypeType temp_canIdType = (Mailbox->CanId) >> 29U;
+    Can_IdType temp_CanId = (Mailbox->CanId) & 0x3FFFFFFF;
+    Std_ReturnType ret_val = E_NOT_OK;
     for (uint8 i = 0; i < HRH_OBj_NUM; i++)
     {
         if ((Hrhcfg_Ptr[i].CanIfHrhIdSymRef->CanObjectId == Mailbox->Hoh) &&
             (Hrhcfg_Ptr[i].CanIfHrhIdSymRef->CanObjectType == RECEIVE) &&
             (Hrhcfg_Ptr[i].CanIfHrhCanCtrlIdRef->CanIfCtrlId == Mailbox->ControllerId))
         {
-            if (Hrhcfg_Ptr[i].CanIfHrhSoftwareFilter == STD_ON)
+            if (((temp_CanId & Hrhcfg_Ptr[i].CanIfHrhRangeCfgObj->CanIfHrhRangeBaseId) ==
+                 (temp_CanId & Hrhcfg_Ptr[i].CanIfHrhRangeCfgObj->CanIfHrhRangeMask)) &&
+                (Hrhcfg_Ptr[i].CanIfHrhRangeCfgObj->CanIfHrhRangeRxPduRangeCanIdType == temp_canIdType))
             {
-                if (Hrhcfg_Ptr[i].CanIfHrhIdSymRef->CanHandleType == BASIC)
+                if ((Hrhcfg_Ptr[i].CanIfHrhSoftwareFilter == STD_ON) &&
+                    (Hrhcfg_Ptr[i].CanIfHrhIdSymRef->CanHandleType == BASIC))
                 {
-                    //Configured sw algorithm is binary.
-                    if (BINARY == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-                    {
-                    }
-                    //Configured sw algorithm is index
-                    else if (INDEX == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-                    {
-                    }
+#if (CanIfPrivateSoftwareFilterValue == LINEAR)
                     //Configured sw algorithm is Linear
-                    else if (LINEAR == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+                    for (uint64 j = 0; j < RX_CAN_L_PDU_NUM; j++)
                     {
-                        if ((Mailbox->CanId & Hrhcfg_Ptr[i].CanIfHrhRangeCfgObj->CanIfHrhRangeBaseId) ==
-                        (Mailbox->CanId & Hrhcfg_Ptr[i].CanIfHrhRangeCfgObj->CanIfHrhRangeMask))
+                        if ((PduCfg_ptr[j].CanIfRxPduHrhIdRef->CanIfHrhIdSymRef->CanObjectId == Mailbox->Hoh) &&
+                            (PduCfg_ptr[j].CanIfRxPduCanIdType == temp_canIdType))
                         {
-                            for (uint64 j = 0; j < RX_CAN_L_PDU_NUM; j++)
+                            if ((temp_CanId & PduCfg_ptr[j].CanIfRxPduCanId) ==
+                                (temp_CanId & PduCfg_ptr[j].CanIfRxPduCanIdMask))
                             {
-                                if((Mailbox->CanId & PduCfg_ptr[j].CanIfRxPduCanId)==
-                                (Mailbox->CanId & PduCfg_ptr[j].CanIfRxPduCanIdMask))
-                                {
-                                    *CanIfRxPduId_ptr =  PduCfg_ptr[j].CanIfRxPduId;
-                                    ret_val = E_OK;
-                                }
+                                *CanIfRxPduId_ptr = PduCfg_ptr[j].CanIfRxPduId;
+                                ret_val = E_OK;
+                                break;
                             }
-                            
                         }
                     }
+#elif (CanIfPrivateSoftwareFilterValue == INDEX)
+                    //Configured sw algorithm is Linear
+
+#elif (CanIfPrivateSoftwareFilterValue == TABLE)
                     //Configured sw algorithm is Table
-                    else if (TABLE == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-                    {
-                    }
-                    else
-                    {
-                        ret_val = E_NOT_OK;
-                    }
+
+#else (CanIfPrivateSoftwareFilterValue == BINARY)
+                    //Configured sw algorithm is binary
+
+#endif
                 }
                 else
                 {
-                    /* FULL Hrh get pdu id and out */
+                    /* Filter disabled
+                *  Full can
+                * Direct map 
+                * */
                     break;
                 }
             }
             else
             {
-                /* Filter disabled*/
+                /*[SWS_CANIF_00417] d If parameter Mailbox->CanId of
+                    CanIf_RxIndication() has an invalid value, CanIf shall report development
+                    error code CANIF_E_PARAM_CANID to the Det_ReportError service of the DET
+                    module, when CanIf_RxIndication() is called.
+                    */
+#if (CANIF_DEV_ERROR_DETECT == STD_ON) /* DET notifications */
+                Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+                                CANIF_E_PARAM_CANID);
+#endif
                 break;
             }
         }
         else
         {
-            /* code */
+            // can't find hoh
         }
     }
     return ret_val;
@@ -220,7 +228,6 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 {
     static CanIf_PduModeType temp_Mode;
     static uint32 temp_CanIfRxPduId;
-    uint8 CanifCntrlID = Map_CanifID_canDriverID(Mailbox->ControllerId);
 
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
     /*[SWS_CANIF_00416] d If parameter Mailbox->Hoh of CanIf_RxIndication()
@@ -231,28 +238,6 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
                         CANIF_E_PARAM_HOH);
-    }
-    else
-    {
-    }
-    /*[SWS_CANIF_00417] d If parameter Mailbox->CanId of
-	CanIf_RxIndication() has an invalid value, CanIf shall report development
-	error code CANIF_E_PARAM_CANID to the Det_ReportError service of the DET
-	module, when CanIf_RxIndication() is called.
-
-	check can msg id when it's in standard frame
-	 msb = 0 > standard (11bit)
-	 msb = 1 > extended (29bit)*/
-    if (!(Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x000007FFU))
-    {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
-                        CANIF_E_PARAM_CANID);
-    }
-    /*If extended frame*/
-    else if ((Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x1FFFFFFFU))
-    {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
-                        CANIF_E_PARAM_CANID);
     }
     else
     {
