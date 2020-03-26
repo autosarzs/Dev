@@ -97,30 +97,30 @@ static Std_ReturnType CanIf_SW_Filter(const Can_HwType *Mailbox, uint32 *CanIfRx
     CanIfHrhRangeRxPduRangeCanIdTypeType temp_canIdType = (Mailbox->CanId) >> 29U;
     Can_IdType temp_CanId = (Mailbox->CanId) & 0x3FFFFFFF;
     Std_ReturnType ret_val = E_NOT_OK;
-    for (uint8 i = 0; i < HRH_OBj_NUM; i++)
+
+    for (uint8 HrhCfg_index = 0; HrhCfg_index < HRH_OBj_NUM; HrhCfg_index++)
     {
-        if ((Hrhcfg_Ptr[i].CanIfHrhIdSymRef->CanObjectId == Mailbox->Hoh) &&
-            (Hrhcfg_Ptr[i].CanIfHrhIdSymRef->CanObjectType == RECEIVE) &&
-            (Hrhcfg_Ptr[i].CanIfHrhCanCtrlIdRef->CanIfCtrlId == Mailbox->ControllerId))
+        if ((Hrhcfg_Ptr[HrhCfg_index].CanIfHrhIdSymRef->CanObjectId == Mailbox->Hoh) &&
+            (Hrhcfg_Ptr[HrhCfg_index].CanIfHrhIdSymRef->CanObjectType == RECEIVE) &&
+            (Hrhcfg_Ptr[HrhCfg_index].CanIfHrhCanCtrlIdRef->CanIfCtrlId == Mailbox->ControllerId))
         {
-            if (((temp_CanId & Hrhcfg_Ptr[i].CanIfHrhRangeCfgObj->CanIfHrhRangeBaseId) ==
-                 (temp_CanId & Hrhcfg_Ptr[i].CanIfHrhRangeCfgObj->CanIfHrhRangeMask)) &&
-                (Hrhcfg_Ptr[i].CanIfHrhRangeCfgObj->CanIfHrhRangeRxPduRangeCanIdType == temp_canIdType))
+            if (((temp_CanId & Hrhcfg_Ptr[HrhCfg_index].CanIfHrhRangeCfgObj->CanIfHrhRangeBaseId) ==
+                 (temp_CanId & Hrhcfg_Ptr[HrhCfg_index].CanIfHrhRangeCfgObj->CanIfHrhRangeMask)) &&
+                (Hrhcfg_Ptr[HrhCfg_index].CanIfHrhRangeCfgObj->CanIfHrhRangeRxPduRangeCanIdType == temp_canIdType))
             {
-                if ((Hrhcfg_Ptr[i].CanIfHrhSoftwareFilter == STD_ON) &&
-                    (Hrhcfg_Ptr[i].CanIfHrhIdSymRef->CanHandleType == BASIC))
+                if ((Hrhcfg_Ptr[HrhCfg_index].CanIfHrhSoftwareFilter == STD_ON) &&
+                    (Hrhcfg_Ptr[HrhCfg_index].CanIfHrhIdSymRef->CanHandleType == BASIC))
                 {
 #if (CanIfPrivateSoftwareFilterValue == LINEAR)
                     //Configured sw algorithm is Linear
-                    for (uint64 j = 0; j < RX_CAN_L_PDU_NUM; j++)
+                    for (uint64 PduCfg_index = 0; PduCfg_index < RX_CAN_L_PDU_NUM; PduCfg_index++)
                     {
-                        if ((PduCfg_ptr[j].CanIfRxPduHrhIdRef->CanIfHrhIdSymRef->CanObjectId == Mailbox->Hoh) &&
-                            (PduCfg_ptr[j].CanIfRxPduCanIdType == temp_canIdType))
+                        if ((PduCfg_ptr[PduCfg_index].CanIfRxPduHrhIdRef == (&Hrhcfg_Ptr[HrhCfg_index]))
                         {
-                            if ((temp_CanId & PduCfg_ptr[j].CanIfRxPduCanId) ==
-                                (temp_CanId & PduCfg_ptr[j].CanIfRxPduCanIdMask))
+                            if ((temp_CanId & PduCfg_ptr[PduCfg_index].CanIfRxPduCanId) ==
+                                (temp_CanId & PduCfg_ptr[PduCfg_index].CanIfRxPduCanIdMask))
                             {
-                                *CanIfRxPduId_ptr = PduCfg_ptr[j].CanIfRxPduId;
+                                *CanIfRxPduId_ptr = PduCfg_ptr[PduCfg_index].CanIfRxPduId;
                                 ret_val = E_OK;
                                 break;
                             }
