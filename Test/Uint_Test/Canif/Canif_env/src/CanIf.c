@@ -42,253 +42,91 @@
 #define CANIF_CHECK_DLC_API_ID (0xAA)
 
 //Temp canif config variable.
-static CanIf_ConfigType CanIf_Config;
 static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+static CanIf_ConfigType*  CanIf_ConfigPtr = &CanIf_ConfigObj;
 
-/*****************************************************************************************/
-/*                                   Local Function Definition                           */
-/*****************************************************************************************/
-/******************************************************************************/
-/*
- * Brief               	The received Data Length value is compared with the configured
- * 						Data Length value of the received L-PDU.
- * Param-Name[in]      	pPduCfg: Pointer to configured PDU struct.
- * 						pPduInfo: Pointer to recieved L-PDU from lower layer CanDrv.
- * Return              	Std_ReturnType
- *  */
-/******************************************************************************/
-static Std_ReturnType CanIf_CheckDLC(const CanIfRxPduCfgType *const pPduCfg, const PduInfoType *pPduInfo)
+static Std_ReturnType CanIf_SW_Filter(const Can_HwType *Mailbox, uint32 *CanIfRxPduId_ptr)
 {
-    Std_ReturnType return_val = E_OK;
-#if (CANIF_PRIVATE_DATA_LENGTH_CHECK == STD_ON)
-    if (pPduCfg->CanIfRxPduDataLength == pPduInfo->SduLength)
-    {
-        /*Check success*/
-        return_val = E_OK;
-    }
-    else
-    {
-        /*[SWS_CANIF_00168] d If the Data Length Check rejects a received LPDU
-	 	CanIf shall report runtime error code
-		CANIF_E_INVALID_DATA_LENGTH to the Det_ReportRuntimeError() service
-		of the DET module.*/
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_CHECK_DLC_API_ID,
-                        CANIF_E_INVALID_DATA_LENGTH);
-    }
-#endif
-    return return_val;
-}
+    // pointer for PBcfg hrh configuration
+    CanIfHrhCfgType *Hrhcfg_Ptr = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfInitHohCfgObj->CanIfHrhCfgObj;
+    // pointer for PBcfg Rx-pdu configuration
+    CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfRxPduCfgObj;
+    // Local variable hold Message type , Extendedd , standard ...
+    CanIfHrhRangeRxPduRangeCanIdTypeType temp_canIdType = (Mailbox->CanId) >> 29U;
+    // Local variable hold Can message id
+    Can_IdType temp_CanId = (Mailbox->CanId) & 0x3FFFFFFF;
+    Std_ReturnType ret_val = E_NOT_OK;
 
-/******************************************************************************/
-/*
- * Brief				Performs Software filtering on recieved Pdus.
- *						it is recommended to offer several search algorithms like
- *						linear search, table search and/or hash search variants to provide the most optimal
- *						solution for most use cases.
- * Param-Name[in]      	pPduCfg: Pointer to configured PDU struct.
- * 						Mailbox: Revcieved Pdu from CanDrv.
- * Return              	Std_ReturnType
- *  */
-/******************************************************************************/
-
-
-static Std_ReturnType CanIf_SW_Filter(CanIfRxPduCfgType *TempCanIfRxPduCfgptr)
-{
-    Std_ReturnType ret_val = E_OK;
-    if (TempCanIfRxPduCfgptr->CanIfRxPduHrhIdRef->CanIfHrhSoftwareFilter == STD_ON)
+    // Loop to find the right hrh , which received this message
+    for (uint8 HrhCfg_index = 0; HrhCfg_index < HRH_OBj_NUM; HrhCfg_index++)
     {
-   /*     //Configured sw algorithm is binary.
-        if (BINARY == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
+        /*
+        * search for the hrh ID,controller ID == received Hoh,controller ID  
+        * make sure its configured to be receive mood
+        */
+        if ((Hrhcfg_Ptr[HrhCfg_index].CanIfHrhIdSymRef->CanObjectId == Mailbox->Hoh) &&
+            (Hrhcfg_Ptr[HrhCfg_index].CanIfHrhIdSymRef->CanObjectType == RECEIVE) &&
+            (Hrhcfg_Ptr[HrhCfg_index].CanIfHrhCanCtrlIdRef->CanIfCtrlId == Mailbox->ControllerId))
         {
-        }
-        //Configured sw algorithm is index
-        else if (INDEX == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-        {
-        }
-        //Configured sw algorithm is Linear
-        else if (LINEAR == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-        {
-        }
-        //Configured sw algorithm is Table
-        else if (TABLE == CanIf_ConfigPtr->CanIfPrivateSoftwareFilterType)
-        {
-        }
-        else
-        {
-            ret_val = E_NOT_OK;
-        }
-    */
-    }
-    else
-    {
-        /* code */
-    }
-    return ret_val;
-}
-
-#if (CANIF_SET_BAUDRATE_API == STD_ON)
-Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID)
-{
-    static uint8 current_ControllerId = -1;
-    uint8 return_val;
-
-#if (CANIF_DEV_ERROR_DETECT == STD_ON) /* DET notifications */
-
-    /*  [SWS_CANIF_00869] d If CanIf_SetBaudrate() is called with invalid ControllerId, 
-		CanIf shall report development error code CANIF_E_PARAM_CONTROLLERID
-		to the Det_ReportError service of the DET module. c(SRS_BSW_00323)*/
-
-    if (ControllerId > USED_CONTROLLERS_NUMBER)
-    {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SETBAUDRATE_API_ID,
-                        CANIF_E_PARAM_CONTROLLERID);
-        return_val = E_NOT_OK;
-    }
-    else
-    {
-    }
-#endif
-
-    /*  Reentrant for different ControllerIds. Non reentrant for the same ControllerId.
-	*/
-
-    if (ControllerId == current_ControllerId)
-    {
-        /* E_NOT_OK: Service request not accepted */
-        return_val = E_NOT_OK;
-    }
-    else
-    {
-        current_ControllerId = ControllerId;
-
-        Can_SetBaudrate(ControllerId, BaudRateConfigID);
-        /* E_OK: Service request accepted, setting of (new) baud rate started */
-        return_val = E_OK;
-    }
-    return return_val;
-}
-#endif
-/*
-	[SWS_CANIF_00415] d Within the service CanIf_RxIndication() the CanIf
-	routes this indication to the configured upper layer target service(s). c()
-	*/
-void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr)
-{
-    static CanIfRxPduCfgType *TempCanIfRxPduCfgptr;
-#if (CANIF_DEV_ERROR_DETECT == STD_ON)
-    /*[SWS_CANIF_00416] d If parameter Mailbox->Hoh of CanIf_RxIndication()
-	has an invalid value, CanIf shall report development error code
-	CANIF_E_PARAM_HOH to the Det_ReportError service of the DET module,
-	when CanIf_RxIndication() is called.*/
-    if (Mailbox->Hoh > HRH_OBj_NUM)
-    {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
-                        CANIF_E_PARAM_HOH);
-    }
-    else
-    {
-    }
-    /*[SWS_CANIF_00417] d If parameter Mailbox->CanId of
-	CanIf_RxIndication() has an invalid value, CanIf shall report development
-	error code CANIF_E_PARAM_CANID to the Det_ReportError service of the DET
-	module, when CanIf_RxIndication() is called.
-
-	check can msg id when it's in standard frame
-	 msb = 0 > standard (11bit)
-	 msb = 1 > extended (29bit)*/
-    if (!(Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x000007FFU))
-    {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
-                        CANIF_E_PARAM_CANID);
-    }
-    /*If extended frame*/
-    else if ((Mailbox->CanId & (0x1 << 31U)) && ((Mailbox->CanId & ~(0xC << 24U)) > 0x1FFFFFFFU))
-    {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
-                        CANIF_E_PARAM_CANID);
-    }
-    else
-    {
-    }
-
-    /*SWS_CANIF_00419] d If parameter PduInfoPtr or Mailbox of
-	CanIf_RxIndication() has an invalid value, CanIf shall report development
-	error code CANIF_E_PARAM_POINTER to the Det_ReportError service of the DET
-	module, when CanIf_RxIndication() is called.
-	*/
-
-    if ((NULL_PTR == Mailbox) || (NULL_PTR == PduInfoPtr))
-    {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
-                        CANIF_E_PARAM_POINTER);
-    }
-    else
-    {
-    }
-#endif
-    /*
-	[SWS_CANIF_00421] If CanIf was not initialized before calling
-	CanIf_RxIndication(), CanIf shall not execute Rx indication handling, when
-	CanIf_RxIndication(), is called.
-	 */
-    if (CanIf_ModuleState == CANIF_READY)
-    {
-        if (CanIf_SW_Filter(TempCanIfRxPduCfgptr) == E_OK)
-        {
-            if (CanIf_CheckDLC(TempCanIfRxPduCfgptr, PduInfoPtr) == E_OK)
+            /*
+            * check if the received can id in the range of the hrh 
+            * The type of the received can equal the type configured to recieve in this hrh 
+            */
+            if (((temp_CanId & Hrhcfg_Ptr[HrhCfg_index].CanIfHrhRangeCfgObj->CanIfHrhRangeBaseId) ==
+                 (temp_CanId & Hrhcfg_Ptr[HrhCfg_index].CanIfHrhRangeCfgObj->CanIfHrhRangeMask)) &&
+                (Hrhcfg_Ptr[HrhCfg_index].CanIfHrhRangeCfgObj->CanIfHrhRangeRxPduRangeCanIdType == temp_canIdType))
             {
-                
-                // call user
-                switch (TempCanIfRxPduCfgptr->CanIfRxPduUserRxIndicationUL)
+                /*
+                * check if the received can id in the range of the hrh 
+                * The type of the received can equal the type configured to recieve in this hrh 
+                */
+                if ((Hrhcfg_Ptr[HrhCfg_index].CanIfHrhSoftwareFilter == STD_ON) &&
+                    (Hrhcfg_Ptr[HrhCfg_index].CanIfHrhIdSymRef->CanHandleType == BASIC))
                 {
-                case CAN_NM_RX_INDICATION:
-                    /* code */
-                    break;
-
-                case CAN_TP_RX_INDICATION:
-                    /* code */
-                    break;
-
-                case CAN_TSYN_RX_INDICATION:
-                    /* code */
-                    break;
-
-                case CDD_RX_INDICATION:
-                    /* code */
-                    break;
-
-                case J1939NM_RX_INDICATION:
-                    /* code */
-                    break;
-
-                case J1939TP_RX_INDICATION:
-                    /* code */
-                    break;
-
-                case PDUR_RX_INDICATION:
-                    /* code */
-                    break;
-
-                case XCP_RX_INDICATION:
-                    /* code */
-                    break;
-
-                default:
+                    //Configured sw algorithm is Linear
+                    for (uint64 PduCfg_index = 0; PduCfg_index < RX_CAN_L_PDU_NUM; PduCfg_index++)
+                    {
+                        if ((PduCfg_ptr[PduCfg_index].CanIfRxPduHrhIdRef == (&Hrhcfg_Ptr[HrhCfg_index])))
+                        {
+                            if ((temp_CanId & PduCfg_ptr[PduCfg_index].CanIfRxPduCanId) ==
+                                (temp_CanId & PduCfg_ptr[PduCfg_index].CanIfRxPduCanIdMask))
+                            {
+                                *CanIfRxPduId_ptr = PduCfg_ptr[PduCfg_index].CanIfRxPduId;
+                                ret_val = E_OK;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    /* Filter disabled
+                *  Full can
+                * Direct map 
+                * 
+                *temp_CanId >> pduid
+                */
                     break;
                 }
             }
             else
             {
-                /* code */
+                /*[SWS_CANIF_00417] d If parameter Mailbox->CanId of
+                    CanIf_RxIndication() has an invalid value, CanIf shall report development
+                    error code CANIF_E_PARAM_CANID to the Det_ReportError service of the DET
+                    module, when CanIf_RxIndication() is called.
+                */
+#if (CANIF_DEV_ERROR_DETECT == STD_ON) /* DET notifications */
+                Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+                                CANIF_E_PARAM_CANID);
+#endif
+                break;
             }
         }
         else
         {
-            /* code */
+            // can't find hoh
         }
     }
-    else
-    {
-        /* code */
-    }
+    return ret_val;
 }

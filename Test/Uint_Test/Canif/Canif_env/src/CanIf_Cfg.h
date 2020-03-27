@@ -35,7 +35,6 @@
 #ifndef __CANIF_CFG_H__
 #define __CANIF_CFG_H__
 
-
 //*****************************************************************************
 //  This parameter defines if the buffer element length shall be fixed to 8
 //  Bytes for buffers to which only PDUs < 8 Bytes are assigned.
@@ -113,7 +112,8 @@
 //  received L-SDU data.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READ_RX_PDU_DATA_API     	STD_OFF
+#define CANIF_PUBLIC_READ_RX_PDU_DATA_API     	STD_ON
+
 
 //*****************************************************************************
 //  Enables and disables the API for reading the notification status of
@@ -539,6 +539,12 @@ has to be performed at during receive processing.
 True: Software filtering is enabled False: Software filtering is enabled*/
 #define CANIF_HRH_SOFTWARE_FILTER               STD_ON
 
+
+/*Selects the desired software filter mechanism for reception only. Each
+implemented software filtering method is identified by this enumeration
+number.*/
+#define CanIfPrivateSoftwareFilterValue			(LINEAR)
+
 /*CAN Identifier used as base value in combination with
 CanIfHrhRangeMask for a masked ID range in which all CAN Ids shall
 pass the software filtering. The size of this parameter is limited by
@@ -625,6 +631,7 @@ each hardware transmit object (HTH).*/
 multiple CANID ranges for a given same HRH*/
 /*It defines muliplicity of CanIfHrhRangeCfg container*/
 #define CANID_RANGES_NUM                           16    
+
 
 
 #endif /* __CANIF_CFG_H__ */

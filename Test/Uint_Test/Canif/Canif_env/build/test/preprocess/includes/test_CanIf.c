@@ -3,4 +3,5 @@
 - build/test/mocks/mock_Can.h
 - build/test/mocks/mock_Det.h
 - src/CanIf.h
+- src/CanIf_Cfg.h
 - build/temp/_test_CanIf.c

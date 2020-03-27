@@ -45,6 +45,9 @@
 /*****************************************************************************************/
 /* Id for the company in the AUTOSAR
   **/
+
+ extern  CanIf_ConfigType CanIf_ConfigObj;
+
 #define CANIF_VENDOR_ID    	(0x100)
 
 /* CAN Module Id */

@@ -13,7 +13,6 @@ char* GlobalOrderError;
 /*=======External Functions This Runner Calls=====*/
 extern void setUp(void);
 extern void tearDown(void);
-extern void test_CanIf_NeedToImplement(void);
 extern void test_CanIf_NeedToImplement1(void);
 
 
@@ -87,8 +86,7 @@ static void run_test(UnityTestFunction func, const char* name, int line_num)
 int main(void)
 {
   UnityBegin("test_CanIf.c");
-  run_test(test_CanIf_NeedToImplement, "test_CanIf_NeedToImplement", 14);
-  run_test(test_CanIf_NeedToImplement1, "test_CanIf_NeedToImplement1", 19);
+  run_test(test_CanIf_NeedToImplement1, "test_CanIf_NeedToImplement1", 17);
 
   CMock_Guts_MemFreeFinal();
   return UnityEnd();

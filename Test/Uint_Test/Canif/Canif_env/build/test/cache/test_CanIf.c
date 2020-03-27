@@ -1,4 +1,5 @@
 #include "build/temp/_test_CanIf.c"
+#include "src/CanIf_Cfg.h"
 #include "src/CanIf.h"
 #include "build/test/mocks/mock_Det.h"
 #include "build/test/mocks/mock_Can.h"
@@ -21,13 +22,7 @@ void tearDown(void)
 
 
 
-void test_CanIf_NeedToImplement(void)
 
-{
-
-    CanIf_ModuleState = ((CanIf_ModuleStateType)0x01);
-
-}
 
 
 
@@ -35,6 +30,6 @@ void test_CanIf_NeedToImplement1(void)
 
 {
 
-    if ((CanIf_ModuleState==((CanIf_ModuleStateType)0x01))) {} else {UnityFail( ((" Expected TRUE Was FALSE")), (UNITY_UINT)((UNITY_UINT)(21)));};
+
 
 }
