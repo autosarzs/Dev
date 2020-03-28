@@ -95,10 +95,10 @@ typedef uint8 CanIf_ModuleStateType;
 //	CANIF_HRH_HANDLETYPE_REF for at least one HRH.
 //*****************************************************************************
 typedef uint8 CanIfPrivateSoftwareFilterTypeType;
-#define BINARY									((CanIfPrivateSoftwareFilterTypeType)0x00)
-#define INDEX									((CanIfPrivateSoftwareFilterTypeType)0x01)
-#define LINEAR									((CanIfPrivateSoftwareFilterTypeType)0x02)
-#define TABLE									((CanIfPrivateSoftwareFilterTypeType)0x03)
+#define BINARY									(/*(CanIfPrivateSoftwareFilterTypeType)*/0x00)
+#define INDEX									(/*(CanIfPrivateSoftwareFilterTypeType)*/0x01)
+#define LINEAR									(/*(CanIfPrivateSoftwareFilterTypeType)*/0x02)
+#define TABLE									(/*(CanIfPrivateSoftwareFilterTypeType)*/0x03)
 
 //*****************************************************************************
 //	This parameter is used to configure the Can_HwHandleType. The

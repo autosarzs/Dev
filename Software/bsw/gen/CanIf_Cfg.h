@@ -61,6 +61,13 @@
 //*****************************************************************************
 #define CANIF_PRIVATE_DATA_LENGTH_CHECK    		STD_ON
 
+/*****************************************************************************
+ *  Selects the desired software filter mechanism for reception only. Each
+ *	implemented software filtering method is identified by this enumeration number.
+ *	Range: Types implemented software filtering methods
+ */
+#define CANIF_PRIVATE_SOFTWARE_FILTER_TYPE		LINEAR
+
 //*****************************************************************************
 //  Defines whether TTCAN is supported.
 //  TRUE: TTCAN is supported. FALSE: TTCAN is not supported, only
