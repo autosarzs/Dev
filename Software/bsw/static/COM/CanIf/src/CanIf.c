@@ -287,11 +287,6 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
     		                			//misra
     		                		}
 #endif
-
-#if (CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
-                        // Call copy_Data
-                        //Set flag
-#endif
     		                	}
     		                	//Software filter failed
     		                	else
@@ -333,39 +328,51 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 #endif
     		                	}
 
-    		                	//Get UL user
+#if (CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
+                        // Call copy_Data
+                        //Set flag
+#endif
+
+    		                	/*
+    		                	 * [SWS_CANIF_00135] d If a target upper layer module was configured to be called
+									with its providing receive indication service (see [SWS_CANIF_00056]), the CanIf shall
+									call this configured receive indication callback service (see ECUC_CanIf_00530) and
+									shall provide the parameters required for upper layer notification callback functions
+									(see [SWS_CANIF_00012]) based on the parameters of CanIf_RxIndication(). c
+									(SRS_BSW_00325)
+								*/
     	                        switch (PduCfg_ptr[temp_CanIfRxPduindex].CanIfRxPduUserRxIndicationUL)
     	                        {
     	                        case CAN_NM_RX_INDICATION:
-    	                            /* code */
+    	                        	CanNm_RxIndication(Mailbox->CanId, PduInfoPtr);
     	                            break;
 
     	                        case CAN_TP_RX_INDICATION:
-    	                            /* code */
+    	                        	CanTp_RxIndication(Mailbox->CanId, PduInfoPtr);
     	                            break;
 
     	                        case CAN_TSYN_RX_INDICATION:
-    	                            /* code */
+    	                        	CanTSyn_CanIfRxIndication(Mailbox->CanId, PduInfoPtr);
     	                            break;
 
     	                        case CDD_RX_INDICATION:
-    	                            /* code */
+    	                        	CanIfRxPduUserRxIndication(Mailbox->CanId, PduInfoPtr);
     	                            break;
 
     	                        case J1939NM_RX_INDICATION:
-    	                            /* code */
+    	                        	J1939Nm_RxIndication(Mailbox->CanId, PduInfoPtr);
     	                            break;
 
     	                        case J1939TP_RX_INDICATION:
-    	                            /* code */
+    	                        	J1939Tp_RxIndication(Mailbox->CanId, PduInfoPtr);
     	                            break;
 
     	                        case PDUR_RX_INDICATION:
-    	                            /* code */
+    	                        	PduR_CanIfRxIndication(Mailbox->CanId, PduInfoPtr);
     	                            break;
 
     	                        case XCP_RX_INDICATION:
-    	                            /* code */
+    	                        	Xcp_CanIfRxIndication(Mailbox->CanId, PduInfoPtr);
     	                            break;
 
     	                        default:

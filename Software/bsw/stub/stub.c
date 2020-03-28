@@ -87,3 +87,38 @@ void CanIfRxPduUserRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr
 
 }
 
+void PduR_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+
+void CanNm_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+
+void J1939Nm_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+
+void CanTp_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+
+void Xcp_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+void CanTSyn_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+void J1939Tp_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+
+
+
