@@ -35,7 +35,7 @@
 #ifndef __CANIF_H__
 #define __CANIF_H__
 
-#include "Can.h"
+//#include "Can.h"
 #include "CanIf_Types.h"
 #include "CanIf_Cfg.h"
 

@@ -36,6 +36,15 @@
 #define __CANIF_CFG_H__
 
 
+/* SW Module Version is 1.0.0 */
+#define CANIF_CFG_SW_MAJOR_VERSION             (1U)
+#define CANIF_CFG_SW_MINOR_VERSION             (0U)
+#define CANIF_CFG_SW_PATCH_VERSION             (0U)
+
+/* AUTOSAR Version 4.3.1 */
+#define CANIF_CFG_AR_RELEASE_MAJOR_VERSION     (4U)
+#define CANIF_CFG_AR_RELEASE_MINOR_VERSION     (3U)
+#define CANIF_CFG_AR_RELEASE_PATCH_VERSION     (1U)
 //*****************************************************************************
 //  This parameter defines if the buffer element length shall be fixed to 8
 //  Bytes for buffers to which only PDUs < 8 Bytes are assigned.
@@ -66,7 +75,7 @@
 //  false: detection and notification is disabled.
 //  Default Value: false
 //*****************************************************************************
-#define CANIF_DEV_ERROR_DETECT                 	STD_ON
+#define CANIF_DEV_ERROR_DETECT                 	STD_OFF
 
 //*****************************************************************************
 //  Enable support for dynamic ID handling using L-SDU MetaData.
@@ -113,8 +122,7 @@
 //  received L-SDU data.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READ_RX_PDU_DATA_API     	STD_ON
-
+#define CANIF_PUBLIC_READ_RX_PDU_DATA_API     	STD_OFF
 
 //*****************************************************************************
 //  Enables and disables the API for reading the notification status of
@@ -142,7 +150,7 @@
 //  CanDrv) within the CAN Interface module.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_TX_BUFFERING             	STD_OFF
+#define CANIF_PUBLIC_TX_BUFFERING             	STD_ON
 
 //*****************************************************************************
 //  Configuration parameter to enable/disable the API to poll for Tx
@@ -177,7 +185,7 @@
 //  is not supported
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_SET_BAUDRATE_API                 	STD_ON
+#define CANIF_SET_BAUDRATE_API                 	STD_OFF
 
 //*****************************************************************************
 //  Enables the CanIf_TriggerTransmit API at Pre-Compile-Time.
@@ -224,53 +232,53 @@
 case of post-build loadable implementation using static memory
 allocation.
 Range: 0..18446744073709551615 */
-#define CANIF_MAX_BUFFER_SIZE					(18446744073709551615)
+//#define CANIF_MAX_BUFFER_SIZE					(18446744073709551615) /* Link Time or PostBuild parameter */
 
 /* Maximum number of Pdus. This parameter is needed only in case of
 post-build loadable implementation using static memory allocation.
 Range: 0..18446744073709551615 */
-#define CANIF_MAX_RX_PDU_CFG					(18446744073709551615)
+//#define CANIF_MAX_RX_PDU_CFG					(18446744073709551615) /* Link Time or PostBuild parameter */
 
 /* Maximum number of Pdus. This parameter is needed only in case of
 post-build loadable implementation using static memory allocation.
 Range: 0..18446744073709551615 */
-#define CANIF_MAX_TX_PDU_CFG					(18446744073709551615)
+//#define CANIF_MAX_TX_PDU_CFG					(18446744073709551615) /* Link Time or PostBuild parameter */
 
 /* CAN Identifier of transmit CAN L-PDUs used by the CAN Driver for
 CAN L-PDU transmission. Range: 11 Bit For Standard CAN Identifier
 ... 29 Bit For Extended CAN identifier
 The CAN Identifier may be omitted for dynamic transmit L-PDUs. */
-#define CANIF_TX_PDU_CAN_ID0					(0U)
-#define CANIF_TX_PDU_CAN_ID1					(1U)
+//#define CANIF_TX_PDU_CAN_ID0					(0U)	/* Link Time or PostBuild parameter */
+//#define CANIF_TX_PDU_CAN_ID1					(1U)	/* Link Time or PostBuild parameter */
 
 /* Identifier mask which denotes relevant bits in the CAN Identifier. This
 parameter may be used to keep parts of the CAN Identifier of dynamic
 transmit L-PDUs static. Range: 11 bits for Standard CAN Identifier, 29
 bits for Extended CAN Identifier.
 Range: 0 .. 536870911 */
-#define CANIF_TX_PDU_CAN_ID_MASK0				(1<<(uint32)0)
-#define CANIF_TX_PDU_CAN_ID_MASK1				(1<<(uint32)1)
+//#define CANIF_TX_PDU_CAN_ID_MASK0				(1<<(uint32)0) /* Link Time or PostBuild parameter */
+//#define CANIF_TX_PDU_CAN_ID_MASK1				(1<<(uint32)1) /* Link Time or PostBuild parameter */
 
 /* ECU wide unique, symbolic handle for transmit CAN L-SDU.
 Range: 0..max. number of CantTxPduIds. Range: 0 - 4294967295*/
-#define CANIF_TX_PDU_ID							(4294967295U)
+//#define CANIF_TX_PDU_ID							(4294967295U) /* Link Time or PostBuild parameter */
 
 /* If CanIfPublicPnFilterSupport is enabled, by this parameter PDUs
 could be configured which will pass the CanIfPnFilter.
 If there is no CanIfTxPduPnFilterPdu configured per controller,
 the corresponding controller applies no CanIfPnFilter.
 dependency: This parameter shall only be configurable if CanIfPublicPnSupport equals True. */
-#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-	#define CANIF_TX_PDU_PN_FILTER_PDU			STD_OFF
-#endif
+//#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
+//	#define CANIF_TX_PDU_PN_FILTER_PDU			STD_OFF 		/* Link Time or PostBuild parameter */
+//#endif
 
 /* Enables and disables transmit confirmation for each transmit CAN
 L-SDU for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
-	#define CANIF_TX_PDU_READ_NOTIFY_STATUS		STD_OFF
-#endif
+//#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
+//	#define CANIF_TX_PDU_READ_NOTIFY_STATUS		STD_OFF			/* Link Time or PostBuild parameter */
+//#endif
 
 /* Determines if or if not CanIf shall use the trigger transmit API for this PDU.
 dependency: If CanIfTxPduTriggerTransmit is TRUE then CanIfTxPduUserTxConfirmationUL 
@@ -385,17 +393,17 @@ dependency: CANIF_CANPDUID_READDATA_API must be enabled */
 /* Enables and disables the Rx buffering for reading of received L-SDU
 data. True: Enabled False: Disabled
 dependency: CANIF_CANPDUID_READDATA_API must be enabled */
-#if(CANIF_CAN_PDU_ID_READ_DATA_API==STD_ON)
-	#define CANIF_RX_PDU_READ_DATA				(STD_OFF)
-#endif
+//#if(CANIF_CAN_PDU_ID_READ_DATA_API==STD_ON)
+//	#define CANIF_RX_PDU_READ_DATA				(STD_OFF)	/* Link Time or PostBuild parameter */
+//#endif
 
 /* Enables and disables receive indication for each receive CAN L-SDU
 for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
-#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
-	#define CANIF_RX_PDU_READ_NOTIFY_STATUS		(STD_OFF)
-#endif
+//#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
+//	#define CANIF_RX_PDU_READ_NOTIFY_STATUS		(STD_OFF)	/* Link Time or PostBuild parameter */
+//#endif
 
 /* This parameter defines the name of the <User_RxIndication>. This parameter depends
 on the parameter CanIfRxPduUserRxIndicationUL. If CanIfRxPduUserRxIndicationUL equals
@@ -540,12 +548,6 @@ has to be performed at during receive processing.
 True: Software filtering is enabled False: Software filtering is enabled*/
 #define CANIF_HRH_SOFTWARE_FILTER               STD_ON
 
-
-/*Selects the desired software filter mechanism for reception only. Each
-implemented software filtering method is identified by this enumeration
-number.*/
-#define CanIfPrivateSoftwareFilterValue			(LINEAR)
-
 /*CAN Identifier used as base value in combination with
 CanIfHrhRangeMask for a masked ID range in which all CAN Ids shall
 pass the software filtering. The size of this parameter is limited by
@@ -570,21 +572,6 @@ definition, in which all CAN Ids shall pass the software filtering.*/
 #define CANIF_HRH_RANGE_RX_PDU_UPPER_CAN_ID0			    		(0U)
 #define CANIF_HRH_RANGE_RX_PDU_UPPER_CAN_ID1      					(1U)
 
-/*This parameter defines the number of CanIf Tx L-PDUs which can be
-buffered in one Txbuffer. If this value equals 0, the CanIf does not
-perform Txbuffering for the CanIf Tx L-PDUs which are assigned to this
-Txbuffer. If CanIfPublicTxBuffering equals False, this parameter equals
-0 for all TxBuffer. If the CanHandleType of the referred HTH equals
-FULL, this parameter equals 0 for this TxBuffer.*/
-/*TODO check this parameter later */
-#if(CANIF_PUBLIC_TX_BUFFERING==STD_OFF)
-	#define CANIF_BUFFER_SIZE                  (0U)
-//#elif(CanHardwareObject.CanHandleType==FULL)
-//	#define CANIF_BUFFER_SIZE                  (1U)
-#else	/* any value, implementation dependant */
-	#define CANIF_BUFFER_SIZE                  (255U)
-#endif
-
 
 /**************************************************************************************************************
 *                                         Sizes of containers muliplicity                                                                  
@@ -592,7 +579,14 @@ FULL, this parameter equals 0 for this TxBuffer.*/
 
 /* CAN_DRIVER_NUM is a size of array to define the number of underlying CAN Driver modules*/
 /* It defines muliplicity of CanIfCtrlDrvCfg & CanIfInitHohCfg containers */
-#define  CAN_DRIVER_NUM                             3
+#define  CAN_DRIVER_NUM                             1
+
+/* Each controller of all connected CAN Driver modules shall be assigned to
+ * one specific ControllerId of the CanIf.
+ */
+#define  CANIF_CONTROLLERS_NUM                      1
+#define  CANIF_CONTROLLER_ID_0                      0
+
 
 /*CAN_TRANSCEIVER_NUM is used to specify the number of containers contains the configuration (parameters)
 of all addressed CAN transceivers by each underlying
@@ -606,33 +600,37 @@ If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the
 CanIf Tx L-PDU only refers via this CanIfBufferCfg the
 corresponding CanIfHthCfg.*/
 /*It defines muliplicity of CanIfBufferCfg container*/
-#define  BUFFERS_NUM                                10
+#define  BUFFERS_NUM                                2
 
 /* RX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
 of each receive CAN L-PDU.*/
 /*It defines muliplicity of CanIfRxPduCfg container*/
-#define RX_CAN_L_PDU_NUM                            10
+#define RX_CAN_L_PDU_NUM                            2
+#define RX_PDU_ID_0                                 0
+#define RX_PDU_ID_1                                 1
 
 /*TX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
 of each transmit CAN L-PDU.*/
 /*It defines muliplicity of CanIfTxPduCfg container*/
-#define TX_CAN_L_PDU_NUM                            10 
+#define TX_CAN_L_PDU_NUM                            2
+#define TX_PDU_ID_0                                 0
+#define TX_PDU_ID_1                                 1
+
 
 /*HRH_OBj_NUM is used to specify the number of containers contains configuration parameters for
 each hardware receive object (HRH).*/
 /*It defines muliplicity of CanIfHrhCfg container*/
-#define HRH_OBj_NUM                                 2
+#define CANIF_HRH_OBj_NUM                           2
+#define CANIF_HRH_ID_0                              0
+#define CANIF_HRH_ID_1                              1
 
 /*HTH_OBj_NUM is used to specify the number of containers contains configuration parameters for
 each hardware transmit object (HTH).*/
 /*It defines muliplicity of CanIfHthCfg container*/
-#define HTH_OBj_NUM                                 2
+#define CANIF_HTH_OBj_NUM                           2
+#define CANIF_HTH_ID_0                              0
+#define CANIF_HTH_ID_1                              1
 
-/*CANID_RANGES_NUM is used to specify the number of containers Defines the parameters required for configurating
-multiple CANID ranges for a given same HRH*/
-/*It defines muliplicity of CanIfHrhRangeCfg container*/
-#define CANID_RANGES_NUM                           16    
 
-extern  CanIf_ConfigType CanIf_ConfigObj;
-extern  CanIfRxPduCfgType CanIfRxPduCfgObj[RX_CAN_L_PDU_NUM];
+
 #endif /* __CANIF_CFG_H__ */

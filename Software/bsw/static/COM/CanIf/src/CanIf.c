@@ -95,7 +95,7 @@ static Std_ReturnType CanIf_CheckDLC(const PduInfoType *pPduInfo)
 static Std_ReturnType CanIf_SW_Filter(const Can_HwType *Mailbox, uint32 *CanIfRxPduId_ptr)
 {
     // pointer for PBcfg hrh configuration
-    CanIfHrhCfgType *Hrhcfg_Ptr = CanIf_ConfigPtr->CanIfInitCfgObj->CanIfInitHohCfgObj->CanIfHrhCfgObj;
+    CanIfHrhCfgType *Hrhcfg_Ptr = &CanIf_ConfigPtr->CanIfInitCfgObj.CanIfInitHohCfgObj.CanIfHrhCfgObj;
     // pointer for PBcfg Rx-pdu configuration
     CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfRxPduCfgObj;
     // Local variable hold Message type , Extendedd , standard ...
