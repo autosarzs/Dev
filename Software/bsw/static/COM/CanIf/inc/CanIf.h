@@ -150,26 +150,6 @@ Std_ReturnType
 CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr);
 
 /*******************************************************************************
-* Service Name:       CanIf_SetPduMode
-* Service ID[hex]:    0x09
-* Sync/Async:         Synchronous
-* Reentrancy:         Non Reentrant
-* Parameters (in):    ControllerId All PDUs of the own ECU connected to the corre-
-                      sponding CanIf ControllerId, which is assigned to a physical 
-                      CAN controller are addressed.
-                      PduModeRequest Requested PDU mode change
-* Parameters (inout): None
-* Parameters (out):   None
-* Return value:       Std_ReturnType E_OK: PDU mode request has been accepted
-                                     E_NOT_OK: PDU mode request has not been
-                                     ac-cepted.
-* Description:        This service sets the requested mode at the L-PDUs of a predefined
-                      logical PDU channel.
-***********************************************************************************/
-Std_ReturnType 
-CanIf_SetPduMode(uint8 ControllerId, CanIf_PduModeType PduModeRequest);
-
-/*******************************************************************************
 * Service Name:       CanIf_GetPduMode
 * Service ID[hex]:    0x0a
 * Sync/Async:         Synchronous
