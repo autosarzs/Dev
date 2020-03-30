@@ -1,8 +1,6 @@
 eclipse.preferences.version=1
 encoding//Debug/bsw/gen/subdir_rules.mk=UTF-8
 encoding//Debug/bsw/gen/subdir_vars.mk=UTF-8
-encoding//Debug/bsw/static/COM/CanIf/src/subdir_rules.mk=UTF-8
-encoding//Debug/bsw/static/COM/CanIf/src/subdir_vars.mk=UTF-8
 encoding//Debug/bsw/static/Infrastructure/platform/src/subdir_rules.mk=UTF-8
 encoding//Debug/bsw/static/Infrastructure/platform/src/subdir_vars.mk=UTF-8
 encoding//Debug/bsw/static/Mcal/CAN/src/subdir_rules.mk=UTF-8
