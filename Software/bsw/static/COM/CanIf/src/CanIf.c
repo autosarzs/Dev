@@ -77,17 +77,10 @@
 /*****************************************************************************************/
 /*                                Exported Variables Definition                          */
 /*****************************************************************************************/
-/*
- * swPduHandle is a global variable defined in Can.c
- */
-extern PduIdType swPduHandle[];
 
 /*****************************************************************************************/
 /*                                Local Variables Definition                             */
 /*****************************************************************************************/
-
-/*Array of struct to map CanIds to a specific L-PDU of type dynamic*/
-static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
 /*Pointer to save configuration parameters set */
 static CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
@@ -141,7 +134,8 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 		 */
 		for(uint8 PduId= 0; PduId < CAN_HTH_NUMBER ; PduId++)
 		{
-			if(CanTxPduId != swPduHandle[PduId] && CAN_HTH_NUMBER-1 == PduId)
+			if(CanTxPduId != CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[PduId].CanIfTxPduId\
+			&& CAN_HTH_NUMBER-1 == PduId)
 			{
 				Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_TXCONFIRMATION_API_ID,CANIF_E_PARAM_LPDU);
 			}

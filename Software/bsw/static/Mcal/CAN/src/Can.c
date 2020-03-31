@@ -145,7 +145,7 @@ static str_MessageObjAssignedToHTH MessageObjAssignedToHTH[CAN_HTH_NUMBER];
  * swPduHandle is a global variable updated in CAN_Write function from PduInfo pointer
  *  and saved to be passed to CanIf_TxConfirmation
  */
-PduIdType swPduHandle[CAN_HTH_NUMBER];
+static PduIdType swPduHandle[CAN_HTH_NUMBER];
 
 /*
  *  global variable used to protect the Hth in CAN_Write function

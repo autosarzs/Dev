@@ -68,3 +68,122 @@ void CanIf_ControllerBusOff(uint8 ControllerId)
 }
 
 
+void CanNm_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void CanNm_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void XCP_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void XCP_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void PduR_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void PduR_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void J1939TP_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void J1939TP_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void J1939Nm_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void J1939Nm_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void Cdd_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void Cdd_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void CanTSyn_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void CanTSyn_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void CanTp_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void CanTp_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+);
+{
+}
+
