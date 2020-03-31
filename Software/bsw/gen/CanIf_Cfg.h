@@ -120,14 +120,23 @@
 //  receive L-PDU.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API 	STD_OFF
+#if(CANIF_READTXPDU_NOTIFY_STATUS_API==STD_ON)
+	#define CANIF_TXPDU_READ_NOTIFYSTATUS STD_ON
+#endif
+
+//*****************************************************************************
+//  Enables and disables the API for reading the notification status of
+//  receive L-PDU.True: Enabled False: Disabled
+//  Default Value: False
+//*****************************************************************************
+#define CANIF_PUBLIC_READRXPDU_NOTIFY_STATUS_API 	STD_OFF
 
 //*****************************************************************************
 //  Enables and disables the API for reading the notification status of
 //  transmit L-PDUs.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API 	STD_OFF
+#define CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API    STD_ON
 
 //*****************************************************************************
 //  Enables and disables the API for reconfiguration of the CAN Identifier
@@ -267,8 +276,8 @@ dependency: This parameter shall only be configurable if CanIfPublicPnSupport eq
 L-SDU for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
-	#define CANIF_TX_PDU_READ_NOTIFY_STATUS		STD_OFF
+#if(CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API==STD_ON)
+	#define CANIF_READTXPDU_NOTIFY_STATUS_API		STD_ON
 #endif
 
 /* Determines if or if not CanIf shall use the trigger transmit API for this PDU.

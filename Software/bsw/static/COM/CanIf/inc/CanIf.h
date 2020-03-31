@@ -39,6 +39,21 @@
 #include "CanIf_Cfg.h"
 
 
+/* CanIf Module Id */
+#define CANIF_MODULE_ID		((uint16)60U)
 
+/* CanIf Instance Id */
+#define CANIF_INSTANCE_ID	((uint8)0U)
+
+/* CanIf Service Id */
+
+#define CANIF_TXCONFIRMATION_API_ID     ((uint8)0x13)
+
+/* CanIf_DetErrorType */
+
+#define CANIF_E_PARAM_LPDU  ((uint8)13U)
+#define CANIF_E_UNINIT      ((uint8)30U)
+
+void CanIf_TxConfirmation(PduIdType);
 
 #endif /* __CANIF_H__ */

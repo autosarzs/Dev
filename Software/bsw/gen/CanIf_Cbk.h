@@ -2,6 +2,7 @@
 #define __CANIF_CBK_H__
 
 #include "Can_GeneralTypes.h"
+#include "ComStack_Types.h"
 
 /* Module Version 1.0.0 */
 #define CAN_IF_TYPES_SW_MAJOR_VERSION           (1U)
@@ -23,9 +24,7 @@
 #endif
 
 
-//typedef uint32 PduIdType;
-
-void CanIf_TxConfirmation(PduIdType CanTxPduId);
+void CanIf_TxConfirmation(PduIdType);
 
 /*apply the cnhages */
 void CanIf_ControllerModeIndication( uint8 ControllerId, Can_ControllerStateType ControllerMode );

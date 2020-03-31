@@ -43,11 +43,6 @@ Std_ReturnType Det_ReportError(uint16 ModuleId, uint8 InstanceId, uint8 ApiId,
 	return 0;
 }
 
-void CanIf_TxConfirmation(PduIdType CanTxPduId)
-{
-
-}
-
 void CanIf_ControllerModeIndication( uint8 ControllerId, Can_ControllerStateType ControllerMode )
 {
 
