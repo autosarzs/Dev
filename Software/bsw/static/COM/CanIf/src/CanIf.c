@@ -57,6 +57,8 @@
 #include "Dem.h"
 #include "MemMap.h"
 
+extern CanIfCtrlCfgType CanIfCtrlCfgObj[];
+
 /*
     Private global variables
 */
