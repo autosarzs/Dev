@@ -4,12 +4,12 @@
 #include "Can_GeneralTypes.h"
 #include "ComStack_Types.h"
 
-void J1939TP_TxConfirmation(
+void J1939Tp_TxConfirmation(
 PduIdType TxPduId,
 Std_ReturnType result
 );
 
-void J1939TP_RxIndication(
+void J1939Tp_RxIndication(
 PduIdType RxPduId,
 const PduInfoType* PduInfoPtr
 );

@@ -4,12 +4,12 @@
 #include "Can_GeneralTypes.h"
 #include "ComStack_Types.h"
 
-void Cdd_TxConfirmation(
+void Cdd_CanIfTxConfirmation(
 PduIdType TxPduId,
 Std_ReturnType result
 );
 
-void Cdd_RxIndication(
+void Cdd_CanIfRxIndication(
 PduIdType RxPduId,
 const PduInfoType* PduInfoPtr
 );

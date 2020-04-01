@@ -283,7 +283,7 @@ dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
 /* Determines if or if not CanIf shall use the trigger transmit API for this PDU.
 dependency: If CanIfTxPduTriggerTransmit is TRUE then CanIfTxPduUserTxConfirmationUL 
 has to be either PDUR or CDD and CanIfTxPduUserTriggerTransmitName has to be specified accordingly */
-#define CANIF_TX_PDU_TRIGGER_TRANSMIT			STD_OFF
+#define CANIF_TX_PDU_TRIGGER_TRANSMIT			STD_ON
 
 /* Enables/disables truncation of PDUs that exceed the configured size. */
 #define CANIF_TX_PDU_TRUNCATION					STD_ON

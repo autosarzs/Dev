@@ -49,6 +49,8 @@
 #include "CanIf.h"
 #include "CanIf_Cbk.h"
 #include "Can_Cfg.h"
+#include "irq.h"
+#include "Det.h"
 /*	Headers of Callback Functions	*/
 #include "CanTp_Cbk.h"
 #include "CanNm_Cbk.h"
@@ -151,6 +153,7 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 		CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[CanTxPduId].CanIfTxPduReadNotifyStatus = TRUE;
 #endif
 
+#if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
 	/*
 	 * [SWS_CANIF_00414] Configuration of CanIf_TxConfirmation():
 	 * Each Tx LPDU (see ECUC_CanIf_00248) has to be configured with a corresponding transmit
@@ -168,11 +171,11 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 	}
 	else if(CAN_TSYN == PduUser)
 	{
-		CanTSyn_TxConfirmation(CanTxPduId , E_OK);
+		CanTSyn_CanIfTxConfirmation(CanTxPduId , E_OK);
 	}
 	else if(CDD == PduUser)
 	{
-		Cdd_TxConfirmation(CanTxPduId , E_OK);
+		Cdd_CanIfTxConfirmation(CanTxPduId , E_OK);
 	}
 	else if(J1939NM == PduUser)
 	{
@@ -180,15 +183,15 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 	}
 	else if(J1939TP == PduUser)
 	{
-		J1939TP_TxConfirmation(CanTxPduId , E_OK);
+		J1939Tp_TxConfirmation(CanTxPduId , E_OK);
 	}
 	else if(PDUR == PduUser)
 	{
-		PduR_TxConfirmation(CanTxPduId , E_OK);
+		PduR_CanIfTxConfirmation(CanTxPduId , E_OK);
 	}
 	else if(XCP == PduUser)
 	{
-		XCP_TxConfirmation(CanTxPduId , E_OK);
+		Xcp_CanIfTxConfirmation(CanTxPduId , E_OK);
 	}
 	else
 	{
@@ -199,6 +202,7 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 		 * no transmit confirmation is executed.
 		 */
 	}
+#endif
 	
 	/* End of Critical Section */
 	irq_Enable();

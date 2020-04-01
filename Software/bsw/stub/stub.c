@@ -83,14 +83,14 @@ const PduInfoType* PduInfoPtr
 }
 
 
-void XCP_TxConfirmation(
+void Xcp_CanIfTxConfirmation(
 PduIdType TxPduId,
 Std_ReturnType result
 )
 {
 }
 
-void XCP_RxIndication(
+void Xcp_CanIfRxIndication(
 PduIdType RxPduId,
 const PduInfoType* PduInfoPtr
 )
@@ -98,14 +98,14 @@ const PduInfoType* PduInfoPtr
 }
 
 
-void PduR_TxConfirmation(
+void PduR_CanIfTxConfirmation(
 PduIdType TxPduId,
 Std_ReturnType result
 )
 {
 }
 
-void PduR_RxIndication(
+void PduR_CanIfRxIndication(
 PduIdType RxPduId,
 const PduInfoType* PduInfoPtr
 )
@@ -113,14 +113,14 @@ const PduInfoType* PduInfoPtr
 }
 
 
-void J1939TP_TxConfirmation(
+void J1939Tp_TxConfirmation(
 PduIdType TxPduId,
 Std_ReturnType result
 )
 {
 }
 
-void J1939TP_RxIndication(
+void J1939Tp_RxIndication(
 PduIdType RxPduId,
 const PduInfoType* PduInfoPtr
 )
@@ -158,14 +158,14 @@ const PduInfoType* PduInfoPtr
 }
 
 
-void CanTSyn_TxConfirmation(
+void CanTSyn_CanIfTxConfirmation(
 PduIdType TxPduId,
 Std_ReturnType result
 )
 {
 }
 
-void CanTSyn_RxIndication(
+void CanTSyn_CanIfRxIndication(
 PduIdType RxPduId,
 const PduInfoType* PduInfoPtr
 )
@@ -183,7 +183,7 @@ Std_ReturnType result
 void CanTp_RxIndication(
 PduIdType RxPduId,
 const PduInfoType* PduInfoPtr
-);
+)
 {
 }
 
