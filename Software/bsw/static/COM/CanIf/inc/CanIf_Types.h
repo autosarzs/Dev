@@ -273,7 +273,7 @@ typedef uint8 CanIfHrhRangeRxPduRangeCanIdTypeType;
 
 /*
 	CanIf_PduModeType
-	[SWS_CANIF_00137]
+	[SWS_CANIF_00137] 
 	The PduMode of a channel defines its transmit or receive activity.
 	Communication direction (transmission and/or reception) of the channel can
 	be controlled separately or together by upper layers.
@@ -287,11 +287,11 @@ typedef uint8 CanIf_PduModeType;
 #define CANIF_ONLINE                                        ((CanIf_PduModeType)0x03)
 
 typedef struct {
-
-				/* This parameter defines if a respective controller of the referenced CAN
+				
+				/* This parameter defines if a respective controller of the referenced CAN 
 				Driver modules is queriable for wake up events (Supports Wakeup Event or not). For Each CanIf Controller */
 				boolean CanIfCtrlWakeupSupport;
-
+				
 				/*This parameter references to the logical handle of the underlying CAN
 				controller from the CAN Driver module to be served by the CAN
 				Interface module. The following parameters of CanController config
@@ -323,7 +323,7 @@ typedef struct {
 				of the referred HTH equals FULL, this parameter equals 0 for this TxBuffer. Range: 0 .. 255
 				dependency: CanIfPublicTxBuffering, CanHandleType */
 				uint8 CanIfBufferSize;
-
+	
 			  /*[ECUC_CanIf_00833]
 				Reference to HTH, that defines the hardware object or the pool of hardware objects configured for transmission.
 				All the CanIf Tx L-PDUs refer via the CanIfBufferCfg and this parameter to the HTHs if TxBuffering is enabled, or
@@ -402,7 +402,6 @@ typedef struct
 						STANDARD_FD_CAN CAN FD 	frame with standard identifier (11 bits)
 			   */
 				CanIfTxPduCanIdTypeType CanIfTxPduCanIdType;
-
 
 				/* If CanIfPublicPnFilterSupport is enabled, by this parameter PDUs
 				could be configured which will pass the CanIfPnFilter.
@@ -582,7 +581,6 @@ typedef struct{
 				The data area size of a CAN L-PDU can have a range from 0 to 64 bytes. */
 				uint8 CanIfRxPduDataLength;
 
-
 				/* Enables and disables the Rx buffering for reading of received L-SDU
 				data. True: Enabled False: Disabled
 				dependency: CANIF_CANPDUID_READDATA_API must be enabled */
@@ -646,8 +644,6 @@ typedef struct{
 }CanIfInitHohCfgType;
 
 typedef struct {
-
-
 
 				/* This container contains the Txbuffer configuration. Multiple buffers with different sizes could be configured.
 				If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the CanIf Tx L-PDU only refers via this CanIfBufferCfg the
@@ -716,7 +712,7 @@ typedef struct {
 				CanIfInitHohCfgType* CanIfCtrlInitHohRef;
 
 				/*This container contains the configuration (parameters) of an adressed CAN controller by
-				an underlying CAN Driver module. This container is configurable per CAN controller.*/
+				an underlying CAN Driver module. This container is configurable per CAN controller.*/	
 				CanIfCtrlCfgType*	CanIfCtrlCfgRef; // will have an Object of [CANIF_CONTROLLERS_NUM] in the PBcfg or Lcfg file
 }CanIfCtrlDrvCfgType;
 

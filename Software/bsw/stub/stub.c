@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*******************************************************************************
  **                                                                            **
  **  Copyright (C) AUTOSarZs olc (2019)		                                  **
@@ -119,6 +120,4 @@ void J1939Tp_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
 {
 
 }
-
-
 
