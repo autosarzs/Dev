@@ -56,10 +56,10 @@
 #include "CanNm_Cbk.h"
 #include "CanTSyn_Cbk.h"
 #include "Cdd_Cbk.h"
-#include "J1939NM_Cbk.h"
-#include "J1939TP_Cbk.h"
+#include "J1939Nm_Cbk.h"
+#include "J1939Tp_Cbk.h"
 #include "PduR_Cbk.h"
-#include "XCP_Cbk.h"
+#include "Xcp_Cbk.h"
 
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
