@@ -72,4 +72,18 @@ void CanIf_ControllerBusOff(uint8 ControllerId)
 
 }
 
+void CanIfTxPduUserTriggerTransmit(PduIdType TxPduId, PduInfoType* PduInfoPtr)
+{
+
+}
+
+void CanIfTxPduUserTxConfirmation(PduIdType TxPduId, Std_ReturnType result )
+{
+
+}
+
+void CanIfRxPduUserRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr )
+{
+
+}
 

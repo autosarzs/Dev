@@ -277,7 +277,6 @@ typedef struct
     /*
     *   Reference to CAN Controller to which the HOH is associated to.
     */
-
     CanControllerType*      CanControllerRef;
 
     /*
@@ -290,7 +289,6 @@ typedef struct
     *   Enables polling of this hardware object.
     */
     boolean    CanHardwareObjectUsesPolling;
-
 } CanHardwareObjectType;
 
 
@@ -314,10 +312,8 @@ typedef struct Can_Pdu
 typedef struct 
 {
     /*Reference to CAN Controller to which the HOH is associated to.*/
-
     CanControllerType *CanControllerRef;
     /*This container contains the configuration (parameters) of CAN Hardware Objects. */
-
     CanHardwareObjectType *CanHardwareObjectRef;
 } CanConfigSet;
 
@@ -330,8 +326,9 @@ typedef struct
     *   This container contains the configuration parameters and sub
     *   containers of the AUTOSAR Can module...Multiplicity =1
     */
-CanControllerType* CanControllerCfgRef;
-CanHardwareObjectType* CanHardwareObjectRef;
+    CanControllerType* CanControllerCfgRef;
+    CanHardwareObjectType* CanHardwareObjectRef;
+
 } Can_ConfigType;
 /* -------------------------------------------------------------------------- */
 /*                             Functions Prototype                            */
@@ -377,6 +374,5 @@ void Can_DisableControllerInterrupts(uint8 Controller);
 void Can_EnableControllerInterrupts(uint8 Controller);
 Std_ReturnType Can_GetControllerMode(uint8 Controller,Can_ControllerStateType* ControllerModePtr);
 void Can_MainFunction_Write(void);
-Std_ReturnType Can_GetControllerErrorState(uint8 ControllerId,Can_ErrorStateType* ErrorStatePtr);
 
 #endif /* CAN_H_ */
