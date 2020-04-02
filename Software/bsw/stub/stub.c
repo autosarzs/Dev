@@ -157,14 +157,14 @@ const PduInfoType* PduInfoPtr
 }
 
 
-void Cdd_TxConfirmation(
+void Cdd_CanIfTxConfirmation(
 PduIdType TxPduId,
 Std_ReturnType result
 )
 {
 }
 
-void Cdd_RxIndication(
+void Cdd_CanIfRxIndication(
 PduIdType RxPduId,
 const PduInfoType* PduInfoPtr
 )

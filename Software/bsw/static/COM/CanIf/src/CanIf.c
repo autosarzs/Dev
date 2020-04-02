@@ -79,6 +79,7 @@
 /*****************************************************************************************/
 /*                                Exported Variables Definition                          */
 /*****************************************************************************************/
+extern PduIdType swPduHandle[CAN_HTH_NUMBER];
 
 /*****************************************************************************************/
 /*                                Local Variables Definition                             */
@@ -136,8 +137,8 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 		 */
 		for(uint8 PduId= 0; PduId < CAN_HTH_NUMBER ; PduId++)
 		{
-			if(CanTxPduId != CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[PduId].CanIfTxPduId\
-			&& CAN_HTH_NUMBER-1 == PduId)
+			// if(CanTxPduId != CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[PduId].CanIfTxPduId
+			if(CanTxPduId != swPduHandle[PduId] && CAN_HTH_NUMBER-1 == PduId)
 			{
 				Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_TXCONFIRMATION_API_ID,CANIF_E_PARAM_LPDU);
 			}
@@ -160,7 +161,7 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 	 * confirmation service of an upper layer module (see [SWS_CANIF_00011]) which is called in CanIf_TxConfirmation().
 	 */
 	CanIfTxPduUserTxConfirmationULType PduUser;
-	PduUser = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[CanTxPduId].CanIfTxPduUserTxConfirmationUL;
+	PduUser = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationUL;
 	if(CAN_NM == PduUser)
 	{
 		CanNm_TxConfirmation(CanTxPduId , E_OK);

@@ -308,7 +308,7 @@ typedef struct {
 				Interface module. The following parameters of CanController config
 				container shall be referenced by this link: CanControllerId, CanWakeupSourceRef
 				Range: 0..max. number of underlying supported CAN controllers*/
-				CanController* CanIfCtrlCanCtrlRef;
+				CanControllerType* CanIfCtrlCanCtrlRef;
 }CanIfCtrlCfgType;
 
 typedef struct {
@@ -319,7 +319,7 @@ typedef struct {
 				ECUC_Can_00324). CanIf receives the following information of the CanDrv module by this reference:
 				- CanHandleType (see ECUC_Can_00323)
 				- CanObjectId (see ECUC_Can_00326) */
-				CanHardwareObject* CanIfHthIdSymRef;
+				CanHardwareObjectType* CanIfHthIdSymRef;
 }CanIfHthCfgType;
 
 /* [ECUC_CanIf_00832]
@@ -460,7 +460,7 @@ typedef struct
 			     * PDUR, XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_TxConfirmation> is fixed.
 			     * If CanIfTxPduUserTxConfirmationUL equals CDD,
 			     * the name of the <User_TxConfirmation> is selectable.*/
-				void (*CanIfTxPduUserTxConfirmationNam)(PduIdType, Std_ReturnType  );
+				void (*CanIfTxPduUserTxConfirmationName)(PduIdType, Std_ReturnType  );
 				
              /* [ECUC_CanIf_00527]
                 This parameter defines the upper layer (UL) module to which the confirmation of
