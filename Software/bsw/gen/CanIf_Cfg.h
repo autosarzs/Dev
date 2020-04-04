@@ -306,7 +306,7 @@ CanIfTxPduUserTrigger- TransmitName must be PduR_CanIfTriggerTransmit.
 
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL is set to CDD,
 the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPdu- UserTriggerTransmitName. */
-/* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration */
+/* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
 // #if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
 	// #if(CanIfTxPduUserTxConfirmationUL==PDUR)
 		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	PduR_CanIfTriggerTransmit
@@ -341,7 +341,7 @@ is set to PDUR, CanIfTxPduUserTriggerTransmitName must be PduR_CanIfTriggerTrans
 
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL
 is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPduUserTriggerTransmitName. */
-/* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration */
+/* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
 // #if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
 	// #if(CanIfTxPduUserTxConfirmationUL==PDUR)
 		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	PduR_CanIfTxConfirmation
@@ -417,6 +417,7 @@ If CanIfRxPduUserRxIndicationUL equals CDD, the name of the <User_RxIndication> 
 Note: If receive indications are not necessary or no upper layer modules are configured
 for receive indications and thus <User_RxIndication>() shall not be called, CANIF_RXPDU_USERRXINDICATION_UL
 and CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
+/* CanIfRxPduUserRxIndicationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
 #if(CanIfRxPduUserRxIndicationUL==PDUR)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	PduR_CanIfRxIndication
 #elif(CanIfRxPduUserRxIndicationUL==CAN_NM)

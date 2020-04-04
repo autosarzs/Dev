@@ -79,7 +79,7 @@
 /*****************************************************************************************/
 /*                                Exported Variables Definition                          */
 /*****************************************************************************************/
-extern PduIdType swPduHandle[CAN_HTH_NUMBER];
+extern PduIdType swPduHandle[];
 
 /*****************************************************************************************/
 /*                                Local Variables Definition                             */
@@ -174,35 +174,35 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 			PduUser = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationUL;
 			if(CAN_NM == PduUser)
 			{
-				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = CanNm_TxConfirmation;
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &CanNm_TxConfirmation;
 			}
 			else if(CAN_TP == PduUser)
 			{
-				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = CanTp_TxConfirmation;
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &CanTp_TxConfirmation;
 			}
 			else if(CAN_TSYN == PduUser)
 			{
-				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = CanTSyn_CanIfTxConfirmation;
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &CanTSyn_CanIfTxConfirmation;
 			}
 			else if(CDD == PduUser)
 			{
-				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = Cdd_CanIfTxConfirmation;
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &Cdd_CanIfTxConfirmation;
 			}
 			else if(J1939NM == PduUser)
 			{
-				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = J1939Nm_TxConfirmation;
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &J1939Nm_TxConfirmation;
 			}
 			else if(J1939TP == PduUser)
 			{
-				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = J1939Tp_TxConfirmation;
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &J1939Tp_TxConfirmation;
 			}
 			else if(PDUR == PduUser)
 			{
-				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = PduR_CanIfTxConfirmation;
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &PduR_CanIfTxConfirmation;
 			}
 			else if(XCP == PduUser)
 			{
-				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = Xcp_CanIfTxConfirmation;
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &Xcp_CanIfTxConfirmation;
 			}
 			else
 			{
@@ -223,7 +223,7 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 				 * <User_TxConfirmation>() which is called by CanIf shall be configured for CanIf by parameter
 				 * CanIfTxPduUserTxConfirmationName (see ECUC_CanIf_00528).
 				 */
-				CanIfTxPduUserTxConfirmationName(CanTxPduId , E_OK);
+			    CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName(CanTxPduId , E_OK);
 			}
 		}
 	}
