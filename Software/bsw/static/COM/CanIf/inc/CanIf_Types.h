@@ -147,27 +147,15 @@ Note: If CanIfTxPduTriggerTransmit is not specified or FALSE, no upper
 layer modules have to be configured for Trigger Transmit. Therefore,
 <User_TriggerTransmit>() will not be called and CanIfTxPduUserTxConfirmationUL
 as well as CanIfTxPduUserTriggerTransmitName need not to be configured. */
-#if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
-	typedef uint8 CanIfTxPduUserTxConfirmationULType;
-	#define CAN_NM							((CanIfTxPduUserTxConfirmationULType)0x00U)
-	#define CAN_TP							((CanIfTxPduUserTxConfirmationULType)0x01U)
-	#define CAN_TSYN						((CanIfTxPduUserTxConfirmationULType)0x02U)
-	#define CDD								((CanIfTxPduUserTxConfirmationULType)0x03U)
-	#define J1939NM							((CanIfTxPduUserTxConfirmationULType)0x04U)
-	#define J1939TP							((CanIfTxPduUserTxConfirmationULType)0x05U)
-	#define PDUR							((CanIfTxPduUserTxConfirmationULType)0x06U)
-	#define XCP								((CanIfTxPduUserTxConfirmationULType)0x07U)
-#endif
 typedef uint8 CanIfTxPduUserTxConfirmationULType;
-#define CAN_NM_TX_CONFIRMATION							((CanIfTxPduUserTxConfirmationULType)0x00U)
-#define CAN_TP_TX_CONFIRMATION							((CanIfTxPduUserTxConfirmationULType)0x01U)
-#define CAN_TSYN_TX_CONFIRMATION						((CanIfTxPduUserTxConfirmationULType)0x02U)
-#define CDD_TX_CONFIRMATION								((CanIfTxPduUserTxConfirmationULType)0x03U)
-#define J1939NM_TX_CONFIRMATION							((CanIfTxPduUserTxConfirmationULType)0x04U)
-#define J1939TP_TX_CONFIRMATION							((CanIfTxPduUserTxConfirmationULType)0x05U)
-#define PDUR_TX_CONFIRMATION							((CanIfTxPduUserTxConfirmationULType)0x06U)
-#define XCP_TX_CONFIRMATION								((CanIfTxPduUserTxConfirmationULType)0x07U)
-
+#define CAN_NM							((CanIfTxPduUserTxConfirmationULType)0x00U)
+#define CAN_TP							((CanIfTxPduUserTxConfirmationULType)0x01U)
+#define CAN_TSYN						((CanIfTxPduUserTxConfirmationULType)0x02U)
+#define CDD								((CanIfTxPduUserTxConfirmationULType)0x03U)
+#define J1939NM							((CanIfTxPduUserTxConfirmationULType)0x04U)
+#define J1939TP							((CanIfTxPduUserTxConfirmationULType)0x05U)
+#define PDUR							((CanIfTxPduUserTxConfirmationULType)0x06U)
+#define XCP								((CanIfTxPduUserTxConfirmationULType)0x07U)
 
 /* CAN Identifier of receive CAN L-PDUs used by the CAN Driver for
 CAN L-PDU reception.
@@ -429,7 +417,7 @@ typedef struct
 				L-SDU for reading its notification status.
 				True: Enabled False: Disabled
 				dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-				#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
+				#if(CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API==STD_ON)
 					boolean CanIfTxPduReadNotifyStatus;
 				#endif
 				
@@ -460,7 +448,7 @@ typedef struct
 			     * PDUR, XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_TxConfirmation> is fixed.
 			     * If CanIfTxPduUserTxConfirmationUL equals CDD,
 			     * the name of the <User_TxConfirmation> is selectable.*/
-				void (*CanIfTxPduUserTxConfirmationName)(PduIdType, Std_ReturnType  );
+				void (*CanIfTxPduUserTxConfirmationName)(PduIdType, Std_ReturnType);
 				
              /* [ECUC_CanIf_00527]
                 This parameter defines the upper layer (UL) module to which the confirmation of
@@ -605,7 +593,7 @@ typedef struct{
 				for reading its notification status.
 				True: Enabled False: Disabled
 				dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
-				#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
+				#if(CANIF_PUBLIC_READRXPDU_NOTIFY_STATUS_API==STD_ON)
 					boolean CanIfRxPduReadNotifyStatus;
 				#endif
 

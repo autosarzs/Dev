@@ -72,6 +72,10 @@ void CanIfTxPduUserTriggerTransmit(PduIdType TxPduId, PduInfoType* PduInfoPtr)
 
 }
 
+void CanIfTxPduUserTriggerTransmitName(PduIdType TxPduId, PduInfoType* PduInfoPtr)
+{
+}
+
 void CanIfTxPduUserTxConfirmation(PduIdType TxPduId, Std_ReturnType result )
 {
 

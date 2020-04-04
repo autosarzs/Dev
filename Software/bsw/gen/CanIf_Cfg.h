@@ -45,6 +45,8 @@
 #define CANIF_CFG_AR_RELEASE_MAJOR_VERSION     (4U)
 #define CANIF_CFG_AR_RELEASE_MINOR_VERSION     (3U)
 #define CANIF_CFG_AR_RELEASE_PATCH_VERSION     (1U)
+
+#define CanIfDevErrorDetect STD_ON
 //*****************************************************************************
 //  This parameter defines if the buffer element length shall be fixed to 8
 //  Bytes for buffers to which only PDUs < 8 Bytes are assigned.
@@ -129,7 +131,7 @@
 //  receive L-PDU.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API 	STD_OFF
+#define CANIF_PUBLIC_READRXPDU_NOTIFY_STATUS_API 	STD_OFF
 
 //*****************************************************************************
 //  Enables and disables the API for reading the notification status of
@@ -276,14 +278,14 @@ dependency: This parameter shall only be configurable if CanIfPublicPnSupport eq
 L-SDU for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-//#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
-//	#define CANIF_TX_PDU_READ_NOTIFY_STATUS		STD_OFF			/* Link Time or PostBuild parameter */
-//#endif
+#if(CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API==STD_ON)
+	#define CANIF_TXPDU_READ_NOTIFYSTATUS		STD_ON			/* Link Time or PostBuild parameter */
+#endif
 
 /* Determines if or if not CanIf shall use the trigger transmit API for this PDU.
 dependency: If CanIfTxPduTriggerTransmit is TRUE then CanIfTxPduUserTxConfirmationUL 
 has to be either PDUR or CDD and CanIfTxPduUserTriggerTransmitName has to be specified accordingly */
-#define CANIF_TX_PDU_TRIGGER_TRANSMIT			STD_ON
+#define CANIF_TXPDU_TRIGGERTRANSMIT			STD_ON
 
 /* Enables/disables truncation of PDUs that exceed the configured size. */
 #define CANIF_TX_PDU_TRUNCATION					STD_ON
@@ -304,25 +306,26 @@ CanIfTxPduUserTrigger- TransmitName must be PduR_CanIfTriggerTransmit.
 
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL is set to CDD,
 the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPdu- UserTriggerTransmitName. */
-#if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
-	#if(CanIfTxPduUserTxConfirmationUL==PDUR)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	PduR_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanNm_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Nm_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Tp_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTp_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==XCP)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Xcp_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTSyn_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CDD)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Cdd_CanIfTriggerTransmit /* Selectable */
-	#endif	
-#endif
+/* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration */
+// #if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
+	// #if(CanIfTxPduUserTxConfirmationUL==PDUR)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	PduR_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanNm_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Nm_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Tp_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTp_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==XCP)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Xcp_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTSyn_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CDD)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Cdd_CanIfTriggerTransmit /* Selectable */
+	// #endif	
+// #endif
 
 /* This parameter defines the name of the <User_TxConfirmation>. This parameter depends
 on the parameter CanIfTxPduUserTxConfirmationUL. If CanIfTxPduUserTxConfirmationUL equals
@@ -338,25 +341,26 @@ is set to PDUR, CanIfTxPduUserTriggerTransmitName must be PduR_CanIfTriggerTrans
 
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL
 is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPduUserTriggerTransmitName. */
-#if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
-	#if(CanIfTxPduUserTxConfirmationUL==PDUR)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	PduR_CanIfTxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanNm_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Nm_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Tp_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTp_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==XCP)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Xcp_CanIfTxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTSyn_CanIfTxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CDD)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Cdd_CanIfTxConfirmation /* Selectable */
-	#endif	
-#endif
+/* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration */
+// #if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
+	// #if(CanIfTxPduUserTxConfirmationUL==PDUR)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	PduR_CanIfTxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanNm_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Nm_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Tp_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTp_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==XCP)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Xcp_CanIfTxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTSyn_CanIfTxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CDD)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Cdd_CanIfTxConfirmation /* Selectable */
+	// #endif	
+// #endif
 
 
 /* CAN Identifier of Receive CAN L-PDUs used by the CAN Interface.
@@ -401,7 +405,7 @@ dependency: CANIF_CANPDUID_READDATA_API must be enabled */
 for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
-//#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
+//#if(CANIF_PUBLIC_READRXPDU_NOTIFY_STATUS_API==STD_ON)
 //	#define CANIF_RX_PDU_READ_NOTIFY_STATUS		(STD_OFF)	/* Link Time or PostBuild parameter */
 //#endif
 

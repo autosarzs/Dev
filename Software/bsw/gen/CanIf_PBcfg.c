@@ -187,7 +187,7 @@ CanIfTxPduCfgType CanIfTxPduCfgObj[TX_CAN_L_PDU_NUM] =
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
         TRUE,                           /* If CanIfPublicPnFilterSupport is enabled or disabled */
 #endif
-#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
+#if(CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API==STD_ON)
         TRUE,                           /* Enables and disables transmit confirmation for each transmit CAN L-SDU for reading its notification status.*/
 #endif
         FALSE,                          /* If trigger transmit API is enabled or disabled */
@@ -198,7 +198,7 @@ CanIfTxPduCfgType CanIfTxPduCfgObj[TX_CAN_L_PDU_NUM] =
 #endif
 
       CanIfTxPduUserTxConfirmation ,  /*This parameter defines the name of the <User_TxConfirmation>.Currently just a stub function*/
-      CAN_NM_TX_CONFIRMATION,           /* the upper layer module to which the indication of the successfully transmitted CANTXPDUID has to be routed via <User_TxConfirmation> */
+      CAN_NM,           /* the upper layer module to which the indication of the successfully transmitted CANTXPDUID has to be routed via <User_TxConfirmation> */
         &CanIfBufferCfgObj[0]           /* Object to the CanIf buffer configuration */
     },
 
@@ -210,7 +210,7 @@ CanIfTxPduCfgType CanIfTxPduCfgObj[TX_CAN_L_PDU_NUM] =
     #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
          TRUE,                           /* If CanIfPublicPnFilterSupport is enabled or disabled */
     #endif
-    #if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
+    #if(CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API==STD_ON)
          TRUE,                           /* Enables and disables transmit confirmation for each transmit CAN L-SDU for reading its notification status.*/
     #endif
          FALSE,                          /* If trigger transmit API is enabled or disabled */
@@ -221,7 +221,7 @@ CanIfTxPduCfgType CanIfTxPduCfgObj[TX_CAN_L_PDU_NUM] =
     #endif
 
        CanIfTxPduUserTxConfirmation,  /*This parameter defines the name of the <User_TxConfirmation>.Currently just a stub function*/
-       CAN_NM_TX_CONFIRMATION,           /* the upper layer module to which the indication of the successfully transmitted CANTXPDUID has to be routed via <User_TxConfirmation> */
+       CAN_NM,           /* the upper layer module to which the indication of the successfully transmitted CANTXPDUID has to be routed via <User_TxConfirmation> */
        &CanIfBufferCfgObj[1]           /* Object to the CanIf buffer configuration */
     }
 };
@@ -257,7 +257,7 @@ CanIfRxPduCfgType CanIfRxPduCfgObj[RX_CAN_L_PDU_NUM] =
         TRUE,                           /* Enables and disables the Rx buffering for reading of received L-SDU */
  #endif
 
-#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
+#if(CANIF_PUBLIC_READRXPDU_NOTIFY_STATUS_API==STD_ON)
        FALSE,                           /* Enables and disables receive indication for each receive CAN L-SDU */
 #endif
         CanIfRxPduUserRxIndication,     /*This parameter defines the name of the <User_RxIndication>. Currently a stub function*/
@@ -275,7 +275,7 @@ CanIfRxPduCfgType CanIfRxPduCfgObj[RX_CAN_L_PDU_NUM] =
      TRUE,                           /* Enables and disables the Rx buffering for reading of received L-SDU */
 #endif
 
-#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
+#if(CANIF_PUBLIC_READRXPDU_NOTIFY_STATUS_API==STD_ON)
     FALSE,                           /* Enables and disables receive indication for each receive CAN L-SDU */
 #endif
      CanIfRxPduUserRxIndication,     /*This parameter defines the name of the <User_RxIndication>. Currently a stub function*/

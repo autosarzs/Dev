@@ -126,10 +126,14 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 	 */
 	if(CanIf_ModuleState != CANIF_READY)
 	{
-		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_TXCONFIRMATION_API_ID,CANIF_E_UNINIT);
+		#if(CanIfDevErrorDetect == STD_ON)
+			Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_TXCONFIRMATION_API_ID,CANIF_E_UNINIT);
+		#endif
 	}
-	else
+	else	// if it is initialized and ready
 	{
+		
+		boolean PduIdCheck = TRUE;	// TRUE as initialized for checking if CanTxPduId exists
 		/*
 		 * [SWS_CANIF_00410] If parameter CanTxPduId of CanIf_TxConfirmation() has an invalid value,
 		 * CanIf shall report development error code CANIF_E_PARAM_LPDU to the Det_ReportError service of the DET module,
@@ -140,70 +144,89 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 			// if(CanTxPduId != CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[PduId].CanIfTxPduId
 			if(CanTxPduId != swPduHandle[PduId] && CAN_HTH_NUMBER-1 == PduId)
 			{
-				Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_TXCONFIRMATION_API_ID,CANIF_E_PARAM_LPDU);
+				PduIdCheck = FALSE ;		// Not found , CanTxPduId does not exist
+				#if(CanIfDevErrorDetect == STD_ON)
+					Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_TXCONFIRMATION_API_ID,CANIF_E_PARAM_LPDU);
+				#endif
+			}
+		}
+		
+		// if CanTxPduId is found
+		if(TRUE == PduIdCheck)
+		{
+			#if(CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API == STD_ON && CANIF_TXPDU_READ_NOTIFYSTATUS == STD_ON)
+				/*
+				 * [SWS_CANIF_00391] If configuration parameters CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API (ECUC_CanIf_00609)
+				 * and CANIF_TXPDU_READ_NOTIFYSTATUS (ECUC_CanIf_00589) for the Transmitted L-PDU are set to TRUE,
+				 * and if CanIf_TxConfirmation() is called, CanIf shall set the notification status for the Transmitted L-PDU.
+				 */
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduReadNotifyStatus = TRUE;
+			#endif
+			
+			// for checking if there is an upper layer or not
+			boolean UserNotFound = FALSE;
+			/*
+			 * [SWS_CANIF_00414] Configuration of CanIf_TxConfirmation():
+			 * Each Tx LPDU (see ECUC_CanIf_00248) has to be configured with a corresponding transmit
+			 * confirmation service of an upper layer module (see [SWS_CANIF_00011]) which is called in CanIf_TxConfirmation().
+			 */
+			CanIfTxPduUserTxConfirmationULType PduUser;
+			PduUser = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationUL;
+			if(CAN_NM == PduUser)
+			{
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = CanNm_TxConfirmation;
+			}
+			else if(CAN_TP == PduUser)
+			{
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = CanTp_TxConfirmation;
+			}
+			else if(CAN_TSYN == PduUser)
+			{
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = CanTSyn_CanIfTxConfirmation;
+			}
+			else if(CDD == PduUser)
+			{
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = Cdd_CanIfTxConfirmation;
+			}
+			else if(J1939NM == PduUser)
+			{
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = J1939Nm_TxConfirmation;
+			}
+			else if(J1939TP == PduUser)
+			{
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = J1939Tp_TxConfirmation;
+			}
+			else if(PDUR == PduUser)
+			{
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = PduR_CanIfTxConfirmation;
+			}
+			else if(XCP == PduUser)
+			{
+				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = Xcp_CanIfTxConfirmation;
+			}
+			else
+			{
+				UserNotFound = TRUE;	// There is no Upper layer found
+				/*
+				 * [SWS_CANIF_00438] Configuration of <User_TxConfirmation>(): The upper layer module,
+				 * which provides this callback service, has to be configured by CanIfTxPduUserTxConfirmationUL(see ECUC_CanIf_00527).
+				 * If no upper layer modules are configured for transmit confirmation using <User_TxConfirmation>(),
+				 * no transmit confirmation is executed.
+				 */
+			}
+			
+			// if there is an upper layer found
+			if(FALSE == UserNotFound)
+			{
+				/*
+				 * [SWS_CANIF_00542] d Configuration of <User_TxConfirmation>(): The name of the API 
+				 * <User_TxConfirmation>() which is called by CanIf shall be configured for CanIf by parameter
+				 * CanIfTxPduUserTxConfirmationName (see ECUC_CanIf_00528).
+				 */
+				CanIfTxPduUserTxConfirmationName(CanTxPduId , E_OK);
 			}
 		}
 	}
-	
-#if(CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API == STD_ON && CANIF_TXPDU_READ_NOTIFYSTATUS == STD_ON)
-		/*
-		 * [SWS_CANIF_00391] If configuration parameters CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API (ECUC_CanIf_00609)
-		 * and CANIF_TXPDU_READ_NOTIFYSTATUS (ECUC_CanIf_00589) for the Transmitted L-PDU are set to TRUE,
-		 * and if CanIf_TxConfirmation() is called, CanIf shall set the notification status for the Transmitted L-PDU.
-		 */
-		CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[CanTxPduId].CanIfTxPduReadNotifyStatus = TRUE;
-#endif
-
-#if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
-	/*
-	 * [SWS_CANIF_00414] Configuration of CanIf_TxConfirmation():
-	 * Each Tx LPDU (see ECUC_CanIf_00248) has to be configured with a corresponding transmit
-	 * confirmation service of an upper layer module (see [SWS_CANIF_00011]) which is called in CanIf_TxConfirmation().
-	 */
-	CanIfTxPduUserTxConfirmationULType PduUser;
-	PduUser = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationUL;
-	if(CAN_NM == PduUser)
-	{
-		CanNm_TxConfirmation(CanTxPduId , E_OK);
-	}
-	else if(CAN_TP == PduUser)
-	{
-		CanTp_TxConfirmation(CanTxPduId , E_OK);
-	}
-	else if(CAN_TSYN == PduUser)
-	{
-		CanTSyn_CanIfTxConfirmation(CanTxPduId , E_OK);
-	}
-	else if(CDD == PduUser)
-	{
-		Cdd_CanIfTxConfirmation(CanTxPduId , E_OK);
-	}
-	else if(J1939NM == PduUser)
-	{
-		J1939Nm_TxConfirmation(CanTxPduId , E_OK);
-	}
-	else if(J1939TP == PduUser)
-	{
-		J1939Tp_TxConfirmation(CanTxPduId , E_OK);
-	}
-	else if(PDUR == PduUser)
-	{
-		PduR_CanIfTxConfirmation(CanTxPduId , E_OK);
-	}
-	else if(XCP == PduUser)
-	{
-		Xcp_CanIfTxConfirmation(CanTxPduId , E_OK);
-	}
-	else
-	{
-		/*
-		 * [SWS_CANIF_00438] d Configuration of <User_TxConfirmation>(): The upper layer module,
-		 * which provides this callback service, has to be configured by CanIfTxPduUserTxConfirmationUL(see ECUC_CanIf_00527).
-		 * If no upper layer modules are configured for transmit confirmation using <User_TxConfirmation>(),
-		 * no transmit confirmation is executed.
-		 */
-	}
-#endif
 	
 	/* End of Critical Section */
 	irq_Enable();
