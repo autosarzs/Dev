@@ -168,5 +168,26 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
 Std_ReturnType 
 CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr);
 
+/*****************************************************************************************/
+/*                                    Macro Definition                                   */
+/*****************************************************************************************/
+/* CANIF Module Id */
+#define CANIF_MODULE_ID    (40U)
+
+/* CANIF Instance Id */
+#define CANIF_INSTANCE_ID  (0U)
+
+/* DET Error Codes */
+typedef uint8 CanIF_DetErrorType;
+
+#define CANIF_E_PARAM_CONTROLLERID	((CanIF_DetErrorType)015U)
+#define CANIF_E_PARAM_CTRLMODE		((CanIF_DetErrorType)021U)
+/* CanIF_ServiceId*/
+typedef uint8 CanIF_ServiceId;
+
+#define  CANIF_SETCONTROLLERMODE_API_ID	((CanIF_ServiceId)0x03)
+
+Std_ReturnType CanIf_SetControllerMode(uint8 ControllerId, Can_ControllerStateType ControllerMode);
+
 
 #endif /* __CANIF_H__ */

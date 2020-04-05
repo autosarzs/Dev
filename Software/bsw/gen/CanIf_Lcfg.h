@@ -35,6 +35,9 @@
 #ifndef CANIF_LCFG_H_
 #define CANIF_LCFG_H_
 
-
+/*extern CANDrv HOH configurations*/
+extern CanIfInitHohCfgType CanIfInitHohCfgObj[] ;
+/*extern CANDrv Controllers configurations*/
+extern  CanControllerType     CanControllerCfg[]  ;
 
 #endif /* CANIF_LCFG_H_ */
