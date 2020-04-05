@@ -80,6 +80,13 @@ typedef struct
 /*    Type range              :                                                          */
 
 /*****************************************************************************************/
+/*                                global Variables Definition                            */
+/*****************************************************************************************/
+extern CanIfTxPduCfgType* CanIfTxPduCfgPtr ;
+extern CanIfRxPduCfgType* CanIfRxPduCfgPtr ;
+extern CanIfHrhCfgType*   CanIfHrhCfgPtr   ;
+extern CanIfHthCfgType*   CanIfHthCfgPtr   ;
+/*****************************************************************************************/
 /*                                Local Variables Definition                             */
 /*****************************************************************************************/
 
@@ -88,7 +95,7 @@ static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
 
 /*Pointer to save configuration parameters set */
-static CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
+static const CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
 
 /*Array to save each logical controller PDUs mode */
 static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
@@ -144,7 +151,18 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
     #endif
 
      /*Save in the global config*/
-     CanIf_ConfigPtr = (CanIf_ConfigType*)ConfigPtr ;
+     CanIf_ConfigPtr = ConfigPtr ;
+     /*
+      * Initialize the link time containers
+      */
+     /*Reference to the TX PDUs array*/
+     CanIfTxPduCfgPtr = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef;
+     /*Reference to the TR PDUs array*/
+     CanIfRxPduCfgPtr = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef ;
+     /*Reference to the CanIf_HRHs array*/
+     CanIfHrhCfgPtr   = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfInitHohCfgRef->CanIfHrhCfgRef ;
+     /*Reference to the CanIf_HTHs array*/
+     CanIfHthCfgPtr   = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfInitHohCfgRef->CanIfHthCfgRef ; ;
 
      /*
       * [SWS_CANIF_00857]  CanIf_Init() (see [SWS_CANIF_00085]) initializes the CanIds of
@@ -154,14 +172,13 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
      for(counter = 0 ; counter<TX_CAN_L_PDU_NUM;counter++)
      {
          /*Check L-PDUs of dynamic type */
-         if(CanIf_ConfigPtr->CanIfInitCfgObj-> CanIfTxPduCfgObj[counter].CanIfTxPduType == DYNAMIC_TX_PDU)
+         if(CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[counter].CanIfTxPduType == DYNAMIC_TX_PDU)
          {
              /*Save CanId init value as CanIfTxPduCanId */
-             MapCanIdToPdu[DynamicPduCounter].CanId = CanIf_ConfigPtr->CanIfInitCfgObj->CanIfTxPduCfgObj[counter] \
+             MapCanIdToPdu[DynamicPduCounter].CanId = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[counter] \
                                                       .CanIfTxPduCanId ;
              /*Save PduId assigned to this CanId */
-             MapCanIdToPdu[DynamicPduCounter].PduId = CanIf_ConfigPtr->CanIfInitCfgObj->CanIfTxPduCfgObj[counter] \
-                                                      .CanIfTxPduId ;
+             MapCanIdToPdu[DynamicPduCounter].PduId = counter ;
              DynamicPduCounter++;
          }
      }
@@ -179,7 +196,7 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
          for(counter = 0 ; counter<BUFFERS_NUM;counter++)
          {
              /*Get number of PDUs saved in this buffer*/
-              TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfBufferRef->CanIfBufferSize;
+              TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfBufferRef->CanIfBufferSize;
 
              /*Loop to initialize all PDUs saved in this buffer */
              for(PduCounter =0;PduCounter<TxBufferSize;PduCounter++)
@@ -188,13 +205,13 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
                  * Initialize all PDUs information
                  */
                  /*Init dynamic CanId with 0*/
-                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].CanId   = 0 ;
+                 CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].CanId   = 0 ;
                  /*Init PDU Id with 0*/
-                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].TxPduId = 0 ;
+                 CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].TxPduId = 0 ;
                  /*Init all sduDataBuffer elements with 0 by casting the array address as uint64* */
-                 *((uint64*)CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)= 0;
+                 *((uint64*)CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)= 0;
                  /*Init SduLength with 0 */
-                 CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduLength = 0 ;
+                 CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduLength = 0 ;
              }
          }
      #endif
