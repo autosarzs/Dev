@@ -39,7 +39,7 @@
 #include"Det.h"
 #include"Dem.h"
 #include"MemMap.h"
-
+#include"CanIf_Lcfg.h"
 
 /********************************************************************************************/
 /* Service Name     : CanIf_SetControllerMode                                               */
@@ -93,11 +93,9 @@ Std_ReturnType CanIf_SetControllerMode(uint8 ControllerId, Can_ControllerStateTy
 
 		}
 	#endif
-		u8DrvControllerID = CanIfCtrlCanCtrlRef[ControllerId];
+		u8DrvControllerID = CanIfCtrlCfgObj[ControllerId].CanIfCtrlCanCtrlRef->CanControllerId;
 		u8CanIFSetControllerModeRet = Can_SetControllerMode( u8DrvControllerID, ControllerMode );
-		/*2. Hint: As optimisation to avoid frequent requests to CanDrv for internal
-			use, the last state indicated by CanIf_ControllerModeIndication() and
-			Can_GetControllerMode() could be stored per controller.*/
+
 	return u8CanIFSetControllerModeRet;
 	
 }

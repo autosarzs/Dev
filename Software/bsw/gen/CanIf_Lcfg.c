@@ -34,12 +34,8 @@
 *******************************************************************************/
 
 #include"CanIf.h"
+#inclcude "CanIf_Lcfg.h" 
 
-
-/*extern CANDrv HOH configurations*/
-extern CanIfInitHohCfgType CanIfInitHohCfgObj[] ;
-/*extern CANDrv Controllers configurations*/
-extern  CanControllerType     CanControllerCfg[]  ;
 
 /*To be initialized in CanI_Init() */
 CanIfTxPduCfgType* CanIfTxPduCfgPtr = NULL_PTR ;
