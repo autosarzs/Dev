@@ -78,11 +78,13 @@ static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] = {CANIF_OFFLINE};
 /* a pointer to the CanIf_ConfigType main Structure for the module to work on */
 static CanIf_ConfigType* CanIf_ConfigPtr = NULL_PTR;
 
-/*******************************************************************************
-*                    Functions Definitions                                     *
+/********************************************************************************
+                            Functions Definitions
+********************************************************************************/
 
-*******************************************************************************/
-/*                  CanIf_GetPduMode service definition                        */
+/********************************************************************************/
+/*                    CanIf_GetPduMode service definition                       */
+/********************************************************************************/
 Std_ReturnType 
 CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
 {
@@ -92,10 +94,9 @@ CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
 
     /* [SWS_CANIF_00661] */
-    if (CANIF_UNINT == CanIf_ModuleState)
+    if (CanIf_ModuleState == CANIF_UNINT)
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
-
             CANIF_GET_PDU_MODE_SID, CANIF_E_UNINIT);
         ret_status = E_NOT_OK;
     }
@@ -104,16 +105,14 @@ CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
     if (ControllerId >= CANIF_CONTROLLERS_NUM)
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
-
             CANIF_GET_PDU_MODE_SID, CANIF_E_PARAM_CONTROLLERID);
         ret_status = E_NOT_OK;
     }
 
     /* [SWS_CANIF_00657]  */
-    if (NULL_PTR == PduModePtr)
+    if (PduModePtr == NULL_PTR)
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
-
             CANIF_GET_PDU_MODE_SID, CANIF_E_PARAM_POINTER);
         ret_status = E_NOT_OK;
     }
@@ -127,6 +126,7 @@ CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr)
 
 /********************************************************************************/
 /*             CanIf_GetControllerErrorState service definition                 */
+/********************************************************************************/
 Std_ReturnType 
 CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorStatePtr)
 {
@@ -137,7 +137,7 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
 
     /* [SWS_CANIF_00661] */
-    if (CANIF_UNINT == CanIf_ModuleState)
+    if (CanIf_ModuleState == CANIF_UNINT)
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
             CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_UNINIT);
@@ -151,7 +151,7 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
 		ret_status= E_NOT_OK;
     }
     /* [SWS_CANIF_00899] */
-    if (NULL_PTR == ErrorStatePtr)
+    if (ErrorStatePtr == NULL_PTR)
     {
         Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,
             CANIF_GET_CONTROLLER_ERROR_STATE_SID, CANIF_E_PARAM_POINTER);
@@ -166,4 +166,64 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
         ret_status = Can_GetControllerErrorState(CanCtrlId, ErrorStatePtr);
     }
     return ret_status;
+}
+
+/********************************************************************************/
+/*                CanIf_SetControllerMode service definition                    */
+/********************************************************************************/
+Std_ReturnType CanIf_SetControllerMode(uint8 ControllerId, Can_ControllerStateType ControllerMode)
+{
+    Std_ReturnType u8CanIFSetControllerModeRet = E_NOT_OK;
+    uint8 u8DrvControllerID = 0;
+
+    /**********************************************************************************************************************/
+    /* [SWS_CANIF_00661] All CanIf API services other than CanIf_Init and CanIf_GetVersionInfo() shall not execute their  */
+    /* normal operation and return E_NOT_OK unless the CanIf has been initialized with a preceding call of CanIf_Init().  */
+    /**********************************************************************************************************************/
+#if(CANIF_DEV_ERROR_DETECT == STD_ON)
+    if (CanIf_ModuleState == CANIF_UNINT)
+    {
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SET_CONTROLLER_MODE_SID, CANIF_E_UNINIT);
+    }
+    else
+    {
+
+    }
+#endif
+    /**********************************************************************************************************************/
+    /* [SWS_CANIF_00311] If parameter ControllerId of CanIf_SetControllerMode() has an invalid value, the CanIf           */
+    /* shall report development error code CANIF_E_PARAM_CONTROLLERID to the Det_ReportError service of the DET module,   */
+    /* when CanIf_SetControllerMode() is called.                                                                          */
+    /**********************************************************************************************************************/
+    #if(CANIF_DEV_ERROR_DETECT == STD_ON)
+        if(ControllerId > CANIF_CONTROLLERS_NUM)
+        {
+            Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SET_CONTROLLER_MODE_SID, CANIF_E_PARAM_CONTROLLERID);
+        }
+        else
+        {
+
+        }
+    #endif
+    /**********************************************************************************************************************/
+    /* [SWS_CANIF_00774] If parameter ControllerMode of CanIf_SetControllerMode() has an invalid value                    */
+    /* (not CAN_CS_STARTED, CAN_CS_SLEEP or CAN_CS_STOPPED), the CanIfshall report development error code                 */
+    /* CANIF_E_PARAM_CTRLMODE to the Det_ReportError service of the DET module, when CanIf_SetControllerMode() is called. */
+    /**********************************************************************************************************************/
+    #if(CANIF_DEV_ERROR_DETECT == STD_ON)
+        if(ControllerMode != CAN_CS_STARTED && ControllerMode != CAN_CS_SLEEP && ControllerMode != CAN_CS_STOPPED)
+        {
+            Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SET_CONTROLLER_MODE_SID, CANIF_E_PARAM_CTRLMODE);
+
+        }
+        else
+        {
+
+        }
+    #endif
+        u8DrvControllerID = CanIfCtrlCfgObj[ControllerId].CanIfCtrlCanCtrlRef->CanControllerId;
+        u8CanIFSetControllerModeRet = Can_SetControllerMode( u8DrvControllerID, ControllerMode );
+
+    return u8CanIFSetControllerModeRet;
+
 }
