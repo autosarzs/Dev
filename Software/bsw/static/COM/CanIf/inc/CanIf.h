@@ -128,8 +128,8 @@
 *******************************************************************************/
 typedef uint8 CanIf_ServiceId;
 #define CANIF_GET_CONTROLLER_ERROR_STATE_SID     ((CanIf_ServiceId)0x4b)
-#define CANIF_SET_PDU_MODE_SID                   ((CanIf_ServiceId)0x09)
 #define CANIF_GET_PDU_MODE_SID                   ((CanIf_ServiceId)0x0a)
+#define CANIF_SET_CONTROLLER_MODE_SID            ((CanIf_ServiceId)0x03)
 
 /*******************************************************************************
 * Service Name:       CanIf_GetControllerErrorState
@@ -168,5 +168,23 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
 Std_ReturnType 
 CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr);
 
+/********************************************************************************************/
+/* Service Name     : CanIf_SetControllerMode                                               */
+/* Syntax           : Std_ReturnType CanIf_SetControllerMode                                */
+/*                    (uint8 ControllerId, Can_ControllerStateType ControllerMode)          */
+/* Service ID[hex]  : 0x03                                                                  */
+/* Sync/Async       : Asynchronous                                                          */
+/* Reentrancy       : Reentrant (Not for the same controller)                               */
+/* Parameters (in)  : ControllerId: Abstracted CanIf ControllerId which is assigned to a    */
+/*                    CAN controller, which is requested for mode transition.               */
+/*                    ControllerMode: Requested mode transition                             */
+/* Parameters(inout): None                                                                  */
+/* Parameters (out) : None                                                                  */
+/* Return Value     : Std_ReturnType E_OK    : Controller mode request has been accepted    */
+/* E_NOT_OK         : Controller mode request has not been accepted                         */
+/* DESCRIPTION      : This service calls the corresponding CAN Driver service for           */
+/* changing ofthe CAN controller mode.                                                      */
+/********************************************************************************************/
+Std_ReturnType CanIf_SetControllerMode(uint8 ControllerId, Can_ControllerStateType ControllerMode);
 
 #endif /* __CANIF_H__ */
