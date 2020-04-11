@@ -167,7 +167,6 @@ CanIf_GetControllerErrorState(uint8 ControllerId, Can_ErrorStateType* ErrorState
     }
     return ret_status;
 }
-
 /********************************************************************************/
 /*                CanIf_SetControllerMode service definition                    */
 /********************************************************************************/

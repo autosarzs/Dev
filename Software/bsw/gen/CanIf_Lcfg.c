@@ -70,7 +70,7 @@ CanIfCtrlCfgType CanIfCtrlCfgObj[CANIF_CONTROLLERS_NUM] =
 CanIfCtrlDrvCfgType CanIfCtrlDrvCfgObj[CAN_DRIVER_NUM] =
 {
     {
-        &CanIfInitHohCfgObj[0],            /*Reference to the Init Hoh Configuration*/
+        &CanIfInitHohCfgObj[0],        /*Reference to the Init Hoh Configuration*/
         &CanIfCtrlCfgObj[0]            /*Reference to the configuration (parameters) of adressed CAN controllers*/
     }
 };
