@@ -1,0 +1,1 @@
+"./main.obj" "./tm4c123gh6pz_startup_ccs.obj" "./bsw/gen/Can_PBcfg.obj" "./bsw/static/COM/CanIf/src/CanIf.obj" "./bsw/static/Infrastructure/platform/src/Timer0A.obj" "./bsw/static/Infrastructure/platform/src/can_lib.obj" "./bsw/static/Infrastructure/platform/src/irq.obj" "./bsw/static/Mcal/CAN/src/Can.obj" "./bsw/stub/stub.obj" "../tm4c123gh6pz.cmd" -llibc.a 
