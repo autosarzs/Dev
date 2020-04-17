@@ -32,7 +32,8 @@
  **  MAY BE CHANGED BY USER : no                                               **
  **                                                                            **
  *******************************************************************************/
-#include "CanIf.h"
+#include "../inc/CanIf.h"
+
 /*
  *  Type Description : Struct to save recieved  PDUs (in case of enable CanIf_ReadRxPduData API un configuration) .
  */
@@ -120,15 +121,16 @@ is not in state CAN_CS_STARTED. c()*/
      for(counter = 0 ; counter<BUFFERS_NUM;counter++)
      {
          /*Get number of PDUs saved in this buffer*/
-          TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfBufferRef->CanIfBufferSize;
-
+        //  TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfBufferRef->CanIfBufferSize;
+          TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfBufferRef->CanIfBufferSize;
          /*Loop to clear all TX Buffers */
          for(PduCounter =0;PduCounter<TxBufferSize;PduCounter++)
          {
 
-             *((uint64*)CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)= 0;
-
-             CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduLength = 0 ;
+            // *((uint64*)CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)= 0;
+             *((uint64*)CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)=0;
+             //CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduLength = 0 ;
+             CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduLength=0;
          }
      }
  #endif
@@ -142,7 +144,7 @@ is not in state CAN_CS_STARTED. c()*/
         case CANIF_TX_OFFLINE:
             CanIf_PduMode[ControllerId]=CANIF_TX_OFFLINE;
             break;
-#if (CanIfTxOfflineActiveSupport ==STD_ON)
+#if (CANIF_TX_OFFLINE_ACTIVE_SUPPORT ==STD_ON)
         case CANIF_TX_OFFLINE_ACTIVE:
             CanIf_PduMode[ControllerId]=CANIF_TX_OFFLINE_ACTIVE;
             break;
@@ -175,7 +177,8 @@ request and return E_NOT_OK, if the corresponding controller mode refrenced by C
 path online.
      */
 
-    Loc_Controller_Id=CanIf_ConfigPtr->CanIfInitCfgObj->CanIfRxPduCfgObj[CanIfRxSduId].CanIfRxPduHrhIdRef->CanIfHrhCanCtrlIdRef->CanIfCtrlId;
+   // Loc_Controller_Id=CanIf_ConfigPtr->CanIfInitCfgObj->CanIfRxPduCfgObj[CanIfRxSduId].CanIfRxPduHrhIdRef->CanIfHrhCanCtrlIdRef->CanIfCtrlId;
+    Loc_Controller_Id= CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[CanIfRxSduId].CanIfRxPduHrhIdRef->CanIfHrhCanCtrlIdRef->CanIfCtrlCanCtrlRef->CanControllerId;
 
     Loc_CanIf_ReadRxPduData_Ret=CanIf_GetControllerMode(Loc_Controller_Id,&Loc_Controller_Mode );
     if (Loc_CanIf_ReadRxPduData_Ret==E_OK )
