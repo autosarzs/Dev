@@ -24,7 +24,9 @@
 #endif
 
 
-void CanIf_TxConfirmation(PduIdType);
+//typedef uint32 PduIdType;
+
+void CanIf_TxConfirmation(PduIdType CanTxPduId);
 
 /*apply the cnhages */
 void CanIf_ControllerModeIndication( uint8 ControllerId, Can_ControllerStateType ControllerMode );

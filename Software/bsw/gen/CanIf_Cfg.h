@@ -45,8 +45,6 @@
 #define CANIF_CFG_AR_RELEASE_MAJOR_VERSION     (4U)
 #define CANIF_CFG_AR_RELEASE_MINOR_VERSION     (3U)
 #define CANIF_CFG_AR_RELEASE_PATCH_VERSION     (1U)
-
-#define CanIfDevErrorDetect STD_ON
 //*****************************************************************************
 //  This parameter defines if the buffer element length shall be fixed to 8
 //  Bytes for buffers to which only PDUs < 8 Bytes are assigned.
@@ -131,14 +129,14 @@
 //  receive L-PDU.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READRXPDU_NOTIFY_STATUS_API 	STD_OFF
+#define CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API 	STD_OFF
 
 //*****************************************************************************
 //  Enables and disables the API for reading the notification status of
 //  transmit L-PDUs.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API    STD_ON
+#define CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API 	STD_OFF
 
 //*****************************************************************************
 //  Enables and disables the API for reconfiguration of the CAN Identifier
@@ -278,14 +276,14 @@ dependency: This parameter shall only be configurable if CanIfPublicPnSupport eq
 L-SDU for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-#if(CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API==STD_ON)
-	#define CANIF_TXPDU_READ_NOTIFYSTATUS		STD_ON			/* Link Time or PostBuild parameter */
-#endif
+//#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
+//	#define CANIF_TX_PDU_READ_NOTIFY_STATUS		STD_OFF			/* Link Time or PostBuild parameter */
+//#endif
 
 /* Determines if or if not CanIf shall use the trigger transmit API for this PDU.
 dependency: If CanIfTxPduTriggerTransmit is TRUE then CanIfTxPduUserTxConfirmationUL 
 has to be either PDUR or CDD and CanIfTxPduUserTriggerTransmitName has to be specified accordingly */
-#define CANIF_TXPDU_TRIGGERTRANSMIT			STD_ON
+#define CANIF_TX_PDU_TRIGGER_TRANSMIT			STD_OFF
 
 /* Enables/disables truncation of PDUs that exceed the configured size. */
 #define CANIF_TX_PDU_TRUNCATION					STD_ON
@@ -405,7 +403,7 @@ dependency: CANIF_CANPDUID_READDATA_API must be enabled */
 for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
-//#if(CANIF_PUBLIC_READRXPDU_NOTIFY_STATUS_API==STD_ON)
+//#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
 //	#define CANIF_RX_PDU_READ_NOTIFY_STATUS		(STD_OFF)	/* Link Time or PostBuild parameter */
 //#endif
 

@@ -126,7 +126,7 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 	 */
 	if(CanIf_ModuleState != CANIF_READY)
 	{
-		#if(CanIfDevErrorDetect == STD_ON)
+		#if(CANIF_DEV_ERROR_DETECT == STD_ON)
 			Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_TXCONFIRMATION_API_ID,CANIF_E_UNINIT);
 		#endif
 	}
@@ -145,7 +145,7 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 			if(CanTxPduId != swPduHandle[PduId] && CAN_HTH_NUMBER-1 == PduId)
 			{
 				PduIdCheck = FALSE ;		// Not found , CanTxPduId does not exist
-				#if(CanIfDevErrorDetect == STD_ON)
+				#if(CANIF_DEV_ERROR_DETECT == STD_ON)
 					Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_TXCONFIRMATION_API_ID,CANIF_E_PARAM_LPDU);
 				#endif
 			}
@@ -154,7 +154,7 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 		// if CanTxPduId is found
 		if(TRUE == PduIdCheck)
 		{
-			#if(CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API == STD_ON && CANIF_TXPDU_READ_NOTIFYSTATUS == STD_ON)
+			#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API == STD_ON && CANIF_TXPDU_READ_NOTIFYSTATUS == STD_ON)
 				/*
 				 * [SWS_CANIF_00391] If configuration parameters CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API (ECUC_CanIf_00609)
 				 * and CANIF_TXPDU_READ_NOTIFYSTATUS (ECUC_CanIf_00589) for the Transmitted L-PDU are set to TRUE,
@@ -172,35 +172,35 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 			 */
 			CanIfTxPduUserTxConfirmationULType PduUser;
 			PduUser = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationUL;
-			if(CAN_NM == PduUser)
+			if(CAN_NM_TX_CONFIRMATION == PduUser)
 			{
 				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &CanNm_TxConfirmation;
 			}
-			else if(CAN_TP == PduUser)
+			else if(CAN_TP_TX_CONFIRMATION == PduUser)
 			{
 				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &CanTp_TxConfirmation;
 			}
-			else if(CAN_TSYN == PduUser)
+			else if(CAN_TSYN_TX_CONFIRMATION == PduUser)
 			{
 				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &CanTSyn_CanIfTxConfirmation;
 			}
-			else if(CDD == PduUser)
+			else if(CDD_TX_CONFIRMATION == PduUser)
 			{
 				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &Cdd_CanIfTxConfirmation;
 			}
-			else if(J1939NM == PduUser)
+			else if(J1939NM_TX_CONFIRMATION == PduUser)
 			{
 				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &J1939Nm_TxConfirmation;
 			}
-			else if(J1939TP == PduUser)
+			else if(J1939TP_TX_CONFIRMATION == PduUser)
 			{
 				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &J1939Tp_TxConfirmation;
 			}
-			else if(PDUR == PduUser)
+			else if(PDUR_TX_CONFIRMATION == PduUser)
 			{
 				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &PduR_CanIfTxConfirmation;
 			}
-			else if(XCP == PduUser)
+			else if(XCP_TX_CONFIRMATION == PduUser)
 			{
 				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduUserTxConfirmationName = &Xcp_CanIfTxConfirmation;
 			}
