@@ -286,6 +286,14 @@ typedef uint8 CanIf_PduModeType;
 #endif /* CanIfTxOfflineActiveSupport = TRUE */
 #define CANIF_ONLINE                                        ((CanIf_PduModeType)0x03)
 
+
+typedef struct {
+				/*This parameter abstracts from the CAN Driver specific parameter
+				Controller. Each controller of all connected CAN Driver modules shall
+				be assigned to one specific ControllerId of the CanIf. 
+				Range: 0..number of configured controllers of all CAN Driver modules	*/
+				uint8 CanIfCtrlId;
+
 typedef struct {
 				
 				/* This parameter defines if a respective controller of the referenced CAN 
@@ -760,3 +768,4 @@ typedef struct
 
 
 #endif /*__CANIF_TYPES_H__*/
+
