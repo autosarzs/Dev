@@ -35,7 +35,7 @@
 #ifndef __CANIF_H__
 #define __CANIF_H__
 
-#include "Can.h"
+//#include "Can.h"
 #include "CanIf_Types.h"
 #include "CanIf_Cfg.h"
 
@@ -84,11 +84,24 @@
 extern Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID);
 extern void CanIf_RxIndication(const Can_HwType* Mailbox, const PduInfoType* PduInfoPtr);
 Std_ReturnType CanIf_GetPduMode(uint8 ControllerId,CanIf_PduModeType* PduModePtr);
+
+
 /*******************************************************************************
- * PBconfigs shall be extern'ed here CanIf users are not responsible to extern pbcfgs.
+ * PBconfigs shall be extern'ed here SO CanIf users NEED NOT to extern pbcfgs in every location they need it.
  * CANIF users only need to include Canif.h
  */
 
+extern CanIf_ConfigType CanIf_ConfigObj;
+
+//User indication Function
+void CanIfRxPduUserRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr );
+void PduR_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr);
+void CanNm_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr);
+void J1939Nm_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr);
+void CanTp_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr);
+void Xcp_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr);
+void CanTSyn_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr);
+void J1939Tp_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr);
 
 
 

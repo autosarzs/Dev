@@ -59,15 +59,24 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
  *  */
 /******************************************************************************/
 #if (CANIF_PRIVATE_DATA_LENGTH_CHECK == STD_ON)
+<<<<<<< HEAD
 static Std_ReturnType CanIf_CheckDLC(const CanIfRxPduCfgType *const ConfigPdu_Ptr, const PduInfoType *pPduInfo)
 {
 	Std_ReturnType return_val = E_NOT_OK;
 
 	/*
+=======
+static Std_ReturnType CanIf_CheckDLC(const CanIfRxPduCfgType * const ConfigPdu_Ptr, const PduInfoType *pPduInfo)
+{
+    Std_ReturnType return_val = E_NOT_OK;
+
+    /*
+>>>>>>> 3ba795987bbe5623d8ff09eff6e274ff654f03f6
      * [SWS_CANIF_00026] d CanIf shall accept all received L-PDUs
 		(see [SWS_CANIF_00390]) with a Data Length value equal or greater then the
 		configured Data Length value (see ECUC_CanIf_00599). c(SRS_Can_01005)
      */
+<<<<<<< HEAD
 	if (ConfigPdu_Ptr->CanIfRxPduDataLength <= pPduInfo->SduLength)
 	{
 		/*Check success*/
@@ -86,11 +95,21 @@ static Std_ReturnType CanIf_CheckDLC(const CanIfRxPduCfgType *const ConfigPdu_Pt
 	}
 
 	return return_val;
+=======
+    if (ConfigPdu_Ptr->CanIfRxPduDataLength <= pPduInfo->SduLength)
+    {
+        /*Check success*/
+        return_val = E_OK;
+    }
+
+    return return_val;
+>>>>>>> 3ba795987bbe5623d8ff09eff6e274ff654f03f6
 }
 #endif
 
 /******************************************************************************/
 /*
+<<<<<<< HEAD
  * Brief				 The approach of software filter mechanisms is to find out the corresponding L-PDU from the
 						 HRH and CanId currently being processed. After the L-PDU is found.
  * Param-Name[in]      	Mailbox: Revcieved Pdu from CanDrv.
@@ -186,6 +205,45 @@ static Std_ReturnType CanIf_SW_Filter(const Can_HwType *Mailbox, uint64 *tempPtr
 		}
 	}
 	return ret_val;
+=======
+ * Brief				Performs Software filtering on recieved Pdus.
+ *						it is recommended to offer several search algorithms like
+ *						linear search, table search and/or hash search variants to provide the most optimal
+ *						solution for most use cases.
+ * Param-Name[in]      	pPduCfg: Pointer to configured PDU struct.
+ * 						Mailbox: Revcieved Pdu from CanDrv.
+ * Return              	index of configured recieve pdu
+ *  */
+/******************************************************************************/
+static sint64 CanIf_SW_Filter(const Can_HwType *Mailbox, const CanIfHrhCfgType * const Hrhcfg_Ptr)
+{
+    CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigObj.CanIfInitCfgRef->CanIfRxPduCfgRef;
+    sint64 ret_val = -1;
+    Can_IdType temp_CanId = (Mailbox->CanId) & 0x3FFFFFFF;
+    // Local variable hold Message type , Extended , standard ...
+#if (CANIF_PRIVATE_SOFTWARE_FILTER_TYPE == LINEAR)
+    //Configured sw algorithm is Linear
+    for (uint64 PduCfg_index = 0; PduCfg_index < RX_CAN_L_PDU_NUM; PduCfg_index++)
+    	{
+    		//configured recieve pdu has same reference to hrh
+    		if (PduCfg_ptr[PduCfg_index].CanIfRxPduHrhIdRef == Hrhcfg_Ptr)
+    		{
+    			//check mask
+    			if ((temp_CanId & PduCfg_ptr[PduCfg_index].CanIfRxPduCanId) ==
+                   (temp_CanId & PduCfg_ptr[PduCfg_index].CanIfRxPduCanIdMask))
+    			{
+    				ret_val = (sint64)PduCfg_index;
+    				break;
+    			}
+    			else
+    			{
+
+    			}
+    		}
+    	}
+#endif
+    return ret_val;
+>>>>>>> 3ba795987bbe5623d8ff09eff6e274ff654f03f6
 }
 
 #if (CANIF_SET_BAUDRATE_API == STD_ON)
@@ -240,17 +298,25 @@ static void Canif_CopyData(uint8 *dest, uint8 *Src, uint8 Len)
 }
 #endif
 
+<<<<<<< HEAD
 /*[SWS_CANIF_00415] Within the service CanIf_RxIndication() the CanIf
+=======
+/*
+	[SWS_CANIF_00415] Within the service CanIf_RxIndication() the CanIf
+>>>>>>> 3ba795987bbe5623d8ff09eff6e274ff654f03f6
 	routes this indication to the configured upper layer target service(s). c()
 	*/
 
 void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr)
 {
+<<<<<<< HEAD
 
 	static CanIf_PduModeType temp_Mode;
 	static uint64 temp_CanIfRxPduindex;
 	CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigObj.CanIfInitCfgRef->CanIfRxPduCfgRef;
 
+=======
+>>>>>>> 3ba795987bbe5623d8ff09eff6e274ff654f03f6
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
 	if ((NULL_PTR == Mailbox) || (NULL_PTR == PduInfoPtr))
 	{
@@ -284,6 +350,130 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 					if (CanIf_CheckDLC(&PduCfg_ptr[temp_CanIfRxPduindex], PduInfoPtr) == E_OK)
 					{
 #endif
+<<<<<<< HEAD
+=======
+    static CanIf_PduModeType temp_Mode;
+    static sint64 temp_CanIfRxPduindex = -1;
+    static uint32 temp_CanifHrhindex = 0;
+
+	/*[SWS_CANIF_00421] If CanIf was not initialized before calling
+		CanIf_RxIndication(), CanIf shall not execute Rx indication handling, when
+		CanIf_RxIndication(), is called.
+	*/
+    /*
+     * The PduMode of a channel defines its transmit or receive activity.
+		Communication direction (transmission and/or reception) of the channel can
+		be controlled separately or together by upper layers.
+     */
+
+    if (CanIf_ModuleState == CANIF_READY && CanIf_GetPduMode(Mailbox->ControllerId, &temp_Mode) == E_OK )
+    {
+    	//if the current Pdu is (tx & rx) or (rx only)
+    	if (temp_Mode == CANIF_ONLINE || temp_Mode == CANIF_TX_OFFLINE)
+    	{
+    			// pointer for PBcfg hrh configuration
+    		    CanIfHrhCfgType *Hrhcfg_Ptr = CanIf_ConfigObj.CanIfInitCfgRef->CanIfInitHohCfgRef->CanIfHrhCfgRef;
+    		    // pointer for PBcfg Rx-pdu configuration
+    		    CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigObj.CanIfInitCfgRef->CanIfRxPduCfgRef;
+    		    // Local variable hold Message type , Extended , standard ...
+    		    CanIfHrhRangeRxPduRangeCanIdTypeType temp_canIdType = (Mailbox->CanId) >> 29U;
+    		    // Local variable hold Can message id
+    		    Can_IdType temp_CanId = (Mailbox->CanId) & 0x3FFFFFFF;
+
+    		    // Search for the hrh , which received this message
+    		    for (temp_CanifHrhindex = 0; temp_CanifHrhindex < CANIF_HRH_OBj_NUM; temp_CanifHrhindex++)
+    		    {
+    		        /*
+    		        * search for the hrh ID,controller ID == received Hoh,controller ID, type of can msg
+    		        * make sure its configured to be receive mode
+    		        */
+    		        if ((Hrhcfg_Ptr[temp_CanifHrhindex].CanIfHrhIdSymRef->CanObjectId == Mailbox->Hoh) &&
+    		            (Hrhcfg_Ptr[temp_CanifHrhindex].CanIfHrhIdSymRef->CanObjectType == RECEIVE) &&
+    		            (Hrhcfg_Ptr[temp_CanifHrhindex].CanIfHrhCanCtrlIdRef->CanIfCtrlCanCtrlRef->CanControllerId == Mailbox->ControllerId) &&
+						(Hrhcfg_Ptr[temp_CanifHrhindex].CanIfHrhRangeCfgRef->CanIfHrhRangeRxPduRangeCanIdType == temp_canIdType))
+    		        {
+    		            /*
+    		            * check if the received can id in the range of the hrh
+    		            * The type of the received can equal the type configured to recieve in this hrh (extended , standard..)
+    		            */
+    		            if ((temp_CanId & Hrhcfg_Ptr[temp_CanifHrhindex].CanIfHrhRangeCfgRef->CanIfHrhRangeBaseId) ==
+    		                 (temp_CanId & Hrhcfg_Ptr[temp_CanifHrhindex].CanIfHrhRangeCfgRef->CanIfHrhRangeMask))
+    		            {
+    		                /*
+    		                * S/w filter is enabled and pdu is basic
+    		                */
+    		                if ((Hrhcfg_Ptr[temp_CanifHrhindex].CanIfHrhSoftwareFilter == STD_ON) &&
+    		                    (Hrhcfg_Ptr[temp_CanifHrhindex].CanIfHrhIdSymRef->CanHandleType == BASIC))
+    		                {
+    		                	//perform sw filter and get the index if passed (-1 is invalid)
+    		                	temp_CanIfRxPduindex = CanIf_SW_Filter(Mailbox, &Hrhcfg_Ptr[temp_CanifHrhindex]);
+    		                	//if recieve pdu exists
+    		                	if (temp_CanIfRxPduindex > (sint64)-1)
+    		                	{
+
+    		                		 /* [SWS_CANIF_00390] d If CanIf accepts an L-PDU received via
+										CanIf_RxIndication() during Software Filtering (see [SWS_CANIF_00389]),
+										CanIf shall process the Data Length check afterwards, if configured
+										(see ECUC_CanIf_00617). c()
+    		                		 */
+#if (CANIF_PRIVATE_DATA_LENGTH_CHECK == STD_ON)
+    		                		if (CanIf_CheckDLC(&PduCfg_ptr[temp_CanIfRxPduindex], PduInfoPtr) == E_NOT_OK)
+    		                		{
+    		                	        /*[SWS_CANIF_00168] d If the Data Length Check rejects a received LPDU
+    		                		 	CanIf shall report runtime error code
+    		                			CANIF_E_INVALID_DATA_LENGTH to the Det_ReportRuntimeError() service
+    		                			of the DET module.*/
+#if (CANIF_DEV_ERROR_DETECT == STD_ON)
+    		                	        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+    		                	                        CANIF_E_INVALID_DATA_LENGTH);
+#endif
+    		                		}
+    		                		else
+    		                		{
+    		                			//misra
+    		                		}
+#endif
+    		                	}
+    		                	//Software filter failed
+    		                	else
+    		                	{
+#if (CANIF_DEV_ERROR_DETECT == STD_ON)
+    		                	        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+														CANIF_E_PARAM_CANID);
+#endif
+    		                	}
+    		                }
+    		                //not basic or sw filter is disabled
+    		                else
+    		                {
+    		                	//search for the configured pdu
+    		                	for (uint64 PduCfg_index = 0; PduCfg_index < RX_CAN_L_PDU_NUM; PduCfg_index++)
+    		                	    {
+    		                	    	//configured recieve pdu has same reference to hrh
+    		                	    	if (PduCfg_ptr[PduCfg_index].CanIfRxPduHrhIdRef == Hrhcfg_Ptr)
+    		                	    	{
+    		                	    		//check mask
+    		                	    		if ((temp_CanId & PduCfg_ptr[PduCfg_index].CanIfRxPduCanId) ==
+    		                	                   (temp_CanId & PduCfg_ptr[PduCfg_index].CanIfRxPduCanIdMask))
+    		                	    		{
+    		                	    			temp_CanIfRxPduindex = (sint64)PduCfg_index;
+    		                	   				break;
+    		                	   			}
+    		                	   			else
+    		                	   			{
+    		                	   				//misra
+    		                	    		}
+    		                	    	}
+    		                	    }
+    		                	//if pdu is not found
+    		                	if(temp_CanIfRxPduindex == (sint64)-1)
+    		                	{
+#if (CANIF_DEV_ERROR_DETECT == STD_ON)
+    		                	        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+														CANIF_E_PARAM_CANID);
+#endif
+    		                	}
+>>>>>>> 3ba795987bbe5623d8ff09eff6e274ff654f03f6
 
 #if (CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
 						// Call copy_Data
@@ -296,6 +486,7 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 						//Set flag
 #endif
 
+<<<<<<< HEAD
 						/*
 				[SWS_CANIF_00135] d If a target upper layer module was configured to be called
 				with its providing receive indication service (see [SWS_CANIF_00056]), the CanIf shall
@@ -367,3 +558,89 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 	}
 #endif
 }
+=======
+    		                	/*
+    		                	 * [SWS_CANIF_00135] d If a target upper layer module was configured to be called
+									with its providing receive indication service (see [SWS_CANIF_00056]), the CanIf shall
+									call this configured receive indication callback service (see ECUC_CanIf_00530) and
+									shall provide the parameters required for upper layer notification callback functions
+									(see [SWS_CANIF_00012]) based on the parameters of CanIf_RxIndication(). c
+									(SRS_BSW_00325)
+								*/
+    	                        switch (PduCfg_ptr[temp_CanIfRxPduindex].CanIfRxPduUserRxIndicationUL)
+    	                        {
+    	                        case CAN_NM_RX_INDICATION:
+    	                        	CanNm_RxIndication(Mailbox->CanId, PduInfoPtr);
+    	                            break;
+
+    	                        case CAN_TP_RX_INDICATION:
+    	                        	CanTp_RxIndication(Mailbox->CanId, PduInfoPtr);
+    	                            break;
+
+    	                        case CAN_TSYN_RX_INDICATION:
+    	                        	CanTSyn_CanIfRxIndication(Mailbox->CanId, PduInfoPtr);
+    	                            break;
+
+    	                        case CDD_RX_INDICATION:
+    	                        	CanIfRxPduUserRxIndication(Mailbox->CanId, PduInfoPtr);
+    	                            break;
+
+    	                        case J1939NM_RX_INDICATION:
+    	                        	J1939Nm_RxIndication(Mailbox->CanId, PduInfoPtr);
+    	                            break;
+
+    	                        case J1939TP_RX_INDICATION:
+    	                        	J1939Tp_RxIndication(Mailbox->CanId, PduInfoPtr);
+    	                            break;
+
+    	                        case PDUR_RX_INDICATION:
+    	                        	PduR_CanIfRxIndication(Mailbox->CanId, PduInfoPtr);
+    	                            break;
+
+    	                        case XCP_RX_INDICATION:
+    	                        	Xcp_CanIfRxIndication(Mailbox->CanId, PduInfoPtr);
+    	                            break;
+
+    	                        default:
+    	                            break;
+    	                        }
+    		                }
+    		            }
+    		            else
+    		            {
+    		                /*[SWS_CANIF_00416] d If parameter Mailbox->Hoh of CanIf_RxIndication()
+							has an invalid value, CanIf shall report development error code
+							CANIF_E_PARAM_HOH to the Det_ReportError service of the DET module,
+						when CanIf_RxIndication() is called. c(SRS_BSW_00323)
+    		                */
+#if (CANIF_DEV_ERROR_DETECT == STD_ON) /* DET notifications */
+    		                Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+											CANIF_E_PARAM_HOH);
+#endif
+    		            }
+
+                    }
+                    else
+                    {
+                        //misra
+                    }
+                }
+    		    //if no HRH is found
+    		    if(temp_CanifHrhindex == 0)
+    		    {
+#if (CANIF_DEV_ERROR_DETECT == STD_ON) /* DET notifications */
+    		                Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,
+											CANIF_E_PARAM_HOH);
+#endif
+    		    }
+
+            }
+    	else
+    	{
+    		/*[SWS_CANIF_00421] d If CanIf was not initialized before calling
+    		CanIf_RxIndication(), CanIf shall not execute Rx indication handling, when
+    		CanIf_RxIndication(), is called. c()*/
+    	}
+    }
+}
+>>>>>>> 3ba795987bbe5623d8ff09eff6e274ff654f03f6
