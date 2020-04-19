@@ -122,6 +122,8 @@
 #error "The AR version of Det.h does not match the expected version"
 #endif /* SW module version checking */
 
+/* CANIF Module Id */
+#define CANIF_MODULE_ID        (60U)
 
 /*******************************************************************************
 *                           API Service ID Macros                              *
@@ -129,8 +131,6 @@
 typedef uint8 CanIf_ServiceId;
 #define CANIF_GET_CONTROLLER_ERROR_STATE_SID     ((CanIf_ServiceId)0x4b)
 #define CANIF_GET_PDU_MODE_SID                   ((CanIf_ServiceId)0x0a)
-#define CANIF_SET_CONTROLLER_MODE_SID            ((CanIf_ServiceId)0x03)
-
 /*******************************************************************************
 * Service Name:       CanIf_GetControllerErrorState
 * Service ID[hex]:    0x4b

@@ -628,5 +628,4 @@ each hardware transmit object (HTH).*/
 #define CANIF_HTH_ID_1                              1
 
 
-
 #endif /* __CANIF_CFG_H__ */
