@@ -294,8 +294,6 @@ typedef struct {
 				Range: 0..number of configured controllers of all CAN Driver modules	*/
 				uint8 CanIfCtrlId;
 
-typedef struct {
-				
 				/* This parameter defines if a respective controller of the referenced CAN 
 				Driver modules is queriable for wake up events (Supports Wakeup Event or not). For Each CanIf Controller */
 				boolean CanIfCtrlWakeupSupport;

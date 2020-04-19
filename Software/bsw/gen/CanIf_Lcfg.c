@@ -39,7 +39,7 @@
 /*extern CANDrv HOH configurations*/
 extern CanIfInitHohCfgType CanIfInitHohCfgObj[] ;
 /*extern CANDrv Controllers configurations*/
-extern  CanControllerType     CanControllerCfg[]  ;
+extern CanControllerType CanControllerCfg[];
 
 /*To be initialized in CanI_Init() */
 CanIfTxPduCfgType* CanIfTxPduCfgPtr = NULL_PTR ;
@@ -55,8 +55,8 @@ CanIfHthCfgType*   CanIfHthCfgPtr   = NULL_PTR ;
 CanIfCtrlCfgType CanIfCtrlCfgObj[CANIF_CONTROLLERS_NUM] =
 {
 	{
-		STD_OFF,						/* Wakeup Support enabled or disabled */
-		&CanControllerCfg[0]            /* Reference to CanController Configuration */
+		STD_OFF,								/* Wakeup Support enabled or disabled */
+		(CanControllerType *)CanControllerCfg	/* Reference to CanController Configuration */
 	}
 };
 

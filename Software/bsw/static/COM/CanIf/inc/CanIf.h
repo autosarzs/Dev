@@ -54,10 +54,6 @@ typedef uint8 CanIf_NotifStatusType;
 #define CANIF_TXCONFIRMATION_API_ID     ((uint8)0x13)
 
 /* CanIf_DetErrorType */
-
-#define CANIF_E_PARAM_LPDU  ((uint8)13U)
-#define CANIF_E_UNINIT      ((uint8)30U)
-
 void CanIf_TxConfirmation(PduIdType);
 typedef uint8 CanIF_DetErrorType;
 /** Development Errors*/
@@ -81,12 +77,6 @@ typedef uint8 CanIF_DetErrorType;
 #define CANIF_E_DATA_LENGTH_MISMATCH   ((CanIF_DetErrorType)0x62U)
 #define CANIF_E_STOPPED                ((CanIF_DetErrorType)0x70U)
 #define CANIF_E_TXPDU_LENGTH_EXCEEDED  ((CanIF_DetErrorType)0x90U)
-
-/* CANIF Module Id */
-#define CANIF_MODULE_ID  0 /*  ID  not added*/
-
-/* CANIF Instance Id */
-#define CANIF_INSTANCE_ID 0 /*  ID  not added*/
 
 typedef uint8 CanIF_ServiceId;
 #define CANIF_GET_TX_CONFIRMATIONSTATE_ID  ((CanIF_ServiceId)0x19U)
