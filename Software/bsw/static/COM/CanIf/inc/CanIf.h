@@ -37,13 +37,9 @@
 
 
 #include "CanIf_Cfg.h"
-#include "Can.h"
-#include "Can_GeneralTypes.h"
-#include "Platform_Types.h"
 #include "CanIf_Types.h"
 typedef uint8 CanIf_PduModeType;
 #define MAX_PDU_REQUEST  4
-#define CANIF_CONTROLLERS_NUM 10
 Std_ReturnType CanIf_SetPduMode(uint8 ControllerId,CanIf_PduModeType PduModeRequest);
 Std_ReturnType CanIf_ReadRxPduData(PduIdType CanIfRxSduId,PduInfoType* CanIfRxInfoPtr);
 Std_ReturnType CanIf_GetControllerMode(uint8 ControllerId,Can_ControllerStateType*ControllerModePtr);

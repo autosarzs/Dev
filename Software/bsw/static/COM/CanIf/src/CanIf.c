@@ -29,7 +29,7 @@
  **                                                                            **
  **  SPECIFICATION(S) : Specification of CAN Interface, AUTOSAR Release 4.3.1  **
  **                                                                            **
- **  MAY BE CHANGED BY USER : no                                               **
+ **  MAY BE CHANGED BY USER x: no                                               **
  **                                                                            **
  *******************************************************************************/
 #include "../inc/CanIf.h"
@@ -121,16 +121,14 @@ is not in state CAN_CS_STARTED. c()*/
      for(counter = 0 ; counter<BUFFERS_NUM;counter++)
      {
          /*Get number of PDUs saved in this buffer*/
-        //  TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfBufferRef->CanIfBufferSize;
-          TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfBufferRef->CanIfBufferSize;
+          TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBufferCfgRef->CanIfBufferRef->CanIfBufferSize;
+
          /*Loop to clear all TX Buffers */
          for(PduCounter =0;PduCounter<TxBufferSize;PduCounter++)
          {
 
-            // *((uint64*)CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)= 0;
-             *((uint64*)CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)=0;
-             //CanIf_ConfigPtr->CanIfPduTxBuffers[counter].CanIfPduInfoRef[PduCounter].SduLength = 0 ;
-             CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduLength=0;
+             CanIf_ConfigPtr->CanIfPduTxBufferCfgRef->CanIfPduInfoRef->SduDatabuffer[PduCounter]=0;
+             CanIf_ConfigPtr->CanIfPduTxBufferCfgRef->CanIfPduInfoRef->SduLength=0;
          }
      }
  #endif
@@ -177,9 +175,8 @@ request and return E_NOT_OK, if the corresponding controller mode refrenced by C
 path online.
      */
 
-   // Loc_Controller_Id=CanIf_ConfigPtr->CanIfInitCfgObj->CanIfRxPduCfgObj[CanIfRxSduId].CanIfRxPduHrhIdRef->CanIfHrhCanCtrlIdRef->CanIfCtrlId;
-    Loc_Controller_Id= CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[CanIfRxSduId].CanIfRxPduHrhIdRef->CanIfHrhCanCtrlIdRef->CanIfCtrlCanCtrlRef->CanControllerId;
 
+      Loc_Controller_Id= CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[CanIfRxSduId].CanIfRxPduHrhIdRef->CanIfHrhCanCtrlIdRef->CanIfCtrlCanCtrlRef->CanControllerId;
     Loc_CanIf_ReadRxPduData_Ret=CanIf_GetControllerMode(Loc_Controller_Id,&Loc_Controller_Mode );
     if (Loc_CanIf_ReadRxPduData_Ret==E_OK )
     {
