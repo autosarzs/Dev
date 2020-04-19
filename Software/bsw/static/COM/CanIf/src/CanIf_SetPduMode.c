@@ -32,7 +32,7 @@
  **  MAY BE CHANGED BY USER x: no                                               **
  **                                                                            **
  *******************************************************************************/
-#include "../inc/CanIf.h"
+#include "CanIf.h"
 
 
 #define MAX_PDU_REQUEST     (05)
@@ -40,19 +40,14 @@
 /*
  *  Type Description : Struct to save recieved  PDUs (in case of enable CanIf_ReadRxPduData API un configuration) .
  */
-typedef struct
-{
-   PduInfoType *     PduInfoPtr;
-   PduIdType      PduId;
-}str_MapRXPdu ;
-
-static str_MapRXPdu  MapRXPdu[RX_CAN_L_PDU_NUM] = {0};
+ 
 /*Pointer to save configuration parameters set */
-static CanIf_ConfigType*    CanIf_ConfigPtr = NULL;
+extern CanIf_ConfigType*    CanIf_ConfigPtr;
+
 CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
 
 
-
+/*TODO who the one request CANIF to be ONLINE ??? */
 Std_ReturnType CanIf_SetPduMode(uint8 ControllerId,CanIf_PduModeType PduModeRequest)
 {
     uint8 PduCounter=0;
@@ -67,13 +62,12 @@ CANIF_E_PARAM_CONTROLLERID to the Det_ReportError service of the
 DET module. c(SRS_BSW_00323)*/
 
 
-    if (ControllerId > CANIF_CONTROLLERS_NUM )
+    if (ControllerId >= CANIF_CONTROLLERS_NUM )
     {
 #if ( DevError == STD_ON )
         Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CanIf_SetPduMode, CANIF_E_PARAM_CONTROLLERID );
-#else
-        Loc_CanIf_SetPduMode_Ret = E_NOT_OK;
 #endif
+        Loc_CanIf_SetPduMode_Ret = E_NOT_OK;
     }
 
 
@@ -81,90 +75,79 @@ DET module. c(SRS_BSW_00323)*/
 CanIf shall report development error code CANIF_E_PARAM_PDU_MODE
 to the Det_ReportError service of the DET module. c(SRS_BSW_00323)*/
 
-
-    if (PduModeRequest >= MAX_PDU_REQUEST  )
+    if (Loc_CanIf_SetPduMode_Ret == E_OK)
     {
-#if ( DevError == STD_ON )
-        Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CanIf_SetPduMode, CANIF_E_PARAM_PDU_MODE );
-#else
-        Loc_CanIf_SetPduMode_Ret = E_NOT_OK;
-#endif
-    }
-
-    /*[SWS_CANIF_00874] The service CanIf_SetPduMode() shall not accept any request
-and shall return E_NOT_OK, if the controller mode referenced by ControllerId
-is not in state CAN_CS_STARTED. c()*/
-
-    Loc_CanIf_SetPduMode_Ret==CanIf_GetControllerMode(ControllerId,&Loc_Controller_Mode );  /* To Get The mode of ControllerMode */
-
-    if (Loc_CanIf_SetPduMode_Ret == E_OK )
-    {
-        if (Loc_Controller_Mode != CAN_CS_STARTED )
-            return E_NOT_OK;
-    }
-    else
-    {
-        return E_NOT_OK;
-    }
-
-    switch(PduModeRequest)
-    {
-
-    case CANIF_OFFLINE:
-    case CANIF_TX_OFFLINE:
-#if (CANIF_TX_OFFLINE_ACTIVE_SUPPORT == STD_ON)
-    case CANIF_TX_OFFLINE_ACTIVE:
-#endif
-
-        if(CanIf_PduMode[ControllerId]==CANIF_ONLINE)
+        if (PduModeRequest >= MAX_PDU_REQUEST  )
         {
-            /* [SWS_CANIF_00865] dIf CanIf_SetControllerMode(ControllerId, CAN_-
-                     CS_SLEEP)*/
-#if(CANIF_PUBLIC_TX_BUFFERING==STD_ON)
-
-
-     for(counter = 0 ; counter<BUFFERS_NUM;counter++)
-     {
-         /*Get number of PDUs saved in this buffer*/
-          TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBufferCfgRef->CanIfBufferRef->CanIfBufferSize;
-
-         /*Loop to clear all TX Buffers */
-         for(PduCounter =0;PduCounter<TxBufferSize;PduCounter++)
-         {
-
-             CanIf_ConfigPtr->CanIfPduTxBufferCfgRef->CanIfPduInfoRef->SduDatabuffer[PduCounter]=0;
-             CanIf_ConfigPtr->CanIfPduTxBufferCfgRef->CanIfPduInfoRef->SduLength=0;
-         }
-     }
- #endif
-
+    #if ( DevError == STD_ON )
+            Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CanIf_SetPduMode, CANIF_E_PARAM_PDU_MODE );
+    #endif
+            Loc_CanIf_SetPduMode_Ret = E_NOT_OK;
+   
         }
-        switch(PduModeRequest)
-        {
-        case CANIF_OFFLINE:
-            CanIf_PduMode[ControllerId]=CANIF_OFFLINE;
-            break;
-        case CANIF_TX_OFFLINE:
-            CanIf_PduMode[ControllerId]=CANIF_TX_OFFLINE;
-            break;
-#if (CANIF_TX_OFFLINE_ACTIVE_SUPPORT ==STD_ON)
-        case CANIF_TX_OFFLINE_ACTIVE:
-            CanIf_PduMode[ControllerId]=CANIF_TX_OFFLINE_ACTIVE;
-            break;
-#endif
-        default:
-            break;
-        }
-
-        break;
-
-        case CANIF_ONLINE:
-            CanIf_PduMode[ControllerId]=CANIF_ONLINE;
-            break;
-        default:
-            break;
+		else
+		{
+			
+              /*[SWS_CANIF_00874] The service CanIf_SetPduMode() shall not accept any request
+          and shall return E_NOT_OK, if the controller mode referenced by ControllerId
+          is not in state CAN_CS_STARTED. c()*/
+          
+              Loc_CanIf_SetPduMode_Ret = CanIf_GetControllerMode(ControllerId,&Loc_Controller_Mode );  /* To Get The mode of ControllerMode */
+          
+              if (Loc_CanIf_SetPduMode_Ret == E_OK )
+              {
+                  if (Loc_Controller_Mode != CAN_CS_STARTED )
+					  /* TODO no return in the mid of the code */
+                      return E_NOT_OK;
+              }
+              else
+              {
+                  return E_NOT_OK;
+              }
+          
+              switch(PduModeRequest)
+              {
+          
+              case CANIF_OFFLINE:
+              case CANIF_TX_OFFLINE:
+          #if (CANIF_TX_OFFLINE_ACTIVE_SUPPORT == STD_ON)
+              case CANIF_TX_OFFLINE_ACTIVE:
+          #endif
+                  if(CanIf_PduMode[ControllerId]==CANIF_ONLINE)
+                  {
+                      /* [SWS_CANIF_00865] dIf CanIf_SetControllerMode(ControllerId, CAN_-
+                               CS_SLEEP)*/
+                     #if(CANIF_PUBLIC_TX_BUFFERING==STD_ON)
+                     
+                     
+                          for(counter = 0 ; counter<BUFFERS_NUM;counter++)
+                          {
+                              /*Get number of PDUs saved in this buffer*/
+                               TxBufferSize = CanIf_ConfigPtr->CanIfPduTxBufferCfgRef->CanIfBufferRef->CanIfBufferSize;
+                     
+                              /*Loop to clear all TX Buffers */
+                              for(PduCounter =0;PduCounter<TxBufferSize;PduCounter++)
+                              {
+                     
+                                  CanIf_ConfigPtr->CanIfPduTxBufferCfgRef->CanIfPduInfoRef->SduDatabuffer[PduCounter]=0;
+                                  CanIf_ConfigPtr->CanIfPduTxBufferCfgRef->CanIfPduInfoRef->SduLength=0;
+                              }
+                          }
+                      #endif
+					  
+					   CanIf_PduMode[ControllerId]= PduModeRequest;
+          
+                  }
+                  break;
+          
+                  case CANIF_ONLINE:
+                      CanIf_PduMode[ControllerId] = CANIF_ONLINE;
+                      break;
+                  default:
+                      break;
+              }
+		}
     }
-
 return Loc_CanIf_SetPduMode_Ret;
 }
 

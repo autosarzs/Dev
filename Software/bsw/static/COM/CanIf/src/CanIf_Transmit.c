@@ -41,6 +41,8 @@
 /*
  *  Type Description : Struct to map CanIds to a specific L-PDU of type dynamic  .
  */
+ 
+ /* TODO :: Remove it */
 typedef struct
 {
    Can_IdType     CanId;
@@ -95,13 +97,16 @@ const PduInfoType* PduInfoPtr
       PduInfoPtr->SduDataPtr, if the PDU is configured for triggered transmission:
       CanIfTxPduTriggerTransmit = TRUE.
      */
+	 
+	 /*TODO :: 0x00 -> NULL*/
     if(PduInfoPtr->SduDataPtr == 0x0)
+    {
+      if(CANIF_TX_PDU_TRIGGER_TRANSMIT != STD_ON)
       {
-    if(CANIF_TX_PDU_TRIGGER_TRANSMIT != STD_ON)
-      {
+		 /*not return inside the function */
         return E_NOT_OK;
       }
-      }
+    }
 
     /*
      * check the TxPduId is in the MapCanIdToPdu to complete the cancellation process
@@ -146,29 +151,31 @@ const PduInfoType* PduInfoPtr
     and CanIfTxPduTruncation is disabled, CanIf shall report the runtime error
     CANIF_E_TXPDU_LENGTH_EXCEEDED and return E_NOT_OK without further actions
    */
+   
+   /*TODO implement FD supported */   
     if (PduInfoPtr->SduLength > 8)
-      {
-    if(CANIF_TX_PDU_TRUNCATION == STD_ON)
-      {
-        TX_message.length = 8;
-      }
+    {
+          if(CANIF_TX_PDU_TRUNCATION == STD_ON)
+          {
+            TX_message.length = 8;
+          }
+          else
+          {
+            /* Where is the prototype of this function? */
+            //Det_ReportRuntimeError(CANIF_E_TXPDU_LENGTH_EXCEEDED)
+            return E_NOT_OK;
+          }
+    }
     else
-      {
-        /* Where is the prototype of this function? */
-        //Det_ReportRuntimeError(CANIF_E_TXPDU_LENGTH_EXCEEDED)
-        return E_NOT_OK;
-      }
-      }
-    else
-      {
-    TX_message.length = PduInfoPtr->SduLength;
-      }
+    {
+      TX_message.length = PduInfoPtr->SduLength;
+    }
 
     TX_message.id = TxPduId;
     TX_message.sdu = PduInfoPtr->SduDataPtr;
     TX_message.swPduHandle =  CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[TxPduId].CanIfTxPduCanId;
 
-    state = Can_write ( Hth, &TX_message);
+    state = Can_write( Hth, &TX_message);
 
     if(state != E_OK )
     {

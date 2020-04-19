@@ -42,7 +42,7 @@
 #define CANIF_CHECK_DLC_API_ID (0xAA)
 
 //Temp canif config variable.
-static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+extern CanIf_ModuleStateType CanIf_ModuleState;
 
 extern CanIf_ConfigType*    CanIf_ConfigPtr;
 
@@ -211,8 +211,8 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 
 	static CanIf_PduModeType temp_Mode;
 	static uint64 temp_CanIfRxPduindex;
-	CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef;
-
+	CanIfRxPduCfgType *PduCfg_ptr ;
+	
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
 	if ((NULL_PTR == Mailbox) || (NULL_PTR == PduInfoPtr))
 	{
@@ -223,15 +223,17 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 	{
 #endif
 		/*[SWS_CANIF_00421] If CanIf was not initialized before calling
-		CanIf_RxIndication(), CanIf shall not execute Rx indication handling, when
-		CanIf_RxIndication(), is called.
-
-     * The PduMode of a channel defines its transmit or receive activity.
-		Communication direction (transmission and/or reception) of the channel can
-		be controlled separately or together by upper layers.
-     */
+			CanIf_RxIndication(), CanIf shall not execute Rx indication handling, when
+			CanIf_RxIndication(), is called.
+	
+			* The PduMode of a channel defines its transmit or receive activity.
+			Communication direction (transmission and/or reception) of the channel can
+			be controlled separately or together by upper layers.
+		*/
 		if ((CanIf_ModuleState == CANIF_READY) && (CanIf_GetPduMode(Mailbox->ControllerId, &temp_Mode) == E_OK))
 		{
+			PduCfg_ptr = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef;
+			
 			//if the current Pdu is (tx & rx) or (rx only)
 			if (temp_Mode == CANIF_ONLINE || temp_Mode == CANIF_TX_OFFLINE)
 			{
@@ -269,6 +271,8 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 				[SWS_CANIF_00211] d CanIf shall execute the software acceptance filter from [SWS_CANIF_00469] for the HRH passed by callback function
 				CanIf_RxIndication(). c()
 				*/
+				/*TODO remove this switch case and use the array to pointer to function */
+				/*TODO search for CANIF_CHECKSUM_RX_CALLOUT_SUPPORT*/
 						switch (PduCfg_ptr[temp_CanIfRxPduindex].CanIfRxPduUserRxIndicationUL)
 						{
 						case CAN_NM_RX_INDICATION:
