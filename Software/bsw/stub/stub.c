@@ -57,7 +57,7 @@ void CanIf_ControllerModeIndication( uint8 ControllerId, Can_ControllerStateType
  * \brief This callout function is called whenever a CAN message is
  *  received in CAN driver.
  */
-void CanIf_RxIndication
+/*void CanIf_RxIndication
 (
     const Can_HwType * Mailbox,
     const PduInfoType * PduInfoPtr
@@ -65,7 +65,7 @@ void CanIf_RxIndication
 
 {
         ReadData= *(PduInfoPtr->SduDataPtr);
-}
+}*/
 
 void CanIf_ControllerBusOff(uint8 ControllerId)
 {
@@ -83,6 +83,39 @@ void CanIfTxPduUserTxConfirmation(PduIdType TxPduId, Std_ReturnType result )
 }
 
 void CanIfRxPduUserRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr )
+{
+
+}
+
+void PduR_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+
+void CanNm_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+
+void J1939Nm_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+
+void CanTp_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+
+void Xcp_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+void CanTSyn_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+{
+
+}
+void J1939Tp_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
 {
 
 }

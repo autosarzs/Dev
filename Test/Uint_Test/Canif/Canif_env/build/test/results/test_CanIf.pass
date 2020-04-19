@@ -1,0 +1,18 @@
+---
+:source:
+  :path: test
+  :file: test_CanIf.c
+:successes:
+- :test: test_CanIf_NeedToImplement1
+  :line: 16
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 1
+  :passed: 1
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.05637395799999467

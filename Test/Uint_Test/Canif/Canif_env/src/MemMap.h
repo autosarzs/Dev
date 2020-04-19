@@ -10,11 +10,11 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : CanIf_PBcfg			                                      **
+**  FILENAME     : MemMap.h    			                                  **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
-**  DATE         : 2020-03-17                                                 **
+**  DATE         : 2019-09-22                                                 **
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
@@ -25,16 +25,16 @@
 **  VENDOR       : AUTOSarZs OLC	                                          **
 **                                                                            **
 **                                                                            **
-**  DESCRIPTION  : CAN Interface Post Build Header file                       **
+**  DESCRIPTION  : CAN Driver source file                                     **
 **                                                                            **
-**  SPECIFICATION(S) : Specification of CAN Inteface, AUTOSAR Release 4.3.1   **
+**  SPECIFICATION(S) : Specification of CAN Driver, AUTOSAR Release 4.3.1     **
 **                                                                            **
 **  MAY BE CHANGED BY USER : no                                               **
 **                                                                            **
 *******************************************************************************/
-#ifndef CANIF_PBCFG_H_
-#define CANIF_PBCFG_H_
+#ifndef MEMMAP_H_
+#define MEMMAP_H_
 
 
 
-#endif /* CANIF_PBCFG_H_ */
+#endif /* MEMMAP_H_ */

@@ -10,11 +10,11 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : CanIf_PBcfg			                                      **
+**  FILENAME     : Compiler.h			                                  **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
-**  DATE         : 2020-03-17                                                 **
+**  DATE         : 2019-09-22                                                 **
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
@@ -25,16 +25,44 @@
 **  VENDOR       : AUTOSarZs OLC	                                          **
 **                                                                            **
 **                                                                            **
-**  DESCRIPTION  : CAN Interface Post Build Header file                       **
+**  DESCRIPTION  : CAN Driver source file                                     **
 **                                                                            **
-**  SPECIFICATION(S) : Specification of CAN Inteface, AUTOSAR Release 4.3.1   **
+**  SPECIFICATION(S) : Specification of CAN Driver, AUTOSAR Release 4.3.1     **
 **                                                                            **
 **  MAY BE CHANGED BY USER : no                                               **
 **                                                                            **
 *******************************************************************************/
-#ifndef CANIF_PBCFG_H_
-#define CANIF_PBCFG_H_
+#ifndef COMPILER_H
+#define COMPILER_H
+
+#define AUTOMATIC
+#define TYPEDEF typedef
+#define STATIC 	static
 
 
+#define INLINE __inline__
 
-#endif /* CANIF_PBCFG_H_ */
+#define FUNC(rettype,memclass) rettype
+
+#define FUNC_P2VAR(rettype, ptrclass, memclass) rettype *(memclass)
+
+#define FUNC_P2CONST(rettype, ptrclass, memclass)const rettype *(memclass)
+
+#define P2VAR(ptrtype, memclass, ptrclass) ptrtype *
+
+#define P2CONST(ptrtype, memclass, ptrclass) const ptrtype *
+
+#define CONSTP2VAR(ptrtype,memclass,ptrclass) ptrtype * const
+
+#define CONSTP2CONST(ptrtype, memclass, ptrclass) const ptrtype * const
+
+#define P2FUNC(rettype,ptrclass,fctname) rettype (*fctname)
+
+#ifndef CONST
+#define CONST(consttype,memclass) const consttype
+#endif
+
+#define VAR(vartype,memclass) vartype
+
+
+#endif /* COMPILER_H */

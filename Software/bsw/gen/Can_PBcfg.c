@@ -43,7 +43,7 @@ CanControllerType CanControllerCfg[] =
 /*Filter configuration for HOH0*/
 CanHwFilter CanHwFilterHTH[] =
 {
-    {   
+    {
         1,               /* ID  */
         0x7FF            /* Mask.not used as it's TRANSMIT HOH  */
     }
@@ -112,7 +112,7 @@ CanHardwareObjectType HOHObj[] =
 data for the CAN driver and SFR settings affecting all controllers. Furthermore it 
 contains pointers to controller configuration structures. The contents of the 
 initialization data structure are CAN hardware specific. */
-const Can_ConfigType Can_Configurations = 
+const Can_ConfigType Can_Configurations =
 {
     CanControllerCfg,
     HOHObj

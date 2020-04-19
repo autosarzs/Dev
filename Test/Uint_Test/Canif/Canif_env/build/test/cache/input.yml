@@ -1,0 +1,204 @@
+---
+:project:
+  :use_exceptions: false
+  :use_mocks: true
+  :compile_threads: 1
+  :test_threads: 1
+  :use_test_preprocessor: true
+  :use_deep_dependencies: false
+  :generate_deep_dependencies: true
+  :test_file_prefix: test_
+  :options_paths: []
+  :release_build: false
+  :use_auxiliary_dependencies: true
+  :build_root: build
+  :which_ceedling: gem
+  :default_tasks:
+  - test:all
+:release_build:
+  :use_assembly: false
+  :artifacts: []
+:paths:
+  :test:
+  - "+:test/**"
+  - "-:test/support"
+  :source:
+  - src/**
+  :support:
+  - test/support
+  :include: []
+  :test_toolchain_include: []
+  :release_toolchain_include: []
+:files:
+  :test: []
+  :source: []
+  :assembly: []
+  :support: []
+  :include: []
+:environment:
+- :rake_columns: '120'
+:defines:
+  :test:
+  - &1 []
+  - TEST
+  :test_preprocess:
+  - *1
+  - TEST
+  :release: []
+  :release_preprocess: []
+  :use_test_definition: false
+  :common: []
+:libraries:
+  :test: []
+  :test_preprocess: []
+  :release: []
+  :release_preprocess: []
+  :placement: :end
+  :flag: "${1}"
+:flags: {}
+:extension:
+  :header: ".h"
+  :source: ".c"
+  :assembly: ".s"
+  :object: ".o"
+  :executable: ".out"
+  :map: ".map"
+  :list: ".lst"
+  :testpass: ".pass"
+  :testfail: ".fail"
+  :dependencies: ".d"
+:unity:
+  :vendor_path: C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/ceedling-0.29.1/vendor
+  :defines: []
+:cmock:
+  :vendor_path: C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/ceedling-0.29.1/vendor
+  :defines: []
+  :includes: []
+  :mock_prefix: mock_
+  :when_no_prototypes: :warn
+  :enforce_strict_ordering: true
+  :plugins:
+  - :ignore
+  - :callback
+  :treat_as:
+    uint8: HEX8
+    uint16: HEX16
+    uint32: UINT32
+    int8: INT8
+    bool: UINT8
+  :mock_path: build/test/mocks
+  :verbosity: 3
+  :unity_helper: false
+:cexception:
+  :vendor_path: C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/ceedling-0.29.1/vendor
+  :defines: []
+:test_runner:
+  :includes: []
+  :file_suffix: _runner
+:tools:
+  :test_compiler:
+    :executable: gcc.exe
+    :name: default_test_compiler
+    :stderr_redirect: :none
+    :background_exec: :none
+    :optional: false
+    :arguments:
+    - -I"$": COLLECTION_PATHS_TEST_SUPPORT_SOURCE_INCLUDE_VENDOR
+    - -I"$": COLLECTION_PATHS_TEST_TOOLCHAIN_INCLUDE
+    - "-D$": COLLECTION_DEFINES_TEST_AND_VENDOR
+    - "-DGNU_COMPILER"
+    - "-g"
+    - -c "${1}"
+    - -o "${2}"
+    - "-MMD"
+    - -MF "${4}"
+  :test_fixture:
+    :executable: "${1}"
+    :name: default_test_fixture
+    :stderr_redirect: :auto
+    :background_exec: :none
+    :optional: false
+    :arguments: []
+  :test_linker:
+    :executable: gcc.exe
+    :name: default_test_linker
+    :stderr_redirect: :none
+    :background_exec: :none
+    :optional: false
+    :arguments:
+    - '"${1}"'
+    - -o "${2}"
+    - ''
+    - "${4}"
+  :test_file_preprocessor:
+    :executable: gcc.exe
+    :name: default_test_file_preprocessor
+    :stderr_redirect: :none
+    :background_exec: :none
+    :optional: false
+    :arguments:
+    - "-E"
+    - -I"$": COLLECTION_PATHS_TEST_SUPPORT_SOURCE_INCLUDE_VENDOR
+    - -I"$": COLLECTION_PATHS_TEST_TOOLCHAIN_INCLUDE
+    - "-D$": COLLECTION_DEFINES_TEST_AND_VENDOR
+    - "-D$": DEFINES_TEST_PREPROCESS
+    - "-DGNU_COMPILER"
+    - '"${1}"'
+    - -o "${2}"
+  :test_includes_preprocessor:
+    :executable: gcc.exe
+    :name: default_test_includes_preprocessor
+    :stderr_redirect: :none
+    :background_exec: :none
+    :optional: false
+    :arguments:
+    - "-E"
+    - "-MM"
+    - "-MG"
+    - -I"$": COLLECTION_PATHS_TEST_SUPPORT_SOURCE_INCLUDE_VENDOR
+    - -I"$": COLLECTION_PATHS_TEST_TOOLCHAIN_INCLUDE
+    - "-D$": COLLECTION_DEFINES_TEST_AND_VENDOR
+    - "-D$": DEFINES_TEST_PREPROCESS
+    - "-DGNU_COMPILER"
+    - "-w"
+    - '"${1}"'
+:test_compiler:
+  :arguments: []
+:test_linker:
+  :arguments: []
+:test_fixture:
+  :arguments: []
+  :link_objects: []
+:test_includes_preprocessor:
+  :arguments: []
+:test_file_preprocessor:
+  :arguments: []
+:test_dependencies_generator:
+  :arguments: []
+:release_compiler:
+  :arguments: []
+:release_linker:
+  :arguments: []
+:release_assembler:
+  :arguments: []
+:release_dependencies_generator:
+  :arguments: []
+:plugins:
+  :load_paths:
+  - C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/ceedling-0.29.1/lib/../plugins
+  :enabled:
+  - stdout_pretty_tests_report
+  - module_generator
+  :display_raw_test_results: false
+  :stdout_pretty_tests_report_path: C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/ceedling-0.29.1/lib/../plugins/stdout_pretty_tests_report
+  :module_generator_path: C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/ceedling-0.29.1/lib/../plugins/module_generator
+:gcov:
+  :html_report: true
+  :html_report_type: detailed
+  :html_medium_threshold: 75
+  :html_high_threshold: 90
+  :xml_report: false
+:module_generator:
+  :project_root: "./"
+  :source_root: src/
+  :test_root: test/
