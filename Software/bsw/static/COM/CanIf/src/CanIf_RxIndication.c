@@ -44,6 +44,8 @@
 //Temp canif config variable.
 static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
+extern CanIf_ConfigType*    CanIf_ConfigPtr;
+
 //const CanIf_ConfigType *CanIf_ConfigPtr = &CanIf_ConfigObj;
 
 /*****************************************************************************************/
@@ -100,7 +102,7 @@ static Std_ReturnType CanIf_CheckDLC(const CanIfRxPduCfgType *const ConfigPdu_Pt
 
 static Std_ReturnType CanIf_SW_Filter(const Can_HwType *Mailbox, uint64 *tempPtr_PduID)
 {
-	CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigObj.CanIfInitCfgRef->CanIfRxPduCfgRef;
+	CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef;
 	// Local variable hold Message type , Extended , standard ...CanIfHrhIdSymRef->CanObjectId
 	CanIfHrhRangeRxPduRangeCanIdTypeType temp_canIdType = (Mailbox->CanId) >> 29U;
 	Std_ReturnType ret_val = E_NOT_OK;
@@ -209,7 +211,7 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 
 	static CanIf_PduModeType temp_Mode;
 	static uint64 temp_CanIfRxPduindex;
-	CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigObj.CanIfInitCfgRef->CanIfRxPduCfgRef;
+	CanIfRxPduCfgType *PduCfg_ptr = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef;
 
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
 	if ((NULL_PTR == Mailbox) || (NULL_PTR == PduInfoPtr))

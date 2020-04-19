@@ -35,6 +35,23 @@
 #include "../inc/CanIf.h"
 
 
+#define MAX_PDU_REQUEST     (05)
+
+/*
+ *  Type Description : Struct to save recieved  PDUs (in case of enable CanIf_ReadRxPduData API un configuration) .
+ */
+typedef struct
+{
+   PduInfoType *     PduInfoPtr;
+   PduIdType      PduId;
+}str_MapRXPdu ;
+
+static str_MapRXPdu  MapRXPdu[RX_CAN_L_PDU_NUM] = {0};
+/*Pointer to save configuration parameters set */
+static CanIf_ConfigType*    CanIf_ConfigPtr = NULL;
+CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
+
+
 
 Std_ReturnType CanIf_SetPduMode(uint8 ControllerId,CanIf_PduModeType PduModeRequest)
 {

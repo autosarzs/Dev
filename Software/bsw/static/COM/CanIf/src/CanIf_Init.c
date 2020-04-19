@@ -95,7 +95,7 @@ static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
 
 /*Pointer to save configuration parameters set */
-static const CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
+const CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
 
 /*Array to save each logical controller PDUs mode */
 static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;

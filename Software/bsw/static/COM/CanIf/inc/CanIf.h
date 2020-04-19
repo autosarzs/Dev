@@ -131,6 +131,9 @@
 typedef uint8 CanIf_ServiceId;
 #define CANIF_GET_CONTROLLER_ERROR_STATE_SID     ((CanIf_ServiceId)0x4b)
 #define CANIF_GET_PDU_MODE_SID                   ((CanIf_ServiceId)0x0a)
+#define CanIf_GetControllerMode_Id               ((Can_ServiceId)0x04)
+#define CanIf_CancelTransmit_Id                 ((Can_ServiceId)0x4A)
+#define CanIf_TRansmit_Id                       ((Can_ServiceId)0x49)
 /*******************************************************************************
 * Service Name:       CanIf_GetControllerErrorState
 * Service ID[hex]:    0x4b

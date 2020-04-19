@@ -62,7 +62,7 @@ typedef struct
 //static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
 /*Pointer to save configuration parameters set */
-static CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
+extern CanIf_ConfigType*    CanIf_ConfigPtr;
 
 
 /********************************************************************************************/
@@ -109,7 +109,7 @@ const PduInfoType* PduInfoPtr
     for(pduid_counter = 0 ; pduid_counter < TX_CAN_L_PDU_NUM ; pduid_counter++ )
     {
         // check the PDU ID
-        if ((CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[pduid_counter].CanIfTxPduId) == TxPduId)
+        if ((CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[pduid_counter].CanIfTxPduCanId) == TxPduId)
         {
             RET_Status = E_OK;
             break;
@@ -125,7 +125,7 @@ const PduInfoType* PduInfoPtr
 //    The service CanIf_Transmit() shall not accept a transmit request,
 //     if the controller mode referenced by ControllerId is different to
 //    CAN_CS_STARTED
-    TX_PDU_CANIF_Controller = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[TxPduId].CanIfTxPduBufferRef->CanIfBufferHthRef->CanIfHthCanCtrlIdRef->CanIfCtrlCanCtrlRef->CanControllerId;
+    TX_PDU_CANIF_Controller = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[TxPduId].CanIfTxPduBufferRef->CanIfBufferHthRef->CanIfHthCanCtrlIdRef->CanIfCtrlCanCtrlRef->CanControllerId;
     state = CanIf_GetControllerMode(TX_PDU_CANIF_Controller, &Controller_mode);
     if(Controller_mode != CAN_CS_STARTED && state != E_OK )
     {
@@ -133,7 +133,7 @@ const PduInfoType* PduInfoPtr
         return  RET_Status ;
     }
 
-    Hth = CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[TxPduId].CanIfTxPduBufferRef->CanIfBufferHthRef->CanIfHthIdSymRef->CanObjectId;
+    Hth = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[TxPduId].CanIfTxPduBufferRef->CanIfBufferHthRef->CanIfHthIdSymRef->CanObjectId;
 
     /*
     [SWS_CANIF_00894] When CanIf_Transmit() is called with PduInfoPtr-
@@ -166,7 +166,7 @@ const PduInfoType* PduInfoPtr
 
     TX_message.id = TxPduId;
     TX_message.sdu = PduInfoPtr->SduDataPtr;
-    TX_message.swPduHandle =  CanIf_ConfigPtr->CanIfInitCfgObj.CanIfTxPduCfgObj[TxPduId].CanIfTxPduCanId;
+    TX_message.swPduHandle =  CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[TxPduId].CanIfTxPduCanId;
 
     state = Can_write ( Hth, &TX_message);
 
