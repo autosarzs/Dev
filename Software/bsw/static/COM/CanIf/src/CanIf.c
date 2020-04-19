@@ -108,11 +108,22 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 /*                                   Global Function Definition                         */
 /****************************************************************************************/
 
-CanIf_NotifStatusType CanIf_GetTxConfirmationState(uint8 ControllerId){
+CanIf_NotifStatusType CanIf_GetTxConfirmationState(uint8 ControllerId)
+{
+	/*
+	 *	[SWS_CANIF_00736] d If parameter ControllerId of
+	 *	CanIf_GetTxConfirmationState() has an invalid value, the CanIf
+	 *	shall report development error code CANIF_E_PARAM_CONTROLLERID
+	 *	to the Det_ReportError service of the DET module, when
+	 *	CanIf_GetTxConfirmationState() is called.
+	 */
     CanIf_NotifStatusType notify = CANIF_NO_NOTIFICATION ;
-    if(ControllerId <= CANIF_CTRL_ID){
+    if(ControllerId <= CANIF_CTRL_ID)
+	{
          notify = controllerData[ControllerId].transmit_confirmed;/* this value is modified by another func*/
-    }else{
+    }
+	else
+	{
 		#if(CANIF_DEV_ERROR_DETECT == STD_ON)
 			Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_GET_TX_CONFIRMATIONSTATE_ID, CANIF_E_PARAM_CONTROLLERID);
 		#endif
