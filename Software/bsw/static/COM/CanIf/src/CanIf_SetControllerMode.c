@@ -72,11 +72,8 @@ extern CanIfCtrlCfgType CanIfCtrlCfgObj[];
 
 static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
-/* CanIf PDU current mode. Initially, CANIF_OFFLINE [SWS_CANIF_00864]. */
-static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] = {CANIF_OFFLINE};// Init them all by CANIF_OFFLINE as default is CANIF_OFFLINE
-
 /* a pointer to the CanIf_ConfigType main Structure for the module to work on */
-static CanIf_ConfigType* CanIf_ConfigPtr = NULL_PTR;
+extern CanIf_ConfigType* CanIf_ConfigPtr;
 
 /********************************************************************************
                             Functions Definitions
