@@ -449,7 +449,7 @@ typedef struct
                  * PDUR, XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_TxConfirmation> is fixed.
                  * If CanIfTxPduUserTxConfirmationUL equals CDD,
                  * the name of the <User_TxConfirmation> is selectable.*/
-                void (*CanIfTxPduUserTxConfirmationNam)(PduIdType, Std_ReturnType  );
+                void (*CanIfTxPduUserTxConfirmationName)(PduIdType, Std_ReturnType  );
 
              /* [ECUC_CanIf_00527]
                 This parameter defines the upper layer (UL) module to which the confirmation of
