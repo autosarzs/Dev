@@ -32,10 +32,7 @@
  **  MAY BE CHANGED BY USER x: no                                               **
  **                                                                            **
  *******************************************************************************/
-#include "CanIf.h"
-
-
-#define MAX_PDU_REQUEST     (05)
+#include "../inc/CanIf.h"
 
 /*
  *  Type Description : Struct to save recieved  PDUs (in case of enable CanIf_ReadRxPduData API un configuration) .
@@ -75,35 +72,31 @@ DET module. c(SRS_BSW_00323)*/
 CanIf shall report development error code CANIF_E_PARAM_PDU_MODE
 to the Det_ReportError service of the DET module. c(SRS_BSW_00323)*/
 
-    if (Loc_CanIf_SetPduMode_Ret == E_OK)
-    {
         if (PduModeRequest >= MAX_PDU_REQUEST  )
         {
     #if ( DevError == STD_ON )
             Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CanIf_SetPduMode, CANIF_E_PARAM_PDU_MODE );
     #endif
             Loc_CanIf_SetPduMode_Ret = E_NOT_OK;
-   
         }
-		else
-		{
-			
-              /*[SWS_CANIF_00874] The service CanIf_SetPduMode() shall not accept any request
-          and shall return E_NOT_OK, if the controller mode referenced by ControllerId
-          is not in state CAN_CS_STARTED. c()*/
-          
-              Loc_CanIf_SetPduMode_Ret = CanIf_GetControllerMode(ControllerId,&Loc_Controller_Mode );  /* To Get The mode of ControllerMode */
-          
-              if (Loc_CanIf_SetPduMode_Ret == E_OK )
-              {
-                  if (Loc_Controller_Mode != CAN_CS_STARTED )
-					  /* TODO no return in the mid of the code */
-                      return E_NOT_OK;
-              }
-              else
-              {
-                  return E_NOT_OK;
-              }
+
+/*[SWS_CANIF_00874] The service CanIf_SetPduMode() shall not accept any request
+ and shall return E_NOT_OK, if the controller mode referenced by ControllerId
+is not in state CAN_CS_STARTED*/
+Loc_CanIf_SetPduMode_Ret = CanIf_GetControllerMode(ControllerId,&Loc_Controller_Mode );  /* To Get The mode of ControllerMode */
+        if (Loc_CanIf_SetPduMode_Ret == E_OK )
+        {
+            if (Loc_Controller_Mode != CAN_CS_STARTED )
+                Loc_CanIf_SetPduMode_Ret = E_NOT_OK;
+        }
+        else
+        {
+            Loc_CanIf_SetPduMode_Ret = E_NOT_OK;
+        }
+if(Loc_CanIf_SetPduMode_Ret==E_OK)
+{
+
+
           
               switch(PduModeRequest)
               {
@@ -144,10 +137,14 @@ to the Det_ReportError service of the DET module. c(SRS_BSW_00323)*/
                       CanIf_PduMode[ControllerId] = CANIF_ONLINE;
                       break;
                   default:
+                      /* Do nothing */
                       break;
               }
 		}
-    }
+else
+ {
+   /* Do nothing */
+ }
 return Loc_CanIf_SetPduMode_Ret;
 }
 
