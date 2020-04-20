@@ -1,6 +1,6 @@
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                  **
+**  Copyright (C) AUTOSarZs olc (2020)		                                  **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -10,11 +10,11 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : CanIf_Lcfg			                                      **
+**  FILENAME     : CanIf.c         			                                  **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
-**  DATE         : 2020-03-17                                                 **
+**  DATE         : 2020-01-26                                                 **
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
@@ -25,53 +25,58 @@
 **  VENDOR       : AUTOSarZs OLC	                                          **
 **                                                                            **
 **                                                                            **
-**  DESCRIPTION  : CAN Interface Link Time Source file                        **
+**  DESCRIPTION  : CAN Interface source file                                  **
 **                                                                            **
-**  SPECIFICATION(S) : Specification of CAN Inteface, AUTOSAR Release 4.3.1   **
+**  SPECIFICATION(S) : Specification of CAN Interface, AUTOSAR Release 4.3.1  **
 **                                                                            **
 **  MAY BE CHANGED BY USER : no                                               **
 **                                                                            **
 *******************************************************************************/
 
-#include"CanIf.h"
+#include "CanIf.h"
+#include "Det.h"
+#include "MemMap.h"
+#include "CanIf_Cbk.h"
 
 
-/*extern CANDrv HOH configurations*/
-extern CanIfInitHohCfgType CanIfInitHohCfgObj[] ;
-/*extern CANDrv Controllers configurations*/
-extern CanControllerType CanControllerCfg[];
-
-/*To be initialized in CanI_Init() */
-CanIfTxPduCfgType* CanIfTxPduCfgPtr = NULL_PTR ;
-CanIfRxPduCfgType* CanIfRxPduCfgPtr = NULL_PTR ;
-CanIfHrhCfgType*   CanIfHrhCfgPtr   = NULL_PTR ;
-CanIfHthCfgType*   CanIfHthCfgPtr   = NULL_PTR ;
-
-/* [ECUC_CanIf_00546]
- * This container contains the configuration (parameters) of an adressed
- * CAN controller by an underlying CAN Driver module. This container
- * is configurable per CAN controller.
- */
-CanIfCtrlCfgType CanIfCtrlCfgObj[CANIF_CONTROLLERS_NUM] =
+#if (CANIF_SET_BAUDRATE_API == STD_ON)
+Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID)
 {
+	static uint8 current_ControllerId = -1;
+	uint8 return_val;
+
+#if (CANIF_DEV_ERROR_DETECT == STD_ON) /* DET notifications */
+
+	/*  [SWS_CANIF_00869] d If CanIf_SetBaudrate() is called with invalid ControllerId, 
+		CanIf shall report development error code CANIF_E_PARAM_CONTROLLERID
+		to the Det_ReportError service of the DET module. c(SRS_BSW_00323)*/
+
+	if (ControllerId > USED_CONTROLLERS_NUMBER)
 	{
-		STD_OFF,								/* Wakeup Support enabled or disabled */
-		(CanControllerType *)CanControllerCfg	/* Reference to CanController Configuration */
+		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SETBAUDRATE_API_ID,
+						CANIF_E_PARAM_CONTROLLERID);
+		return_val = E_NOT_OK;
 	}
-};
+	else
+	{
+	}
+#endif
+	/*  Reentrant for different ControllerIds. Non reentrant for the same ControllerId.
+	*/
+	if (ControllerId == current_ControllerId)
+	{
+		/* E_NOT_OK: Service request not accepted */
+		return_val = E_NOT_OK;
+	}
+	else
+	{
+		current_ControllerId = ControllerId;
 
-
-/*
- *  [ECUC_CanIf_00253]
- *  Configuration parameters for all the underlying CAN Driver modules are
- *  aggregated under this container. For each CAN Driver module a seperate
- *  instance of this container has to be provided.
- */
-CanIfCtrlDrvCfgType CanIfCtrlDrvCfgObj[CAN_DRIVER_NUM] =
-{
-    {
-        &CanIfInitHohCfgObj[0],        /*Reference to the Init Hoh Configuration*/
-        &CanIfCtrlCfgObj[0]            /*Reference to the configuration (parameters) of adressed CAN controllers*/
-    }
-};
+		Can_SetBaudrate(ControllerId, BaudRateConfigID);
+		/* E_OK: Service request accepted, setting of (new) baud rate started */
+		return_val = E_OK;
+	}
+	return return_val;
+}
+#endif
 

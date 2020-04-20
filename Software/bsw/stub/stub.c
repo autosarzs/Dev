@@ -52,7 +52,7 @@ void CanIf_ControllerModeIndication( uint8 ControllerId, Can_ControllerStateType
  * \brief This callout function is called whenever a CAN message is
  *  received in CAN driver.
  */
-void CanIf_RxIndication
+/*void CanIf_RxIndication
 (
     const Can_HwType * Mailbox,
     const PduInfoType * PduInfoPtr
@@ -60,7 +60,7 @@ void CanIf_RxIndication
 
 {
         ReadData= *(PduInfoPtr->SduDataPtr);
-}
+}*/
 
 void CanIf_ControllerBusOff(uint8 ControllerId)
 {
@@ -204,4 +204,3 @@ const PduInfoType* PduInfoPtr
 )
 {
 }
-

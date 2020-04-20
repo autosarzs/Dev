@@ -61,6 +61,13 @@
 //*****************************************************************************
 #define CANIF_PRIVATE_DATA_LENGTH_CHECK    		STD_ON
 
+/*****************************************************************************
+ *  Selects the desired software filter mechanism for reception only. Each
+ *	implemented software filtering method is identified by this enumeration number.
+ *	Range: Types implemented software filtering methods
+ */
+#define CANIF_PRIVATE_SOFTWARE_FILTER_TYPE		LINEAR
+
 //*****************************************************************************
 //  Defines whether TTCAN is supported.
 //  TRUE: TTCAN is supported. FALSE: TTCAN is not supported, only
@@ -136,7 +143,7 @@
 //  transmit L-PDUs.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API 	STD_OFF
+#define CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API 	STD_ON
 
 //*****************************************************************************
 //  Enables and disables the API for reconfiguration of the CAN Identifier
@@ -288,20 +295,20 @@ has to be either PDUR or CDD and CanIfTxPduUserTriggerTransmitName has to be spe
 /* Enables/disables truncation of PDUs that exceed the configured size. */
 #define CANIF_TX_PDU_TRUNCATION					STD_ON
 
+
+#define CanIfTxOfflineActiveSupport   STD_ON
+
 /* This parameter defines the name of the <User_TriggerTransmit>. This parameter depends on the parameter
 CanIfTxPduUserTxConfirmationUL. If CanIfTxPduUserTxConfirmationUL equals CAN_TP, CAN_NM, PDUR,
 XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_TriggerTransmit> is fixed. If CanIfTxPduUserTxConfirmationUL
 equals CDD, the name of the <User_TxConfirmation> is selectable. Please be aware that this parameter depends on the same
 parameter as CanIfTxPduUserTxConfirmationName. It shall be clear which upper layer is responsible for that PDU.
 dependency: CanIfTxPduUserTriggerTransmitName requires CanIfTxPduUserTxConfirmationUL to be either PDUR or CDD.
-
 Note: If CanIfTxPduTriggerTransmit is not specified or FALSE, no upper layer modules have to be configured for
 Trigger Transmit. Therefore, <User_TriggerTransmit>() will not be called and CanIfTxPduUserTxConfirmationUL
 as well as CanIfTxPduUserTriggerTransmitName need not to be configured.
-
 [SWS_CANIF_00890] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL is set to PDUR,
 CanIfTxPduUserTrigger- TransmitName must be PduR_CanIfTriggerTransmit.
-
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL is set to CDD,
 the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPdu- UserTriggerTransmitName. */
 /* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
@@ -329,14 +336,11 @@ the name of the API <User_TriggerTransmit>() has to be configured via parameter 
 on the parameter CanIfTxPduUserTxConfirmationUL. If CanIfTxPduUserTxConfirmationUL equals
 CAN_TP, CAN_NM, PDUR, XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_TxConfirmation> is fixed.
 If CanIfTxPduUserTxConfirmationUL equals CDD, the name of the <User_TxConfirmation> is selectable.
-
 Note: If transmit confirmations are not necessary or no upper layer modules are configured
 for transmit confirmations and thus <User_TxConfirmation>() shall not be called, CanIfTxPduUserTxConfirmationUL
 and CanIfTxPduUserTxConfirmationName need not to be configured.
-
 [SWS_CANIF_00890] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL
 is set to PDUR, CanIfTxPduUserTriggerTransmitName must be PduR_CanIfTriggerTransmit.
-
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL
 is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPduUserTriggerTransmitName. */
 /* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
@@ -411,7 +415,6 @@ dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
 on the parameter CanIfRxPduUserRxIndicationUL. If CanIfRxPduUserRxIndicationUL equals
 CAN_TP, CAN_NM, PDUR, XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_RxIndication> is fixed.
 If CanIfRxPduUserRxIndicationUL equals CDD, the name of the <User_RxIndication> is selectable.
-
 Note: If receive indications are not necessary or no upper layer modules are configured
 for receive indications and thus <User_RxIndication>() shall not be called, CANIF_RXPDU_USERRXINDICATION_UL
 and CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
@@ -633,7 +636,6 @@ each hardware transmit object (HTH).*/
 #define CANIF_HTH_OBj_NUM                           2
 #define CANIF_HTH_ID_0                              0
 #define CANIF_HTH_ID_1                              1
-
 
 
 #endif /* __CANIF_CFG_H__ */

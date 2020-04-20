@@ -2,7 +2,7 @@
  * Can_PBcfg.c
  *
  *  Created on: Sep 20, 2019
- *      Author: Sad MultiVerse
+ *      Author: AUTOSarZs-DevTeam
  */
 
 #include "Can.h"
@@ -43,7 +43,7 @@ CanControllerType CanControllerCfg[] =
 /*Filter configuration for HOH0*/
 CanHwFilter CanHwFilterHTH[] =
 {
-    {   
+    {
         1,               /* ID  */
         0x7FF            /* Mask.not used as it's TRANSMIT HOH  */
     }
@@ -73,7 +73,7 @@ CanHardwareObjectType HOHObj[] =
         TRANSMIT,                /*  HOH Type    */
         &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
         &CanHwFilterHTH[0],      /*  Reference to the Filter configuartion   */
-         FALSE                   /*  Enable or diasble using polling */
+         TRUE                    /*  Enable or diasble using polling */
     },
     {
          FULL,                    /*  Can controller type for tm4c123gh6pm    */
@@ -83,7 +83,7 @@ CanHardwareObjectType HOHObj[] =
          RECEIVE,                 /*  HOH Type    */
          &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
          &CanHwFilterHRH[0],      /*  Reference to the Filter configuartion   */
-         FALSE                    /*  Enable or diasble using polling */
+         TRUE                     /*  Enable or diasble using polling */
     },
     {
          FULL,                    /*  Can controller type for tm4c123gh6pm    */
@@ -112,7 +112,7 @@ CanHardwareObjectType HOHObj[] =
 data for the CAN driver and SFR settings affecting all controllers. Furthermore it 
 contains pointers to controller configuration structures. The contents of the 
 initialization data structure are CAN hardware specific. */
-const Can_ConfigType Can_Configurations = 
+const Can_ConfigType Can_Configurations =
 {
     CanControllerCfg,
     HOHObj
