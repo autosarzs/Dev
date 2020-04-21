@@ -42,7 +42,7 @@
 #define CANIF_CHECK_DLC_API_ID (0xAA)
 
 //Temp canif config variable.
-extern CanIf_ModuleStateType CanIf_ModuleState;
+static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
 extern CanIf_ConfigType*    CanIf_ConfigPtr;
 

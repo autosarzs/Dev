@@ -35,6 +35,7 @@
 #include "Std_Types.h"
 #include "ComStack_Types.h"
 #include "CanIf_Cbk.h"
+#include "Stub.h"
 
 uint8 ReadData=0;
 Std_ReturnType Det_ReportError(uint16 ModuleId, uint8 InstanceId, uint8 ApiId,
@@ -72,9 +73,9 @@ void CanIf_ControllerBusOff(uint8 ControllerId)
 
 }
 
-void CanIfTxPduUserTriggerTransmit(PduIdType TxPduId, PduInfoType* PduInfoPtr)
+Std_ReturnType PduR_CanIfTriggerTransmit(PduIdType TxPduId, PduInfoType* PduInfoPtr)
 {
-
+    return 0;
 }
 
 void CanIfTxPduUserTxConfirmation(PduIdType TxPduId, Std_ReturnType result )
@@ -120,3 +121,37 @@ void J1939Tp_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
 
 }
 
+void CanSM_CheckTrcvWakeFlagIndication(uint8 TransceiverId)
+{
+
+}
+
+void CanSM_ClearTrcvWufFlagIndication(uint8 TransceiverId)
+{
+
+}
+
+void CanSM_ConfirmPnAvailability(uint8 TransceiverId)
+{
+
+}
+
+void CanSM_ControllerBusOff(uint8 ControllerId)
+{
+
+}
+
+void CanSM_ControllerModeIndication(uint8 ControllerId, Can_ControllerStateType ControllerMode)
+{
+
+}
+
+void CanSM_TransceiverModeIndication(uint8 TransceiverId, CanTrcv_TrcvModeType TransceiverMode)
+{
+
+}
+
+void EcuM_ValidateWakeupEvent(EcuM_WakeupSourceType sources)
+{
+
+}

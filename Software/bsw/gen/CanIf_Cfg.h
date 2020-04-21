@@ -311,6 +311,7 @@ as well as CanIfTxPduUserTriggerTransmitName need not to be configured.
 CanIfTxPduUserTrigger- TransmitName must be PduR_CanIfTriggerTransmit.
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL is set to CDD,
 the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPdu- UserTriggerTransmitName. */
+/** These paramters are found in PostBuild file as they are not pre-compile
 #if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
 	#if(CanIfTxPduUserTxConfirmationUL==PDUR)
 		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	PduR_CanIfTriggerTransmit
@@ -327,11 +328,11 @@ the name of the API <User_TriggerTransmit>() has to be configured via parameter 
 	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
 		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTSyn_CanIfTriggerTransmit
 	#elif(CanIfTxPduUserTxConfirmationUL==CDD)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Cdd_CanIfTriggerTransmit /* Selectable */
+		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Cdd_CanIfTriggerTransmit // Selectable
 	#endif	
-#endif
+#endif */
 
-/* This parameter defines the name of the <User_TxConfirmation>. This parameter depends
+/** This parameter defines the name of the <User_TxConfirmation>. This parameter depends
 on the parameter CanIfTxPduUserTxConfirmationUL. If CanIfTxPduUserTxConfirmationUL equals
 CAN_TP, CAN_NM, PDUR, XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_TxConfirmation> is fixed.
 If CanIfTxPduUserTxConfirmationUL equals CDD, the name of the <User_TxConfirmation> is selectable.
@@ -342,6 +343,7 @@ and CanIfTxPduUserTxConfirmationName need not to be configured.
 is set to PDUR, CanIfTxPduUserTriggerTransmitName must be PduR_CanIfTriggerTransmit.
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL
 is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPduUserTriggerTransmitName. */
+/* These paramters are found in PostBuild file as they are not pre-compile
 #if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
 	#if(CanIfTxPduUserTxConfirmationUL==PDUR)
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	PduR_CanIfTxConfirmation
@@ -358,9 +360,9 @@ is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured
 	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
 		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTSyn_CanIfTxConfirmation
 	#elif(CanIfTxPduUserTxConfirmationUL==CDD)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Cdd_CanIfTxConfirmation /* Selectable */
+		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Cdd_CanIfTxConfirmation // Selectable
 	#endif	
-#endif
+#endif */
 
 
 /* CAN Identifier of Receive CAN L-PDUs used by the CAN Interface.
@@ -416,6 +418,7 @@ If CanIfRxPduUserRxIndicationUL equals CDD, the name of the <User_RxIndication> 
 Note: If receive indications are not necessary or no upper layer modules are configured
 for receive indications and thus <User_RxIndication>() shall not be called, CANIF_RXPDU_USERRXINDICATION_UL
 and CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
+/** These paramters are found in PostBuild file as they are not pre-compile
 #if(CanIfRxPduUserRxIndicationUL==PDUR)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	PduR_CanIfRxIndication
 #elif(CanIfRxPduUserRxIndicationUL==CAN_NM)
@@ -431,8 +434,8 @@ and CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
 #elif(CanIfRxPduUserRxIndicationUL==CAN_TSYN)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	CanTSyn_CanIfRxIndication
 #elif(CanIfRxPduUserRxIndicationUL==CDD)
-	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	Cdd_CanIfRxIndication /* Selectable */
-#endif	
+	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	Cdd_CanIfRxIndication // Selectable
+#endif */
 
 /* Lower CAN Identifier of a receive CAN L-PDU for identifier range
 definition, in which all CAN Ids are mapped to one PduId.
@@ -449,76 +452,83 @@ CanIfDispatchUserCheckTrcvWakeFlagIndicationUL equals CAN_SM the name of
 <User_CheckTrcvWakeFlagIndication> is fixed. If it equals CDD, the name is selectable.
 If CanIfPublicPnSupport equals False, this parameter shall not be configurable.
 dependency: CANIF_DISPATCH_USERCHECKTRCVWAKEFLAGINDICATION_UL, CANIF_PUBLIC_PN_SUPPORT */
+/** These paramters are found in LinkTime file as they are not pre-compile
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
 	#if(CanIfDispatchUserCheckTrcvWakeFlagIndicationUL==CAN_SM)
 		#define CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_NAME 	CanSM_CheckTrcvWakeFlagIndication
 	#elif(CanIfDispatchUserCheckTrcvWakeFlagIndicationUL==CDD)
 		#define CANIF_DISPATCH_USER_CHECK_TRCV_WAKE_FLAG_INDICATION_NAME	Cdd_CheckTrcvWakeFlagIndication
 	#endif
-#endif
+#endif */
 
 /* This parameter defines the name of <User_ClearTrcvWufFlagIndication>. If
 CanIfDispatchUserClearTrcvWufFlagIndicationUL equals CAN_SM the name of
 <User_ClearTrcvWufFlagIndication> is fixed. If it equals CDD, the name is selectable.
 If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurable. */
+/** These paramters are found in LinkTime file as they are not pre-compile
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
 	#if(CanIfDispatchUserClearTrcvWufFlagIndicationUL==CAN_SM)
 		#define CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_NAME		CanSM_ClearTrcvWufFlagIndication
 	#elif(CanIfDispatchUserClearTrcvWufFlagIndicationUL==CDD)
 		#define CANIF_DISPATCH_USER_CLEAR_TRCV_WUF_FLAG_INDICATION_NAME		Cdd_ClearTrcvWufFlagIndication
 	#endif
-#endif
+#endif */
 
 /* This parameter defines the name of <User_ConfirmPnAvailability>. If
 CanIfDispatchUserConfirmPnAvailabilityUL equals CAN_SM the name of
 <User_ConfirmPnAvailability> is fixed. If it equals CDD, the name is selectable.
 If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurable. */
+/** These paramters are found in LinkTime file as they are not pre-compile
 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
 	#if(CanIfDispatchUserConfirmPnAvailabilityUL==CAN_SM)
 		#define CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_NAME		CanSM_ConfirmPnAvailability
 	#elif(CanIfDispatchUserConfirmPnAvailabilityUL==CDD)
 		#define CANIF_DISPATCH_USER_CONFIRM_PN_AVAILABILITY_NAME		Cdd_ConfirmPnAvailability
 	#endif
-#endif
+#endif */
 
 /* This parameter defines the name of <User_ControllerBusOff>. This parameter depends on the parameter
 CANIF_USERCTRLBUSOFF_UL. If CANIF_USERCTRLBUSOFF_UL equals CAN_SM the name of <User_ControllerBusOff>
 is fixed. If CANIF_USERCTRLBUSOFF_UL equals CDD, the name of <User_ControllerBusOff> is selectable. */
+/** These paramters are found in LinkTime file as they are not pre-compile
 #if(CanIfDispatchUserCtrlBusOffUL==CAN_SM)
 	#define CANIF_DISPATCH__USER_CTRL_BUS_OFF_NAME					CanSM_ControllerBusOff
 #elif(CanIfDispatchUserCtrlBusOffUL==CDD)
 	#define CANIF_DISPATCH__USER_CTRL_BUS_OFF_NAME					Cdd_ControllerBusOff
-#endif
+#endif */
 
 /* This parameter defines the name of <User_ControllerModeIndication>. This parameter depends on the parameter
 CANIF_USERCTRLMODEINDICATION_UL. If CANIF_USERCTRLMODEINDICATION_UL equals CAN_SM the name of <User_ControllerModeIndication>
 is fixed. If CANIF_USERCTRLMODEINDICATION_UL equals CDD, the name of <User_ControllerModeIndication> is selectable. */
+/** These paramters are found in LinkTime file as they are not pre-compile
 #if(CanIfDispatchUserCtrlModeIndicationUL==CAN_SM)
 	#define CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_NAME			CanSM_ControllerModeIndication
 #elif(CanIfDispatchUserCtrlModeIndicationUL==CDD)
 	#define CANIF_DISPATCH_USER_CTRL_MODE_INDICATION_NAME			Cdd_ControllerModeIndication
-#endif
+#endif */
 
 /* This parameter defines the name of <User_TrcvModeIndication>. This parameter depends on the parameter
 CANIF_USERTRCVMODEINDICATION_UL. If CANIF_USERTRCVMODEINDICATION_UL equals CAN_SM the name of <User_TrcvModeIndication>
 is fixed. If CANIF_USERTRCVMODEINDICATION_UL equals CDD, the name of <User_TrcvModeIndication> is selectable. */
+/** These paramters are found in LinkTime file as they are not pre-compile
 #if(CanIfDispatchUserTrcvModeIndicationUL==CAN_SM)
 	#define CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_NAME			CanSM_TransceiverModeIndication
 #elif(CanIfDispatchUserTrcvModeIndicationUL==CDD)
 	#define CANIF_DISPATCH_USER_TRCV_MODE_INDICATION_NAME			Cdd_TransceiverModeIndication
-#endif
+#endif */
 
 /* This parameter defines the name of <User_ValidateWakeupEvent>. This parameter depends on the parameter
 CANIF_USERVALIDATEWAKEUPEVENT_UL. CANIF_USERVALIDATEWAKEUPEVENT_UL equals ECUM the name of <User_ValidateWakeupEvent>
 is fixed. CANIF_USERVALIDATEWAKEUPEVENT_UL equals CDD, the name of <User_ValidateWakeupEvent> is selectable. If parameter 
 CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, no <User_ValidateWakeupEvent> API can be configured. */
+/** These paramters are found in LinkTime file as they are not pre-compile
 #if(CANIF_PUBLIC_WAKEUP_CHECK_VALID_SUPPORT==STD_ON)
 	#if(CanIfDispatchUserValidateWakeupEventUL==ECUM)
 		#define CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_NAME		EcuM_ValidateWakeupEvent
 	#elif(CanIfDispatchUserValidateWakeupEventUL==CDD)
 		#define CANIF_DISPATCH_USER_VALIDATE_WAKEUP_EVENT_NAME		Cdd_ValidateWakeupEvent
 	#endif
-#endif
+#endif */
 
 /*This parameter abstracts from the CAN Driver specific parameter
 Controller. Each controller of all connected CAN Driver modules shall
