@@ -160,7 +160,7 @@ CanIfPduInfoCfgType CanIfPduInfoCfgObj_0[1];
 CanIfPduInfoCfgType CanIfPduInfoCfgObj_1[1];
 
 /*Struct to map each Buffer with the PDUs saved in it*/
-CanIfPduTxBufferCfgType CanIfPduTxBufferCfgOj[BUFFERS_NUM]=
+CanIfPduTxBufferCfgType CanIfPduTxBufferCfgObj[BUFFERS_NUM]=
 {
     {
         CanIfPduInfoCfgObj_0,         /*Reference to PDUsInfo array for buffer_0  */
@@ -193,8 +193,8 @@ CanIfTxPduCfgType CanIfTxPduCfgObj[TX_CAN_L_PDU_NUM] =
         FALSE,                          /* If trigger transmit API is enabled or disabled */
         FALSE,                          /* Enables/disables truncation of PDUs that exceed the configured size */
         STATIC_TX_PDU,                  /* Defines the type of each transmit CAN L-PDU is DYNAMIC or STATIC */
-#if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
-      CanIfTxPduUserTriggerTransmit,/* This parameter defines the name of the <User_TriggerTransmit>.Currently just a stub function */
+#if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
+        PduR_CanIfTriggerTransmit,/* This parameter defines the name of the <User_TriggerTransmit>.Currently just a stub function */
 #endif
 
       CanIfTxPduUserTxConfirmation ,  /*This parameter defines the name of the <User_TxConfirmation>.Currently just a stub function*/
@@ -216,8 +216,8 @@ CanIfTxPduCfgType CanIfTxPduCfgObj[TX_CAN_L_PDU_NUM] =
          FALSE,                          /* If trigger transmit API is enabled or disabled */
          FALSE,                          /* Enables/disables truncation of PDUs that exceed the configured size */
          STATIC_TX_PDU,                  /* Defines the type of each transmit CAN L-PDU is DYNAMIC or STATIC */
-    #if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
-       CanIfTxPduUserTriggerTransmitName,/* This parameter defines the name of the <User_TriggerTransmit>.Currently just a stub function */
+    #if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
+         PduR_CanIfTriggerTransmit,/* This parameter defines the name of the <User_TriggerTransmit>.Currently just a stub function */
     #endif
 
        CanIfTxPduUserTxConfirmation,  /*This parameter defines the name of the <User_TxConfirmation>.Currently just a stub function*/
@@ -315,7 +315,7 @@ CanIf_ConfigType  CanIf_ConfigObj =
 {
      &CanIfInitCfgObj,                        /*This container contains the init parameters of the CAN Interface.*/
 #if(CANIF_PUBLIC_TX_BUFFERING==STD_ON)
-     CanIfPduTxBufferCfgOj                   /*Struct to map each TxBuffer with the PDUs saved in it*/
+     CanIfPduTxBufferCfgObj                   /*Struct to map each TxBuffer with the PDUs saved in it*/
 #endif
 } ;
 
