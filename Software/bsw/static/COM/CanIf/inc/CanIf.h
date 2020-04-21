@@ -122,8 +122,8 @@
 #error "The AR version of Det.h does not match the expected version"
 #endif /* SW module version checking */
 
-/* CANIF Module Id */
-#define CANIF_MODULE_ID        (60U)
+/* Maximum Pdu Request */
+#define MAX_PDU_REQUEST     (04)
 
 /*******************************************************************************
 *                           API Service ID Macros                              *
