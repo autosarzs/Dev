@@ -669,11 +669,29 @@ typedef struct {
 }CanIfInitCfgType;
 
 typedef struct{
+                /* [ECUC_CanIf_00791]
+                 * This parameter defines the name of <User_CheckTrcvWakeFlagIndication>.
+                 * If CanIfDispatchUserCheckTrcvWakeFlagIndicationUL equals CAN_SM the name of
+                 * <User_CheckTrcvWakeFlagIndication> is fixed. If it equals CDD, the name is selectable.
+                 * If CanIfPublicPnSupport equals False, this parameter shall not be configurable. */
+                #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
+                    void (* CanIfDispatchUserCheckTrcvWakeFlagIndicationName)(uint8);
+                #endif
+
                 /* This parameter defines the upper layer module to which the CheckTrcvWakeFlagIndication
                 from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
                 parameter shall not be configurable. */
                 #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
                     CanIfDispatchUserCheckTrcvWakeFlagIndicationULType CanIfDispatchUserCheckTrcvWakeFlagIndicationUL;
+                #endif
+
+                /* [ECUC_CanIf_00789]
+                 * This parameter defines the name of <User_ClearTrcvWufFlagIndication>.
+                 * If CanIfDispatchUserClearTrcvWufFlagIndicationUL equals CAN_SM the name of <User_ClearTrcvWufFlagIndication>
+                 * is fixed. If it equals CDD, the name is selectable.
+                 * If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurable. */
+                #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
+                    void (* CanIfDispatchUserClearTrcvWufFlagIndicationName)(uint8);
                 #endif
 
                 /* This parameter defines the upper layer module to which the ClearTrcvWufFlagIndication
@@ -683,6 +701,15 @@ typedef struct{
                     CanIfDispatchUserClearTrcvWufFlagIndicationULType CanIfDispatchUserClearTrcvWufFlagIndicationUL;
                 #endif
 
+                /* [ECUC_CanIf_00819]
+                 * This parameter defines the name of <User_ConfirmPnAvailability>.
+                 * If CanIfDispatchUserConfirmPnAvailabilityUL equals CAN_SM the name of <User_ConfirmPnAvailability> is fixed.
+                 * If it equals CDD, the name is selectable.
+                 * If CANIF_PUBLIC_PN_SUPPORT equals False, this parameter shall not be configurable. */
+                #if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
+                    void (* CanIfDispatchUserConfirmPnAvailabilityName)(uint8);
+                #endif
+
                 /* This parameter defines the upper layer module to which the ClearTrcvWufFlagIndication
                 from the Driver modules have to be routed. If CANIF_PUBLIC_PN_SUPPORT equals False, this
                 parameter shall not be configurable. dependency: CANIF_PUBLIC_PN_SUPPORT */
@@ -690,19 +717,48 @@ typedef struct{
                     CanIfDispatchUserConfirmPnAvailabilityULType CanIfDispatchUserConfirmPnAvailabilityUL;
                 #endif
 
+                /* [ECUC_CanIf_00525]
+                 * This parameter defines the name of <User_ControllerBusOff>. This parameter depends on the parameter
+                   CANIF_USERCTRLBUSOFF_UL. If CANIF_USERCTRLBUSOFF_UL equals CAN_SM the name of <User_ControllerBusOff> is fixed.
+                   If CANIF_USERCTRLBUSOFF_UL equals CDD, the name of <User_ControllerBusOff> is selectable. */
+                void (* CanIfDispatchUserCtrlBusOffName)(uint8);
+
                 /* This parameter defines the upper layer (UL) module to which the notifications of all
                 ControllerBusOff events from the CAN Driver modules have to be routed via <User_ControllerBusOff>.
                 There is no possibility to configure no upper layer (UL) module as the provider of <User_ControllerBusOff>.
                 dependency: CANIF_PUBLIC_PN_SUPPORT */
                 CanIfDispatchUserCtrlBusOffULType CanIfDispatchUserCtrlBusOffUL;
 
+                /* [ECUC_CanIf_00683]
+                 * This parameter defines the name of <User_ControllerModeIndication>. This parameter depends on the parameter
+                   CANIF_USERCTRLMODEINDICATION_UL. If CANIF_USERCTRLMODEINDICATION_UL equals CAN_SM the name of
+                   <User_ControllerModeIndication> is fixed. If CANIF_USERCTRLMODEINDICATION_UL equals CDD, the name of
+                   <User_ControllerModeIndication> is selectable. */
+                void (* CanIfDispatchUserCtrlModeIndicationName)(uint8, Can_ControllerStateType);
+
                 /* This parameter defines the upper layer (UL) module to which the notifications of all ControllerTransition
                 events from the CAN Driver modules have to be routed via <User_ControllerModeIndication>. */
                 CanIfDispatchUserCtrlModeIndicationULType CanIfDispatchUserCtrlModeIndicationUL;
 
+                /* [ECUC_CanIf_00685]
+                 * This parameter defines the name of <User_TrcvModeIndication>. This parameter depends on the parameter
+                   CANIF_USERTRCVMODEINDICATION_UL. If CANIF_USERTRCVMODEINDICATION_UL equals CAN_SM the name of
+                   <User_TrcvModeIndication> is fixed. If CANIF_USERTRCVMODEINDICATION_UL equals CDD, the name of
+                   <User_TrcvModeIndication> is selectable. */
+                void (* CanIfDispatchUserTrcvModeIndicationName)(uint8, CanTrcv_TrcvModeType);
+
                 /* This parameter defines the upper layer (UL) module to which the notifications of all TransceiverTransition
                 events from the CAN Transceiver Driver modules have to be routed via <User_TrcvModeIndication>. If no UL module is configured, no upper layer callback function will be called. */
                 CanIfDispatchUserTrcvModeIndicationULType CanIfDispatchUserTrcvModeIndicationUL;
+
+                /* [ECUC_CanIf_00531]
+                 * This parameter defines the name of <User_ValidateWakeupEvent>. This parameter depends on the parameter
+                   CANIF_USERVALIDATEWAKEUPEVENT_UL. CANIF_USERVALIDATEWAKEUPEVENT_UL equals ECUM the name of <User_ValidateWakeupEvent>
+                   is fixed. CANIF_USERVALIDATEWAKEUPEVENT_UL equals CDD, the name of <User_ValidateWakeupEvent> is selectable.
+                   If parameter CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, no <User_ValidateWakeupEvent> API can be configured.*/
+                #if(CANIF_PUBLIC_WAKEUP_CHECK_VALID_SUPPORT == STD_ON)
+                    void (* CanIfDispatchUserValidateWakeupEventName)(EcuM_WakeupSourceType);
+                #endif
 
                 /* This parameter defines the upper layer (UL) module to which the notifications about positive former requested
                 wake up sources have to be routed via <User_ValidateWakeupEvent>. If parameter CANIF_WAKEUP_CHECK_VALIDATION_API is disabled, this parameter cannot be configured. dependency: CANIF_WAKEUP_CHECK_VALIDATION_API */
