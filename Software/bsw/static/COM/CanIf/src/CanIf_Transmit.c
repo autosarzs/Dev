@@ -122,7 +122,7 @@ const PduInfoType* PduInfoPtr
     }
     if (RET_Status != E_OK )
     {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CanIf_TRansmit_Id, CANIF_E_INVALID_TXPDUID);
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_TRANSMIT_ID, CANIF_E_INVALID_TXPDUID);
         return RET_Status;
     }
 

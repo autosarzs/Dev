@@ -90,7 +90,7 @@ Can_ControllerStateType* ControllerModePtr
     error code CANIF_E_PARAM_CONTROLLERID to the Det_ReportError service
     of the DET, when CanIf_GetControllerMode() is called. c(SRS_BSW_00323)*/
     if (ControllerId != 0 || ControllerId != 1){
-          Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CanIf_GetControllerMode_Id, CANIF_E_PARAM_CONTROLLERID);
+          Det_ReportError(CAN_MODULE_ID, CAN_INSTANCE_ID, CANIF_GET_CONTROLLER_MODE_ID, CANIF_E_PARAM_CONTROLLERID);
 
           return E_NOT_OK;
     }
@@ -100,7 +100,7 @@ Can_ControllerStateType* ControllerModePtr
     error code CANIF_E_PARAM_POINTER to the Det_ReportError service of
     the DET, when CanIf_GetControllerMode() is called. c(SRS_BSW_00323)*/
     if(ControllerModePtr == 0){
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CanIf_GetControllerMode_Id, CANIF_E_PARAM_POINTER);
+        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_GET_CONTROLLER_MODE_ID, CANIF_E_PARAM_POINTER);
 
         return E_NOT_OK;
     }
