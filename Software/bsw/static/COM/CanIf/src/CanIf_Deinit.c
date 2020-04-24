@@ -48,6 +48,7 @@
 /*                                   Include Component headres                           */
 /*****************************************************************************************/
 #include "CanIf.h"
+#include "Det.h"
 
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
@@ -145,7 +146,7 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
   #if (CANIF_DEV_ERROR_DETECT == STD_ON)
         if (CanIf_ModuleState != CANIF_READY)
            {
-           Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_DENIT_API_ID,CANIF_E_UNINIT);
+           Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_DEINIT_API_ID,CANIF_E_UNINIT);
            }
 
   #endif
