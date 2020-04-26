@@ -47,7 +47,7 @@
 /*****************************************************************************************/
 /*                                   Include Component headres                           */
 /*****************************************************************************************/
-#include "CanIf.h"
+#include "../inc/CanIf.h"
 
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
@@ -101,7 +101,7 @@ const CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
 static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
 
 /* Holding the CanIf module current state. Initially, CANIF_UNINT. */
-static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
 /*****************************************************************************************/
 /*                                   Local Function Declaration                          */

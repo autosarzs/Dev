@@ -32,7 +32,7 @@
 **  MAY BE CHANGED BY USER : no                                               **
 **                                                                            **
 *******************************************************************************/
-#include "CanIf.h"
+#include "../inc/CanIf.h"
 //#include "CanIf_Types.h"
 #include "Det.h"
 /*****************************************************************************************/
@@ -62,7 +62,7 @@ typedef struct
 //static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
 /*Pointer to save configuration parameters set */
-static CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
+extern CanIf_ConfigType*    CanIf_ConfigPtr;
 
 
 /********************************************************************************************/

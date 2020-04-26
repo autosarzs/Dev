@@ -33,10 +33,20 @@
 **                                                                            **
 *******************************************************************************/
 
-#include "CanIf.h"
+#include "../inc/CanIf.h"
 #include "Det.h"
 #include "MemMap.h"
 #include "CanIf_Cbk.h"
+
+/*  Headers of Callback Functions   */
+#include "CanTp_Cbk.h"
+#include "CanNm_Cbk.h"
+#include "CanTSyn_Cbk.h"
+#include "Cdd_Cbk.h"
+#include "J1939Nm_Cbk.h"
+#include "J1939Tp_Cbk.h"
+#include "PduR_Cbk.h"
+#include "Xcp_Cbk.h"
 
 /*private function IDs*/
 #define CANIF_CHECK_DLC_API_ID (0xAA)

@@ -45,7 +45,7 @@ typedef struct
 
 static str_MapRXPdu  MapRXPdu[RX_CAN_L_PDU_NUM] = {0};
 /*Pointer to save configuration parameters set */
-static CanIf_ConfigType*    CanIf_ConfigPtr = NULL;
+extern CanIf_ConfigType*    CanIf_ConfigPtr;
 CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
 
 

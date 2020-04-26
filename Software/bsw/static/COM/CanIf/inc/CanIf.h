@@ -38,12 +38,6 @@
 /* CanIf Vendor ID in AUTOSAR */
 #define CANIF_VENDOR_ID                    (2020U)
 
-/* CanIf Module ID in AUTOSAR */
-#define	CANIF_MODULE_ID					   (060U)
-
-/* CanIf Instance ID */
-#define CANIF_INSTANCE_ID                  (0U)
-
 /*
  * SW Module Version is 1.0.0
  */
@@ -67,31 +61,6 @@
 /******************************************************************************
 *                             DET Error Codes                                 *
 *******************************************************************************/
-/*
-    Development Errors.
-*/
-#define CANIF_E_PARAM_CANID                ((uint8)10)
-#define CANIF_E_PARAM_HOH                  ((uint8)12)
-#define CANIF_E_PARAM_LPDU                 ((uint8)13)
-#define CANIF_E_PARAM_CONTROLLERID         ((uint8)15)
-#define CANIF_E_PARAM_WAKEUPSOURCE         ((uint8)16)
-#define CANIF_E_PARAM_TRCV                 ((uint8)17)
-#define CANIF_E_PARAM_TRCVMODE             ((uint8)18)
-#define CANIF_E_PARAM_TRCVWAKEUPMODE       ((uint8)19)
-#define CANIF_E_PARAM_CTRLMODE             ((uint8)21)
-#define CANIF_E_PARAM_PDU_MODE             ((uint8)22)
-#define CANIF_E_PARAM_POINTER              ((uint8)20)
-#define CANIF_E_UNINIT                     ((uint8)30)
-#define CANIF_E_INVALID_TXPDUID            ((uint8)50)
-#define CANIF_E_INVALID_RXPDUID            ((uint8)60)
-#define CANIF_E_INIT_FAILED                ((uint8)80)
-/*
-    Runtime Errors.
-*/
-#define CANIF_E_INVALID_DATA_LENGTH        ((uint8)61)
-#define CANIF_E_DATA_LENGTH_MISMATCH       ((uint8)62)
-#define CANIF_E_STOPPED                    ((uint8)70)
-#define CANIF_E_TXPDU_LENGTH_EXCEEDED      ((uint8)90)
 
 #include "CanIf_Types.h"
 /* AUTOSAR version checking */
@@ -114,7 +83,7 @@ typedef uint8 CanIf_NotifStatusType;
 #define CANIF_TX_RX_NOTIFICATION  (CanIf_NotifStatusType)0x01 /*The requested Rx/Tx CAN L-PDU was successfully transmitted orreceived.*/
 #define CANIF_NO_NOTIFICATION     (CanIf_NotifStatusType)0x00 /*No transmit or receive event occurred for the requested L-PDU*/
 
-/* CanIf Module Id */
+/* CanIf Module Id in AUTOSAR */
 #define CANIF_MODULE_ID		((uint16)60U)
 
 /* CanIf Instance Id */
@@ -165,9 +134,6 @@ typedef uint8 CanIF_ServiceId;
  ||  (CANIF_SW_PATCH_VERSION != CANIF_CFG_SW_PATCH_VERSION))
 #error "The AR version of Det.h does not match the expected version"
 #endif /* SW module version checking */
-
-/* CANIF Module Id */
-#define CANIF_MODULE_ID        (60U)
 
 /*******************************************************************************
 *                           API Service ID Macros                              *
@@ -235,5 +201,5 @@ CanIf_GetPduMode(uint8 ControllerId, CanIf_PduModeType* PduModePtr);
 Std_ReturnType CanIf_SetControllerMode(uint8 ControllerId, Can_ControllerStateType ControllerMode);
 void CanIf_TxConfirmation(PduIdType);
 CanIf_NotifStatusType CanIf_GetTxConfirmationState(uint8);
-
+Std_ReturnType CanIf_GetControllerMode(uint8 ,Can_ControllerStateType*);
 #endif /* __CANIF_H__ */

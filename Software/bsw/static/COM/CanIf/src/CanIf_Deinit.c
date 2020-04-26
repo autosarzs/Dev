@@ -47,7 +47,7 @@
 /*****************************************************************************************/
 /*                                   Include Component headres                           */
 /*****************************************************************************************/
-#include "CanIf.h"
+#include "../inc/CanIf.h"
 
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
@@ -95,13 +95,13 @@ static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
 
 /*Pointer to save configuration parameters set */
-static const CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
+extern const CanIf_ConfigType*    CanIf_ConfigPtr;
 
 /*Array to save each logical controller PDUs mode */
 static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
 
 /* Holding the CanIf module current state. Initially, CANIF_UNINT. */
-static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+extern CanIf_ModuleStateType CanIf_ModuleState;
 
 /*****************************************************************************************/
 /*                                   Local Function Declaration                          */

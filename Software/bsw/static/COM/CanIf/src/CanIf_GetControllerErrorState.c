@@ -34,7 +34,7 @@
 *******************************************************************************/
 
 
-#include "CanIf.h"
+#include "../inc/CanIf.h"
 #include "CanIf_Cbk.h"
 
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
@@ -70,7 +70,7 @@ extern CanIfCtrlCfgType CanIfCtrlCfgObj[];
  CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
 ******************************************************************************/
 
-static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+extern CanIf_ModuleStateType CanIf_ModuleState;
 
 /* CanIf PDU current mode. Initially, CANIF_OFFLINE [SWS_CANIF_00864]. */
 static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] = {CANIF_OFFLINE};// Init them all by CANIF_OFFLINE as default is CANIF_OFFLINE

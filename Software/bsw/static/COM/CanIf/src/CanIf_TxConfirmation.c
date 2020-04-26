@@ -43,7 +43,7 @@
 /*****************************************************************************************/
 /*                                   Include Component headres                           */
 /*****************************************************************************************/
-#include "CanIf.h"
+#include "../inc/CanIf.h"
 #include "CanIf_Cbk.h"
 #include "Can_Cfg.h"
 #include "irq.h"
@@ -149,12 +149,13 @@ void CanIf_TxConfirmation(PduIdType CanTxPduId)
 		// if CanTxPduId is found
 		if(TRUE == PduIdCheck)
 		{
-			#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API == STD_ON && CANIF_TXPDU_READ_NOTIFYSTATUS == STD_ON)
+			#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API == STD_ON)
 				/*
 				 * [SWS_CANIF_00391] If configuration parameters CANIF_PUBLIC_READTXPDU_NOTIFY_STATUS_API (ECUC_CanIf_00609)
 				 * and CANIF_TXPDU_READ_NOTIFYSTATUS (ECUC_CanIf_00589) for the Transmitted L-PDU are set to TRUE,
 				 * and if CanIf_TxConfirmation() is called, CanIf shall set the notification status for the Transmitted L-PDU.
 				 */
+				// CANIF_TXPDU_READ_NOTIFYSTATUS is implemented as CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API 
 				CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[CanTxPduId].CanIfTxPduReadNotifyStatus = TRUE;
 			#endif
 			
