@@ -44,9 +44,9 @@
 #define MAX_BAUDRATE_CONFIGS_CONTROLLER_0 	     (1U)
 #define MAX_BAUDRATE_CONFIGS_CONTROLLER_1	     (1U)
 #define USED_CONTROLLERS_NUMBER                  (1U)                /*number of can controllers in the ECU*/
-#define CAN_HOH_NUMBER                           (2U)
-#define CAN_HRH_NUMBER                           (1U)
-#define CAN_HTH_NUMBER                           (1U)
+#define CAN_HOH_NUMBER                           (4U)
+#define CAN_HRH_NUMBER                           (2U)
+#define CAN_HTH_NUMBER                           (2U)
 #define CLOCK                                    (80000000)            /*Can Clock in Hz*/
 #define CONTROLLER_0_BDR_ID                      (0U)
 #define CONTROLLER0_ID                           (0U)

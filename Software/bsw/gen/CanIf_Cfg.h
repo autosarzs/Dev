@@ -36,6 +36,15 @@
 #define __CANIF_CFG_H__
 
 
+/* SW Module Version is 1.0.0 */
+#define CANIF_CFG_SW_MAJOR_VERSION             (1U)
+#define CANIF_CFG_SW_MINOR_VERSION             (0U)
+#define CANIF_CFG_SW_PATCH_VERSION             (0U)
+
+/* AUTOSAR Version 4.3.1 */
+#define CANIF_CFG_AR_RELEASE_MAJOR_VERSION     (4U)
+#define CANIF_CFG_AR_RELEASE_MINOR_VERSION     (3U)
+#define CANIF_CFG_AR_RELEASE_PATCH_VERSION     (1U)
 //*****************************************************************************
 //  This parameter defines if the buffer element length shall be fixed to 8
 //  Bytes for buffers to which only PDUs < 8 Bytes are assigned.
@@ -51,6 +60,13 @@
 //  Default Value: true
 //*****************************************************************************
 #define CANIF_PRIVATE_DATA_LENGTH_CHECK    		STD_ON
+
+/*****************************************************************************
+ *  Selects the desired software filter mechanism for reception only. Each
+ *	implemented software filtering method is identified by this enumeration number.
+ *	Range: Types implemented software filtering methods
+ */
+#define CANIF_PRIVATE_SOFTWARE_FILTER_TYPE		LINEAR
 
 //*****************************************************************************
 //  Defines whether TTCAN is supported.
@@ -127,7 +143,7 @@
 //  transmit L-PDUs.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API 	STD_OFF
+#define CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API 	STD_ON
 
 //*****************************************************************************
 //  Enables and disables the API for reconfiguration of the CAN Identifier
@@ -141,7 +157,7 @@
 //  CanDrv) within the CAN Interface module.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_TX_BUFFERING             	STD_OFF
+#define CANIF_PUBLIC_TX_BUFFERING             	STD_ON
 
 //*****************************************************************************
 //  Configuration parameter to enable/disable the API to poll for Tx
@@ -223,53 +239,53 @@
 case of post-build loadable implementation using static memory
 allocation.
 Range: 0..18446744073709551615 */
-#define CANIF_MAX_BUFFER_SIZE					(18446744073709551615)
+//#define CANIF_MAX_BUFFER_SIZE					(18446744073709551615) /* Link Time or PostBuild parameter */
 
 /* Maximum number of Pdus. This parameter is needed only in case of
 post-build loadable implementation using static memory allocation.
 Range: 0..18446744073709551615 */
-#define CANIF_MAX_RX_PDU_CFG					(18446744073709551615)
+//#define CANIF_MAX_RX_PDU_CFG					(18446744073709551615) /* Link Time or PostBuild parameter */
 
 /* Maximum number of Pdus. This parameter is needed only in case of
 post-build loadable implementation using static memory allocation.
 Range: 0..18446744073709551615 */
-#define CANIF_MAX_TX_PDU_CFG					(18446744073709551615)
+//#define CANIF_MAX_TX_PDU_CFG					(18446744073709551615) /* Link Time or PostBuild parameter */
 
 /* CAN Identifier of transmit CAN L-PDUs used by the CAN Driver for
 CAN L-PDU transmission. Range: 11 Bit For Standard CAN Identifier
 ... 29 Bit For Extended CAN identifier
 The CAN Identifier may be omitted for dynamic transmit L-PDUs. */
-#define CANIF_TX_PDU_CAN_ID0					(0U)
-#define CANIF_TX_PDU_CAN_ID1					(1U)
+//#define CANIF_TX_PDU_CAN_ID0					(0U)	/* Link Time or PostBuild parameter */
+//#define CANIF_TX_PDU_CAN_ID1					(1U)	/* Link Time or PostBuild parameter */
 
 /* Identifier mask which denotes relevant bits in the CAN Identifier. This
 parameter may be used to keep parts of the CAN Identifier of dynamic
 transmit L-PDUs static. Range: 11 bits for Standard CAN Identifier, 29
 bits for Extended CAN Identifier.
 Range: 0 .. 536870911 */
-#define CANIF_TX_PDU_CAN_ID_MASK0				(1<<(uint32)0)
-#define CANIF_TX_PDU_CAN_ID_MASK1				(1<<(uint32)1)
+//#define CANIF_TX_PDU_CAN_ID_MASK0				(1<<(uint32)0) /* Link Time or PostBuild parameter */
+//#define CANIF_TX_PDU_CAN_ID_MASK1				(1<<(uint32)1) /* Link Time or PostBuild parameter */
 
 /* ECU wide unique, symbolic handle for transmit CAN L-SDU.
 Range: 0..max. number of CantTxPduIds. Range: 0 - 4294967295*/
-#define CANIF_TX_PDU_ID							(4294967295U)
+//#define CANIF_TX_PDU_ID							(4294967295U) /* Link Time or PostBuild parameter */
 
 /* If CanIfPublicPnFilterSupport is enabled, by this parameter PDUs
 could be configured which will pass the CanIfPnFilter.
 If there is no CanIfTxPduPnFilterPdu configured per controller,
 the corresponding controller applies no CanIfPnFilter.
 dependency: This parameter shall only be configurable if CanIfPublicPnSupport equals True. */
-#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
-	#define CANIF_TX_PDU_PN_FILTER_PDU			STD_OFF
-#endif
+//#if(CANIF_PUBLIC_PN_SUPPORT==STD_ON)
+//	#define CANIF_TX_PDU_PN_FILTER_PDU			STD_OFF 		/* Link Time or PostBuild parameter */
+//#endif
 
 /* Enables and disables transmit confirmation for each transmit CAN
 L-SDU for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READTXPDU_NOTIFY_STATUS_API must be enabled.*/
-#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
-	#define CANIF_TX_PDU_READ_NOTIFY_STATUS		STD_OFF
-#endif
+//#if(CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API==STD_ON)
+//	#define CANIF_TX_PDU_READ_NOTIFY_STATUS		STD_OFF			/* Link Time or PostBuild parameter */
+//#endif
 
 /* Determines if or if not CanIf shall use the trigger transmit API for this PDU.
 dependency: If CanIfTxPduTriggerTransmit is TRUE then CanIfTxPduUserTxConfirmationUL 
@@ -279,75 +295,74 @@ has to be either PDUR or CDD and CanIfTxPduUserTriggerTransmitName has to be spe
 /* Enables/disables truncation of PDUs that exceed the configured size. */
 #define CANIF_TX_PDU_TRUNCATION					STD_ON
 
+
+#define CanIfTxOfflineActiveSupport   STD_ON
+
 /* This parameter defines the name of the <User_TriggerTransmit>. This parameter depends on the parameter
 CanIfTxPduUserTxConfirmationUL. If CanIfTxPduUserTxConfirmationUL equals CAN_TP, CAN_NM, PDUR,
 XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_TriggerTransmit> is fixed. If CanIfTxPduUserTxConfirmationUL
 equals CDD, the name of the <User_TxConfirmation> is selectable. Please be aware that this parameter depends on the same
 parameter as CanIfTxPduUserTxConfirmationName. It shall be clear which upper layer is responsible for that PDU.
 dependency: CanIfTxPduUserTriggerTransmitName requires CanIfTxPduUserTxConfirmationUL to be either PDUR or CDD.
-
 Note: If CanIfTxPduTriggerTransmit is not specified or FALSE, no upper layer modules have to be configured for
 Trigger Transmit. Therefore, <User_TriggerTransmit>() will not be called and CanIfTxPduUserTxConfirmationUL
 as well as CanIfTxPduUserTriggerTransmitName need not to be configured.
-
 [SWS_CANIF_00890] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL is set to PDUR,
 CanIfTxPduUserTrigger- TransmitName must be PduR_CanIfTriggerTransmit.
-
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL is set to CDD,
 the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPdu- UserTriggerTransmitName. */
-#if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
-	#if(CanIfTxPduUserTxConfirmationUL==PDUR)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	PduR_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanNm_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Nm_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Tp_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTp_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==XCP)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Xcp_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTSyn_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CDD)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Cdd_CanIfTriggerTransmit /* Selectable */
-	#endif	
-#endif
+/* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
+// #if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
+	// #if(CanIfTxPduUserTxConfirmationUL==PDUR)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	PduR_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanNm_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Nm_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Tp_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTp_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==XCP)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Xcp_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTSyn_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CDD)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Cdd_CanIfTriggerTransmit /* Selectable */
+	// #endif	
+// #endif
 
 /* This parameter defines the name of the <User_TxConfirmation>. This parameter depends
 on the parameter CanIfTxPduUserTxConfirmationUL. If CanIfTxPduUserTxConfirmationUL equals
 CAN_TP, CAN_NM, PDUR, XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_TxConfirmation> is fixed.
 If CanIfTxPduUserTxConfirmationUL equals CDD, the name of the <User_TxConfirmation> is selectable.
-
 Note: If transmit confirmations are not necessary or no upper layer modules are configured
 for transmit confirmations and thus <User_TxConfirmation>() shall not be called, CanIfTxPduUserTxConfirmationUL
 and CanIfTxPduUserTxConfirmationName need not to be configured.
-
 [SWS_CANIF_00890] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL
 is set to PDUR, CanIfTxPduUserTriggerTransmitName must be PduR_CanIfTriggerTransmit.
-
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL
 is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPduUserTriggerTransmitName. */
-#if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
-	#if(CanIfTxPduUserTxConfirmationUL==PDUR)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	PduR_CanIfTxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanNm_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Nm_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Tp_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTp_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==XCP)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Xcp_CanIfTxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTSyn_CanIfTxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CDD)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Cdd_CanIfTxConfirmation /* Selectable */
-	#endif	
-#endif
+/* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
+// #if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
+	// #if(CanIfTxPduUserTxConfirmationUL==PDUR)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	PduR_CanIfTxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanNm_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Nm_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Tp_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTp_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==XCP)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Xcp_CanIfTxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTSyn_CanIfTxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CDD)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Cdd_CanIfTxConfirmation /* Selectable */
+	// #endif	
+// #endif
 
 
 /* CAN Identifier of Receive CAN L-PDUs used by the CAN Interface.
@@ -384,26 +399,26 @@ dependency: CANIF_CANPDUID_READDATA_API must be enabled */
 /* Enables and disables the Rx buffering for reading of received L-SDU
 data. True: Enabled False: Disabled
 dependency: CANIF_CANPDUID_READDATA_API must be enabled */
-#if(CANIF_CAN_PDU_ID_READ_DATA_API==STD_ON)
-	#define CANIF_RX_PDU_READ_DATA				(STD_OFF)
-#endif
+//#if(CANIF_CAN_PDU_ID_READ_DATA_API==STD_ON)
+//	#define CANIF_RX_PDU_READ_DATA				(STD_OFF)	/* Link Time or PostBuild parameter */
+//#endif
 
 /* Enables and disables receive indication for each receive CAN L-SDU
 for reading its notification status.
 True: Enabled False: Disabled
 dependency: CANIF_READRXPDU_NOTIFY_STATUS_API must be enabled. */
-#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
-	#define CANIF_RX_PDU_READ_NOTIFY_STATUS		(STD_OFF)
-#endif
+//#if(CANIF_PUBLIC_READ_RX_PDU_NOTIFY_STATUS_API==STD_ON)
+//	#define CANIF_RX_PDU_READ_NOTIFY_STATUS		(STD_OFF)	/* Link Time or PostBuild parameter */
+//#endif
 
 /* This parameter defines the name of the <User_RxIndication>. This parameter depends
 on the parameter CanIfRxPduUserRxIndicationUL. If CanIfRxPduUserRxIndicationUL equals
 CAN_TP, CAN_NM, PDUR, XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_RxIndication> is fixed.
 If CanIfRxPduUserRxIndicationUL equals CDD, the name of the <User_RxIndication> is selectable.
-
 Note: If receive indications are not necessary or no upper layer modules are configured
 for receive indications and thus <User_RxIndication>() shall not be called, CANIF_RXPDU_USERRXINDICATION_UL
 and CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
+/* CanIfRxPduUserRxIndicationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
 #if(CanIfRxPduUserRxIndicationUL==PDUR)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	PduR_CanIfRxIndication
 #elif(CanIfRxPduUserRxIndicationUL==CAN_NM)
@@ -563,21 +578,6 @@ definition, in which all CAN Ids shall pass the software filtering.*/
 #define CANIF_HRH_RANGE_RX_PDU_UPPER_CAN_ID0			    		(0U)
 #define CANIF_HRH_RANGE_RX_PDU_UPPER_CAN_ID1      					(1U)
 
-/*This parameter defines the number of CanIf Tx L-PDUs which can be
-buffered in one Txbuffer. If this value equals 0, the CanIf does not
-perform Txbuffering for the CanIf Tx L-PDUs which are assigned to this
-Txbuffer. If CanIfPublicTxBuffering equals False, this parameter equals
-0 for all TxBuffer. If the CanHandleType of the referred HTH equals
-FULL, this parameter equals 0 for this TxBuffer.*/
-/*TODO check this parameter later */
-#if(CANIF_PUBLIC_TX_BUFFERING==STD_OFF)
-	#define CANIF_BUFFER_SIZE                  (0U)
-//#elif(CanHardwareObject.CanHandleType==FULL)
-//	#define CANIF_BUFFER_SIZE                  (1U)
-#else	/* any value, implementation dependant */
-	#define CANIF_BUFFER_SIZE                  (255U)
-#endif
-
 
 /**************************************************************************************************************
 *                                         Sizes of containers muliplicity                                                                  
@@ -585,7 +585,14 @@ FULL, this parameter equals 0 for this TxBuffer.*/
 
 /* CAN_DRIVER_NUM is a size of array to define the number of underlying CAN Driver modules*/
 /* It defines muliplicity of CanIfCtrlDrvCfg & CanIfInitHohCfg containers */
-#define  CAN_DRIVER_NUM                             3
+#define  CAN_DRIVER_NUM                             1
+
+/* Each controller of all connected CAN Driver modules shall be assigned to
+ * one specific ControllerId of the CanIf.
+ */
+#define  CANIF_CONTROLLERS_NUM                      1
+#define  CANIF_CONTROLLER_ID_0                      0
+
 
 /*CAN_TRANSCEIVER_NUM is used to specify the number of containers contains the configuration (parameters)
 of all addressed CAN transceivers by each underlying
@@ -599,32 +606,36 @@ If CanIfBufferSize (ECUC_CanIf_00834) equals 0, the
 CanIf Tx L-PDU only refers via this CanIfBufferCfg the
 corresponding CanIfHthCfg.*/
 /*It defines muliplicity of CanIfBufferCfg container*/
-#define  BUFFERS_NUM                                10
+#define  BUFFERS_NUM                                2
 
 /* RX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
 of each receive CAN L-PDU.*/
 /*It defines muliplicity of CanIfRxPduCfg container*/
-#define RX_CAN_L_PDU_NUM                            10
+#define RX_CAN_L_PDU_NUM                            2
+#define RX_PDU_ID_0                                 0
+#define RX_PDU_ID_1                                 1
 
 /*TX_CAN_L-PDU_NUM is a size of array to define the number of containers contain the configuration (parameters)
 of each transmit CAN L-PDU.*/
 /*It defines muliplicity of CanIfTxPduCfg container*/
-#define TX_CAN_L_PDU_NUM                            10 
+#define TX_CAN_L_PDU_NUM                            2
+#define TX_PDU_ID_0                                 0
+#define TX_PDU_ID_1                                 1
+
 
 /*HRH_OBj_NUM is used to specify the number of containers contains configuration parameters for
 each hardware receive object (HRH).*/
 /*It defines muliplicity of CanIfHrhCfg container*/
-#define HRH_OBj_NUM                                 2
+#define CANIF_HRH_OBj_NUM                           2
+#define CANIF_HRH_ID_0                              0
+#define CANIF_HRH_ID_1                              1
 
 /*HTH_OBj_NUM is used to specify the number of containers contains configuration parameters for
 each hardware transmit object (HTH).*/
 /*It defines muliplicity of CanIfHthCfg container*/
-#define HTH_OBj_NUM                                 2
-
-/*CANID_RANGES_NUM is used to specify the number of containers Defines the parameters required for configurating
-multiple CANID ranges for a given same HRH*/
-/*It defines muliplicity of CanIfHrhRangeCfg container*/
-#define CANID_RANGES_NUM                           16    
+#define CANIF_HTH_OBj_NUM                           2
+#define CANIF_HTH_ID_0                              0
+#define CANIF_HTH_ID_1                              1
 
 
 #endif /* __CANIF_CFG_H__ */
