@@ -92,17 +92,19 @@ extern CanIfHthCfgType*   CanIfHthCfgPtr   ;
 /*****************************************************************************************/
 
 /*Array of struct to map CanIds to a specific L-PDU of type dynamic*/
-static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
-
+ str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
 /*Pointer to save configuration parameters set */
 const CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
 
 /*Array to save each logical controller PDUs mode */
-static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
+ CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
 
 /* Holding the CanIf module current state. Initially, CANIF_UNINT. */
-static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+ CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+
+ /* Holding the CanIf controller current state. Initially, CAN_CS_STOPPED. */
+ Can_ControllerStateType CanIf_ControllerState[CANIF_CONTROLLERS_NUM];
 
 /*****************************************************************************************/
 /*                                   Local Function Declaration                          */
@@ -226,6 +228,13 @@ static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
             CanIf_PduMode[counter] = CANIF_OFFLINE ;
         }
 	   
+       /*
+        *   During initialization CanIf shall switch every Controller to CAN_CS_STOPPED
+        */
+        for( counter=0; counter<CANIF_CONTROLLERS_NUM; counter++)
+        {
+            CanIf_ControllerState[counter] = CAN_CS_STOPPED ;
+        }
         /*Set module to Ready state*/
         CanIf_ModuleState = CANIF_READY ;
 	} 

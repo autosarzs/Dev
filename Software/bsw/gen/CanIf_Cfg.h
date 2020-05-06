@@ -45,6 +45,10 @@
 #define CANIF_CFG_AR_RELEASE_MAJOR_VERSION     (4U)
 #define CANIF_CFG_AR_RELEASE_MINOR_VERSION     (3U)
 #define CANIF_CFG_AR_RELEASE_PATCH_VERSION     (1U)
+
+
+#define CLASSIC_CAN_DATA_LENGTH          (8U)
+#define CANFD_DATA_LENGTH                (64U)
 //*****************************************************************************
 //  This parameter defines if the buffer element length shall be fixed to 8
 //  Bytes for buffers to which only PDUs < 8 Bytes are assigned.

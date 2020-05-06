@@ -41,7 +41,7 @@
 /*
  *  Type Description : Struct to map CanIds to a specific L-PDU of type dynamic  .
  */
- 
+
  /* TODO :: Remove it */
 typedef struct
 {
@@ -97,13 +97,13 @@ const PduInfoType* PduInfoPtr
       PduInfoPtr->SduDataPtr, if the PDU is configured for triggered transmission:
       CanIfTxPduTriggerTransmit = TRUE.
      */
-	 
-	 /*TODO :: 0x00 -> NULL*/
+
+     /*TODO :: 0x00 -> NULL*/
     if(PduInfoPtr->SduDataPtr == 0x0)
     {
       if(CANIF_TX_PDU_TRIGGER_TRANSMIT != STD_ON)
       {
-		 /*not return inside the function */
+         /*not return inside the function */
         return E_NOT_OK;
       }
     }
@@ -151,8 +151,8 @@ const PduInfoType* PduInfoPtr
     and CanIfTxPduTruncation is disabled, CanIf shall report the runtime error
     CANIF_E_TXPDU_LENGTH_EXCEEDED and return E_NOT_OK without further actions
    */
-   
-   /*TODO implement FD supported */   
+
+   /*TODO implement FD supported */
     if (PduInfoPtr->SduLength > 8)
     {
           if(CANIF_TX_PDU_TRUNCATION == STD_ON)

@@ -117,10 +117,10 @@ Range:  EXTENDED_CAN CAN        frame with extended identifier (29 bits)
         STANDARD_CAN CAN        frame with standard identifier (11 bits)
         STANDARD_FD_CAN CAN FD  frame with standard identifier (11 bits)*/
 typedef uint8 CanIfTxPduCanIdTypeType;
-#define EXTENDED_CAN_TX                         ((CanIfTxPduCanIdTypeType)0x00U)
-#define EXTENDED_FD_CAN_TX                      ((CanIfTxPduCanIdTypeType)0x01U)
-#define STANDARD_CAN_TX                         ((CanIfTxPduCanIdTypeType)0x02U)
-#define STANDARD_FD_CAN_TX                      ((CanIfTxPduCanIdTypeType)0x03U)
+#define EXTENDED_CAN_TX                         ((CanIfTxPduCanIdTypeType)0x02U)
+#define EXTENDED_FD_CAN_TX                      ((CanIfTxPduCanIdTypeType)0x03U)
+#define STANDARD_CAN_TX                         ((CanIfTxPduCanIdTypeType)0x00U)
+#define STANDARD_FD_CAN_TX                      ((CanIfTxPduCanIdTypeType)0x01U)
 
 /* Defines the type of each transmit CAN L-PDU.
 Range:  DYNAMIC     CAN ID is defined at runtime.
@@ -751,7 +751,7 @@ typedef struct{
                 events from the CAN Transceiver Driver modules have to be routed via <User_TrcvModeIndication>. If no UL module is configured, no upper layer callback function will be called. */
                 CanIfDispatchUserTrcvModeIndicationULType CanIfDispatchUserTrcvModeIndicationUL;
 
-                /* [ECUC_CanIf_00531]
+                 /* [ECUC_CanIf_00531]
                  * This parameter defines the name of <User_ValidateWakeupEvent>. This parameter depends on the parameter
                    CANIF_USERVALIDATEWAKEUPEVENT_UL. CANIF_USERVALIDATEWAKEUPEVENT_UL equals ECUM the name of <User_ValidateWakeupEvent>
                    is fixed. CANIF_USERVALIDATEWAKEUPEVENT_UL equals CDD, the name of <User_ValidateWakeupEvent> is selectable.
