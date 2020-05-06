@@ -217,13 +217,13 @@ Std_ReturnType New_CanIf_Transmit(PduIdType TxPduId,const PduInfoType* PduInfoPt
         {
             TxPduCanId |=(EXTENDED_FD_CAN_TX<<30);
         }
-    }
-    /*Check PDU type Dynamic or static*/
-    PduType = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[TxPduId].CanIfTxPduType ;
 
-    /*Dynamic type*/
-    if(PduType == DYNAMIC_TX_PDU)
-    {
+        /*Check PDU type Dynamic or static*/
+        PduType = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[TxPduId].CanIfTxPduType ;
+
+        /*Dynamic type*/
+        if(PduType == DYNAMIC_TX_PDU)
+        {
         for(counter =0 ;counter <TX_CAN_L_PDU_NUM; counter++)
         {
             if(MapCanIdToPdu[counter].PduId ==TxPduId)
@@ -231,40 +231,41 @@ Std_ReturnType New_CanIf_Transmit(PduIdType TxPduId,const PduInfoType* PduInfoPt
                 TxPduCanId |= (0x3FFFFFFF & MapCanIdToPdu[counter].CanId);
             }
         }
-    }
-    /*Static type*/
-    else
-    {
+        }
+        /*Static type*/
+        else
+        {
         TxPduCanId |=( 0x3FFFFFFF & CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[TxPduId].CanIfTxPduCanId);
-    }
-    /*Save physical CAN ID*/
-    TX_message.id = TxPduCanId;
+        }
+        /*Save physical CAN ID*/
+        TX_message.id = TxPduCanId;
 
-    /*Save Data Length*/
-    TX_message.length = PduInfoPtr->SduLength ;
+        /*Save Data Length*/
+        TX_message.length = PduInfoPtr->SduLength ;
 
-    /*Save data buffer*/
-    TX_message.sdu = PduInfoPtr->SduDataPtr ;
+        /*Save data buffer*/
+        TX_message.sdu = PduInfoPtr->SduDataPtr ;
 
-    /*Save PDU ID*/
-    TX_message.swPduHandle = TxPduId;
-    Hth = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[TxPduId].\
+        /*Save PDU ID*/
+        TX_message.swPduHandle = TxPduId;
+        Hth = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[TxPduId].\
             CanIfTxPduBufferRef->CanIfBufferHthRef->CanIfHthIdSymRef->CanObjectId ;
 
-    /*Call can Write*/
-    state = Can_write(Hth ,( const Can_PduType * )&TX_message);
-    if(state == E_NOT_OK)
-    {
+        /*Call can Write*/
+        state = Can_write(Hth ,( const Can_PduType * )&TX_message);
+        if(state == E_NOT_OK)
+        {
         #if(CANIF_PUBLIC_TX_BUFFERING==STD_ON)
         /*TODO */
         #else
         RET_Status = state ;
         #endif
-    }
-    else
-    {
+        }
+        else
+        {
         RET_Status = state ;
+        }
     }
-        return  RET_Status ;
+    return  RET_Status ;
 }
 
