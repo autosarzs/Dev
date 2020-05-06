@@ -70,7 +70,6 @@ extern CanIfCtrlCfgType CanIfCtrlCfgObj[];
  CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
 ******************************************************************************/
 
-static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
 /* a pointer to the CanIf_ConfigType main Structure for the module to work on */
 extern CanIf_ConfigType* CanIf_ConfigPtr;
@@ -135,6 +134,7 @@ Std_ReturnType CanIf_SetControllerMode(uint8 ControllerId, Can_ControllerStateTy
     #endif
         u8DrvControllerID = CanIfCtrlCfgObj[ControllerId].CanIfCtrlCanCtrlRef->CanControllerId;
         u8CanIFSetControllerModeRet = Can_SetControllerMode( u8DrvControllerID, ControllerMode );
+
 
     return u8CanIFSetControllerModeRet;
 

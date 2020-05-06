@@ -32,17 +32,7 @@
  **  MAY BE CHANGED BY USER x: no                                               **
  **                                                                            **
  *******************************************************************************/
-#include "../inc/CanIf.h"
-
-/*
- *  Type Description : Struct to save recieved  PDUs (in case of enable CanIf_ReadRxPduData API un configuration) .
- */
- 
-/*Pointer to save configuration parameters set */
-extern CanIf_ConfigType*    CanIf_ConfigPtr;
-
-CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
-
+#include "Internal.h"
 
 /*TODO who the one request CANIF to be ONLINE ??? */
 Std_ReturnType CanIf_SetPduMode(uint8 ControllerId,CanIf_PduModeType PduModeRequest)

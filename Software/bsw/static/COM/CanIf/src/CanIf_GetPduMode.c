@@ -34,8 +34,9 @@
 *******************************************************************************/
 
 
-#include "CanIf.h"
+
 #include "CanIf_Cbk.h"
+#include "Internal.h"
 
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
 #include "Det.h"
@@ -56,7 +57,9 @@
 
 #include "Dem.h"
 #include "MemMap.h"
-#include "Internal.h"
+
+
+
 
 
 

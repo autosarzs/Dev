@@ -98,7 +98,7 @@ extern CanIfHthCfgType*   CanIfHthCfgPtr   ;
 const CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
 
 /*Array to save each logical controller PDUs mode */
- CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
+ CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] = {0};
 
 /* Holding the CanIf module current state. Initially, CANIF_UNINT. */
  CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
