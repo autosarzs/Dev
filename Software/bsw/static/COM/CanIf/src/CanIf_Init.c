@@ -210,13 +210,18 @@ const CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
                     * Initialize all PDUs information
                     */
                     /*Init dynamic CanId with 0*/
-                    CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].CanId   = 0 ;
-                    /*Init PDU Id with 0*/
-                    CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].TxPduId = 0 ;
-                    /*Init all sduDataBuffer elements with 0 by casting the array address as uint64* */
-                    *((uint64*)CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)= 0;
+                    CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].DynamicCanId   = 0 ;
+                    /*Init PDU Id with non configured PDU ID*/
+                    CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].TxPduId = TX_CAN_L_PDU_NUM ;
+                    for(uint32 Datacounter =0 ;Datacounter< CANFD_DATA_LENGTH; Datacounter++)
+                    {
+                        /*Init all sduDataBuffer elements with 0 */
+                        CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer[Datacounter]= 0;
+                    }
                     /*Init SduLength with 0 */
                     CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduLength = 0 ;
+                    /*Set as an empty place inside the buffer*/
+                    CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].Empty = TRUE ;
                 }
             }
         #endif

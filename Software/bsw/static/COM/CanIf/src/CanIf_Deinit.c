@@ -47,7 +47,7 @@
 /*****************************************************************************************/
 /*                                   Include Component headres                           */
 /*****************************************************************************************/
-#include "CanIf.h"
+#include "Internal.h"
 #include "Det.h"
 
 /*****************************************************************************************/
@@ -64,14 +64,7 @@
 /*****************************************************************************************/
 /*                                   Local types Definition                              */
 /*****************************************************************************************/
-/*
- *  Type Description : Struct to map CanIds to a specific L-PDU of type dynamic  .
- */
-typedef struct
-{
-   Can_IdType     CanId;
-   PduIdType      PduId;
-}str_MapCanIdToPdu ;
+
 
 
 /*****************************************************************************************/
@@ -83,26 +76,12 @@ typedef struct
 /*****************************************************************************************/
 /*                                global Variables Definition                            */
 /*****************************************************************************************/
-extern CanIfTxPduCfgType* CanIfTxPduCfgPtr ;
-extern CanIfRxPduCfgType* CanIfRxPduCfgPtr ;
-extern CanIfHrhCfgType*   CanIfHrhCfgPtr   ;
-extern CanIfHthCfgType*   CanIfHthCfgPtr   ;
+
 /*****************************************************************************************/
 /*                                Local Variables Definition                             */
 /*****************************************************************************************/
 
-/*Array of struct to map CanIds to a specific L-PDU of type dynamic*/
-static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
-
-/*Pointer to save configuration parameters set */
-static const CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
-
-/*Array to save each logical controller PDUs mode */
-static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
-
-/* Holding the CanIf module current state. Initially, CANIF_UNINT. */
-static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
 /*****************************************************************************************/
 /*                                   Local Function Declaration                          */

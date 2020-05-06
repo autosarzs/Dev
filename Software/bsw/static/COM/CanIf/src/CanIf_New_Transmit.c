@@ -36,9 +36,12 @@
 #include "Det.h"
 #include "Internal.h"
 /*****************************************************************************************/
-/*                                   Local types Definition                              */
+/*                                   Local Functions prototypes                          */
 /*****************************************************************************************/
-
+ #if(CANIF_PUBLIC_TX_BUFFERING==STD_ON)
+static Std_ReturnType BufferTxPdus(Can_HwHandleType Hth ,PduIdType TxPduId,const PduInfoType*\
+                                   PduInfoPtr,Can_IdType DynamicTxPduCanId);
+#endif
 
 /*****************************************************************************************/
 /*                                Exported Variables Definition                          */
@@ -67,7 +70,7 @@
 /*                                                                                          */
 /*                                                                                          */
 /********************************************************************************************/
-Std_ReturnType New_CanIf_Transmit(PduIdType TxPduId,const PduInfoType* PduInfoPtr)
+Std_ReturnType CanIf_Transmit(PduIdType TxPduId,const PduInfoType* PduInfoPtr)
 {
     Std_ReturnType state, RET_Status = E_OK ;
     CanIfTxPduCanIdTypeType IdType ;
@@ -78,6 +81,7 @@ Std_ReturnType New_CanIf_Transmit(PduIdType TxPduId,const PduInfoType* PduInfoPt
     uint8 ControllerId =0,counter ;
     Can_IdType TxPduCanId =0 ;
     CanIfTxPduTypeType PduType ;
+
 
     /*Save CanId type to be used later*/
     IdType = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfTxPduCfgRef[TxPduId].CanIfTxPduCanIdType ;
@@ -243,8 +247,18 @@ Std_ReturnType New_CanIf_Transmit(PduIdType TxPduId,const PduInfoType* PduInfoPt
         /*Save Data Length*/
         TX_message.length = PduInfoPtr->SduLength ;
 
-        /*Save data buffer*/
-        TX_message.sdu = PduInfoPtr->SduDataPtr ;
+        /*[SWS_CANIF_00882] d CanIf_Transmit() shall accept a NULL pointer as PduInfoPtr->SduDataPtr,
+         *if the PDU is configured for triggered transmission: CanIfTxPduTriggerTransmit = TRUE.
+         */
+        if(TriggerTransmitEnable == TRUE)
+        {
+            TX_message.sdu = NULL_PTR ;
+        }
+        else
+        {
+            /*Save data buffer*/
+            TX_message.sdu = PduInfoPtr->SduDataPtr ;
+        }
 
         /*Save PDU ID*/
         TX_message.swPduHandle = TxPduId;
@@ -253,19 +267,116 @@ Std_ReturnType New_CanIf_Transmit(PduIdType TxPduId,const PduInfoType* PduInfoPt
 
         /*Call can Write*/
         state = Can_write(Hth ,( const Can_PduType * )&TX_message);
+
+        /*if Can_write returns E_NOT_OK
+         *check if TX Buffering is enable to store buffer
+         */
         if(state == E_NOT_OK)
         {
         #if(CANIF_PUBLIC_TX_BUFFERING==STD_ON)
-        /*TODO */
+            /*Buffer PDU,
+             *BufferTxPdus returns E_OK     -> if found empty place or overwrites same PDU
+             *BufferTxPdus returns E_NOT_OK -> if didn't find empty place
+             *
+             *[SWS_CANIF_00837] d If the buffer size is greater zero, all buffer elements are busy
+             *and CanIf_Transmit() is called with a new L-PDU (no other instance of the same L-PDU
+             *is already stored in the buffer), then the new L-PDU or its Transmit Request shall
+             *not be stored and CanIf_Transmit() shall return E_NOT_OK
+             */
+            RET_Status= BufferTxPdus(Hth,TxPduId,PduInfoPtr,TxPduCanId);
         #else
         RET_Status = state ;
         #endif
         }
         else
         {
-        RET_Status = state ;
+            RET_Status = state ;
         }
     }
     return  RET_Status ;
 }
 
+#if(CANIF_PUBLIC_TX_BUFFERING==STD_ON)
+static Std_ReturnType BufferTxPdus(Can_HwHandleType Hth ,PduIdType TxPduId,const PduInfoType* PduInfoPtr,Can_IdType DynamicTxPduCanId)
+{
+    uint8 BufferCounter =0 , PduCounter =0, BufferSize = 0, BufferPlace =0;
+    boolean FoundPlace = FALSE ;
+    Can_HwHandleType BufferHth =0 ;
+    PduIdType BufferPdu = 0 ;
+    PduLengthType   DataLength = 0 ;
+    Std_ReturnType rtn_val = E_NOT_OK ;
+
+    /* Get the right buffer to use . PDU must be save in the buffer that uses
+     * the same HTH configured for that PDU
+     */
+      for(BufferCounter =0; BufferCounter < BUFFERS_NUM ;BufferCounter++)
+      {
+          /*Get this buffer assigned HTH*/
+          BufferHth =  CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[BufferCounter].\
+                  CanIfBufferRef->CanIfBufferHthRef->CanIfHthIdSymRef->CanObjectId ;
+
+          /*If HTH for the requested PDU found , Find Empty place in the buffer*/
+          if(Hth == BufferHth)
+          {
+              /*Get buffer size*/
+              BufferSize = CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[BufferCounter].CanIfBufferRef->CanIfBufferSize ;
+
+              for(PduCounter= 0 ; PduCounter < BufferSize ;PduCounter++)
+              {
+                  /* Check if PDU was buffered before ,
+                   * only one instance per TX L-PDU can be buffered in the over all amount of CanIfBufferCfg.
+                   * [SWS_CANIF_00068] CanIf shall overwrite direct transmitted CanIf TX L-PDU in the assigned
+                   * CanIfTxBuffer, if the CanIf TX L-PDU is already buffered in the CanIfTxBuffe
+                   */
+                  BufferPdu = CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[BufferCounter].\
+                              CanIfPduInfoRef[PduCounter].TxPduId ;
+
+                  if(BufferPdu == TxPduId)
+                  {
+                      FoundPlace = TRUE ;
+                      BufferPlace = PduCounter ;
+                      break;
+                  }
+                  /*Save  Empty place in the buffer */
+                  else if( CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[BufferCounter].CanIfPduInfoRef[PduCounter].Empty == TRUE)
+                  {
+                      FoundPlace = TRUE ;
+                      BufferPlace = PduCounter ;
+                  }
+                  else
+                  {
+
+                  }
+              }
+              if(FoundPlace == TRUE)
+              {
+                  break;
+              }
+          }
+      }
+      /*Save PDU in buer as we found place whether it's empty place or overwrite the same PDU*/
+      if(FoundPlace == TRUE)
+      {
+          /*Save data length*/
+          DataLength = PduInfoPtr->SduLength ;
+          CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[BufferCounter].CanIfPduInfoRef[PduCounter].SduLength = DataLength ;
+
+          /*Save SDU */
+          for(uint32 Datacounter =0 ;Datacounter< DataLength; Datacounter++)
+          {
+              CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[BufferCounter].CanIfPduInfoRef[BufferPlace].\
+              SduDatabuffer[Datacounter] = PduInfoPtr->SduDataPtr[Datacounter] ;
+          }
+          /*Save DynamicTxPduCanId*/
+          CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[BufferCounter].CanIfPduInfoRef[BufferPlace].DynamicCanId = DynamicTxPduCanId;
+
+          /*save PDU ID*/
+          CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[BufferCounter].CanIfPduInfoRef[BufferPlace].TxPduId = TxPduId ;
+          /*Save place as not empty*/
+          CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[BufferCounter].CanIfPduInfoRef[BufferPlace].Empty = FALSE ;
+          rtn_val = E_OK ;
+      }
+
+      return rtn_val ;
+}
+#endif
