@@ -136,6 +136,11 @@ Std_ReturnType CanIf_SetControllerMode(uint8 ControllerId, Can_ControllerStateTy
         u8DrvControllerID = CanIfCtrlCfgObj[ControllerId].CanIfCtrlCanCtrlRef->CanControllerId;
         u8CanIFSetControllerModeRet = Can_SetControllerMode( u8DrvControllerID, ControllerMode );
 
+        if (u8CanIFSetControllerModeRet == E_OK)
+        {
+            CanIf_ModuleState = ControllerMode;
+        }
+
     return u8CanIFSetControllerModeRet;
 
 }
