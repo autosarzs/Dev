@@ -343,7 +343,7 @@ typedef struct {
 typedef struct
 {
               /*Buffer To save PDU data with the max Can message data size */
-               uint8       SduDatabuffer[MAX_DATA_LENGTH]    ;
+               uint8       SduDatabuffer[CANFD_DATA_LENGTH]    ;
               /*PDU Data length*/
                uint8       SduLength   ;
               /*Id of this L-PDU*/
@@ -351,7 +351,8 @@ typedef struct
               /*[SWS_CANIF_00849]  For dynamic Transmit L-PDUs,
                  also the CanId has to be stored in the CanIfTxBuffer.
                */
-               Can_IdType  CanId  ;
+               Can_IdType  DynamicCanId  ;
+               boolean    Empty ;
 
 }CanIfPduInfoCfgType;
 

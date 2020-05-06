@@ -7,6 +7,7 @@
 #define BSW_STATIC_COM_CANIF_INC_INTERNAL_H_
 
 
+#include "CanIf.h"
 /*
  *  Type Description : Struct to map CanIds to a specific L-PDU of type dynamic  .
  */
