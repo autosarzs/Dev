@@ -54,7 +54,7 @@
 //Temp canif config variable.
 static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 
-extern CanIf_ConfigType* CanIf_ConfigPtr;
+extern const CanIf_ConfigType* CanIf_ConfigPtr;
 
 //const CanIf_ConfigType *CanIf_ConfigPtr = &CanIf_ConfigObj;
 

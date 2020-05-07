@@ -52,10 +52,6 @@
 /*Array of struct to map CanIds to a specific L-PDU of type dynamic*/
 //extern str_MapCanIdToPdu  MapCanIdToPdu[];
 
-/*Pointer to save configuration parameters set */
-extern CanIf_ConfigType* CanIf_ConfigPtr;
-
-
 /********************************************************************************************/
 /*    Function Description    : This service calls the corresponding CAN Driver service
                                 for obtaining the current status of the CAN controller.     */

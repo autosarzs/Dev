@@ -72,9 +72,6 @@ extern CanIfCtrlCfgType CanIfCtrlCfgObj[];
 
 extern CanIf_ModuleStateType CanIf_ModuleState;
 
-/* a pointer to the CanIf_ConfigType main Structure for the module to work on */
-extern CanIf_ConfigType* CanIf_ConfigPtr;
-
 /********************************************************************************
                             Functions Definitions
 ********************************************************************************/

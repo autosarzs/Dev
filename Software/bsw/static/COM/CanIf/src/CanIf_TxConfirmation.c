@@ -76,7 +76,7 @@
 extern PduIdType swPduHandle[];
 
 /*Pointer to save configuration parameters set */
-extern CanIf_ConfigType* CanIf_ConfigPtr;
+extern const CanIf_ConfigType* CanIf_ConfigPtr;
 
 /* Holding the CanIf module current state. Initially, CANIF_UNINT. */
 extern CanIf_ModuleStateType CanIf_ModuleState;

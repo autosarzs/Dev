@@ -95,7 +95,7 @@ extern CanIfHthCfgType*   CanIfHthCfgPtr   ;
 str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
 /*Pointer to save configuration parameters set */
-CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
+const CanIf_ConfigType* CanIf_ConfigPtr = NULL_PTR;
 
 /*Array to save each logical controller PDUs mode */
 CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] = {0};
@@ -156,7 +156,7 @@ CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 	 else
 	 {
 		/*Save in the global config*/
-        CanIf_ConfigPtr = (CanIf_ConfigType*)ConfigPtr ;
+        CanIf_ConfigPtr = ConfigPtr ;
         /*
          * Initialize the link time containers
          */
