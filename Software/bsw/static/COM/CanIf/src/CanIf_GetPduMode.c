@@ -36,6 +36,7 @@
 
 #include "../inc/CanIf.h"
 #include "CanIf_Cbk.h"
+#include "../inc/Internal.h"
 
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
 #include "Det.h"
@@ -57,26 +58,10 @@
 #include "Dem.h"
 #include "MemMap.h"
 
-extern CanIfCtrlCfgType CanIfCtrlCfgObj[];
-
-/*
-    Private global variables
-*/
-/******************************************************************************
- CanIf_ModuleState: it's a variable to store the CanIf module state
- CanIf_ModuleStateType: a Data Type that can be one of the following
- CANIF_UNINIT : After power-up/reset, the Can module shall be in the state CAN_UNINIT 
- and also CANIF will be in CANIF_UNINT.
- CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
-******************************************************************************/
 
 extern CanIf_ModuleStateType CanIf_ModuleState;
 
-/* CanIf PDU current mode. Initially, CANIF_OFFLINE [SWS_CANIF_00864]. */
-static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] = {CANIF_OFFLINE};// Init them all by CANIF_OFFLINE as default is CANIF_OFFLINE
 
-/* a pointer to the CanIf_ConfigType main Structure for the module to work on */
-extern CanIf_ConfigType* CanIf_ConfigPtr;
 
 /********************************************************************************
                             Functions Definitions

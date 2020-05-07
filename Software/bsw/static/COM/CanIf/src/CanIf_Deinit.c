@@ -48,6 +48,8 @@
 /*                                   Include Component headres                           */
 /*****************************************************************************************/
 #include "../inc/CanIf.h"
+#include "Internal.h"
+#include "Det.h"
 
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
@@ -63,14 +65,7 @@
 /*****************************************************************************************/
 /*                                   Local types Definition                              */
 /*****************************************************************************************/
-/*
- *  Type Description : Struct to map CanIds to a specific L-PDU of type dynamic  .
- */
-typedef struct
-{
-   Can_IdType     CanId;
-   PduIdType      PduId;
-}str_MapCanIdToPdu ;
+
 
 
 /*****************************************************************************************/
@@ -82,23 +77,19 @@ typedef struct
 /*****************************************************************************************/
 /*                                global Variables Definition                            */
 /*****************************************************************************************/
-extern CanIfTxPduCfgType* CanIfTxPduCfgPtr ;
-extern CanIfRxPduCfgType* CanIfRxPduCfgPtr ;
-extern CanIfHrhCfgType*   CanIfHrhCfgPtr   ;
-extern CanIfHthCfgType*   CanIfHthCfgPtr   ;
+
 /*****************************************************************************************/
 /*                                Local Variables Definition                             */
 /*****************************************************************************************/
 
 /*Array of struct to map CanIds to a specific L-PDU of type dynamic*/
-static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
-
-
-/*Pointer to save configuration parameters set */
-extern const CanIf_ConfigType*    CanIf_ConfigPtr;
+extern str_MapCanIdToPdu  MapCanIdToPdu[];
 
 /*Array to save each logical controller PDUs mode */
-static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
+extern CanIf_PduModeType CanIf_PduMode[];
+
+/*Pointer to save configuration parameters set */
+extern CanIf_ConfigType*    CanIf_ConfigPtr;
 
 /* Holding the CanIf module current state. Initially, CANIF_UNINT. */
 extern CanIf_ModuleStateType CanIf_ModuleState;
@@ -145,7 +136,7 @@ extern CanIf_ModuleStateType CanIf_ModuleState;
   #if (CANIF_DEV_ERROR_DETECT == STD_ON)
         if (CanIf_ModuleState != CANIF_READY)
            {
-           Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_DENIT_API_ID,CANIF_E_UNINIT);
+           Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID,CANIF_DEINIT_API_ID,CANIF_E_UNINIT);
            }
 
   #endif

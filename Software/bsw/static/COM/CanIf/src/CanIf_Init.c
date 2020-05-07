@@ -48,6 +48,7 @@
 /*                                   Include Component headres                           */
 /*****************************************************************************************/
 #include "../inc/CanIf.h"
+#include "Det.h"
 
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
@@ -91,17 +92,19 @@ extern CanIfHthCfgType*   CanIfHthCfgPtr   ;
 /*****************************************************************************************/
 
 /*Array of struct to map CanIds to a specific L-PDU of type dynamic*/
-static str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
-
+str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
 
 /*Pointer to save configuration parameters set */
-const CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
+CanIf_ConfigType*    CanIf_ConfigPtr = NULL_PTR;
 
 /*Array to save each logical controller PDUs mode */
-static CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
+CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] = {0};
 
 /* Holding the CanIf module current state. Initially, CANIF_UNINT. */
 CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+
+ /* Holding the CanIf controller current state. Initially, CAN_CS_STOPPED. */
+ Can_ControllerStateType CanIf_ControllerState[CANIF_CONTROLLERS_NUM];
 
 /*****************************************************************************************/
 /*                                   Local Function Declaration                          */
@@ -153,7 +156,7 @@ CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 	 else
 	 {
 		/*Save in the global config*/
-        CanIf_ConfigPtr = ConfigPtr ;
+        CanIf_ConfigPtr = (CanIf_ConfigType*)ConfigPtr ;
         /*
          * Initialize the link time containers
          */
@@ -207,13 +210,18 @@ CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
                     * Initialize all PDUs information
                     */
                     /*Init dynamic CanId with 0*/
-                    CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].CanId   = 0 ;
-                    /*Init PDU Id with 0*/
-                    CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].TxPduId = 0 ;
-                    /*Init all sduDataBuffer elements with 0 by casting the array address as uint64* */
-                    *((uint64*)CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer)= 0;
+                    CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].DynamicCanId   = 0 ;
+                    /*Init PDU Id with non configured PDU ID*/
+                    CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].TxPduId = TX_CAN_L_PDU_NUM ;
+                    for(uint32 Datacounter =0 ;Datacounter< CANFD_DATA_LENGTH; Datacounter++)
+                    {
+                        /*Init all sduDataBuffer elements with 0 */
+                        CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduDatabuffer[Datacounter]= 0;
+                    }
                     /*Init SduLength with 0 */
                     CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].SduLength = 0 ;
+                    /*Set as an empty place inside the buffer*/
+                    CanIf_ConfigPtr->CanIfPduTxBufferCfgRef[counter].CanIfPduInfoRef[PduCounter].Empty = TRUE ;
                 }
             }
         #endif
@@ -225,6 +233,13 @@ CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
             CanIf_PduMode[counter] = CANIF_OFFLINE ;
         }
 	   
+       /*
+        *   During initialization CanIf shall switch every Controller to CAN_CS_STOPPED
+        */
+        for( counter=0; counter<CANIF_CONTROLLERS_NUM; counter++)
+        {
+            CanIf_ControllerState[counter] = CAN_CS_STOPPED ;
+        }
         /*Set module to Ready state*/
         CanIf_ModuleState = CANIF_READY ;
 	} 

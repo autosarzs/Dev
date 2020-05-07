@@ -135,15 +135,21 @@ typedef uint8 CanIF_ServiceId;
 #error "The AR version of Det.h does not match the expected version"
 #endif /* SW module version checking */
 
+/* Maximum Pdu Request */
+#define MAX_PDU_REQUEST     (04)
 /*******************************************************************************
 *                           API Service ID Macros                              *
 *******************************************************************************/
 typedef uint8 CanIf_ServiceId;
-#define CANIF_GET_CONTROLLER_ERROR_STATE_SID     ((CanIf_ServiceId)0x4b)
-#define CANIF_GET_PDU_MODE_SID                   ((CanIf_ServiceId)0x0a)
-#define CanIf_GetControllerMode_Id               ((Can_ServiceId)0x04)
-#define CanIf_CancelTransmit_Id                 ((Can_ServiceId)0x4A)
-#define CanIf_TRansmit_Id                       ((Can_ServiceId)0x49)
+#define CANIF_GET_CONTROLLER_ERROR_STATE_SID    ((CanIf_ServiceId)0x4b)
+#define CANIF_GET_PDU_MODE_SID                  ((CanIf_ServiceId)0x0a)
+#define CANIF_GET_CONTROLLER_MODE_ID            ((CanIf_ServiceId)0x04)
+#define CANIF_CANCEL_TRANSMIT_ID                ((CanIf_ServiceId)0x4A)
+#define CANIF_TRANSMIT_ID                       ((CanIf_ServiceId)0x49)
+#define CANIF_INIT_API_ID                       ((CanIf_ServiceId)0x01)
+#define CANIF_DEINIT_API_ID                     ((CanIf_ServiceId)0x02)
+#define CANIF_RX_INDCIATION_API_ID              ((CanIf_ServiceId)0x14)
+#define CANIF_SET_CONTROLLER_MODE_SID           ((CanIf_ServiceId)0x03)
 /*******************************************************************************
 * Service Name:       CanIf_GetControllerErrorState
 * Service ID[hex]:    0x4b

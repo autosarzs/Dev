@@ -39,7 +39,11 @@ typedef struct {
 	
 }CanTrcvChannelType;
 
-void CanIfTxPduUserTriggerTransmit(PduIdType TxPduId, PduInfoType* PduInfoPtr);
-void CanIfTxPduUserTriggerTransmitName(PduIdType, PduInfoType* );
+typedef uint32 EcuM_WakeupSourceType;
+#define ECUM_WKSOURCE_POWER                 ((EcuM_WakeupSourceType)0x00)
+#define ECUM_WKSOURCE_RESET                 ((EcuM_WakeupSourceType)0x01)
+#define ECUM_WKSOURCE_INTERNAL_RESET        ((EcuM_WakeupSourceType)0x02)
+#define ECUM_WKSOURCE_INTERNAL_WDG          ((EcuM_WakeupSourceType)0x03)
+#define ECUM_WKSOURCE_EXTERNAL_WDG          ((EcuM_WakeupSourceType)0x04)
 
 #endif /* STUB_H_ */
