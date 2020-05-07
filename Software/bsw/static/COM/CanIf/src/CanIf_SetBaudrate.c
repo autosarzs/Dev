@@ -33,7 +33,7 @@
 **                                                                            **
 *******************************************************************************/
 
-#include "CanIf.h"
+#include "../inc/CanIf.h"
 #include "Det.h"
 #include "MemMap.h"
 #include "CanIf_Cbk.h"

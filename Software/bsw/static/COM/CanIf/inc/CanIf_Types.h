@@ -286,7 +286,13 @@ typedef uint8 CanIf_PduModeType;
 #endif /* CanIfTxOfflineActiveSupport = TRUE */
 #define CANIF_ONLINE                                        ((CanIf_PduModeType)0x03)
 
+
 typedef struct {
+				/*This parameter abstracts from the CAN Driver specific parameter
+				Controller. Each controller of all connected CAN Driver modules shall
+				be assigned to one specific ControllerId of the CanIf. 
+				Range: 0..number of configured controllers of all CAN Driver modules	*/
+				uint8 CanIfCtrlId;
 
                 /* This parameter defines if a respective controller of the referenced CAN
                 Driver modules is queriable for wake up events (Supports Wakeup Event or not). For Each CanIf Controller */
@@ -439,6 +445,7 @@ typedef struct
                 * This parameter defines the name of the <User_TriggerTransmit>.
                 * This parameter depends on the parameter CanIfTxPduUserTxConfirmationUL
                 * */
+
                 #if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
                     void (*CanIfTxPduUserTriggerTransmitName)(PduIdType, PduInfoType* );
                 #endif
@@ -449,7 +456,7 @@ typedef struct
                  * PDUR, XCP, CAN_TSYN, J1939NM or J1939TP, the name of the <User_TxConfirmation> is fixed.
                  * If CanIfTxPduUserTxConfirmationUL equals CDD,
                  * the name of the <User_TxConfirmation> is selectable.*/
-                void (*CanIfTxPduUserTxConfirmationNam)(PduIdType, Std_ReturnType  );
+                void (*CanIfTxPduUserTxConfirmationName)(PduIdType, Std_ReturnType  );
 
              /* [ECUC_CanIf_00527]
                 This parameter defines the upper layer (UL) module to which the confirmation of

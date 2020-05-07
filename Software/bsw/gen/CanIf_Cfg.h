@@ -143,7 +143,7 @@
 //  transmit L-PDUs.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API 	STD_OFF
+#define CANIF_PUBLIC_READ_TX_PDU_NOTIFY_STATUS_API 	STD_ON
 
 //*****************************************************************************
 //  Enables and disables the API for reconfiguration of the CAN Identifier
@@ -311,25 +311,26 @@ as well as CanIfTxPduUserTriggerTransmitName need not to be configured.
 CanIfTxPduUserTrigger- TransmitName must be PduR_CanIfTriggerTransmit.
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL is set to CDD,
 the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPdu- UserTriggerTransmitName. */
-#if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
-	#if(CanIfTxPduUserTxConfirmationUL==PDUR)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	PduR_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanNm_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Nm_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Tp_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTp_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==XCP)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Xcp_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTSyn_CanIfTriggerTransmit
-	#elif(CanIfTxPduUserTxConfirmationUL==CDD)
-		#define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Cdd_CanIfTriggerTransmit /* Selectable */
-	#endif	
-#endif
+/* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
+// #if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
+	// #if(CanIfTxPduUserTxConfirmationUL==PDUR)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	PduR_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanNm_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Nm_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	J1939Tp_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTp_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==XCP)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Xcp_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	CanTSyn_CanIfTriggerTransmit
+	// #elif(CanIfTxPduUserTxConfirmationUL==CDD)
+		// #define CANIF_TX_PDU_USER_TRIGGER_TRANSMIT_NAME	Cdd_CanIfTriggerTransmit /* Selectable */
+	// #endif	
+// #endif
 
 /* This parameter defines the name of the <User_TxConfirmation>. This parameter depends
 on the parameter CanIfTxPduUserTxConfirmationUL. If CanIfTxPduUserTxConfirmationUL equals
@@ -342,25 +343,26 @@ and CanIfTxPduUserTxConfirmationName need not to be configured.
 is set to PDUR, CanIfTxPduUserTriggerTransmitName must be PduR_CanIfTriggerTransmit.
 [SWS_CANIF_00891] Configuration of <User_TriggerTransmit>(): If CanIfTxPduUserTxConfirmationUL
 is set to CDD, the name of the API <User_TriggerTransmit>() has to be configured via parameter CanIfTxPduUserTriggerTransmitName. */
-#if(CANIF_TX_PDU_TRIGGER_TRANSMIT==STD_ON)
-	#if(CanIfTxPduUserTxConfirmationUL==PDUR)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	PduR_CanIfTxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanNm_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Nm_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Tp_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTp_TxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==XCP)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Xcp_CanIfTxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTSyn_CanIfTxConfirmation
-	#elif(CanIfTxPduUserTxConfirmationUL==CDD)
-		#define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Cdd_CanIfTxConfirmation /* Selectable */
-	#endif	
-#endif
+/* CanIfTxPduUserTxConfirmationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
+// #if(CANIF_TXPDU_TRIGGERTRANSMIT==STD_ON)
+	// #if(CanIfTxPduUserTxConfirmationUL==PDUR)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	PduR_CanIfTxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_NM)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanNm_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939NM)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Nm_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==J1939TP)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	J1939Tp_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TP)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTp_TxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==XCP)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Xcp_CanIfTxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CAN_TSYN)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	CanTSyn_CanIfTxConfirmation
+	// #elif(CanIfTxPduUserTxConfirmationUL==CDD)
+		// #define CANIF_TX_PDU_USER_TX_CONFIRMATION_NAME	Cdd_CanIfTxConfirmation /* Selectable */
+	// #endif	
+// #endif
 
 
 /* CAN Identifier of Receive CAN L-PDUs used by the CAN Interface.
@@ -416,6 +418,7 @@ If CanIfRxPduUserRxIndicationUL equals CDD, the name of the <User_RxIndication> 
 Note: If receive indications are not necessary or no upper layer modules are configured
 for receive indications and thus <User_RxIndication>() shall not be called, CANIF_RXPDU_USERRXINDICATION_UL
 and CANIF_RXPDU_USERRXINDICATION_NAME need not to be configured. */
+/* CanIfRxPduUserRxIndicationUL is implemented as PostBuild Configuration.This implementation must be applied in functions */
 #if(CanIfRxPduUserRxIndicationUL==PDUR)
 	#define CANIF_RX_PDU_USER_RX_INDICATION_NAME	PduR_CanIfRxIndication
 #elif(CanIfRxPduUserRxIndicationUL==CAN_NM)

@@ -34,7 +34,7 @@
 *******************************************************************************/
 
 
-#include "CanIf.h"
+#include "../inc/CanIf.h"
 #include "CanIf_Cbk.h"
 
 #if (CANIF_DEV_ERROR_DETECT == STD_ON)
@@ -70,7 +70,7 @@ extern CanIfCtrlCfgType CanIfCtrlCfgObj[];
  CANIF_READY  : The function CanIf_Init shall change the module state to CANIF_READY
 ******************************************************************************/
 
-static CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
+extern CanIf_ModuleStateType CanIf_ModuleState;
 
 /* a pointer to the CanIf_ConfigType main Structure for the module to work on */
 extern CanIf_ConfigType* CanIf_ConfigPtr;

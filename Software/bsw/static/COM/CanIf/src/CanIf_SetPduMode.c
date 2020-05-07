@@ -32,7 +32,7 @@
  **  MAY BE CHANGED BY USER x: no                                               **
  **                                                                            **
  *******************************************************************************/
-#include "CanIf.h"
+#include "../inc/CanIf.h"
 
 
 #define MAX_PDU_REQUEST     (05)

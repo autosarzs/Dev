@@ -43,11 +43,6 @@ Std_ReturnType Det_ReportError(uint16 ModuleId, uint8 InstanceId, uint8 ApiId,
 	return 0;
 }
 
-void CanIf_TxConfirmation(PduIdType CanTxPduId)
-{
-
-}
-
 void CanIf_ControllerModeIndication( uint8 ControllerId, Can_ControllerStateType ControllerMode )
 {
 
@@ -77,6 +72,10 @@ void CanIfTxPduUserTriggerTransmit(PduIdType TxPduId, PduInfoType* PduInfoPtr)
 
 }
 
+void CanIfTxPduUserTriggerTransmitName(PduIdType TxPduId, PduInfoType* PduInfoPtr)
+{
+}
+
 void CanIfTxPduUserTxConfirmation(PduIdType TxPduId, Std_ReturnType result )
 {
 
@@ -87,36 +86,121 @@ void CanIfRxPduUserRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr
 
 }
 
-void PduR_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+void CanNm_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
 {
-
 }
 
-void CanNm_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+void CanNm_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
 {
-
 }
 
-void J1939Nm_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
-{
 
+void Xcp_CanIfTxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
 }
 
-void CanTp_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+void Xcp_CanIfRxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
 {
-
 }
 
-void Xcp_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
-{
 
-}
-void CanTSyn_CanIfRxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
+void PduR_CanIfTxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
 {
-
-}
-void J1939Tp_RxIndication(PduIdType RxPduId, const PduInfoType* PduInfoPtr)
-{
-
 }
 
+void PduR_CanIfRxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void J1939Tp_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void J1939Tp_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void J1939Nm_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void J1939Nm_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void Cdd_CanIfTxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void Cdd_CanIfRxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void CanTSyn_CanIfTxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void CanTSyn_CanIfRxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}
+
+
+void CanTp_TxConfirmation(
+PduIdType TxPduId,
+Std_ReturnType result
+)
+{
+}
+
+void CanTp_RxIndication(
+PduIdType RxPduId,
+const PduInfoType* PduInfoPtr
+)
+{
+}

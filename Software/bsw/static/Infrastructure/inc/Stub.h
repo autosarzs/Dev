@@ -39,4 +39,7 @@ typedef struct {
 	
 }CanTrcvChannelType;
 
+void CanIfTxPduUserTriggerTransmit(PduIdType TxPduId, PduInfoType* PduInfoPtr);
+void CanIfTxPduUserTriggerTransmitName(PduIdType, PduInfoType* );
+
 #endif /* STUB_H_ */
