@@ -89,51 +89,45 @@ Std_ReturnType CanIf_SetControllerMode(uint8 ControllerId, Can_ControllerStateTy
     /* [SWS_CANIF_00661] All CanIf API services other than CanIf_Init and CanIf_GetVersionInfo() shall not execute their  */
     /* normal operation and return E_NOT_OK unless the CanIf has been initialized with a preceding call of CanIf_Init().  */
     /**********************************************************************************************************************/
-#if(CANIF_DEV_ERROR_DETECT == STD_ON)
+
     if (CanIf_ModuleState == CANIF_UNINT)
     {
-        Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SET_CONTROLLER_MODE_SID, CANIF_E_UNINIT);
+        #if(CANIF_DEV_ERROR_DETECT == STD_ON)
+            Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SET_CONTROLLER_MODE_SID, CANIF_E_UNINIT);
+        #endif
     }
     else
     {
-
-    }
-#endif
-    /**********************************************************************************************************************/
-    /* [SWS_CANIF_00311] If parameter ControllerId of CanIf_SetControllerMode() has an invalid value, the CanIf           */
-    /* shall report development error code CANIF_E_PARAM_CONTROLLERID to the Det_ReportError service of the DET module,   */
-    /* when CanIf_SetControllerMode() is called.                                                                          */
-    /**********************************************************************************************************************/
-    #if(CANIF_DEV_ERROR_DETECT == STD_ON)
+        /**********************************************************************************************************************/
+        /* [SWS_CANIF_00311] If parameter ControllerId of CanIf_SetControllerMode() has an invalid value, the CanIf           */
+        /* shall report development error code CANIF_E_PARAM_CONTROLLERID to the Det_ReportError service of the DET module,   */
+        /* when CanIf_SetControllerMode() is called.                                                                          */
+        /**********************************************************************************************************************/
         if(ControllerId > CANIF_CONTROLLERS_NUM)
         {
-            Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SET_CONTROLLER_MODE_SID, CANIF_E_PARAM_CONTROLLERID);
+            #if(CANIF_DEV_ERROR_DETECT == STD_ON)
+                Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SET_CONTROLLER_MODE_SID, CANIF_E_PARAM_CONTROLLERID);
+            #endif
         }
         else
         {
-
+            /**********************************************************************************************************************/
+            /* [SWS_CANIF_00774] If parameter ControllerMode of CanIf_SetControllerMode() has an invalid value                    */
+            /* (not CAN_CS_STARTED, CAN_CS_SLEEP or CAN_CS_STOPPED), the CanIfshall report development error code                 */
+            /* CANIF_E_PARAM_CTRLMODE to the Det_ReportError service of the DET module, when CanIf_SetControllerMode() is called. */
+            /**********************************************************************************************************************/    
+            if(ControllerMode != CAN_CS_STARTED && ControllerMode != CAN_CS_SLEEP && ControllerMode != CAN_CS_STOPPED)
+            {
+                #if(CANIF_DEV_ERROR_DETECT == STD_ON)
+                    Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SET_CONTROLLER_MODE_SID, CANIF_E_PARAM_CTRLMODE);
+                #endif
+            }
+            else
+            {
+                u8DrvControllerID = CanIfCtrlCfgObj[ControllerId].CanIfCtrlCanCtrlRef->CanControllerId;
+                u8CanIFSetControllerModeRet = Can_SetControllerMode( u8DrvControllerID, ControllerMode );
+            }
         }
-    #endif
-    /**********************************************************************************************************************/
-    /* [SWS_CANIF_00774] If parameter ControllerMode of CanIf_SetControllerMode() has an invalid value                    */
-    /* (not CAN_CS_STARTED, CAN_CS_SLEEP or CAN_CS_STOPPED), the CanIfshall report development error code                 */
-    /* CANIF_E_PARAM_CTRLMODE to the Det_ReportError service of the DET module, when CanIf_SetControllerMode() is called. */
-    /**********************************************************************************************************************/
-    #if(CANIF_DEV_ERROR_DETECT == STD_ON)
-        if(ControllerMode != CAN_CS_STARTED && ControllerMode != CAN_CS_SLEEP && ControllerMode != CAN_CS_STOPPED)
-        {
-            Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SET_CONTROLLER_MODE_SID, CANIF_E_PARAM_CTRLMODE);
-
-        }
-        else
-        {
-
-        }
-    #endif
-        u8DrvControllerID = CanIfCtrlCfgObj[ControllerId].CanIfCtrlCanCtrlRef->CanControllerId;
-        u8CanIFSetControllerModeRet = Can_SetControllerMode( u8DrvControllerID, ControllerMode );
-
-
+    }
     return u8CanIFSetControllerModeRet;
-
 }
