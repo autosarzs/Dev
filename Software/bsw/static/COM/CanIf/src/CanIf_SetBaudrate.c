@@ -38,12 +38,12 @@
 #include "MemMap.h"
 #include "CanIf_Cbk.h"
 
-
+/* [SWS_CANIF_00871] */
 #if (CANIF_SET_BAUDRATE_API == STD_ON)
 Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID)
 {
 	static uint8 current_ControllerId = -1;
-	uint8 return_val;
+	Std_ReturnType return_val = E_OK;
 
 #if (CANIF_DEV_ERROR_DETECT == STD_ON) /* DET notifications */
 
@@ -51,7 +51,7 @@ Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID)
 		CanIf shall report development error code CANIF_E_PARAM_CONTROLLERID
 		to the Det_ReportError service of the DET module. c(SRS_BSW_00323)*/
 
-	if (ControllerId > USED_CONTROLLERS_NUMBER)
+	if (ControllerId >= USED_CONTROLLERS_NUMBER)
 	{
 		Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_SETBAUDRATE_API_ID,
 						CANIF_E_PARAM_CONTROLLERID);
@@ -72,9 +72,8 @@ Std_ReturnType CanIf_SetBaudrate(uint8 ControllerId, uint16 BaudRateConfigID)
 	{
 		current_ControllerId = ControllerId;
 
-		Can_SetBaudrate(ControllerId, BaudRateConfigID);
+		return_val = Can_SetBaudrate(ControllerId, BaudRateConfigID);
 		/* E_OK: Service request accepted, setting of (new) baud rate started */
-		return_val = E_OK;
 	}
 	return return_val;
 }

@@ -150,6 +150,7 @@ typedef uint8 CanIf_ServiceId;
 #define CANIF_DEINIT_API_ID                     ((CanIf_ServiceId)0x02)
 #define CANIF_RX_INDCIATION_API_ID              ((CanIf_ServiceId)0x14)
 #define CANIF_SET_CONTROLLER_MODE_SID           ((CanIf_ServiceId)0x03)
+#define CANIF_SETBAUDRATE_API_ID                ((CanIf_ServiceId)0x27)
 /*******************************************************************************
 * Service Name:       CanIf_GetControllerErrorState
 * Service ID[hex]:    0x4b
