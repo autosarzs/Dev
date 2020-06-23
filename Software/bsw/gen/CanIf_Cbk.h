@@ -2,7 +2,7 @@
 #define __CANIF_CBK_H__
 
 #include "Can_GeneralTypes.h"
-
+#include "ComStack_Types.h"
 /* Module Version 1.0.0 */
 #define CAN_IF_TYPES_SW_MAJOR_VERSION           (1U)
 #define CAN_IF_TYPES_SW_MINOR_VERSION           (0U)

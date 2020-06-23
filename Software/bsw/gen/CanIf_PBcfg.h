@@ -1,6 +1,6 @@
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                    **
+**  Copyright (C) AUTOSarZs olc (2019)		                                  **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -10,40 +10,31 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : Stub			                                      **
+**  FILENAME     : CanIf_PBcfg			                                      **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
-**  DATE         : 2020-01-08                                                 **
+**  DATE         : 2020-03-17                                                 **
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                                  **
+**  PLATFORM     : TIVA C		                                              **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                        **
+**  AUTHOR       : AUTOSarZs-DevTeam	                                      **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                            **
+**  VENDOR       : AUTOSarZs OLC	                                          **
 **                                                                            **
 **                                                                            **
-**  DESCRIPTION  : CAN Driver source file                                     **
+**  DESCRIPTION  : CAN Interface Post Build Header file                       **
 **                                                                            **
-**  SPECIFICATION(S) : Specification of CAN Driver, AUTOSAR Release 4.3.1     **
+**  SPECIFICATION(S) : Specification of CAN Inteface, AUTOSAR Release 4.3.1   **
 **                                                                            **
 **  MAY BE CHANGED BY USER : no                                               **
 **                                                                            **
 *******************************************************************************/
-#ifndef __STUB_H__
-#define __STUB_H__
+#ifndef CANIF_PBCFG_H_
+#define CANIF_PBCFG_H_
 
-typedef struct {
-	
-}CanTrcvChannelType;
 
-typedef uint32 EcuM_WakeupSourceType;
-#define ECUM_WKSOURCE_POWER                 ((EcuM_WakeupSourceType)0x00)
-#define ECUM_WKSOURCE_RESET                 ((EcuM_WakeupSourceType)0x01)
-#define ECUM_WKSOURCE_INTERNAL_RESET        ((EcuM_WakeupSourceType)0x02)
-#define ECUM_WKSOURCE_INTERNAL_WDG          ((EcuM_WakeupSourceType)0x03)
-#define ECUM_WKSOURCE_EXTERNAL_WDG          ((EcuM_WakeupSourceType)0x04)
 
-#endif /* STUB_H_ */
+#endif /* CANIF_PBCFG_H_ */

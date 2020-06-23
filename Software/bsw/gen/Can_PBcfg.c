@@ -2,7 +2,7 @@
  * Can_PBcfg.c
  *
  *  Created on: Sep 20, 2019
- *      Author: Sad MultiVerse
+ *      Author: AUTOSarZs-DevTeam
  */
 
 #include "Can.h"
@@ -24,7 +24,7 @@ CanControllerBaudrateConfig CanControllerBaudrateConf[] =
 };
 
 /*  Controller0 Configuration   */
-CanController CanControllerCfg[] =
+CanControllerType CanControllerCfg[] =
 {
     {
         0,                                  /*  Controller ID   */
@@ -43,7 +43,7 @@ CanController CanControllerCfg[] =
 /*Filter configuration for HOH0*/
 CanHwFilter CanHwFilterHTH[] =
 {
-    {   
+    {
         1,               /* ID  */
         0x7FF            /* Mask.not used as it's TRANSMIT HOH  */
     }
@@ -64,7 +64,7 @@ CanHwFilter CanHwFilterHRH[] =
 };
 
 /*Configuration FOR all used Hardware objects*/
-CanHardwareObject HOHObj[] =
+CanHardwareObjectType HOHObj[] =
 {
     {   FULL,                    /*  Can controller type for tm4c123gh6pm    */
         1,                       /*  Number of FIFO elements for this HOH    */
@@ -73,7 +73,7 @@ CanHardwareObject HOHObj[] =
         TRANSMIT,                /*  HOH Type    */
         &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
         &CanHwFilterHTH[0],      /*  Reference to the Filter configuartion   */
-         FALSE                   /*  Enable or diasble using polling */
+         TRUE                    /*  Enable or diasble using polling */
     },
     {
          FULL,                    /*  Can controller type for tm4c123gh6pm    */
@@ -83,7 +83,7 @@ CanHardwareObject HOHObj[] =
          RECEIVE,                 /*  HOH Type    */
          &CanControllerCfg[0],    /*  Reference to the controller this HOH belongs to */
          &CanHwFilterHRH[0],      /*  Reference to the Filter configuartion   */
-         FALSE                    /*  Enable or diasble using polling */
+         TRUE                     /*  Enable or diasble using polling */
     },
     {
          FULL,                    /*  Can controller type for tm4c123gh6pm    */
@@ -112,7 +112,7 @@ CanHardwareObject HOHObj[] =
 data for the CAN driver and SFR settings affecting all controllers. Furthermore it 
 contains pointers to controller configuration structures. The contents of the 
 initialization data structure are CAN hardware specific. */
-const Can_ConfigType Can_Configurations = 
+const Can_ConfigType Can_Configurations =
 {
     CanControllerCfg,
     HOHObj
