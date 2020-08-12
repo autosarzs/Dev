@@ -63,9 +63,9 @@ void EcuM_ValidateWakeupEvent(EcuM_WakeupSourceType sources);
 CanIfCtrlCfgType CanIfCtrlCfgObj[CANIF_CONTROLLERS_NUM] =
 {
 	{
-		STD_OFF,								/* Wakeup Support enabled or disabled */
-		(CanControllerType *)CanControllerCfg	/* Reference to CanController Configuration */
-	}
+		STD_OFF,			/* Wakeup Support enabled or disabled */
+		CanControllerCfg	/* Reference to CanController Configuration */
+	},
 };
 
 

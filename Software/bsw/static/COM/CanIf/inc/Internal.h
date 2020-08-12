@@ -17,6 +17,36 @@ typedef struct
    PduIdType      PduId;
 }str_MapCanIdToPdu ;
 
+/*
+ *  Type Description : Struct to help in sorting CanId according to smaller ranges  .
+ */
+typedef struct
+{
+    uint32 CanIdStart ;
+    uint32 PduId      ;
+    uint32 CanIdEnd   ;
+}PduSCanIdRangesType;
+
+/*
+ *  Type Description : Struct to Buffer received PDUs .
+ */
+#if(CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
+typedef struct
+{
+    uint8 Data[CANFD_DATA_LENGTH] ;
+    uint8* MetaDataPtr            ;
+    PduLengthType   SduLength ;
+}RxBufferType;
+
+extern RxBufferType RxBuffer[RX_CAN_L_PDU_NUM];
+
+#endif
+
+/*
+ *  Struct to help in sorting CanId according to smaller ranges  .
+ */
+extern PduSCanIdRangesType PduSCanIdRanges[RX_CAN_L_PDU_NUM] ;
+
 /*Array of struct to map CanIds to a specific L-PDU of type dynamic*/
 extern str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] ;
 

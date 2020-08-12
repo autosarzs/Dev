@@ -109,6 +109,10 @@ typedef uint8 Can_ServiceId;
 #define NULL_PTR  ((void*)0)
 
 #define MAX_DATA_LENGTH         (8U)
+
+#define MAX_STANDARD_CAN_ID     (0x07FFU)
+#define MAX_EXTENDED_CAN_ID     (0x1FFFFFFFU)
+
 //*****************************************************************************
 //  Enables / disables API Can_MainFunction_BusOff() for
 //  handling Busoff events in polling mode.

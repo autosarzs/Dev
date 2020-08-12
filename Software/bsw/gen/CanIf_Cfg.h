@@ -86,7 +86,7 @@
 //  false: detection and notification is disabled.
 //  Default Value: false
 //*****************************************************************************
-#define CANIF_DEV_ERROR_DETECT                 	STD_OFF
+#define CANIF_DEV_ERROR_DETECT                 	STD_ON
 
 //*****************************************************************************
 //  Enable support for dynamic ID handling using L-SDU MetaData.
@@ -133,7 +133,7 @@
 //  received L-SDU data.True: Enabled False: Disabled
 //  Default Value: False
 //*****************************************************************************
-#define CANIF_PUBLIC_READ_RX_PDU_DATA_API     	STD_OFF
+#define CANIF_PUBLIC_READ_RX_PDU_DATA_API     	STD_ON
 
 //*****************************************************************************
 //  Enables and disables the API for reading the notification status of

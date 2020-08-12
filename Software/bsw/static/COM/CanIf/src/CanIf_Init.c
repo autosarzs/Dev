@@ -47,9 +47,9 @@
 /*****************************************************************************************/
 /*                                   Include Component headres                           */
 /*****************************************************************************************/
-#include "../inc/CanIf.h"
+#include "CanIf.h"
 #include "Det.h"
-
+#include "Internal.h"
 /*****************************************************************************************/
 /*                                   Local Macro Definition                              */
 /*****************************************************************************************/
@@ -64,14 +64,6 @@
 /*****************************************************************************************/
 /*                                   Local types Definition                              */
 /*****************************************************************************************/
-/*
- *  Type Description : Struct to map CanIds to a specific L-PDU of type dynamic  .
- */
-typedef struct
-{
-   Can_IdType     CanId;
-   PduIdType      PduId;
-}str_MapCanIdToPdu ;
 
 
 /*****************************************************************************************/
@@ -92,10 +84,10 @@ extern CanIfHthCfgType*   CanIfHthCfgPtr   ;
 /*****************************************************************************************/
 
 /*Array of struct to map CanIds to a specific L-PDU of type dynamic*/
-str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] = {0};
+str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] ;
 
 /*Pointer to save configuration parameters set */
-const CanIf_ConfigType* CanIf_ConfigPtr = NULL_PTR;
+ CanIf_ConfigType* CanIf_ConfigPtr = NULL_PTR;
 
 /*Array to save each logical controller PDUs mode */
 CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] = {0};
@@ -106,39 +98,48 @@ CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
  /* Holding the CanIf controller current state. Initially, CAN_CS_STOPPED. */
  Can_ControllerStateType CanIf_ControllerState[CANIF_CONTROLLERS_NUM];
 
+ /* Struct to help in sorting CanId according to smaller ranges  .*/
+ PduSCanIdRangesType PduSCanIdRanges[RX_CAN_L_PDU_NUM] ;
+
+
+ /*To Buffer received PDUs */
+ #if(CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
+     RxBufferType RxBuffer[RX_CAN_L_PDU_NUM];
+ #endif
 /*****************************************************************************************/
 /*                                   Local Function Declaration                          */
 /*****************************************************************************************/
+ static void SortPdusCanIdsRanges(void);
 
 /*****************************************************************************************/
-/*                                   Local Function Definition                           */
+/*                                   global Function Definition                          */
 /*****************************************************************************************/
-
 
 /****************************************************************************************/
- /*    Function Description    : This service Initializes internal and external          */
- /*                              interfaces of the CAN Interface for the further         */
- /*                              processing                                              */
- /*    Parameter in            : ConfigPtr                                               */
- /*    Parameter inout         : none                                                    */
- /*    Parameter out           : none                                                    */
- /*    Return value            : none                                                    */
- /*    Requirement             : SWS_CANIF_00001                                          */
- /*    Notes                   : All underlying CAN controllers and transceivers still   */
- /*                              remain not operational.                                 */
- /*                              The service CanIf_Init() is called only by the EcuM.    */
- /*                              [SWS_CANIF_00857]  CanIf_Init() (see [SWS_CANIF_00085]) */
- /*                              initializes the CanIds of the dynamic Transmit L-PDUs   */
- /*                              with CanIfTxPduType to the value configured via         */
- /*                              CanIfTxPduCanId.                                        */
- /*                              [SWS_CANIF_00387]  When function CanIf_Init() is called,*/
- /*                              CanIf shall initialize every Transmit L-PDU Buffer      */
- /*                              assigned to CanIf.The requirement [SWS_CANIF_00387] is  */
- /*                              necessary to prevent transmission of old data after     */
- /*                              restart of the CAN Controller                           */
- /*                              [SWS_CANIF_00864]  During initialization CanIf shall    */
- /*                              switch every channel to CANIF_OFFLINE                   */
- /*****************************************************************************************/
+/*    Function Description    : This service Initializes internal and external          */
+/*                              interfaces of the CAN Interface for the further         */
+/*                              processing                                              */
+/*    Parameter in            : ConfigPtr                                               */
+/*    Parameter inout         : none                                                    */
+/*    Parameter out           : none                                                    */
+/*    Return value            : none                                                    */
+/*    Requirement             : SWS_CANIF_00001                                         */
+/*    Notes                   : All underlying CAN controllers and transceivers still   */
+/*                              remain not operational.                                 */
+/*                              The service CanIf_Init() is called only by the EcuM.    */
+/*                              [SWS_CANIF_00857]  CanIf_Init() (see [SWS_CANIF_00085]) */
+/*                              initializes the CanIds of the dynamic Transmit L-PDUs   */
+/*                              with CanIfTxPduType to the value configured via         */
+/*                              CanIfTxPduCanId.                                        */
+/*                              [SWS_CANIF_00387]  When function CanIf_Init() is called,*/
+/*                              CanIf shall initialize every Transmit L-PDU Buffer      */
+/*                              assigned to CanIf.The requirement [SWS_CANIF_00387] is  */
+/*                              necessary to prevent transmission of old data after     */
+/*                              restart of the CAN Controller                           */
+/*                              [SWS_CANIF_00864]  During initialization CanIf shall    */
+/*                              switch every channel to CANIF_OFFLINE                   */
+/****************************************************************************************/
+
  void CanIf_Init( const CanIf_ConfigType* ConfigPtr )
  {
      PduIdType counter ,DynamicPduCounter = 0;
@@ -156,7 +157,7 @@ CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
 	 else
 	 {
 		/*Save in the global config*/
-        CanIf_ConfigPtr = ConfigPtr ;
+        CanIf_ConfigPtr =(CanIf_ConfigType*) ConfigPtr ;
         /*
          * Initialize the link time containers
          */
@@ -240,6 +241,46 @@ CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
         {
             CanIf_ControllerState[counter] = CAN_CS_STOPPED ;
         }
+
+        /*  Sort CanIDs of ranges of each L-PDU according to the following requirement :
+
+            [SWS_CANIF_00852]  If a range is (partly) contained in another range, or a single
+            CanId is contained in a range, the software filter shall select the L-PDU based on the
+            following assumptions:
+            • A single CanId is always more relevant than a range.
+            • A smaller range is more relevant than a larger range.
+         */
+
+        /*1- Save CanIds ranges in the buffer to be sorted*/
+        for( counter=0; counter<RX_CAN_L_PDU_NUM; counter++)
+        {
+            /*Save lower CanId range*/
+            PduSCanIdRanges[counter].CanIdStart = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[counter].\
+                    CanIfRxPduCanIdRangeRef->CanIfRxPduCanIdRangeLowerCanId;
+
+            /*Save upper CanId range*/
+            PduSCanIdRanges[counter].CanIdEnd = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[counter].\
+                    CanIfRxPduCanIdRangeRef->CanIfRxPduCanIdRangeUpperCanId;
+
+            /*Save PDUId*/
+            PduSCanIdRanges[counter].PduId = counter;
+
+            /*Initialize receive buffer if configured*/
+
+            #if(CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
+                RxBuffer[counter].SduLength = 0;
+                RxBuffer[counter].MetaDataPtr=0;
+                for(uint32 Datacounter =0 ;Datacounter< CANFD_DATA_LENGTH; Datacounter++)
+                {
+                    /*Init all sduDataBuffer elements with 0 */
+                    RxBuffer[counter].Data[Datacounter] = 0;
+                }
+            #endif
+        }
+
+        /*Sort CanIds ranges*/
+        SortPdusCanIdsRanges();
+
         /*Set module to Ready state*/
         CanIf_ModuleState = CANIF_READY ;
 	} 
@@ -247,5 +288,57 @@ CanIf_ModuleStateType CanIf_ModuleState = CANIF_UNINT;
  
  
 
+/*****************************************************************************************/
+/*                                   Local Function Definition                           */
+/*****************************************************************************************/
 
+/****************************************************************************************/
+/*    Function Description    : This service To Sort CanId ranges of each PDU           */
+/*    Parameter in            : none                                                    */
+/*    Parameter inout         : none                                                    */
+/*    Parameter out           : none                                                    */
+/*    Return value            : none                                                    */
+/*    Requirement             : [SWS_CANIF_00852]  If a range is (partly) contained in  */
+/*                              another range, or a single                              */
+/*                              CanId is contained in a range, the software filter shall*/
+/*                              select the L-PDU based on the                           */
+/*                              following assumptions:                                  */
+/*                              • A single CanId is always more relevant than a range.  */
+/*                              • A smaller range is more relevant than a larger range. */
+/****************************************************************************************/
 
+static void SortPdusCanIdsRanges(void)
+{
+     uint32 i ,j ;
+
+     PduSCanIdRangesType TempRange ;
+
+     /*First sort start CanId Range of PDUs*/
+     for(i=0;i<RX_CAN_L_PDU_NUM;i++)
+     {
+         for(j=0;j<RX_CAN_L_PDU_NUM-1;j++)
+         {
+             if(PduSCanIdRanges[j+1].CanIdStart<PduSCanIdRanges[j].CanIdStart)
+             {
+                 TempRange= PduSCanIdRanges[j+1];
+                 PduSCanIdRanges[j+1] = PduSCanIdRanges[j] ;
+                 PduSCanIdRanges[j] = TempRange;
+             }
+         }
+     }
+
+     /*Sort Ranges in order to have smaller ranges or single CanID first */
+     for(i=0;i<RX_CAN_L_PDU_NUM;i++)
+     {
+         for(j=0;j<RX_CAN_L_PDU_NUM-1;j++)
+         {
+             if(PduSCanIdRanges[j+1].CanIdEnd<=PduSCanIdRanges[j].CanIdEnd &&
+                PduSCanIdRanges[j+1].CanIdStart>PduSCanIdRanges[j].CanIdStart)
+             {
+                 TempRange= PduSCanIdRanges[j+1];
+                 PduSCanIdRanges[j+1] = PduSCanIdRanges[j] ;
+                 PduSCanIdRanges[j] = TempRange;
+             }
+         }
+     }
+ }

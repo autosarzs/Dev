@@ -288,17 +288,12 @@ typedef uint8 CanIf_PduModeType;
 
 
 typedef struct {
-				/*This parameter abstracts from the CAN Driver specific parameter
-				Controller. Each controller of all connected CAN Driver modules shall
-				be assigned to one specific ControllerId of the CanIf. 
-				Range: 0..number of configured controllers of all CAN Driver modules	*/
-				uint8 CanIfCtrlId;
 
                 /* This parameter defines if a respective controller of the referenced CAN
                 Driver modules is queriable for wake up events (Supports Wakeup Event or not). For Each CanIf Controller */
                 boolean CanIfCtrlWakeupSupport;
 
-                /*This parameter references to the logical handle of the underlying CAN
+                  /*This parameter references to the logical handle of the underlying CAN
                 controller from the CAN Driver module to be served by the CAN
                 Interface module. The following parameters of CanController config
                 container shall be referenced by this link: CanControllerId, CanWakeupSourceRef
