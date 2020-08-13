@@ -51,7 +51,7 @@ extern PduSCanIdRangesType PduSCanIdRanges[RX_CAN_L_PDU_NUM] ;
 extern str_MapCanIdToPdu  MapCanIdToPdu[TX_CAN_L_PDU_NUM] ;
 
 /*Array to save each logical controller PDUs mode */
-extern CanIf_PduModeType CanIf_PduMode[CANIF_CONTROLLERS_NUM] ;
+extern CanIf_PduModeType CanIf_PduMode[] ;
 
 /* a pointer to the CanIf_ConfigType main Structure for the module to work on */
 extern CanIf_ConfigType* CanIf_ConfigPtr;
