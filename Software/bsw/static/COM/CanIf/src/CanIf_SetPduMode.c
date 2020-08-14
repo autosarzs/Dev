@@ -62,7 +62,7 @@ DET module. c(SRS_BSW_00323)*/
     if (ControllerId >= CANIF_CONTROLLERS_NUM )
     {
 #if ( CANIF_DEV_ERROR_DETECT == STD_ON )
-        Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CanIf_SetPduMode, CANIF_E_PARAM_CONTROLLERID );
+        Det_ReportError(CANIF_MODULE_ID,CANIF_INSTANCE_ID , CANIF_SET_PDU_MODE_ID, CANIF_E_PARAM_CONTROLLERID );
 #endif
         Loc_CanIf_SetPduMode_Ret = E_NOT_OK;
     }
@@ -75,7 +75,7 @@ to the Det_ReportError service of the DET module. c(SRS_BSW_00323)*/
         if (PduModeRequest >= MAX_PDU_REQUEST  )
         {
     #if ( CANIF_DEV_ERROR_DETECT == STD_ON )
-            Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CanIf_SetPduMode, CANIF_E_PARAM_PDU_MODE );
+            Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANCE_ID , CANIF_SET_PDU_MODE_ID, CANIF_E_PARAM_PDU_MODE );
     #endif
             Loc_CanIf_SetPduMode_Ret = E_NOT_OK;
         }

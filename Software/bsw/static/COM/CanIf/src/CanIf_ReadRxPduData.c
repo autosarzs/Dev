@@ -32,19 +32,12 @@
  **  MAY BE CHANGED BY USER x: no                                               **
  **                                                                            **
  *******************************************************************************/
-#include "../inc/CanIf.h"
+#include "CanIf.h"
+#include "Det.h"
+#include "MemMap.h"
+#include "CanIf_Cbk.h"
 #include "Internal.h"
 
-/*
- *  Type Description : Struct to save recieved  PDUs (in case of enable CanIf_ReadRxPduData API un configuration) .
- */
-typedef struct
-{
-   PduInfoType *     PduInfoPtr;
-   PduIdType      PduId;
-}str_MapRXPdu ;
-
-static str_MapRXPdu  MapRXPdu[RX_CAN_L_PDU_NUM] = {0};
 
 /*
  * [SWS_CANIF_00330] Configuration of CanIf_ReadRxPduData(): This API can be enabled or disabled at pre-compile time 
@@ -57,7 +50,7 @@ Std_ReturnType CanIf_ReadRxPduData(PduIdType CanIfRxSduId,PduInfoType*CanIfRxInf
     Std_ReturnType Loc_CanIf_ReadRxPduData_Ret =E_OK ;
     Can_ControllerStateType Loc_Controller_Mode=0;
     uint8 Loc_Controller_Id;
-    uint8 PDUCounter=0;
+    uint8 counter=0;
     
 	/*
 	 * [SWS_CANIF_00324] The function CanIf_ReadRxPduData() shall not accept a request and return E_NOT_OK, if the 
@@ -82,7 +75,7 @@ Std_ReturnType CanIf_ReadRxPduData(PduIdType CanIfRxSduId,PduInfoType*CanIfRxInf
 			if (CanIfRxSduId >= RX_CAN_L_PDU_NUM )
 			{
 			#if ( CANIF_DEV_ERROR_DETECT == STD_ON )
-				Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CANIF_READ_RX_PDU_DATA_API_ID,CANIF_E_INVALID_RXPDUID );
+				Det_ReportError(CANIF_MODULE_ID,CANIF_INSTANCE_ID , CANIF_READ_RX_PDU_DATA_API_ID,CANIF_E_INVALID_RXPDUID );
 			#endif
 				Loc_CanIf_ReadRxPduData_Ret=E_NOT_OK;
 
@@ -97,7 +90,7 @@ Std_ReturnType CanIf_ReadRxPduData(PduIdType CanIfRxSduId,PduInfoType*CanIfRxInf
 				if (CanIfRxInfoPtr== NULL)
 				{
 				#if ( CANIF_DEV_ERROR_DETECT == STD_ON )
-					Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CANIF_READ_RX_PDU_DATA_API_ID,CanIF_E_PARAM_POINTER );
+				    Det_ReportError(CANIF_MODULE_ID, CANIF_INSTANCE_ID, CANIF_RX_INDCIATION_API_ID,CANIF_E_PARAM_POINTER);
 				#endif
 					Loc_CanIf_ReadRxPduData_Ret=E_NOT_OK;
 

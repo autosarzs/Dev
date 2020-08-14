@@ -158,7 +158,7 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 	CanIdTypeType CanIdType = 0;
 	CanHandleTypeType CanHandleType = 0 ;
 	PduInfoType UpperLayerPduInfo ;
-	CanIfCtrlCfgType* CanIfController ;
+	CanIfCtrlCfgType* CanIfController = NULL_PTR ;
 	uint8 ControllerID = 0 ;
 	uint8 Data[CANFD_DATA_LENGTH];
 
