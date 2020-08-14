@@ -32,8 +32,8 @@
  **  MAY BE CHANGED BY USER x: no                                               **
  **                                                                            **
  *******************************************************************************/
-#include "../inc/CanIf.h"
-#include "../inc/Internal.h"
+#include "CanIf.h"
+#include "Internal.h"
 
 /*
  *  Type Description : Struct to save recieved  PDUs (in case of enable CanIf_ReadRxPduData API un configuration) .
@@ -61,7 +61,7 @@ DET module. c(SRS_BSW_00323)*/
 
     if (ControllerId >= CANIF_CONTROLLERS_NUM )
     {
-#if ( DevError == STD_ON )
+#if ( CANIF_DEV_ERROR_DETECT == STD_ON )
         Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CanIf_SetPduMode, CANIF_E_PARAM_CONTROLLERID );
 #endif
         Loc_CanIf_SetPduMode_Ret = E_NOT_OK;
@@ -74,7 +74,7 @@ to the Det_ReportError service of the DET module. c(SRS_BSW_00323)*/
 
         if (PduModeRequest >= MAX_PDU_REQUEST  )
         {
-    #if ( DevError == STD_ON )
+    #if ( CANIF_DEV_ERROR_DETECT == STD_ON )
             Det_ReportError (CANIF_MODULE_ID,CANIF_INSTANSE_ID , CanIf_SetPduMode, CANIF_E_PARAM_PDU_MODE );
     #endif
             Loc_CanIf_SetPduMode_Ret = E_NOT_OK;

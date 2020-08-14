@@ -158,6 +158,8 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 	CanIdTypeType CanIdType = 0;
 	CanHandleTypeType CanHandleType = 0 ;
 	PduInfoType UpperLayerPduInfo ;
+	CanIfCtrlCfgType* CanIfController ;
+	uint8 ControllerID = 0 ;
 	uint8 Data[CANFD_DATA_LENGTH];
 
 	
@@ -175,9 +177,23 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 	        /*Get HOH type BASIC or FULL*/
 	        CanHandleType = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfInitHohCfgRef->CanIfHrhCfgRef[counter].\
                     CanIfHrhIdSymRef->CanHandleType ;
+	        CanIfController = CanIf_ConfigPtr->CanIfInitCfgRef->CanIfInitHohCfgRef->CanIfHrhCfgRef[counter].\
+	                CanIfHrhCanCtrlIdRef;
+
 	        break ;
 	    }
 	}
+
+	for(counter=0;counter<CANIF_CONTROLLERS_NUM;counter++)
+	    {
+	        /*Get CanIf Cotroller ID */
+	        if(&CanIfCtrlCfgObj[counter] == CanIfController)
+	        {
+	            ControllerID = counter;
+	            break ;
+	        }
+	    }
+
 
 	/*  [SWS_CANIF_00419]  If parameter PduInfoPtr or Mailbox of
         CanIf_RxIndication() has an invalid value, CanIf shall report development
@@ -225,24 +241,68 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
 	}
     else
     {
-        /*1-Software Filtering (only BasicCAN), if configured */
-        if(CanIf_SW_Filter(CanIfHrh , Mailbox->CanId)== E_OK || CanHandleType == FULL)
+        /*  [SWS_CANIF_00073]  For Physical Channels switching to CANIF_OFFLINE
+            mode CanIf shall:
+            prevent invocation of receive indication callback services of the upper layer modules,
+         */
+        if(CanIf_PduMode[ControllerID]!= CANIF_OFFLINE)
         {
-            /*Get PDUId*/
-            if(CanIf_PDULinearSearch(CanIfHrh, Mailbox->CanId ,&PduId) == E_OK)
+            /*1-Software Filtering (only BasicCAN), if configured */
+            if(CanIf_SW_Filter(CanIfHrh , Mailbox->CanId)== E_OK || CanHandleType == FULL)
             {
-                /*2-Data Length Check, if configured*/
+                /*Get PDUId*/
+                if(CanIf_PDULinearSearch(CanIfHrh, Mailbox->CanId ,&PduId) == E_OK)
+                {
+                    /*2-Data Length Check, if configured*/
 
-                /*Hint: The Data Length Check can be enabled or disabled globally by CanIf configuration
-                  (see CanIfPrivateDataLengthCheck) for all used CanDrvs.
-                  [SWS_CANIF_00168] If the Data Length Check rejects a received LPDU
-                  (see [SWS_CANIF_00026]), CanIf shall report runtime error code
-                  CANIF_E_INVALID_DATA_LENGTH to the Det_ReportRuntimeError() service
-                  of the DET module.
-                 */
-                #if (CANIF_PRIVATE_DATA_LENGTH_CHECK == STD_ON)
-                    if(PduInfoPtr->SduLength == CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduDataLength )
-                    {
+                    /*Hint: The Data Length Check can be enabled or disabled globally by CanIf configuration
+                      (see CanIfPrivateDataLengthCheck) for all used CanDrvs.
+                      [SWS_CANIF_00168] If the Data Length Check rejects a received LPDU
+                      (see [SWS_CANIF_00026]), CanIf shall report runtime error code
+                      CANIF_E_INVALID_DATA_LENGTH to the Det_ReportRuntimeError() service
+                      of the DET module.
+                     */
+                    #if (CANIF_PRIVATE_DATA_LENGTH_CHECK == STD_ON)
+                        if(PduInfoPtr->SduLength == CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduDataLength )
+                        {
+                            /*3- buffer received L-SDU if configured*/
+                            #if(CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
+                               if(CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduReadData == TRUE)
+                               {
+                                    RxBuffer[PduId].MetaDataPtr = PduInfoPtr->MetaDataPtr;
+                                    RxBuffer[PduId].SduLength   = PduInfoPtr->SduLength ;
+                                    for(counter=0;counter< PduInfoPtr->SduLength;counter++)
+                                    {
+                                        RxBuffer[PduId].Data[counter] = PduInfoPtr->SduDataPtr[counter];
+                                    }
+
+                                    UpperLayerPduInfo.MetaDataPtr   = RxBuffer[PduId].MetaDataPtr;
+                                    UpperLayerPduInfo.SduLength     = RxBuffer[PduId].SduLength;
+                                    UpperLayerPduInfo.SduDataPtr    = RxBuffer[PduId].MetaDataPtr;
+
+
+                               }
+                            #endif
+
+                               if(CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduReadData == FALSE)
+                               {
+                                    UpperLayerPduInfo.MetaDataPtr = PduInfoPtr->MetaDataPtr;
+                                    UpperLayerPduInfo.SduLength= PduInfoPtr->SduLength ;
+                                    for(counter=0;counter< PduInfoPtr->SduLength;counter++)
+                                    {
+                                        Data[counter]= PduInfoPtr->SduDataPtr[counter];
+                                        UpperLayerPduInfo.SduDataPtr= Data ;
+                                    }
+                               }
+
+                            /*4- call upper layer receive indication callback service, if configured.*/
+                            if(CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduUserRxIndicationName!=NULL_PTR)
+                            {
+                                CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].\
+                                CanIfRxPduUserRxIndicationName(PduId,(const PduInfoType*)&UpperLayerPduInfo);
+                            }
+                        }
+                    #else
                         /*3- buffer received L-SDU if configured*/
                         #if(CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
                            if(CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduReadData == TRUE)
@@ -254,18 +314,14 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
                                     RxBuffer[PduId].Data[counter] = PduInfoPtr->SduDataPtr[counter];
                                 }
 
-                                UpperLayerPduInfo.MetaDataPtr   = RxBuffer[PduId].MetaDataPtr;
-                                UpperLayerPduInfo.SduLength     = RxBuffer[PduId].SduLength;
-                                UpperLayerPduInfo.SduDataPtr    = RxBuffer[PduId].MetaDataPtr;
-
-
+                                UpperLayerPduInfo = RxBuffer[PduId];
                            }
                         #endif
 
                            if(CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduReadData == FALSE)
                            {
                                 UpperLayerPduInfo.MetaDataPtr = PduInfoPtr->MetaDataPtr;
-                                UpperLayerPduInfo.SduLength= PduInfoPtr->SduLength ;
+                                UpperLayerPduInfo.SduLength PduInfoPtr->SduLength ;
                                 for(counter=0;counter< PduInfoPtr->SduLength;counter++)
                                 {
                                     Data[counter]= PduInfoPtr->SduDataPtr[counter];
@@ -277,43 +333,10 @@ void CanIf_RxIndication(const Can_HwType *Mailbox, const PduInfoType *PduInfoPtr
                         if(CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduUserRxIndicationName!=NULL_PTR)
                         {
                             CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].\
-                            CanIfRxPduUserRxIndicationName(PduId,(const PduInfoType*)&UpperLayerPduInfo);
+                            CanIfRxPduUserRxIndicationName(PduId,(const PduInfoType*) UpperLayerPduInfo);
                         }
-                    }
-                #else
-                    /*3- buffer received L-SDU if configured*/
-                    #if(CANIF_PUBLIC_READ_RX_PDU_DATA_API == STD_ON)
-                       if(CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduReadData == TRUE)
-                       {
-                            RxBuffer[PduId].MetaDataPtr = PduInfoPtr->MetaDataPtr;
-                            RxBuffer[PduId].SduLength   = PduInfoPtr->SduLength ;
-                            for(counter=0;counter< PduInfoPtr->SduLength;counter++)
-                            {
-                                RxBuffer[PduId].Data[counter] = PduInfoPtr->SduDataPtr[counter];
-                            }
-
-                            UpperLayerPduInfo = RxBuffer[PduId];
-                       }
                     #endif
-
-                       if(CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduReadData == FALSE)
-                       {
-                            UpperLayerPduInfo.MetaDataPtr = PduInfoPtr->MetaDataPtr;
-                            UpperLayerPduInfo.SduLength PduInfoPtr->SduLength ;
-                            for(counter=0;counter< PduInfoPtr->SduLength;counter++)
-                            {
-                                Data[counter]= PduInfoPtr->SduDataPtr[counter];
-                                UpperLayerPduInfo.SduDataPtr= Data ;
-                            }
-                       }
-
-                    /*4- call upper layer receive indication callback service, if configured.*/
-                    if(CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].CanIfRxPduUserRxIndicationName!=NULL_PTR)
-                    {
-                        CanIf_ConfigPtr->CanIfInitCfgRef->CanIfRxPduCfgRef[PduId].\
-                        CanIfRxPduUserRxIndicationName(PduId,(const PduInfoType*) UpperLayerPduInfo);
-                    }
-                #endif
+                }
             }
         }
     }
