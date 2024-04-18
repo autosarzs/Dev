@@ -1,6 +1,6 @@
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                    **
+**  Copyright (C) AUTOSarZs olc (2019)                                        **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -10,7 +10,7 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : Dio_Cfg.h         		                                      **
+**  FILENAME     : Dio_Cfg.h                                                  **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
@@ -18,11 +18,11 @@
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                                  **
+**  PLATFORM     : TIVA C                                                     **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                        **
+**  AUTHOR       : AUTOSarZs-DevTeam                                          **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                            **
+**  VENDOR       : AUTOSarZs OLC                                              **
 **                                                                            **
 **                                                                            **
 **  DESCRIPTION  : DIO Driver config header file                              **

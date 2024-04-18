@@ -1,6 +1,6 @@
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                    **
+**  Copyright (C) AUTOSarZs olc (2019)                                        **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -10,7 +10,7 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : Dio_Lcfg.c       			                                    **
+**  FILENAME     : Dio_Lcfg.c                                                 **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
@@ -18,11 +18,11 @@
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                                  **
+**  PLATFORM     : TIVA C                                                     **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                        **
+**  AUTHOR       : AUTOSarZs-DevTeam                                          **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                            **
+**  VENDOR       : AUTOSarZs OLC                                              **
 **                                                                            **
 **                                                                            **
 **  DESCRIPTION  : DIO Driver config source file                              **
@@ -37,6 +37,11 @@
 /*                              Include headers                                */
 /*******************************************************************************/
 #include "Dio.h"
+#include "Dio_MemMap.h"
+
+/*******************************************************************************/
+/*                              Static Configurations                          */
+/*******************************************************************************/
 
 /*Array Of Channels Defined By User*/
 Dio_ConfiguredChannel channels[DIO_CONFIGURED_CHANNLES] = {

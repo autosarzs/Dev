@@ -10,7 +10,7 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FOLDERNAME     : DIO                                                      **
+**  FILENAME     : SchM_Dio.h                                                 **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
@@ -18,17 +18,24 @@
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C TC431x                                              **
+**  PLATFORM     : TIVA C                                                     **
 **                                                                            **
 **  AUTHOR       : AUTOSarZs-DevTeam                                          **
 **                                                                            **
 **  VENDOR       : AUTOSarZs OLC                                              **
 **                                                                            **
 **                                                                            **
-**  DESCRIPTION  : DIO Driver source file                                     **
+**  DESCRIPTION  : DIO Driver Schm file                                       **
 **                                                                            **
 **  SPECIFICATION(S) : Specification of DIO Driver, AUTOSAR Release 4.3.1     **
 **                                                                            **
 **  MAY BE CHANGED BY USER : no                                               **
 **                                                                            **
 *******************************************************************************/
+
+#ifndef DIO_SCHM_H_
+#define DIO_SCHM_H_
+
+#endif /* SCHM */
+
+

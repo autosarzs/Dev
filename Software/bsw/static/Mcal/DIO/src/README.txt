@@ -1,6 +1,6 @@
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                    **
+**  Copyright (C) AUTOSarZs olc (2019)                                        **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -10,7 +10,7 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FOLDERNAME     : DIO         			                                        **
+**  FOLDERNAME     : DIO                                                      **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
@@ -20,9 +20,9 @@
 **                                                                            **
 **  PLATFORM     : TIVA C TC431x                                              **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                        **
+**  AUTHOR       : AUTOSarZs-DevTeam                                          **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                            **
+**  VENDOR       : AUTOSarZs OLC                                              **
 **                                                                            **
 **                                                                            **
 **  DESCRIPTION  : DIO Driver source file                                     **

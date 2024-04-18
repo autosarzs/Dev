@@ -1,6 +1,6 @@
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                    **
+**  Copyright (C) AUTOSarZs olc (2019)                                        **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -10,7 +10,7 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : Dio.c         			                                        **
+**  FILENAME     : Dio.c                                                      **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
@@ -18,11 +18,11 @@
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                                  **
+**  PLATFORM     : TIVA C                                                     **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                        **
+**  AUTHOR       : AUTOSarZs-DevTeam                                          **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                            **
+**  VENDOR       : AUTOSarZs OL                                               **
 **                                                                            **
 **                                                                            **
 **  DESCRIPTION  : DIO Driver source file                                     **
@@ -38,13 +38,24 @@
 /*******************************************************************************/
 
 #include "Dio.h"
+#include "Dio_MemMap.h"
+#include "SchM_Dio.h"
+#ifdef DIO_DEV_ERROR_DETECT
+#include "Det.h"
+#endif
 
 /*******************************************************************************/
 /*                       global variables                                      */
 /*******************************************************************************/
 
-/*Extern Channel Array Of port bases*/
-extern const Dio_Type *portBaseAddresses[];
+/* Define the base addresses of the ports */
+volatile Dio_Type *portBaseAddresses[] = {
+    PORTA,
+    PORTB,
+    PORTC,
+    PORTD,
+    PORTE,
+    PORTF};
 
 /*Extern Channel Array Of Structure*/
 extern Dio_ConfiguredChannel channels[DIO_CONFIGURED_CHANNLES];
@@ -61,7 +72,7 @@ extern Dio_ConfiguredChannel channels[DIO_CONFIGURED_CHANNLES];
  * @param PortId The ID of the port.
  * @return The base address of the port, or NULL if the port ID is invalid.
  */
-inline const Dio_Type *getPortBaseAddress(Dio_AvailablePorts PortId)
+inline volatile Dio_Type *getPortBaseAddress(Dio_AvailablePorts PortId)
 {
   if (PortId >= PORTA_ID && PortId <= PORTF_ID)
   {
@@ -98,7 +109,7 @@ Dio_LevelType Dio_ReadChannel(Dio_ChannelType ChannelId)
   else
   {
     Dio_AvailablePorts PortId = channels[ChannelId].Port;
-    const Dio_Type *portBase = getPortBaseAddress(PortId);
+    const volatile Dio_Type *portBase = getPortBaseAddress(PortId);
     if (portBase == NULL)
     {
       /* Do Nothing */
@@ -135,7 +146,7 @@ void Dio_WriteChannel(Dio_ChannelType ChannelId, Dio_LevelType Level)
   else
   {
     Dio_AvailablePorts PortId = channels[ChannelId].Port;
-    const Dio_Type *portBase = getPortBaseAddress(PortId);
+    volatile Dio_Type *portBase = getPortBaseAddress(PortId);
     if (portBase == NULL)
     {
       /* Do Nothing */
@@ -172,7 +183,7 @@ void Dio_WriteChannel(Dio_ChannelType ChannelId, Dio_LevelType Level)
  */
 Dio_PortLevelType Dio_ReadPort(Dio_PortType PortId)
 {
-  Dio_PortLevelType portData;
+  Dio_PortLevelType portData = 0;
 
   if (PortId >= PORTA_ID && PortId <= PORTF_ID)
   {
@@ -185,7 +196,7 @@ Dio_PortLevelType Dio_ReadPort(Dio_PortType PortId)
   }
   else
   {
-    const Dio_Type *portBase = getPortBaseAddress(PortId);
+    const volatile Dio_Type *portBase = getPortBaseAddress(PortId);
     portData = portBase->DATA;
   }
 
@@ -215,7 +226,7 @@ void Dio_WritePort(Dio_PortType PortId, Dio_PortLevelType Level)
   }
   else
   {
-    Dio_Type *portBase = getPortBaseAddress(PortId);
+    volatile Dio_Type *portBase = getPortBaseAddress(PortId);
     portBase->DATA = Level;
   }
 }
@@ -275,8 +286,6 @@ Dio_PortLevelType Dio_ReadChannelGroup(const Dio_ChannelGroupType *ChannelGroupI
  */
 void Dio_WriteChannelGroup(const Dio_ChannelGroupType *ChannelGroupIdPtr, Dio_PortLevelType Level)
 {
-  Dio_PortLevelType maskedData = 0;
-
   // Check if the pointer is valid
   if (ChannelGroupIdPtr == NULL)
   {
@@ -299,7 +308,7 @@ void Dio_WriteChannelGroup(const Dio_ChannelGroupType *ChannelGroupIdPtr, Dio_Po
   else
   {
     // Get the base address of the port
-    Dio_Type *portBase = getPortBaseAddress(ChannelGroupIdPtr->port);
+    volatile Dio_Type *portBase = getPortBaseAddress(ChannelGroupIdPtr->port);
 
     // Perform masking and shifting to align with LSB
     Dio_PortLevelType maskedData = (Level >> ChannelGroupIdPtr->offset) & ChannelGroupIdPtr->mask;

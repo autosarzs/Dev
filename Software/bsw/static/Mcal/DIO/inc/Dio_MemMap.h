@@ -1,6 +1,6 @@
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                    **
+**  Copyright (C) AUTOSarZs olc (2019)                                        **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -10,7 +10,7 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : Dio_Regs.h        			                                    **
+**  FILENAME     : Dio_MemMap.h                                               **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
@@ -18,14 +18,14 @@
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                                  **
+**  PLATFORM     : TIVA C                                                     **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                        **
+**  AUTHOR       : AUTOSarZs-DevTeam                                          **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                            **
+**  VENDOR       : AUTOSarZs OLC                                              **
 **                                                                            **
 **                                                                            **
-**  DESCRIPTION  : DIO Register Description for Tiva C                        **
+**  DESCRIPTION  : DIO Memory Mapping for Tiva C                              **
 **                                                                            **
 **  SPECIFICATION(S) : Specification of DIO Driver, AUTOSAR Release 4.3.1     **
 **                                                                            **
@@ -33,8 +33,8 @@
 **                                                                            **
 *******************************************************************************/
 
-#ifndef DIO_REGS_H_
-#define DIO_REGS_H_
+#ifndef DIO_MEM_MAP_H_
+#define DIO_MEM_MAP_H_
 
 /*******************************************************************************/
 /*                              Include headers                                */
@@ -92,13 +92,5 @@ typedef struct
 #define PORTE ((Dio_Type *)0x40024000)
 #define PORTF ((Dio_Type *)0x40025000)
 
-/* Define the base addresses of the ports */
-volatile const Dio_Type *portBaseAddresses[] = {
-    PORTA,
-    PORTB,
-    PORTC,
-    PORTD,
-    PORTE,
-    PORTF};
 
-#endif /* DIO_REGS_H_ */
+#endif /* DIO_MEM_MAP_H_ */
