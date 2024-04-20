@@ -37,20 +37,6 @@
 #ifndef DIO_CFG_H_
 #define DIO_CFG_H_
 
-/*
- * Module Version 1.0.0
- */
-#define DIO_CFG_SW_MAJOR_VERSION              (1U)
-#define DIO_CFG_SW_MINOR_VERSION              (0U)
-#define DIO_CFG_SW_PATCH_VERSION              (0U)
-
-/*
- * AUTOSAR Version 4.3.1
- */
-#define DIO_CFG_AR_RELEASE_MAJOR_VERSION     (4U)
-#define DIO_CFG_AR_RELEASE_MINOR_VERSION     (3U)
-#define DIO_CFG_AR_RELEASE_PATCH_VERSION     (1U)
-
 /* Pre-compile option for Development Error Detect */
 #define DIO_DEV_ERROR_DETECT                (STD_ON)
 

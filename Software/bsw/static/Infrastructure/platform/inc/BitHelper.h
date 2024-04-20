@@ -41,6 +41,7 @@
 #define TOGGLE_BIT(x,i) x^=(1<<(i))
 #define GET_BIT(x,i) (x>>(i))&1
 #define CLR_BITS(x,i,Mask) x&=~(Mask<<(i))
+#define SET_BITS(x,i,Mask) x|=(Mask<<(i))
 
 #define BYTE_OFFSET(REG_ADD) (REG_ADD - 0x40000000)
 #define BIT_WORD_OFFSET(REG_ADD,BIT_NUM) (( BYTE_OFFSET(REG_ADD)* 32) + (BIT_NUM * 4)) 

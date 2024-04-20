@@ -41,6 +41,7 @@
 /*******************************************************************************/
 
 #include "Std_Types.h"
+#include "Port.h"
 #include "Dio_Cfg.h"
 #include "BitHelper.h"
 
@@ -50,6 +51,21 @@
 
 #define DIO_MODULE_ID (120)
 #define DIO_INSTANCE_ID (0)
+
+/*
+ * Module Version 1.0.0
+ */
+#define DIO_CFG_SW_MAJOR_VERSION              (1U)
+#define DIO_CFG_SW_MINOR_VERSION              (0U)
+#define DIO_CFG_SW_PATCH_VERSION              (0U)
+
+/*
+ * AUTOSAR Version 4.3.1
+ */
+#define DIO_CFG_AR_RELEASE_MAJOR_VERSION     (4U)
+#define DIO_CFG_AR_RELEASE_MINOR_VERSION     (3U)
+#define DIO_CFG_AR_RELEASE_PATCH_VERSION     (1U)
+
 
 /* Service ID for DIO read Channel */
 #define DIO_READ_CHANNEL_SID (uint8)0x00
@@ -175,16 +191,6 @@ typedef enum
   CHANNEL_43,
 } Dio_AvailableChannels;
 
-/*Defines Available Ports*/
-typedef enum
-{
-  PORTA_ID,
-  PORTB_ID,
-  PORTC_ID,
-  PORTD_ID,
-  PORTE_ID,
-  PORTF_ID
-} Dio_AvailablePorts;
 
 /*Struct To Represent channel configuration*/
 typedef struct
@@ -192,7 +198,7 @@ typedef struct
   /*Defines ID Of Channel*/
   Dio_AvailableChannels Channel_ID;
   /*Defines Which Port*/
-  Dio_AvailablePorts Port;
+  Port_AvailablePorts Port;
   /*Which pin in port*/
   Dio_ChannelType Channel;
   /*input or Output*/

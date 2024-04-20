@@ -38,7 +38,7 @@
 /*******************************************************************************/
 
 #include "Dio.h"
-#include "Dio_MemMap.h"
+#include "Port_MemMap.h"
 #include "SchM_Dio.h"
 #ifdef DIO_DEV_ERROR_DETECT
 #include "Det.h"
@@ -48,18 +48,11 @@
 /*                       global variables                                      */
 /*******************************************************************************/
 
-/* Define the base addresses of the ports */
-volatile Dio_Type *portBaseAddresses[] = {
-    PORTA,
-    PORTB,
-    PORTC,
-    PORTD,
-    PORTE,
-    PORTF};
-
 /*Extern Channel Array Of Structure*/
 extern Dio_ConfiguredChannel channels[DIO_CONFIGURED_CHANNLES];
 
+/* will be defined in Port driver */
+extern volatile Port_Type *portBaseAddresses[];
 /*******************************************************************************/
 /*                       Static Functions                                      */
 /*******************************************************************************/
@@ -72,7 +65,7 @@ extern Dio_ConfiguredChannel channels[DIO_CONFIGURED_CHANNLES];
  * @param PortId The ID of the port.
  * @return The base address of the port, or NULL if the port ID is invalid.
  */
-inline volatile Dio_Type *getPortBaseAddress(Dio_AvailablePorts PortId)
+inline volatile Port_Type *getPortBaseAddress(Port_AvailablePorts PortId)
 {
   if (PortId >= PORTA_ID && PortId <= PORTF_ID)
   {
@@ -84,6 +77,10 @@ inline volatile Dio_Type *getPortBaseAddress(Dio_AvailablePorts PortId)
     return NULL;
   }
 }
+
+/*******************************************************************************/
+/*                       Module Interfaces                                     */
+/*******************************************************************************/
 
 /**
  * @brief Reads the level of the specified DIO channel.
@@ -108,8 +105,8 @@ Dio_LevelType Dio_ReadChannel(Dio_ChannelType ChannelId)
   }
   else
   {
-    Dio_AvailablePorts PortId = channels[ChannelId].Port;
-    const volatile Dio_Type *portBase = getPortBaseAddress(PortId);
+    Port_AvailablePorts PortId = channels[ChannelId].Port;
+    const volatile Port_Type *portBase = getPortBaseAddress(PortId);
     if (portBase == NULL)
     {
       /* Do Nothing */
@@ -145,8 +142,8 @@ void Dio_WriteChannel(Dio_ChannelType ChannelId, Dio_LevelType Level)
   }
   else
   {
-    Dio_AvailablePorts PortId = channels[ChannelId].Port;
-    volatile Dio_Type *portBase = getPortBaseAddress(PortId);
+    Port_AvailablePorts PortId = channels[ChannelId].Port;
+    volatile Port_Type *portBase = getPortBaseAddress(PortId);
     if (portBase == NULL)
     {
       /* Do Nothing */
@@ -196,7 +193,7 @@ Dio_PortLevelType Dio_ReadPort(Dio_PortType PortId)
   }
   else
   {
-    const volatile Dio_Type *portBase = getPortBaseAddress(PortId);
+    const volatile Port_Type *portBase = getPortBaseAddress(PortId);
     portData = portBase->DATA;
   }
 
@@ -226,7 +223,7 @@ void Dio_WritePort(Dio_PortType PortId, Dio_PortLevelType Level)
   }
   else
   {
-    volatile Dio_Type *portBase = getPortBaseAddress(PortId);
+    volatile Port_Type *portBase = getPortBaseAddress(PortId);
     portBase->DATA = Level;
   }
 }
@@ -308,7 +305,7 @@ void Dio_WriteChannelGroup(const Dio_ChannelGroupType *ChannelGroupIdPtr, Dio_Po
   else
   {
     // Get the base address of the port
-    volatile Dio_Type *portBase = getPortBaseAddress(ChannelGroupIdPtr->port);
+    volatile Port_Type *portBase = getPortBaseAddress(ChannelGroupIdPtr->port);
 
     // Perform masking and shifting to align with LSB
     Dio_PortLevelType maskedData = (Level >> ChannelGroupIdPtr->offset) & ChannelGroupIdPtr->mask;

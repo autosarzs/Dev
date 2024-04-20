@@ -46,6 +46,7 @@
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Infrastructure/platform/inc"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Mcal/CAN/inc"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Mcal/DIO/inc"/>
+									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Mcal/Port/inc"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/stub"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Infrastructure/platform/inc"/>
 									<listOptionValue builtIn="false" value="${CG_TOOL_INCLUDE_PATH}"/>
@@ -125,6 +126,7 @@
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Infrastructure/platform/inc"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Mcal/CAN/inc"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Mcal/DIO/inc"/>
+									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Mcal/Port/inc"/>
 									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/stub"/>
 									<listOptionValue builtIn="false" value="../../bsw/static/Infrastructure/platform/inc"/>
 									<listOptionValue builtIn="false" value="${CG_TOOL_INCLUDE_PATH}"/>
