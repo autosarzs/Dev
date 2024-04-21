@@ -88,6 +88,8 @@ SECTIONS {
         __bss_end__ = .;
     } > REGION_BSS
 
+    __end__ = .;
+
     .heap : {
         __heap_start__ = .;
         end = __heap_start__;

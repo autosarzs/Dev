@@ -16,18 +16,18 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Download Linaro GCC compiler
-RUN wget -c https://releases.linaro.org/components/toolchain/binaries/7.2-2017.11/arm-linux-gnueabihf/gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz --no-check-certificate
+RUN wget -c https://releases.linaro.org/components/toolchain/binaries/7.2-2017.11/arm-eabi/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz --no-check-certificate
 
 # Extract Linaro GCC compiler into a folder inside /opt/compilers
-RUN mkdir -p /opt/compilers/arm-linux-gnueabihf && \
-    tar xf gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz -C /opt/compilers/arm-linux-gnueabihf --strip-components=1 && \
-    rm gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz
+RUN mkdir -p /opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi && \
+    tar xf gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz -C /opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi --strip-components=1 && \
+    rm gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz
 
 # Set up working directory
 WORKDIR /workspace
 
 # Clone your Git repository
-RUN git clone https://github.com/autosarzs/Dev.git .
+RUN git clone -b cmake_docker_int https://github.com/mustafabahaa/Dev.git .
 
 # Set the default command
 CMD ["/bin/bash"]

@@ -3,6 +3,8 @@
 # Get the directory of the Makefile
 WORKSPACE_DIR := $(CURDIR)
 
+SW_DIR= $(WORKSPACE_DIR)/Software
+
 # Directories
 CMAKE_PROJECT_DIR = $(WORKSPACE_DIR)/Software/build/CMake
 BUILD_DIR = $(WORKSPACE_DIR)/Software/build/CMake/Build
