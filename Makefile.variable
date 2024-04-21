@@ -1,0 +1,13 @@
+# Makefile Configuration
+
+# Get the directory of the Makefile
+WORKSPACE_DIR := $(CURDIR)
+
+# Directories
+CMAKE_PROJECT_DIR = $(WORKSPACE_DIR)/Software/build/CMake
+BUILD_DIR = $(WORKSPACE_DIR)/Software/build/CMake/Build
+
+# ToolChain
+TOOLCHAIN=/opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi
+
+MAXIMUM_CPU_CORES?=$(shell grep -c ^processor /proc/cpuinfo)
