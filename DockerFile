@@ -1,0 +1,33 @@
+FROM ubuntu:20.04
+
+# Avoid stuck at console asking for input
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install compiler and other tools
+RUN apt-get update && \
+    apt-get install -y \
+    make \
+    cmake \
+    git \
+    aptitude \
+    gcc-multilib \
+    wget \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download Linaro GCC compiler
+RUN wget -c https://releases.linaro.org/components/toolchain/binaries/7.2-2017.11/arm-linux-gnueabihf/gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz --no-check-certificate
+
+# Extract Linaro GCC compiler into a folder inside /opt/compilers
+RUN mkdir -p /opt/compilers/arm-linux-gnueabihf && \
+    tar xf gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz -C /opt/compilers/arm-linux-gnueabihf --strip-components=1 && \
+    rm gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz
+
+# Set up working directory
+WORKDIR /workspace
+
+# Clone your Git repository
+RUN git clone https://github.com/autosarzs/Dev.git .
+
+# Set the default command
+CMD ["/bin/bash"]
