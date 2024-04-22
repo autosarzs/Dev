@@ -4,9 +4,8 @@ project(autosarz)
 
 include("${CMAKE_PROJECT_DIR}/user.cmake")
 
-message( STATUS "Building MCAL Layer")
+message( STATUS "Building MCAL ComponentS")
 add_subdirectory("${mcal_dir}")
-
 
 message( STATUS "Building App Component")
 add_subdirectory("${app_swc}")

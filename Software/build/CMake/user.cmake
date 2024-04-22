@@ -12,6 +12,8 @@ set( mcal_dir "${SW_DIR}/bsw/static/mcal" CACHE PATH "Default")
 
 # MCAL Software Components
 set( can_swc  "${SW_DIR}/bsw/static/mcal/can_swc" CACHE PATH "Default")
+set( port_swc  "${SW_DIR}/bsw/static/mcal/port_swc" CACHE PATH "Default")
+set( dio_swc  "${SW_DIR}/bsw/static/mcal/dio_swc" CACHE PATH "Default")
 
 # App Software Components
 set( app_swc  "${SW_DIR}/swc/app_swc" CACHE PATH "Default")
