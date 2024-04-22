@@ -11,9 +11,12 @@ RUN apt-get update && \
     git \
     aptitude \
     gcc-multilib \
+    python3 \
+    python3-pip \
     wget \
     xz-utils \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && pip3 install junit2html
 
 # Download Linaro GCC compiler
 RUN wget -c https://releases.linaro.org/components/toolchain/binaries/7.2-2017.11/arm-eabi/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz --no-check-certificate
@@ -22,9 +25,6 @@ RUN wget -c https://releases.linaro.org/components/toolchain/binaries/7.2-2017.1
 RUN mkdir -p /opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi && \
     tar xf gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz -C /opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi --strip-components=1 && \
     rm gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz
-
-# Clone your Git repository
-RUN git clone -b master https://github.com/mustafabahaa/Dev.git .
 
 # Set the default command
 CMD ["/bin/bash"]

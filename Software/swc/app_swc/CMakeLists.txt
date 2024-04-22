@@ -1,5 +1,5 @@
 # CMake Version Check
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 # Project
 project(app_swc 
@@ -29,6 +29,6 @@ include(tools/cmake/app_swc_libs.cmake)
 target_link_libraries(app_swc PRIVATE ${app_swc_libs})
 
 
-install( PROGRAMS $<TARGET_FILE:app_swc>  PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ DESTINATION ${CMAKE_BINARY_DIR} RENAME autosar_app.out)
-install( FILES    $<TARGET_FILE:app_swc>.map DESTINATION ${CMAKE_BINARY_DIR} RENAME autosar_app.map  )
+install( PROGRAMS $<TARGET_FILE:app_swc>  PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ DESTINATION ${CMAKE_BINARY_DIR}/../output/build RENAME autosar_app.out)
+install( FILES    $<TARGET_FILE:app_swc>.map DESTINATION ${CMAKE_BINARY_DIR}/../output/build RENAME autosar_app.map  )
 

@@ -35,7 +35,7 @@ jobs:
       - run:
           name: Build Autosar App
           command: |
-            docker run acmeorg/foobar:${CIRCLE_SHA1} make autosar
+            docker run acmeorg/foobar:${CIRCLE_SHA1} make build
 
 workflows:
   scheduled-build:

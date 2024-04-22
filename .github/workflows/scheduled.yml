@@ -44,4 +44,4 @@ jobs:
           docker load < "images/acmeorg_foobar_${{ github.sha }}"
       - name: Build Autosar App
         run: |
-          docker run acmeorg/foobar:${{ github.sha }} make autosar
+          docker run acmeorg/foobar:${{ github.sha }} make build

@@ -8,6 +8,10 @@ SW_DIR= $(WORKSPACE_DIR)/Software
 # Directories
 CMAKE_PROJECT_DIR = $(WORKSPACE_DIR)/Software/build/CMake
 BUILD_DIR = $(WORKSPACE_DIR)/Software/build/CMake/Build
+INSTALL_DIR = $(WORKSPACE_DIR)/Software/build/CMake/output
+BINARY_INSTALL_DIR = $(INSTALL_DIR)/build
+TESTS_INSTALL_DIR = $(INSTALL_DIR)/tests
+UNIT_TESTS_INSTALL_DIR = $(TESTS_INSTALL_DIR)/unit
 
 # ToolChain
 TOOLCHAIN=/opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi
