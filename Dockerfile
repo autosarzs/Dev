@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Avoid stuck at console asking for input
 ARG DEBIAN_FRONTEND=noninteractive
@@ -23,11 +23,8 @@ RUN mkdir -p /opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi && \
     tar xf gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz -C /opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi --strip-components=1 && \
     rm gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz
 
-# Set up working directory
-WORKDIR /workspace
-
 # Clone your Git repository
-RUN git clone -b cmake_docker_int https://github.com/mustafabahaa/Dev.git .
+RUN git clone -b master https://github.com/mustafabahaa/Dev.git .
 
 # Set the default command
 CMD ["/bin/bash"]

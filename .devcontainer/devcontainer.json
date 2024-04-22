@@ -13,7 +13,8 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-python.python",
+				"ms-vscode.cmake-tools",
+        "github.vscode-github-actions",
 				"dbaeumer.vscode-eslint",
 				"eamodio.gitlens",
 				"mhutchie.git-graph",
