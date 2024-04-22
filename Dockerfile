@@ -8,7 +8,9 @@ RUN apt-get update && \
     apt-get install -y \
     make \
     cmake \
+    lsb-release \
     git \
+    file \
     aptitude \
     gcc-multilib \
     python3 \

@@ -3,9 +3,8 @@ message(STATUS "SW_DIR = ${SW_DIR}")
 set( CMAKE_INSTALL_PREFIX "./" CACHE PATH "Default install path")
 
 # Common Directories
-set( Infrastructure_inc "${SW_DIR}/bsw/static/Infrastructure/inc" CACHE PATH "Default")
-set( platform_inc "${SW_DIR}/bsw/static/Infrastructure/platform/inc" CACHE PATH "Default")
-set( platform_src "${SW_DIR}/bsw/static/Infrastructure/platform/src" CACHE PATH "Default")
+set( infrastructure "${SW_DIR}/bsw/static/Infrastructure" CACHE PATH "Default")
+set( platform "${SW_DIR}/bsw/static/Infrastructure/platform" CACHE PATH "Default")
 set( stubs "${SW_DIR}/bsw/stub" CACHE PATH "Default")
 
 set( mcal_dir "${SW_DIR}/bsw/static/mcal" CACHE PATH "Default")

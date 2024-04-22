@@ -8,6 +8,7 @@ SW_DIR= $(WORKSPACE_DIR)/Software
 # Directories
 CMAKE_PROJECT_DIR = $(WORKSPACE_DIR)/Software/build/CMake
 BUILD_DIR = $(WORKSPACE_DIR)/Software/build/CMake/Build
+BUILD_TESTS_DIR = $(WORKSPACE_DIR)/Software/build/CMake/Test
 INSTALL_DIR = $(WORKSPACE_DIR)/Software/build/CMake/output
 BINARY_INSTALL_DIR = $(INSTALL_DIR)/build
 TESTS_INSTALL_DIR = $(INSTALL_DIR)/tests

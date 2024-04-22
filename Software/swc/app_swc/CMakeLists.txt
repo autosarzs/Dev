@@ -8,27 +8,31 @@ project(app_swc
         DESCRIPTION "app_swc")
 
 
-# Sources
-include( tools/cmake/app_swc_sources.cmake )
-add_executable( app_swc  ${app_swc_sources_list} )
+##############################################################################
+# Include Common Compilation Settings                                       #
+##############################################################################
 
-# Compilation Options
-include( tools/cmake/app_swc_compile_options.cmake )
-target_compile_options( app_swc PRIVATE ${app_swc_compile_options})
+include(tools/cmake/app_swc_compile.cmake)
 
-# C Defninitions
-include( tools/cmake/app_swc_defines.cmake )
-target_compile_definitions( app_swc PRIVATE ${app_swc_defines})
+##############################################################################
+# Build Configuration                                                        #
+##############################################################################
 
-# Includes
-include( tools/cmake/app_swc_includes.cmake )
-target_include_directories( app_swc PRIVATE ${app_swc_includes})
+# Compilation Mode: Only build the library
 
-# Libraries
-include(tools/cmake/app_swc_libs.cmake)
-target_link_libraries(app_swc PRIVATE ${app_swc_libs})
+if(MODE STREQUAL "COMPILING")
+  add_executable(app_swc ${app_swc_sources_list})
+  target_compile_options(app_swc PRIVATE ${app_swc_compile_options})
+  target_include_directories(app_swc PRIVATE ${app_swc_includes})
+  target_compile_definitions(app_swc PRIVATE ${app_swc_defines})
+  target_link_libraries(app_swc PRIVATE ${app_swc_libs})
 
+  # Installation
+  install( PROGRAMS $<TARGET_FILE:app_swc>  PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ DESTINATION ${CMAKE_BINARY_DIR}/../output/build RENAME autosar_app.out)
+  install( FILES    $<TARGET_FILE:app_swc>.map DESTINATION ${CMAKE_BINARY_DIR}/../output/build RENAME autosar_app.map  )
 
-install( PROGRAMS $<TARGET_FILE:app_swc>  PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ DESTINATION ${CMAKE_BINARY_DIR}/../output/build RENAME autosar_app.out)
-install( FILES    $<TARGET_FILE:app_swc>.map DESTINATION ${CMAKE_BINARY_DIR}/../output/build RENAME autosar_app.map  )
+elseif (MODE STREQUAL "TESTING")
+  include(tools/cmake/app_swc_tests.cmake)
+  add_executable(app_swc_test ${app_swc_tests_sources_list})
+endif()
 
