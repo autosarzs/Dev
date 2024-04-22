@@ -1,6 +1,6 @@
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                  **
+**  Copyright (C) AUTOSarZs olc (2019)                                        **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -10,44 +10,66 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : BitHelper.h     			                                  **
+**  FILENAME     : Port_Cfg.h                                                  **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
-**  DATE         : 2019-09-22                                                 **
+**  DATE         : 2024-04-17                                                 **
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                              **
+**  PLATFORM     : TIVA C                                                     **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                      **
+**  AUTHOR       : AUTOSarZs-DevTeam                                          **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                          **
+**  VENDOR       : AUTOSarZs OLC                                              **
 **                                                                            **
 **                                                                            **
-**  DESCRIPTION  : CAN Driver source file                                     **
+**  DESCRIPTION  : Port Driver config header file                             **
 **                                                                            **
-**  SPECIFICATION(S) : Specification of CAN Driver, AUTOSAR Release 4.3.1     **
+**  SPECIFICATION(S) : Specification of Port Driver, AUTOSAR Release 4.3.1    **
 **                                                                            **
 **  MAY BE CHANGED BY USER : no                                               **
 **                                                                            **
 *******************************************************************************/
-#ifndef _BIT_MATH_H
-#define _BIT_MATH_H
 
-#define BITBAND_BASE 0x42000000
-#define SET_BIT(x,i) x|=(1<<(i))
-#define CLR_BIT(x,i) x&=~(1<<(i))
-#define TOGGLE_BIT(x,i) x^=(1<<(i))
-#define GET_BIT(x,i) (x>>(i))&1
-#define CLR_BITS(x,i,Mask) x&=~(Mask<<(i))
-#define SET_BITS(x,i,Mask) x|=(Mask<<(i))
+#ifndef PORT_CFG_H_
+#define PORT_CFG_H_
 
-#define BYTE_OFFSET(REG_ADD) (REG_ADD - 0x40000000)
-#define BIT_WORD_OFFSET(REG_ADD,BIT_NUM) (( BYTE_OFFSET(REG_ADD)* 32) + (BIT_NUM * 4)) 
-#define BIT_WORD_ADDR(REG_ADD,BIT_NUM) (BITBAND_BASE + BIT_WORD_OFFSET(REG_ADD,BIT_NUM))
-#define GET_BIT_PERPHBAND(REG_ADD,BIT_NUM) (*((volatile uint32 *)BIT_WORD_ADDR(REG_ADD,BIT_NUM)))
-#define SET_BIT_PERPHBAND(REG_ADD,BIT_NUM) (GET_BIT_PERPHBAND(REG_ADD,BIT_NUM) = (uint32)0x01)
-#define CLR_BIT_PERPHBAND(REG_ADD,BIT_NUM) (GET_BIT_PERPHBAND(REG_ADD,BIT_NUM) = (uint32)0x00)
+/*******************************************************************************/
+/*                              Include headers                                */
+/*******************************************************************************/
 
-#endif
+/*
+ * Module Version 1.0.0
+ */
+#define PORT_CFG_SW_MAJOR_VERSION              (1U)
+#define PORT_CFG_SW_MINOR_VERSION              (0U)
+#define PORT_CFG_SW_PATCH_VERSION              (0U)
+
+/*
+ * AUTOSAR Version 4.0.3
+ */
+#define PORT_CFG_AR_RELEASE_MAJOR_VERSION     (4U)
+#define PORT_CFG_AR_RELEASE_MINOR_VERSION     (0U)
+#define PORT_CFG_AR_RELEASE_PATCH_VERSION     (3U)
+
+/* Pre-compile option for Development Error Detect */
+#define PORT_DEV_ERROR_DETECT               (STD_ON)
+
+/* Pre-compile option for Version Info API */
+#define PORT_VERSION_INFO_API               (STD_ON)
+
+/* Pre-compile option for presence of Port_SetPinDirection API */
+#define PORT_SET_PIN_DIRECTION_API			(STD_ON)
+
+/* Pre-compile option for presence of Port_SetPinMode API */
+#define PORT_SET_PIN_MODE_API				(STD_ON)
+
+/* Number of PINS */
+#define PORT_CONFIGURED_PINS				(43U)
+
+#endif /* PORT_CFG_H_ */
+
+
+

@@ -1,6 +1,6 @@
 /*******************************************************************************
 **                                                                            **
-**  Copyright (C) AUTOSarZs olc (2019)		                                  **
+**  Copyright (C) AUTOSarZs olc (2019)                                        **
 **                                                                            **
 **  All rights reserved.                                                      **
 **                                                                            **
@@ -10,44 +10,46 @@
 **                                                                            **
 ********************************************************************************
 **                                                                            **
-**  FILENAME     : BitHelper.h     			                                  **
+**  FILENAME     : Dio_Cfg.h                                                  **
 **                                                                            **
 **  VERSION      : 1.0.0                                                      **
 **                                                                            **
-**  DATE         : 2019-09-22                                                 **
+**  DATE         : 2024-04-17                                                 **
 **                                                                            **
 **  VARIANT      : Variant PB                                                 **
 **                                                                            **
-**  PLATFORM     : TIVA C		                                              **
+**  PLATFORM     : TIVA C                                                     **
 **                                                                            **
-**  AUTHOR       : AUTOSarZs-DevTeam	                                      **
+**  AUTHOR       : AUTOSarZs-DevTeam                                          **
 **                                                                            **
-**  VENDOR       : AUTOSarZs OLC	                                          **
+**  VENDOR       : AUTOSarZs OLC                                              **
 **                                                                            **
 **                                                                            **
-**  DESCRIPTION  : CAN Driver source file                                     **
+**  DESCRIPTION  : DIO Driver config header file                              **
 **                                                                            **
-**  SPECIFICATION(S) : Specification of CAN Driver, AUTOSAR Release 4.3.1     **
+**  SPECIFICATION(S) : Specification of DIO Driver, AUTOSAR Release 4.3.1     **
 **                                                                            **
 **  MAY BE CHANGED BY USER : no                                               **
 **                                                                            **
 *******************************************************************************/
-#ifndef _BIT_MATH_H
-#define _BIT_MATH_H
 
-#define BITBAND_BASE 0x42000000
-#define SET_BIT(x,i) x|=(1<<(i))
-#define CLR_BIT(x,i) x&=~(1<<(i))
-#define TOGGLE_BIT(x,i) x^=(1<<(i))
-#define GET_BIT(x,i) (x>>(i))&1
-#define CLR_BITS(x,i,Mask) x&=~(Mask<<(i))
-#define SET_BITS(x,i,Mask) x|=(Mask<<(i))
 
-#define BYTE_OFFSET(REG_ADD) (REG_ADD - 0x40000000)
-#define BIT_WORD_OFFSET(REG_ADD,BIT_NUM) (( BYTE_OFFSET(REG_ADD)* 32) + (BIT_NUM * 4)) 
-#define BIT_WORD_ADDR(REG_ADD,BIT_NUM) (BITBAND_BASE + BIT_WORD_OFFSET(REG_ADD,BIT_NUM))
-#define GET_BIT_PERPHBAND(REG_ADD,BIT_NUM) (*((volatile uint32 *)BIT_WORD_ADDR(REG_ADD,BIT_NUM)))
-#define SET_BIT_PERPHBAND(REG_ADD,BIT_NUM) (GET_BIT_PERPHBAND(REG_ADD,BIT_NUM) = (uint32)0x01)
-#define CLR_BIT_PERPHBAND(REG_ADD,BIT_NUM) (GET_BIT_PERPHBAND(REG_ADD,BIT_NUM) = (uint32)0x00)
+#ifndef DIO_CFG_H_
+#define DIO_CFG_H_
 
-#endif
+/* Pre-compile option for Development Error Detect */
+#define DIO_DEV_ERROR_DETECT                (STD_ON)
+
+/* Pre-compile option for Version Info API */
+#define DIO_VERSION_INFO_API                (STD_OFF)
+
+/* Pre-compile option for presence of Dio_FlipChannel API */
+#define DIO_FLIP_CHANNEL_API                (STD_ON)
+
+/* Number of the configured Dio Channels */
+#define DIO_CONFIGURED_CHANNLES              (2U)
+
+#endif /* DIO_CFG_H_ */
+
+
+
