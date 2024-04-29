@@ -1,0 +1,27 @@
+{
+	"name": "autosarz",
+	"build": {
+		"context": "..",
+		"dockerfile": "../Dockerfile"
+	},
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "workspaceFolder": "/workspace",
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/apt-packages:1": {
+			"preserve_apt_list": true,
+			"packages": "make file lsb-release cmake git aptitude gcc-multilib wget xz-utils"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cmake-tools",
+        "github.vscode-github-actions",
+				"dbaeumer.vscode-eslint",
+				"eamodio.gitlens",
+				"mhutchie.git-graph",
+				"ms-vscode.cpptools"
+			]
+		}
+	}
+}

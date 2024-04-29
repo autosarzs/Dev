@@ -1,0 +1,6 @@
+Software/build/CMake/Build/
+Software/build/CMake/Test/
+Software/build/CMake/output
+.vscode/settings.json
+*.prefs
+Testing
