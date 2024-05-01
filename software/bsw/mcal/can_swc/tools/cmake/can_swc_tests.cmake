@@ -8,12 +8,12 @@ set(
     can_swc_ut_sources_list
 
     ${can_swc}/core/Can.c
-    ${can_swc}/config/Can_PBcfg.c
+    ${gendata}/Can_PBcfg.c
 
 )
 
 # Create a list of all files in ${platform}/inc
-file(GLOB PLATFORM_INCLUDES "${platform}/inc/*.h")
+file(GLOB PLATFORM_INCLUDES "${platform}/*.h")
 
 # Create a temporary directory to store the filtered header files
 set(filtered_platform_includes "${CMAKE_CURRENT_BINARY_DIR}/filtered_include")
@@ -35,10 +35,12 @@ endforeach()
 
 set(
     can_swc_tests_includes
+
     ${can_swc}/core
-    ${can_swc}/config
     ${can_swc}/tests/stubs
-    ${infrastructure}/inc
+    ${gendata}
+
+    ${common_includes}
     ${filtered_platform_includes} 
     ${stubs}
 )

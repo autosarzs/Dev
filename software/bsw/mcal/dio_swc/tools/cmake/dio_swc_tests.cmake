@@ -9,22 +9,19 @@ set(
     dio_swc_ut_sources_list
 
     ${dio_swc}/core/Dio.c
-    ${dio_swc}/config/Dio_Lcfg.c
+    ${gendata}/Dio_Lcfg.c
 )
 
 set(
     dio_swc_tests_includes
 
     ${dio_swc}/core
-    ${dio_swc}/config
-    ${dio_swc}/tests/stubs
-
     ${port_swc}/core
-    ${port_swc}/config
+    ${dio_swc}/tests/stubs
+    ${gendata}
 
-    ${infrastructure}/inc
-    ${platform}/inc
-
+    ${common_includes}
+    ${platform}
     ${stubs}
 )
 

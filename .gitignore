@@ -1,6 +1,8 @@
-Software/build/CMake/Build/
-Software/build/CMake/Test/
-Software/build/CMake/output
+tools/build/CMake/Build/
+tools/build/CMake/Test/
+tools/build/CMake/output
 .vscode/settings.json
-*.prefs
 Testing
+tools/build/IDEs/CCS/Debug
+
+*.prefs

@@ -4,20 +4,18 @@ set(
     dio_swc_sources_list
 
     ${dio_swc}/core/Dio.c
-    ${dio_swc}/config/Dio_Lcfg.c
+    ${gendata}/Dio_Lcfg.c
 )
 
 set(
     dio_swc_includes
 
     ${dio_swc}/core
-    ${dio_swc}/config
-
     ${port_swc}/core
-    ${port_swc}/config
+    ${gendata}
 
-    ${infrastructure}/inc
-    ${platform}/inc
+    ${common_includes}
+    ${platform}
     ${stubs}
 )
 

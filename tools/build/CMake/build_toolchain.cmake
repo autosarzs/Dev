@@ -3,9 +3,9 @@ set(COMMON_FLAGS "-mcpu=cortex-m4 -march=armv7e-m -mthumb -mfloat-abi=soft -mfpu
 set(CMAKE_C_FLAGS          "${COMMON_FLAGS}")
 set(CMAKE_CXX_FLAGS        "${COMMON_FLAGS}")
 
-set(CMAKE_C_COMPILER       ${TOOLCHAIN}/bin/arm-eabi-gcc)
-set(CMAKE_CXX_COMPILER     ${TOOLCHAIN}/bin/arm-eabi-gcc)
-set(CMAKE_AR               ${TOOLCHAIN}/bin/arm-eabi-ar)
+set(CMAKE_C_COMPILER       ${TOOLCHAIN_DIR}/bin/arm-eabi-gcc)
+set(CMAKE_CXX_COMPILER     ${TOOLCHAIN_DIR}/bin/arm-eabi-gcc)
+set(CMAKE_AR               ${TOOLCHAIN_DIR}/bin/arm-eabi-ar)
 
 set(CMAKE_EXE_LINKER_FLAGS "-specs=nosys.specs -mthumb -Wl,-Map,app_swc.map -Wl,--build-id=none")
 

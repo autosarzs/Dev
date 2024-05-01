@@ -1,20 +1,25 @@
-# Makefile Configuration
 
+####################################
 # Get the directory of the Makefile
+####################################
 WORKSPACE_DIR := $(CURDIR)
-
-SW_DIR= $(WORKSPACE_DIR)/Software
-
-# Directories
-CMAKE_PROJECT_DIR = $(WORKSPACE_DIR)/Software/build/CMake
-BUILD_DIR = $(WORKSPACE_DIR)/Software/build/CMake/Build
-BUILD_TESTS_DIR = $(WORKSPACE_DIR)/Software/build/CMake/Test
-INSTALL_DIR = $(WORKSPACE_DIR)/Software/build/CMake/output
+####################################
+# Define Common Macros
+####################################
+MAXIMUM_CPU_CORES?=$(shell grep -c ^processor /proc/cpuinfo)
+COMPILER_NAME=gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi
+####################################
+# Define Common Dirs
+####################################
+SW_DIR= $(WORKSPACE_DIR)/software
+TOOLS_DIR= $(WORKSPACE_DIR)/tools
+CMAKE_PROJECT_DIR = $(TOOLS_DIR)/build/CMake
+BUILD_DIR = $(CMAKE_PROJECT_DIR)/Build
+BUILD_TESTS_DIR = $(CMAKE_PROJECT_DIR)/Test
+INSTALL_DIR = $(CMAKE_PROJECT_DIR)/output
 BINARY_INSTALL_DIR = $(INSTALL_DIR)/build
 TESTS_INSTALL_DIR = $(INSTALL_DIR)/tests
 UNIT_TESTS_INSTALL_DIR = $(TESTS_INSTALL_DIR)/unit
-
-# ToolChain
-TOOLCHAIN=/opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi
-
-MAXIMUM_CPU_CORES?=$(shell grep -c ^processor /proc/cpuinfo)
+COMPILER_DIR=/opt/compilers
+TOOLCHAIN_DIR=$(COMPILER_DIR)/$(COMPILER_NAME)
+####################################

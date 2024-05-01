@@ -3,25 +3,21 @@ set(
 
     ${app_swc}/core/main.c
     ${app_swc}/core/tm4c123gh6pz_startup_ccs_gcc.c
-
     ${stubs}/stub.c
-    
-    ${platform}/src/can_lib.c
-    ${platform}/src/irq.c
-    ${platform}/src/Timer0A.c
+    ${platform}/can_lib.c
+    ${platform}/irq.c
+    ${platform}/Timer0A.c
 )
 
 set(
     app_swc_includes
 
-    core
-    config
-
+    ${app_swc}/core
     ${can_swc}/core
-    ${can_swc}/config
+    ${gendata}
     
-    ${infrastructure}/inc
-    ${platform}/inc
+    ${common_includes}
+    ${platform}
     ${stubs}
 )
 
