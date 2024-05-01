@@ -25,7 +25,7 @@ jobs:
         run: |
           CONTAINER_ID=$(docker ps --format "{{.ID}}" | head -n 1)
           mkdir -p ./artifacts
-          docker cp $CONTAINER_ID:/workspace/Software/build/CMake/output/build ./artifacts
+          docker cp $CONTAINER_ID:/workspace/tools/build/CMake/output/build ./artifacts
           ls -R ./artifacts
 
       # Upload build artifacts
@@ -55,7 +55,7 @@ jobs:
         run: |
           CONTAINER_ID=$(docker ps --format "{{.ID}}" | head -n 1)
           mkdir -p ./artifacts
-          docker cp $CONTAINER_ID:/workspace/Software/build/CMake/output/tests/unit ./artifacts
+          docker cp $CONTAINER_ID:/workspace/tools/build/CMake/output/tests/unit ./artifacts
           ls -R ./artifacts
 
       # Upload test artifacts
