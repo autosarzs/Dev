@@ -41,16 +41,14 @@
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.INCLUDE_PATH.1072065126" name="Include paths (-I)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.INCLUDE_PATH" valueType="includePath">
 									<listOptionValue builtIn="false" value="${PROJECT_ROOT}"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Infrastructure/inc"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Infrastructure/platform/inc"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/can_swc/core"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/can_swc/config"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/dio_swc/core"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/dio_swc/config"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/port_swc/core"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/port_swc/config"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../swc/app_swc/core"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/stub"/>
+									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/software/application/app_swc/core}"/>
+									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/software/bsw/mcal/can_swc/core}"/>
+									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/software/bsw/mcal/dio_swc/core}"/>
+									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/software/bsw/mcal/port_swc/core}"/>
+									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/software/gendata}"/>
+									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/software/common/includes}"/>
+									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/software/common/stubs}"/>
+									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/software/common/platform}"/>
 									<listOptionValue builtIn="false" value="${CG_TOOL_INCLUDE_PATH}"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.OPT_LEVEL.173839305" name="Optimization Level" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.OPT_LEVEL.OPT_FOR_DEBUG" valueType="enumerated"/>
@@ -83,7 +81,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="swc/app_swc/tests|bsw/static/mcal/can_swc/tests|bsw/static/mcal/port_swc/tests|bsw/static/mcal/dio_swc/tests" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="software/bsw/mcal/port_swc/tests|software/bsw/mcal/dio_swc/tests|software/bsw/mcal/can_swc/tests|software/application/app_swc/tests" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -126,19 +124,6 @@
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.DATA_SECTIONS.1182356232" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.DATA_SECTIONS" value="true" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.DEFINE.427356450" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.DEFINE" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="PART_TM4C123GH6PZ"/>
-								</option>
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.INCLUDE_PATH.1139074633" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.INCLUDE_PATH" valueType="includePath">
-									<listOptionValue builtIn="false" value="${PROJECT_ROOT}"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Infrastructure/inc"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/Infrastructure/platform/inc"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/can_swc/core"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/can_swc/config"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/dio_swc/core"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/dio_swc/config"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/port_swc/core"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/static/mcal/port_swc/config"/>
-									<listOptionValue builtIn="false" value="${PROJECT_LOC}/../../../bsw/stub"/>
-									<listOptionValue builtIn="false" value="${CG_TOOL_INCLUDE_PATH}"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.OPT_LEVEL.release.1819501150" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.OPT_LEVEL.release" value="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.OPT_LEVEL.OPT_FOR_SPACE" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.SPECS.1946805533" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_7.0.compilerID.SPECS" value="&quot;nosys.specs&quot;" valueType="string"/>
