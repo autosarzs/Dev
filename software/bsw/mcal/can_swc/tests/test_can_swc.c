@@ -1,21 +1,51 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include "Can.h"
+#include "unity.h"
+#include "unity_fixture.h"
+#include "mock_Det.h"
+#include "mock_stub.h"
+#include "mock_can_lib.h"
+#include "mock_test_can_swc_stubs.h"
 
-int main()
+/**********CALLBACKS *****************/
+Std_ReturnType Det_ReportError_CALLBACK(uint16 ModuleId, uint8 InstanceId, uint8 ApiId, uint8 ErrorId)
 {
-  // Test case 1:
-  {
-    printf("Test case 1 result: success \n");
-    // Add assertions to verify the result
-  }
+  (void)ModuleId;
+  (void)InstanceId;
+  (void)ApiId;
+  (void)ErrorId;
+  return E_OK;
+}
+/***********TESTS*************/
+TEST_GROUP(can_swc);
 
-  // Test case 2: Test with invalid channel ID
-  {
-    printf("Test case 2 result: success \n");
-    // Add assertions to verify the result
-  }
+TEST_SETUP(can_swc)
+{
+  mock_Det_Init();
+  mock_stub_Init();
+  mock_stub_Init();
+  mock_can_lib_Init();
+  mock_test_can_swc_stubs_Init();
+}
 
-  return 0;
+TEST_TEAR_DOWN(can_swc)
+{
+  mock_Det_Verify();
+  mock_Det_Destroy();
+  mock_stub_Verify();
+  mock_stub_Destroy();
+  mock_can_lib_Verify();
+  mock_can_lib_Destroy();
+  mock_test_can_swc_stubs_Verify();
+  mock_test_can_swc_stubs_Destroy();
+}
+
+TEST(can_swc, CAN_TEST_PASS)
+{
+  TEST_MESSAGE("\n ------- FORCE PASS SCENARIO ----------\n");
+  TEST_ASSERT_EQUAL(1,1);
+}
+TEST(can_swc, CAN_TEST_FAIL)
+{
+  TEST_MESSAGE("\n ------- FORCE FAIL SCENARIO ----------\n");
+  TEST_ASSERT_EQUAL(1,-1);
 }

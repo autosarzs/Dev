@@ -1,20 +1,26 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+#include "Dio.h"
+#include "unity.h"
+#include "unity_fixture.h"
+#include "mock_Det.h"
 
-int main()
+TEST_GROUP(dio_swc);
+
+TEST_SETUP(dio_swc)
 {
-  // Test case 1: Test with valid channel ID
-  {
-    printf("Test case 1 result \n");
-    // Add assertions to verify the result
-  }
+}
 
-  // Test case 2: Test with invalid channel ID
-  {
-    printf("Test case 2 result: \n");
-    // Add assertions to verify the result
-  }
+TEST_TEAR_DOWN(dio_swc)
+{
+}
 
-  return 0;
+TEST(dio_swc, test_Dio_ReadChannel_OutOfRange)
+{
+    Dio_LevelType ret  ; 
+    Dio_ChannelType ChannelId = DIO_CONFIGURED_CHANNLES+1; 
+    Det_ReportError_ExpectAndReturn(DIO_MODULE_ID,
+                    DIO_INSTANCE_ID,
+                    DIO_READ_CHANNEL_SID,
+                    DIO_E_PARAM_INVALID_CHANNEL_ID,E_OK);   
+    ret = Dio_ReadChannel(ChannelId); 
+    TEST_ASSERT_EQUAL(STD_OFF,ret);
 }

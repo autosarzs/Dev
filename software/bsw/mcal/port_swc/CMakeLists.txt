@@ -32,12 +32,19 @@ elseif (MODE STREQUAL "TESTING")
   target_compile_definitions(port_swc PRIVATE ${port_swc_tests_defines})
 endif()
 
-if(MODE STREQUAL "TESTING")
+if(MODE STREQUAL "TESTING")    
+  # Execute CMock script
+  execute_process(
+    COMMAND ruby ${CMOCK_SCRIPT} -o${CMOCK_CONFIG_FILE} ${port_swc_mock_header_files}
+    OUTPUT_VARIABLE CMOCK_OUTPUT
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests
+  )
+  message("CMock output: ${CMOCK_OUTPUT}")
+
   # Testing Mode: Build the library and test executable
   include(tools/cmake/port_swc_tests.cmake)
   add_executable(port_swc_test ${port_swc_tests_sources_list})
   target_compile_definitions(port_swc_test PRIVATE ${port_swc_tests_defines})
   target_include_directories(port_swc_test PRIVATE ${port_swc_tests_includes})
   target_link_libraries(port_swc_test PRIVATE port_swc)
-  add_test(NAME port_swc_test COMMAND port_swc_test)
 endif()

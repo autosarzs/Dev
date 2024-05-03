@@ -20,3 +20,10 @@ set( dio_swc  "${SW_DIR}/bsw/mcal/dio_swc" CACHE PATH "Default")
 
 # App Software Components
 set( app_swc  "${SW_DIR}/application/app_swc" CACHE PATH "Default")
+
+# Frameworks 
+set( CMOCK_ROOT_DIR  "/workspace/tools/frameworks/CMock" CACHE PATH "Default")
+set( UNITY_ROOT_DIR  "${CMOCK_ROOT_DIR}/vendor/unity" CACHE PATH "Default")
+
+set(CMOCK_SCRIPT "${CMOCK_ROOT_DIR}/lib/cmock.rb")
+set(CMOCK_CONFIG_FILE "/workspace/tools/build/CMake/cmockConfig.yml")

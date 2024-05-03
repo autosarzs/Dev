@@ -2,3 +2,9 @@
 	path = wiki
 	url = https://github.com/autosarzs/Dev.wiki.git
 	branch = master
+[submodule "CMock"]
+	path = CMock
+	url = https://github.com/ThrowTheSwitch/CMock.git
+[submodule "tools/frameworks/CMock"]
+	path = tools/frameworks/CMock
+	url = https://github.com/ThrowTheSwitch/CMock.git

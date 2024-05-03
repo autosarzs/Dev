@@ -32,13 +32,19 @@ elseif (MODE STREQUAL "TESTING")
   target_compile_definitions(dio_swc PRIVATE ${dio_swc_tests_defines})
 endif()
 
+if(MODE STREQUAL "TESTING")  
+  # Execute CMock script
+  execute_process(
+    COMMAND ruby ${CMOCK_SCRIPT} -o${CMOCK_CONFIG_FILE} ${dio_swc_mock_header_files}
+    OUTPUT_VARIABLE CMOCK_OUTPUT
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests
+  )
+  message("CMock output: ${CMOCK_OUTPUT}")
 
-if(MODE STREQUAL "TESTING")
   # Testing Mode: Build the library and test executable
   add_executable(dio_swc_test ${dio_swc_tests_sources_list})
   target_compile_definitions(dio_swc_test PRIVATE ${dio_swc_tests_defines})
   target_compile_options(dio_swc_test PRIVATE ${dio_swc_tests_compile_options})
   target_include_directories(dio_swc_test PRIVATE ${dio_swc_tests_includes})
   target_link_libraries(dio_swc_test PRIVATE ${dio_swc_tests_libs})
-  add_test(NAME dio_swc_test COMMAND dio_swc_test)
 endif()
