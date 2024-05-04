@@ -1,0 +1,15 @@
+name: Check Branch Name
+
+runs:
+  using: "composite"
+
+  steps:
+    - name : Check Branch Name
+      shell: bash
+      run: |
+        branch_name=${{ github.event.pull_request.head.ref }}
+        if [[ ! $branch_name =~ ^issue_[0-9]+_[a-zA-Z0-9_-]{1,100}$ ]]; then
+          echo "Branch names must follow the format 'issue_<issue-number>_short_description' with a short description not exceeding 50 characters."
+          echo "Example: issue_15_canif_fix"
+          exit 1
+        fi

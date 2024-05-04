@@ -1,13 +1,30 @@
-name: Scheduled Build
+name: Pull Request
 
 on:
-  push:
+  pull_request:
+    types: [opened, synchronize]
     branches:
       - main
 
 jobs:
+  sanity-check:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check Branch Name
+        uses: ./.github/actions/check-branch-name
+
+      - name: Check Commit Messages
+        uses: ./.github/actions/check-commit-message
+
   build:
     runs-on: ubuntu-22.04
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,6 +36,7 @@ jobs:
 
   test:
     runs-on: ubuntu-22.04
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

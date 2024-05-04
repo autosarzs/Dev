@@ -1,0 +1,41 @@
+name: Check Commit Message
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check Commit Message
+      shell: bash
+      run: |
+        # Get the last commit message
+        message=$(git show --format=%B -s ${{ github.event.after }})
+
+        # Initialize variables to track line number and error status
+        line_number=1
+        errors=false
+
+        # Loop over each line of the commit message
+        while IFS= read -r line; do
+          # Check first line format
+          if [[ $line_number -eq 1 ]]; then
+            if ! grep -E '^\[issue:#[0-9]+\] .{1,100}$' <<< "$line"; then
+              echo "The first line of the commit message must start with '[issue:#<issue-number>]' followed by a description with a maximum of 100 characters."
+              errors=true
+            fi
+          fi
+
+          # Check empty line after the first line
+          if [[ $line_number -eq 2 && "$line" != "" ]]; then
+            echo "The second line of the commit message must be empty."
+            errors=true
+          fi
+
+          # Increment line number
+          ((line_number++))
+        done <<< "$message"
+
+        # Print result
+        if $errors; then
+          exit 1
+        else
+          echo "Commit message is correct."
+        fi

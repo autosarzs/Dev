@@ -1,12 +1,7 @@
-name: Update Dev Container
+name: Update Devcontainer
 
-on:
-  workflow_dispatch:
-    inputs:
-      username:
-        description: 'GitHub username or organization name'
-        required: true
-    
+on: workflow_dispatch
+
 jobs:
   push-container:
     runs-on: ubuntu-22.04

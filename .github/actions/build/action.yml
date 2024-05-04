@@ -1,0 +1,30 @@
+name: Build
+
+runs:
+  using: "composite"
+
+  steps:
+      # Run the build task inside the devcontainer
+      - name: Run Build Stage
+        uses: devcontainers/ci@v0.3
+        with:
+          cacheFrom: ghcr.io/${{ github.repository_owner }}/autosar-devcontainer
+          push: never
+          runCmd: make build
+
+      # Copy artifacts from Docker container to host
+      - name: Copy artifacts from Docker container to host
+        shell: bash
+        run: |
+          CONTAINER_ID=$(docker ps --format "{{.ID}}" | head -n 1)
+          mkdir -p ./artifacts
+          docker cp $CONTAINER_ID:/workspace/tools/build/CMake/output/build ./artifacts
+          ls -R ./artifacts
+
+      # Upload build artifacts
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./artifacts/build
+

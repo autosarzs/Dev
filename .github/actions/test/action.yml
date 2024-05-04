@@ -1,0 +1,30 @@
+name: Build
+
+runs:
+  using: "composite"
+
+  steps:
+    # Run the build task inside the devcontainer
+    - name: Run test stage
+      uses: devcontainers/ci@v0.3
+      with:
+        cacheFrom: ghcr.io/${{ github.repository_owner }}/autosar-devcontainer
+        push: never
+        runCmd: make unit_test
+
+    # Copy artifacts from Docker container to host
+    - name: Copy artifacts from Docker container to host
+      shell: bash
+      run: |
+        CONTAINER_ID=$(docker ps --format "{{.ID}}" | head -n 1)
+        mkdir -p ./artifacts
+        docker cp $CONTAINER_ID:/workspace/tools/build/CMake/output/tests/unit ./artifacts
+        ls -R ./artifacts
+
+    # Upload test artifacts
+    - name: Archive test artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-artifacts
+        path: ./artifacts/unit
+

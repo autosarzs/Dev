@@ -1,0 +1,30 @@
+name: Feature
+description: Request a new feature.
+title: "[Feature Request]: "
+labels: ["development"]
+projects: ["autosarzs"]
+assignees:
+  - autosarzs
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to submit a feature request!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more information?
+      placeholder: e.g., email or Discord username
+    validations:
+      required: true
+  - type: textarea
+    id: feature-request
+    attributes:
+      label: Description
+      description: Please describe the new feature you'd like to request.
+      placeholder: Describe the feature you envision
+      value: "Feature ..."
+    validations:
+      required: true
+

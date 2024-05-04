@@ -1,0 +1,48 @@
+name: Bug Report
+description: Report a bug.
+title: "[Bug]: "
+labels: ["bug"]
+projects: ["autosarzs"]
+assignees:
+  - autosarzs
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out this bug report!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more information?
+      placeholder: e.g., email or Discord username
+    validations:
+      required: true
+  - type: textarea
+    id: describe-issue
+    attributes:
+      label: Describe the Issue
+      description: Please provide detailed information,screenshots about the issue and steps to reproduce it.
+      placeholder: Describe the issue you encountered
+      value: "A bug occurred!"
+    validations:
+      required: true
+  - type: dropdown
+    id: env
+    attributes:
+      label: Environment
+      description: What was your development environment?
+      options:
+        - Autosar devcontainer
+        - Windows
+        - Linux
+        - macOS
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Log Output
+      description: Please copy and paste any relevant log output. It will be automatically formatted into code, so there's no need for backticks.
+      render: shell
