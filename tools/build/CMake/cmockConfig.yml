@@ -8,7 +8,7 @@
   - :ignore_arg
   - :expect_any_args
   :includes: []
-  :mock_path: ./stubs
+  :mock_path: ./mocks
   :mock_prefix: mock_
   :treat_externs: :include
   :treat_as:

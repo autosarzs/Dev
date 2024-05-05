@@ -3,11 +3,11 @@ set(
 
     ${can_swc}/tests/test_can_swc.c
 
-    # Any mocked file will be under stub/mock_headerFileName.c
-    ${can_swc}/tests/stubs/mock_Det.c
-    ${can_swc}/tests/stubs/mock_stub.c
-    ${can_swc}/tests/stubs/mock_can_lib.c
-    ${can_swc}/tests/stubs/mock_test_can_swc_stubs.c
+    # Any mocked file will be under ${MOCK_FILE_PATH}/mocks/mock_headerFileName.c
+    ${MOCK_FILE_PATH}/mocks/mock_Det.c
+    ${MOCK_FILE_PATH}/mocks/mock_stub.c
+    ${MOCK_FILE_PATH}/mocks/mock_can_lib.c
+    ${MOCK_FILE_PATH}/mocks/mock_test_can_swc_stubs.c
     # Include Test Runners 
     ${can_swc}/tests/test_runners/can_Runner.c
     ${can_swc}/tests/test_runners/all_tests.c
@@ -18,11 +18,6 @@ set(
 
     ${can_swc}/core/Can.c
     ${gendata}/Can_PBcfg.c
-
-    # Add Unity/CMock Framework Source files [WILL BE FIXED IN EACH UNIT TEST DIR]
-    ${UNITY_ROOT_DIR}/src/unity.c
-    ${UNITY_ROOT_DIR}/extras/fixture/src/unity_fixture.c
-    ${CMOCK_ROOT_DIR}/src/cmock.c
 )
 
 set (
@@ -60,17 +55,12 @@ set(
 
     ${can_swc}/core
     ${can_swc}/tests/stubs
+    ${MOCK_FILE_PATH}/mocks
     ${gendata}
 
     ${common_includes}
     ${filtered_platform_includes} 
     ${stubs}
-
-    # Include Unity/CMock Framework [WILL BE FIXED IN EACH UNIT TEST DIR]
-    ${CMOCK_ROOT_DIR}/src
-    ${UNITY_ROOT_DIR}/src
-    ${UNITY_ROOT_DIR}/extras/fixture/src
-    ${UNITY_ROOT_DIR}/extras/memory/src/
 
 )
 set(

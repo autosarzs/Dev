@@ -30,6 +30,7 @@ CMAKE_TEST_VARIABLES += -DCMAKE_TOOLCHAIN_FILE=$(CMAKE_PROJECT_DIR)/test_toolcha
 CMAKE_TEST_VARIABLES += -DCMAKE_PROJECT_DIR=$(CMAKE_PROJECT_DIR)
 CMAKE_TEST_VARIABLES += -DSW_DIR=$(SW_DIR)
 CMAKE_TEST_VARIABLES += -DMODE=TESTING
+CMAKE_TEST_VARIABLES += -DBUILD_TESTS_DIR=$(BUILD_TESTS_DIR)
 
 
 # Test directories
@@ -53,6 +54,13 @@ endif
 	cd $(BUILD_TESTS_DIR)/ && \
 	cmake -S $(CURDIR) -B $(BUILD_TESTS_DIR) $(CMAKE_TEST_VARIABLES)  ;\
 	make -j$(MAXIMUM_CPU_CORES) ;\
+	(cd $(BUILD_TESTS_DIR) && \
+		ctest --verbose --output-on-failure --output-junit test_results.xml . && \
+		junit2html test_results.xml test_results.html)
+	mkdir -p $(UNIT_TESTS_INSTALL_DIR)
+	cp $(BUILD_TESTS_DIR)/test_results.xml $(UNIT_TESTS_INSTALL_DIR)/
+	cp $(BUILD_TESTS_DIR)/test_results.html $(UNIT_TESTS_INSTALL_DIR)/
+
 
 test: $(TEST_PROGRAMS)
 	@echo "Running all test programs"

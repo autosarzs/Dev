@@ -8,9 +8,13 @@ project(dio_swc
         DESCRIPTION "dio_swc")
 
 ##############################################################################
+# Extract Module Path in build/CMake/Test/                                   #
+##############################################################################
+extract_module_path(dio_swc MOCK_FILE_PATH)
+
+##############################################################################
 # Include Common Compilation Settings                                       #
 ##############################################################################
-
 include(tools/cmake/dio_swc_compile.cmake)
 
 ##############################################################################
@@ -37,14 +41,14 @@ if(MODE STREQUAL "TESTING")
   execute_process(
     COMMAND ruby ${CMOCK_SCRIPT} -o${CMOCK_CONFIG_FILE} ${dio_swc_mock_header_files}
     OUTPUT_VARIABLE CMOCK_OUTPUT
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    WORKING_DIRECTORY ${MOCK_FILE_PATH}  #  /workspace/tools/build/CMake/Test/software/bsw/mcal/dio_swc
   )
   message("CMock output: ${CMOCK_OUTPUT}")
 
   # Testing Mode: Build the library and test executable
-  add_executable(dio_swc_test ${dio_swc_tests_sources_list})
+  add_executable(dio_swc_test ${dio_swc_tests_sources_list} ${unity_common_sources})
   target_compile_definitions(dio_swc_test PRIVATE ${dio_swc_tests_defines})
   target_compile_options(dio_swc_test PRIVATE ${dio_swc_tests_compile_options})
-  target_include_directories(dio_swc_test PRIVATE ${dio_swc_tests_includes})
+  target_include_directories(dio_swc_test PRIVATE ${dio_swc_tests_includes} ${unity_common_includes})
   target_link_libraries(dio_swc_test PRIVATE ${dio_swc_tests_libs})
 endif()
