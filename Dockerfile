@@ -17,6 +17,7 @@ RUN apt-get update && \
     python3-pip \
     wget \
     xz-utils \
+    ruby \
     && rm -rf /var/lib/apt/lists/* \
     && pip3 install junit2html
 

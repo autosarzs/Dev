@@ -1,13 +1,13 @@
 set(
     dio_swc_tests_sources_list
 
-    ${dio_swc}/tests/test_dio_swc.c
+    ${dio_swc}/tests/unit/test_dio_swc.c
 
     # Any mocked file will be under ${MOCK_FILE_PATH}/mocks/mock_headerFileName.c
     ${MOCK_FILE_PATH}/mocks/mock_Det.c
     # Include Test Runners 
-    ${dio_swc}/tests/test_runners/dio_Runner.c
-    ${dio_swc}/tests/test_runners/all_tests.c
+    ${dio_swc}/tests/unit/test_runners/dio_Runner.c
+    ${dio_swc}/tests/unit/test_runners/all_tests.c
 )
 
 set(
@@ -34,7 +34,7 @@ set(
     ${common_includes}
     ${platform}
     ${stubs}
-    ${dio_swc}/tests/stubs
+    ${dio_swc}/tests/unit/stubs
     ${MOCK_FILE_PATH}/mocks/
 )
 
