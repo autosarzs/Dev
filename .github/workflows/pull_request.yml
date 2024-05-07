@@ -1,7 +1,7 @@
 name: Pull Request
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize]
     branches:
       - main
@@ -16,14 +16,24 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Add needs-review label to the pull request
+        uses: ./.github/actions/remove-label
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ github.event.number }}
+          label: "needs-review"
+
       - name: Check Branch Name
         uses: ./.github/actions/check-branch-name
 
       - name: Check Commit Messages
         uses: ./.github/actions/check-commit-message
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   build:
     runs-on: ubuntu-22.04
+    needs: sanity-check
 
     steps:
       - name: Checkout code
@@ -36,6 +46,7 @@ jobs:
 
   test:
     runs-on: ubuntu-22.04
+    needs: sanity-check
 
     steps:
       - name: Checkout code
@@ -45,3 +56,44 @@ jobs:
 
       - name: Test
         uses: ./.github/actions/test
+
+  run-pull-request-workflow:
+    runs-on: ubuntu-22.04
+    needs: [sanity-check, build, test]
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add needs-review label to the pull request
+        uses: ./.github/actions/add-label
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          number: ${{ github.event.number }}
+          label: "needs-review"
+
+      - name: Get Pull Request linked Issue Number
+        id: get_issue_by_pull_request
+        uses: ./.github/actions/get-issue-by-pull-request
+
+      - name: Get issue project id from issue number
+        uses: monry/actions-get-project-item-id@v2.0.2
+        id: get-project-item-id
+        with:
+          github-token: ${{ secrets.PAT }}
+          project-owner: ${{ github.repository_owner }}
+          project-number: 1
+          issue-repository: ${{ github.repository_owner }}/Dev
+          issue-number: ${{ steps.get_issue_by_pull_request.outputs.issue_id  }}
+
+      - name: Update issue to in review
+        uses: titoportas/update-project-fields@v0.1.0
+        with:
+          project-url: https://github.com/users/${{ github.repository_owner }}/projects/1
+          github-token: ${{ secrets.PAT }}
+          item-id: ${{ steps.get-project-item-id.outputs.project-item-id }}
+          field-keys: Status
+          field-values: In Review

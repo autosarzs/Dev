@@ -3,8 +3,6 @@ description: Report a bug.
 title: "[Bug]: "
 labels: ["bug"]
 projects: ["autosarzs"]
-assignees:
-  - autosarzs
 body:
   - type: markdown
     attributes:

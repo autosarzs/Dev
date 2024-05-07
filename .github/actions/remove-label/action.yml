@@ -1,0 +1,27 @@
+name: Remove Label Action
+description: Remove a label to an issue or pull request
+
+inputs:
+  token:
+    description: "Github Token"
+    required: true
+
+  number:
+    description: 'The number of the issue or pull request to which the label will be removed from'
+    required: true
+  label:
+    description: 'The label to be removed from the issue'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Remove label from issue
+      id: remove-label
+      shell: bash
+      run: gh issue edit "$NUMBER" --remove-label "$LABELS"
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        GH_REPO: ${{ github.repository }}
+        NUMBER: ${{ inputs.number }}
+        LABELS: ${{ inputs.label }}
