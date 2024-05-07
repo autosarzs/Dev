@@ -1,10 +1,8 @@
 name: Feature
 description: Request a new feature.
 title: "[Feature Request]: "
-labels: ["development"]
+labels: ["feature"]
 projects: ["autosarzs"]
-assignees:
-  - autosarzs
 body:
   - type: markdown
     attributes:

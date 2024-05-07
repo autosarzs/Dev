@@ -1,0 +1,36 @@
+name: Issue Assigned Workflow
+on:
+  issues:
+    types: [assigned]
+
+jobs:
+  issue-assigned:
+    runs-on: ubuntu-22.04
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Is First Assigned
+        id: check_first_assigned
+        uses: ./.github/actions/is-first-assigned
+        with:
+          pat_token: ${{ secrets.PAT }}
+
+      - name: Get Issue Item ID
+        if: steps.check_first_assigned.outputs.is_first_assignment == 'True'
+        id: add-project
+        uses: actions/add-to-project@v1.0.1
+        with:
+          project-url: https://github.com/users/${{ github.repository_owner }}/projects/1
+          github-token: ${{ secrets.PAT }}
+
+      - name: Update Issue Workflow
+        if: steps.check_first_assigned.outputs.is_first_assignment == 'True'
+        uses: titoportas/update-project-fields@v0.1.0
+        with:
+          project-url: https://github.com/users/${{ github.repository_owner }}/projects/1
+          github-token: ${{ secrets.PAT }}
+          item-id: ${{ steps.add-project.outputs.itemId }}
+          field-keys: Status
+          field-values: Assigned

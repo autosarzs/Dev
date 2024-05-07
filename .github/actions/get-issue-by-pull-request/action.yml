@@ -1,0 +1,34 @@
+name: Check Branch Name
+
+description: Check if branch name is valid
+
+outputs:
+  issue_id:
+    description: "Return Issue ID linked in pull request"
+    value: ${{ steps.get_issue_id_script.outputs.issue_id }}
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Run Python Script
+      id: get_issue_id_script
+      shell: bash
+      run: |
+        # Install dependencies
+        pip install -r $GITHUB_ACTION_PATH/requirements.txt
+
+        # Exec the sciprt
+        output=$(python $GITHUB_ACTION_PATH/get_issue_id_from_pull_request.py \
+          --pull_request_body "${{ github.event.pull_request.body }}")
+
+        # Print the whole script output for debugging
+        echo "$output"
+
+        # Extract the result of the script
+        issue_id=$(echo "$output" | grep '^issue_id=')
+
+        # Add the result to output buffer
+        echo "$issue_id" >> $GITHUB_OUTPUT
+
+

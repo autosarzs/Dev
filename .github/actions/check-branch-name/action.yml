@@ -1,15 +1,21 @@
 name: Check Branch Name
 
+description: Check if branch name is valid
+
 runs:
   using: "composite"
-
   steps:
-    - name : Check Branch Name
+
+    - name: Run Python Script
+      id: check_branch_name_script
       shell: bash
       run: |
-        branch_name=${{ github.event.pull_request.head.ref }}
-        if [[ ! $branch_name =~ ^issue_[0-9]+_[a-zA-Z0-9_-]{1,100}$ ]]; then
-          echo "Branch names must follow the format 'issue_<issue-number>_short_description' with a short description not exceeding 50 characters."
-          echo "Example: issue_15_canif_fix"
-          exit 1
-        fi
+        # Install dependencies
+        pip install -r $GITHUB_ACTION_PATH/requirements.txt
+
+        # Exec the sciprt
+        output=$(python $GITHUB_ACTION_PATH/check_branch_name.py \
+          --branch_name "${{ github.event.pull_request.head.ref }}")
+
+        # Print the whole script output for debugging
+        echo "$output"
