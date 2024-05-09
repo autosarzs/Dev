@@ -23,5 +23,5 @@ UNIT_TESTS_INSTALL_DIR = $(TESTS_INSTALL_DIR)/unit
 COMPILER_DIR=/opt/compilers
 TOOLCHAIN_DIR=$(COMPILER_DIR)/$(COMPILER_NAME)
 CMOCK_DIR = $(TOOLS_DIR)/frameworks/CMock
-UNITY_ROOT= $(CMOCK_DIR)/vendor/Unity
+UNITY_ROOT= $(CMOCK_DIR)/vendor/unity
 ####################################

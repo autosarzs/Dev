@@ -28,6 +28,9 @@ RUN wget -c https://releases.linaro.org/components/toolchain/binaries/7.2-2017.1
 RUN mkdir -p /opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi && \
     tar xf gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz -C /opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi --strip-components=1 && \
     rm gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz
+    
+# Install gcovr tool
+RUN pip install gcovr==7.2
 
 # Set the default command
 CMD ["/bin/bash"]
