@@ -1,0 +1,39 @@
+name: Check First Assignment
+
+description: Check if the issue is assigned for the first time
+
+inputs:
+  pat_token:
+    description: "PAT Token"
+    required: true
+
+outputs:
+  is_first_assignment:
+    description: "Return True if issue is first assigned and False if not"
+    value: ${{ steps.check_first_assgined_script.outputs.is_first_assignment }}
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Run Python Script
+      id: check_first_assgined_script
+      shell: bash
+      run: |
+        # Install dependencies
+        pip install -r $GITHUB_ACTION_PATH/requirements.txt
+
+        # Exec the sciprt
+        output=$(python $GITHUB_ACTION_PATH/check_first_assigned.py \
+          --repo "${{ github.repository }}" \
+          --issue "${{ github.event.issue.number }}" \
+          --token "${{ inputs.pat_token }}")
+
+        # Print the whole script output for debugging
+        echo "$output"
+
+        # Extract the result of the script
+        is_first_assignment=$(echo "$output" | grep '^is_first_assignment=')
+
+        # Add the result to output buffer
+        echo "$is_first_assignment" >> $GITHUB_OUTPUT

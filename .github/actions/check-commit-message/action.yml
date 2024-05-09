@@ -1,41 +1,21 @@
 name: Check Commit Message
 
+description: Check if commit message is valid
+
 runs:
   using: "composite"
   steps:
-    - name: Check Commit Message
+
+    - name: Run Python Script
+      id: check_commit_message_script
       shell: bash
       run: |
-        # Get the last commit message
-        message=$(git show --format=%B -s ${{ github.event.after }})
+        # Install dependencies
+        pip install -r $GITHUB_ACTION_PATH/requirements.txt
 
-        # Initialize variables to track line number and error status
-        line_number=1
-        errors=false
+        # Exec the script
+        output=$(python $GITHUB_ACTION_PATH/check_commit_message.py \
+          --commit_hash "${{ github.event.after }}")
 
-        # Loop over each line of the commit message
-        while IFS= read -r line; do
-          # Check first line format
-          if [[ $line_number -eq 1 ]]; then
-            if ! grep -E '^\[issue:#[0-9]+\] .{1,100}$' <<< "$line"; then
-              echo "The first line of the commit message must start with '[issue:#<issue-number>]' followed by a description with a maximum of 100 characters."
-              errors=true
-            fi
-          fi
-
-          # Check empty line after the first line
-          if [[ $line_number -eq 2 && "$line" != "" ]]; then
-            echo "The second line of the commit message must be empty."
-            errors=true
-          fi
-
-          # Increment line number
-          ((line_number++))
-        done <<< "$message"
-
-        # Print result
-        if $errors; then
-          exit 1
-        else
-          echo "Commit message is correct."
-        fi
+        # Print the whole script output for debugging
+        echo "$output"
