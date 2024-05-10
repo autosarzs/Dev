@@ -22,14 +22,14 @@ jobs:
         id: add-project
         uses: actions/add-to-project@v1.0.1
         with:
-          project-url: https://github.com/users/${{ github.repository_owner }}/projects/1
+          project-url: https://github.com/users/${{ github.repository_owner }}/projects/${{ env.PROJECT_NUMBER }}
           github-token: ${{ secrets.PAT }}
 
       - name: Update Issue Workflow
         if: steps.check_first_assigned.outputs.is_first_assignment == 'True'
         uses: titoportas/update-project-fields@v0.1.0
         with:
-          project-url: https://github.com/users/${{ github.repository_owner }}/projects/1
+          project-url: https://github.com/users/${{ github.repository_owner }}/projects/${{ env.PROJECT_NUMBER }}
           github-token: ${{ secrets.PAT }}
           item-id: ${{ steps.add-project.outputs.itemId }}
           field-keys: Status
