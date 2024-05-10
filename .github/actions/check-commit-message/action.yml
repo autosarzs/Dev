@@ -2,6 +2,11 @@ name: Check Commit Message
 
 description: Check if commit message is valid
 
+inputs:
+  token:
+    description: "Github Token"
+    required: true
+
 runs:
   using: "composite"
   steps:
@@ -15,7 +20,8 @@ runs:
 
         # Exec the script
         output=$(python $GITHUB_ACTION_PATH/check_commit_message.py \
-          --commit_hash "${{ github.event.after }}")
+          --commits_url "${{ github.event.pull_request.commits_url }}" \
+          --token "${{ inputs.token }}")
 
         # Print the whole script output for debugging
         echo "$output"
