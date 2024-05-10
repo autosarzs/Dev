@@ -1,0 +1,21 @@
+---
+:cmock:
+  :plugins:
+  - :array
+  - :ignore
+  - :callback
+  - :return_thru_ptr
+  - :ignore_arg
+  - :expect_any_args
+  :includes: []
+  :mock_path: ./mocks
+  :mock_prefix: mock_
+  :treat_externs: :include
+  :treat_as:
+    uint8: HEX8
+    uint16: HEX16
+    uint32: UINT32
+    int8: INT8
+    bool: UINT8
+    void: void
+

@@ -1,4 +1,4 @@
-set(COMMON_FLAGS "-Og -g -Wall")
+set(COMMON_FLAGS "-Og -g -Wall --coverage")
 
 set(CMAKE_C_FLAGS          "${COMMON_FLAGS}")
 set(CMAKE_CXX_FLAGS        "${COMMON_FLAGS}")
