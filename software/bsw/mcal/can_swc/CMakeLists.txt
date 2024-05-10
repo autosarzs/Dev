@@ -29,6 +29,11 @@ project(can_swc
         DESCRIPTION "can_swc")
 
 ##############################################################################
+# Extract Module Path in build/CMake/Test/                                   #
+##############################################################################
+extract_module_path(can_swc MOCK_FILE_PATH)
+
+##############################################################################
 # Include Common Compilation Settings                                       #
 ##############################################################################
 
@@ -56,11 +61,18 @@ endif()
 
 
 if(MODE STREQUAL "TESTING")
+  # Execute CMock script
+  execute_process(
+    COMMAND ruby ${CMOCK_SCRIPT} -o${CMOCK_CONFIG_FILE} ${can_swc_mock_header_files}
+    OUTPUT_VARIABLE CMOCK_OUTPUT
+    WORKING_DIRECTORY ${MOCK_FILE_PATH}  #  /workspace/tools/build/CMake/Test/software/bsw/mcal/can_swc
+  )
+  message("CMock output: ${CMOCK_OUTPUT}")
+
   # Testing Mode: Build the library and test executable
-  add_executable(can_swc_test ${can_swc_tests_sources_list})
+  add_executable(can_swc_test ${can_swc_tests_sources_list} ${unity_common_sources})
   target_compile_definitions(can_swc_test PRIVATE ${can_swc_tests_defines})
   target_compile_options(can_swc_test PRIVATE ${can_swc_tests_compile_options})
-  target_include_directories(can_swc_test PRIVATE ${can_swc_tests_includes})
+  target_include_directories(can_swc_test PRIVATE ${can_swc_tests_includes} ${unity_common_includes})
   target_link_libraries(can_swc_test PRIVATE can_swc)
-  add_test(NAME can_swc_test COMMAND can_swc_test)
 endif()

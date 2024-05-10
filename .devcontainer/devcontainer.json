@@ -9,7 +9,7 @@
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/apt-packages:1": {
 			"preserve_apt_list": true,
-			"packages": "make file lsb-release cmake git aptitude gcc-multilib wget xz-utils"
+			"packages": "make file lsb-release cmake git aptitude gcc-multilib wget xz-utils ruby"
 		}
 	},
 	"customizations": {
