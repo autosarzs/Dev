@@ -45,27 +45,27 @@ For now the only configuration is the template json configuration and it is manu
     - First section is the `metadata`. You don't need to modify this as it is needed for the generator to run proberly.
     <div align="center">  
 
-    ![alt text](image.png)
+    ![alt text](docs/img/metadata.png)
     </div>  
 
     - Second section is the templates defined within this json config, This templates are the processed by file; Each file to be generated requires a template.
         -   The template basic data is the main file data to be processed.
         <div align="center">  
 
-        ![alt text](image-2.png)
+        ![alt text](docs/img/template_base_data.png)
         </div>
 
         - The file templates is devided into three main sections:  
             1. The headers: It is the introduction to the file itself it containes the main data to be included within the file at its start.
         <div align="center">  
 
-        ![alt text](image-3.png)
+        ![alt text](docs/img/file_header.png)
         </div>
 
             2. The sections: This is the section organization to include in this file  
         <div align="center">  
 
-        ![alt text](image-5.png)
+        ![alt text](docs/img/file_sections.png)
         </div> 
 
             3. The fill values: The startup skeletion for the file such as:  
@@ -78,8 +78,9 @@ For now the only configuration is the template json configuration and it is manu
             ex:
         <div align="center">  
 
-        ![alt text](image-4.png)
+        ![alt text](docs/img/generated_sample.png)
         </div> 
+        
 ## Next Features  
 
 For now the generator is still being developed to be more flexible and easier and the next main thing to develop is integrate a user interface with it to make the template generation and the config json adjustments easier and user friendly. 

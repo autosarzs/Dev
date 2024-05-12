@@ -1,5 +1,7 @@
-./venv
-./test
-./examples
-./dist
-./build
+asset_generator.egg-info/
+venv/
+test/
+examples/
+dist/
+build/
+out/
