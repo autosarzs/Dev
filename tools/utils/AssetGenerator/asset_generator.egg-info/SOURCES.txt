@@ -1,0 +1,8 @@
+README.md
+setup.py
+asset_generator.egg-info/PKG-INFO
+asset_generator.egg-info/SOURCES.txt
+asset_generator.egg-info/dependency_links.txt
+asset_generator.egg-info/entry_points.txt
+asset_generator.egg-info/requires.txt
+asset_generator.egg-info/top_level.txt
