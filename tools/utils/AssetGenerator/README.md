@@ -62,11 +62,13 @@ For now the only configuration is the template json configuration and it is manu
         <a href="https://ibb.co/xXw2g9C"><img src="https://i.ibb.co/jbq8w06/file-sections.png" alt="file-sections" border="0" /></a>
         </div> 
             3. The fill values: The startup skeletion for the file such as:  
-                1. Common Headers
-                2. Component Headers
-                3. Other Headers
-                4. Local Data
-                5. Functions / Services
+            
+                1. Common Headers  
+                2. Component Headers  
+                3. Other Headers  
+                4. Local Data  
+                5. Functions / Services  
+
             and it is generated with its documntation and defaults.  
             ex:
         <div align="center">  
