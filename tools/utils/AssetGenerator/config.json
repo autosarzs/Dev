@@ -1,0 +1,435 @@
+{
+    "metadata": {
+        "generator_name": "mowx_xftg_wx13",
+        "version": "2.0.0",
+        "author": "MoWx",
+        "description": "A tool for generating files from templates",
+        "created_at": "May 5 2024",
+        "last_updated_at": "May 5 2024"
+    },
+    "templates": [
+        {
+            "name": "C Source File",
+            "source_file": "Can",
+            "file_extension": ".c",
+            "description": "Template for generating C source file",
+            "file_header": [
+                {
+                    "name": "FILENAME",
+                    "value": "Can.c",
+                    "description": ""
+                },
+                {
+                    "name": "AUTHOR",
+                    "value": "AUTOSarZs-DevTeam",
+                    "description": ""
+                },
+                {
+                    "name": "DATE",
+                    "value": "2024-5-12",
+                    "description": ""
+                },
+                {
+                    "name": "VERSION",
+                    "value": "1.0.0",
+                    "description": ""
+                },
+                {
+                    "name": "PLATFORM",
+                    "value": "Tiva C",
+                    "description": ""
+                },
+                {
+                    "name": "VENDOR",
+                    "value": "AUTOSarZs OLC",
+                    "description": ""
+                },
+                {
+                    "name": "SPECIFICATION(S)",
+                    "value": "Specification of CAN Driver, AUTOSAR Release 4.3.1",
+                    "description": ""
+                },
+                {
+                    "name": "MAY BE CHANGED BY USER",
+                    "value": "No",
+                    "description": ""
+                },
+                {
+                    "name": "DESCRIPTION",
+                    "value": "CAN Driver source file",
+                    "description": ""
+                }, 
+                {
+                    "name": "LICENSE",
+                    "value": "MPL 2.0",
+                    "description": ""
+                }
+            ],
+            "file_sections": [
+                {
+                    "name": "include_common_headers",
+                    "value": "Include Common Headres",
+                    "description": ""
+                },
+                {
+                    "name": "include_other_headers",
+                    "value": "Include Other Headres",
+                    "description": ""
+                },
+                {
+                    "name": "include_component_headers",
+                    "value": "Include Component Headres",
+                    "description": ""
+                },
+                {
+                    "name": "local_macros_definition",
+                    "value": "Local Macro Definition",
+                    "description": ""
+                },
+                {
+                    "name": "local_types_definition",
+                    "value": "Local Types Definition",
+                    "description": ""
+                },
+                {
+                    "name": "exported_variables_definition",
+                    "value": "Exported Variables Definition",
+                    "description": ""
+                },
+                {
+                    "name": "local_enums_definition",
+                    "value": "Local Enums Definition",
+                    "description": ""
+                },
+                {
+                    "name": "local_variables_definition",
+                    "value": "Local Variables Definition",
+                    "description": ""
+                },
+                {
+                    "name": "local_structs_definition",
+                    "value": "Local Structs Definition",
+                    "description": ""
+                },
+                {
+                    "name": "local_unions_definition",
+                    "value": "Local Unions Definition",
+                    "description": ""
+                },
+                {
+                    "name": "local_functions_declaration",
+                    "value": "Local Functions Declaration",
+                    "description": ""
+                },
+                {
+                    "name": "local_functions_definition",
+                    "value": "Local Functions Definition",
+                    "description": ""
+                },
+                {
+                    "name": "global_functions_definition",
+                    "value": "Global Functions Definition",
+                    "description": ""
+                }
+            ],
+            "file_fill_values": {
+                "include_common_headers": [
+                    {
+                        "name": "default_value_x",
+                        "conditional_include_macro": "",
+                        "description": ""
+                    }
+                ],
+                "include_other_headers": [
+                    {
+                        "name": "default_value_x",
+                        "conditional_include_macro": "",
+                        "description": ""
+                    }
+                ],
+                "include_component_headers": [
+                    {
+                        "name": "default_value_x",
+                        "conditional_include_macro": "",
+                        "description": ""
+                    }
+                ],
+                "local_macros_definition": [
+                    {
+                        "name": "default_value_x",
+                        "conditional_include_macro": "",
+                        "description": ""
+                    }
+                ],
+                "local_structs_definition": [
+                    {
+                        "name": "default_value_x",
+                        "compiler": {
+                            "packed_attribute": "x"
+                        },
+                        "members": [
+                            {
+                                "name": "x",
+                                "type": "x",
+                                "bit_field": ""
+                            },
+                            {
+                                "name": "x",
+                                "type": "x",
+                                "bit_field": ""
+                            }
+                        ],
+                        "conditional_include_macro": "",
+                        "description": ""
+                    }
+                ],
+                "local_enums_definition": [
+                    {
+                        "name": "x",
+                        "members": {
+                            "mem1": "value",
+                            "mem2": "value"
+                        },
+                        "description": ""
+                    }
+                ],
+                "local_unions_definition": [
+                    {
+                        "name": "default_value_x",
+                        "compiler": {
+                            "packed_attribute": "x"
+                        },
+                        "members": [
+                            {
+                                "name": "x",
+                                "type": "x",
+                                "bit_field": ""
+                            },
+                            {
+                                "name": "x",
+                                "type": "x",
+                                "bit_field": ""
+                            }
+                        ],
+                        "description": ""
+                    }
+                ],
+                "local_types_definition": [
+                    {
+                        "base_name": "can_rx",
+                        "new_name": "can_rx_t",
+                        "type": "struct",
+                        "description": "x"
+                    },
+                    {
+                        "base_name": "y",
+                        "new_name": "y",
+                        "type": "y",
+                        "description": "y"
+                    }
+                ],
+                "exported_variables_definition": [
+                    {
+                        "name": "x",
+                        "type": "x",
+                        "description": "x"
+                    }
+                ],
+                "local_variables_definition": [
+                    {
+                        "name": "can_rx_buffer[256]",
+                        "type": "u8",
+                        "compiler": "ALIGN(4)",
+                        "description": ""
+                    }
+                ],
+                "local_functions_declaration": [
+                    {
+                        "name": "SetControllerBaudrate",
+                        "return_type": "void",
+                        "local_global": "local",
+                        "service_flag": "false",
+                        "description": "This function sets the baud rate",
+                        "requirement": "SWS_Can_00223",
+                        "notes": "",
+                        "arguments": [
+                            {
+                                "name": "BaseAddress",
+                                "type": "uint32",
+                                "description": ""
+                            },
+                            {
+                                "name": "BRConfig",
+                                "type": "CanControllerBaudrateConfig*",
+                                "description": ""
+                            },
+                            {
+                                "name": "CanCpuClock",
+                                "type": "McuClockReferencePoint",
+                                "description": ""
+                            }
+                        ],
+                        "compiler": {
+                            "inline_attribute": "__attribute__((always_inline))"
+                        },
+                        "service_name": "",
+                        "service_id": "",
+                        "sync_async": "",
+                        "reentrancy": ""
+                    },
+                    {
+                        "name": "Can_write",
+                        "return_type": "Std_ReturnType",
+                        "local_global": "local",
+                        "service_flag": "true",
+                        "description": "This function is called by CanIf to pass a CAN message to CanDrv for transmission.",
+                        "requirement": "SWS_Can_00223",
+                        "notes": "",
+                        "arguments": [
+                            {
+                                "name": "Hth",
+                                "type": "Can_HwHandleType",
+                                "description": ""
+                            },
+                            {
+                                "name": "PduInfo",
+                                "type": "Can_PduType*",
+                                "description": ""
+                            }
+                        ],
+                        "compiler": {
+                        },
+                        "service_name": "Can_write",
+                        "service_id": "0x06",
+                        "sync_async": "Synchronous",
+                        "reentrancy": "Reentrant (Thread-Safe)"
+                    }
+                ],
+                "local_functions_definition": [
+                    {
+                        "name": "SetControllerBaudrate",
+                        "return_type": "void",
+                        "local_global": "local",
+                        "service_flag": "false",
+                        "description": "This function sets the baud rate",
+                        "requirement": "SWS_Can_00223",
+                        "notes": "",
+                        "arguments": [
+                            {
+                                "name": "BaseAddress",
+                                "type": "uint32",
+                                "description": ""
+                            },
+                            {
+                                "name": "BRConfig",
+                                "type": "CanControllerBaudrateConfig*",
+                                "description": ""
+                            },
+                            {
+                                "name": "CanCpuClock",
+                                "type": "McuClockReferencePoint",
+                                "description": ""
+                            }
+                        ],
+                        "compiler": {
+                            "inline_attribute": "__attribute__((always_inline))"
+                        },
+                        "service_name": "",
+                        "service_id": "",
+                        "sync_async": "",
+                        "reentrancy": ""
+                    },
+                    {
+                        "name": "Can_write",
+                        "return_type": "Std_ReturnType",
+                        "local_global": "local",
+                        "service_flag": "true",
+                        "description": "This function is called by CanIf to pass a CAN message to CanDrv for transmission.",
+                        "requirement": "SWS_Can_00223",
+                        "notes": "",
+                        "arguments": [
+                            {
+                                "name": "Hth",
+                                "type": "Can_HwHandleType",
+                                "description": ""
+                            },
+                            {
+                                "name": "PduInfo",
+                                "type": "Can_PduType*",
+                                "description": ""
+                            }
+                        ],
+                        "compiler": {
+                        },
+                        "service_name": "Can_write",
+                        "service_id": "0x06",
+                        "sync_async": "Synchronous",
+                        "reentrancy": "Reentrant (Thread-Safe)"
+                    }
+                ],
+                "global_functions_definition": [
+                    {
+                        "name": "SetControllerBaudrate",
+                        "return_type": "void",
+                        "local_global": "global",
+                        "service_flag": "false",
+                        "description": "This function sets the baud rate",
+                        "requirement": "SWS_Can_00223",
+                        "notes": "",
+                        "arguments": [
+                            {
+                                "name": "BaseAddress",
+                                "type": "uint32",
+                                "description": ""
+                            },
+                            {
+                                "name": "BRConfig",
+                                "type": "CanControllerBaudrateConfig*",
+                                "description": ""
+                            },
+                            {
+                                "name": "CanCpuClock",
+                                "type": "McuClockReferencePoint",
+                                "description": ""
+                            }
+                        ],
+                        "compiler": {
+                            "inline_attribute": "__attribute__((always_inline))"
+                        },
+                        "service_name": "",
+                        "service_id": "",
+                        "sync_async": "",
+                        "reentrancy": ""
+                    },
+                    {
+                        "name": "Can_write",
+                        "return_type": "Std_ReturnType",
+                        "local_global": "global",
+                        "service_flag": "true",
+                        "description": "This function is called by CanIf to pass a CAN message to CanDrv for transmission.",
+                        "requirement": "SWS_Can_00223",
+                        "notes": "",
+                        "arguments": [
+                            {
+                                "name": "Hth",
+                                "type": "Can_HwHandleType",
+                                "description": ""
+                            },
+                            {
+                                "name": "PduInfo",
+                                "type": "Can_PduType*",
+                                "description": ""
+                            }
+                        ],
+                        "compiler": {
+                        },
+                        "service_name": "Can_write",
+                        "service_id": "0x06",
+                        "sync_async": "Synchronous",
+                        "reentrancy": "Reentrant (Thread-Safe)"
+                    }
+                ]
+            }
+        }
+    ]
+}
