@@ -1,9 +1,8 @@
 <div align="center">  
 <a href="https://ibb.co/y48Nh9g"><img src="https://i.ibb.co/jJL8VN3/logo.png" alt="logo" border="0" /> </a>  
+
   <a href="https://www.python.org"><img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" alt="Python"></a>  
 </div>  
-
-
 <div align="center">  
 
 # Autosarzs Asset Generator 2.0  
@@ -29,8 +28,7 @@ To run the generator properly:
 - Then you need to adjust the configurations for the project  
     1. First you need to adjust your templates inside `config.json` located in project root directory.  
         <div align="center">  
-
-        ![alt text](docs/img/config_json_location.png)
+        <a href="https://imgbb.com/"><img src="https://i.ibb.co/6vcGy3p/config-json-location.png" alt="config-json-location" border="0" /></a>
         </div>  
 
     2. After cofiguring the templates to generate in the json config file,  
@@ -45,29 +43,24 @@ For now the only configuration is the template json configuration and it is manu
     - First section is the `metadata`. You don't need to modify this as it is needed for the generator to run proberly.
     <div align="center">  
 
-    ![alt text](docs/img/metadata.png)
+    <a href="https://imgbb.com/"><img src="https://i.ibb.co/qDRv0pm/metadata.png" alt="metadata" border="0" /></a>
     </div>  
 
     - Second section is the templates defined within this json config, This templates are the processed by file; Each file to be generated requires a template.
         -   The template basic data is the main file data to be processed.
         <div align="center">  
-
-        ![alt text](docs/img/template_base_data.png)
+        <a href="https://imgbb.com/"><img src="https://i.ibb.co/qdYFsjH/template-base-data.png" alt="template-base-data" border="0" /></a>
         </div>
 
         - The file templates is devided into three main sections:  
             1. The headers: It is the introduction to the file itself it containes the main data to be included within the file at its start.
         <div align="center">  
-
-        ![alt text](docs/img/file_header.png)
+        <a href="https://ibb.co/1ZCSBbS"><img src="https://i.ibb.co/gy0nQ6n/file-header.png" alt="file-header" border="0" /></a>
         </div>
-
             2. The sections: This is the section organization to include in this file  
         <div align="center">  
-
-        ![alt text](docs/img/file_sections.png)
+        <a href="https://ibb.co/xXw2g9C"><img src="https://i.ibb.co/jbq8w06/file-sections.png" alt="file-sections" border="0" /></a>
         </div> 
-
             3. The fill values: The startup skeletion for the file such as:  
                 1. Common Headers
                 2. Component Headers
@@ -77,10 +70,9 @@ For now the only configuration is the template json configuration and it is manu
             and it is generated with its documntation and defaults.  
             ex:
         <div align="center">  
-
-        ![alt text](docs/img/generated_sample.png)
+        <a href="https://ibb.co/d208jBn"><img src="https://i.ibb.co/mqCfbJQ/generated-sample.png" alt="generated-sample" border="0" /></a>
         </div> 
-        
+
 ## Next Features  
 
 For now the generator is still being developed to be more flexible and easier and the next main thing to develop is integrate a user interface with it to make the template generation and the config json adjustments easier and user friendly. 
