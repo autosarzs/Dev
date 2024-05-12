@@ -13,8 +13,8 @@ setup(
     packages=find_packages(),
     #
     install_requires=[
-        'wheel',
         'tabulate',
+        'wheel',
         'argparse'
     ],
     #

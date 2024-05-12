@@ -84,16 +84,16 @@ LICENSE:
             print(" Not implemented ")
         
         if args.run_default:
-            cmd = f"{get_python_command()} {GENERATOR_ENTRY_POINT_PATH}"
+            cmd =  [get_python_command(), GENERATOR_ENTRY_POINT_PATH]
             subprocess.run(cmd, shell=False)
         
         if args.run:
-            cmd = f"{get_python_command()} {GENERATOR_ENTRY_POINT_PATH}"
+            cmd =  [get_python_command(), GENERATOR_ENTRY_POINT_PATH]
             subprocess.run(cmd, shell=False)
-        
+            
         if args.clear_cache:
-            cmd = "rm .cache/*"
-            subprocess.run(cmd, shell=False)
+            import shutil
+            shutil.rmtree('.cache')
             
     except Exception as e:
         print("Unexpected error occured.")
