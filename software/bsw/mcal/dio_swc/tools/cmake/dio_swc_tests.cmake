@@ -6,8 +6,8 @@ set(
     # Any mocked file will be under ${MOCK_FILE_PATH}/mocks/mock_headerFileName.c
     ${MOCK_FILE_PATH}/mocks/mock_Det.c
     # Include Test Runners 
-    ${dio_swc}/tests/unit/test_runners/dio_Runner.c
-    ${dio_swc}/tests/unit/test_runners/all_tests.c
+    ${dio_swc}/tests/unit/test_runners/test_runner.c
+    ${dio_swc}/tests/unit/test_runners/test_main.c
 )
 
 set(
@@ -22,6 +22,7 @@ set (
     dio_swc_mock_header_files
     
     ${stubs}/Det.h
+    ${port_swc}/core/Port.h
 
 )
 
@@ -50,6 +51,5 @@ set(
 set(
     dio_swc_tests_libs
     "dio_swc"
-    "port_swc"
 )
 
