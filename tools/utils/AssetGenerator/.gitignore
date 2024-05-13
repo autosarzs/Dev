@@ -5,3 +5,9 @@ examples/
 dist/
 build/
 out/
+src/__pycache__/
+src/plogger/__pycache__/
+src/fetch_cfg/__pycache__/
+src/stream/__pycache__/
+src/ui/__pycache__/
+src/utils/__pycache__/
