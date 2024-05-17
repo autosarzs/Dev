@@ -10,8 +10,8 @@ concurrency:
 env:
   GIT_AUTHOR_NAME: Actionbot
   GIT_AUTHOR_EMAIL: actions@github.com
-  DOCS_DIR_NAME: PRIV_Docs
-  MAIN_DIR_NAME: Priv_Autosar
+  DOCS_DIR_NAME: Docs
+  MAIN_DIR_NAME: Dev
   USER_NAME: ${{ github.repository_owner }}
 
 jobs:
