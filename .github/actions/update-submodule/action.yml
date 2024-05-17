@@ -1,0 +1,58 @@
+name: Submodule Auto-Update
+
+description: |
+  This composite action checks for updates to a specified submodule in your Git repository and, if an update is available, commits the change and pushes it to the main branch.
+
+  The action performs the following steps:
+
+  1. Configures the Git user name and email for the commit.
+  2. Navigates to the specified submodule path.
+  3. Fetches the latest changes from the remote repository for the submodule.
+  4. Checks out the specified branch for the submodule.
+  5. Pulls the latest changes from the remote for the submodule branch.
+  6. Navigates back to the root of the repository.
+  7. Stages the changes to the submodule.
+  8. Commits the changes with the specified commit message.
+  9. Pulls the latest changes from the main branch, rebasing the local changes.
+  10. Pushes the updated main branch to the remote repository.
+
+
+inputs:
+  submodule_path:
+    description: "Submodule Path"
+    required: true
+  commit_msg:
+    description: "Commit Message"
+    required: false
+    default: "Update submodule to the latest commit"
+  user_name:
+    description: "User name"
+    required: false
+    default: 'Git Action'
+  email:
+    description: "Email"
+    required: false
+    default: 'GitAction@Autosarz.com'
+  branch:
+    description: "Fetch from branch"
+    required: false
+    default: 'main'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check for Submodule Changes
+      id: check_submodule
+      shell: bash
+      run: |
+        git config --global user.name "${{ inputs.user_name }}"
+        git config --global user.email "${{ inputs.email}}"
+        cd ${{ inputs.submodule_path }}
+        git fetch
+        git checkout ${{ inputs.branch }}
+        git pull origin ${{ inputs.branch }}
+        cd ..
+        echo $(git add ${{ inputs.submodule_path }})
+        echo $(git commit -m "${{ inputs.commit_msg }}")
+        git pull origin main --rebase
+        echo $(git push origin main)

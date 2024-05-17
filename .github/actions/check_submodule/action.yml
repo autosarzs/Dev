@@ -1,0 +1,53 @@
+name: Submodule Status Checker
+
+description: |
+  This action checks if there is an update available for a specified submodule in your Git repository.
+
+  When triggered, the action will:
+
+  1. Fetch the latest changes from the remote repository for the specified submodule branch.
+  2. Compare the current commit of the submodule in your repository to the latest commit on the remote.
+  3. If the remote commit is different from the local commit, the action will set the `is_submodule_need_update` output to indicate that an update is available.
+
+  The action requires the following input:
+
+  - `submodule_path`: The relative path to the submodule within your repository.
+  - `branch`: The branch to fetch the latest changes from for the submodule (default is 'main').
+
+  The action outputs the following:
+
+  - `is_submodule_need_update`: A boolean value indicating whether an update is available for the submodule.
+
+
+inputs:
+  submodule_path:
+    description: "Submodule Path"
+    required: true
+  branch:
+    description: "Fetch from branch"
+    required: false
+    default: 'main'
+
+outputs:
+  is_submodule_need_update:
+    description: "Answer Question Is there an update to the submodule?"
+    value: ${{ steps.check_submodule.outputs.is_submodule_need_update }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check for Submodule Changes
+      id: check_submodule
+      shell: bash
+      run: |
+        cd ${{ inputs.submodule_path }}
+        git fetch origin ${{ inputs.branch }}  # Fetch latest changes from the remote input branch
+        
+        echo "git rev-list --count HEAD..origin/${{ inputs.branch }} = $(git rev-list --count HEAD..origin/${{ inputs.branch }})"
+        
+        IS_SUB_UPDATED=$(git rev-list --count HEAD..origin/${{ inputs.branch }})
+
+        # Add the result to output buffer
+        echo "is_submodule_need_update=$IS_SUB_UPDATED" >> "$GITHUB_OUTPUT"
+        
+
