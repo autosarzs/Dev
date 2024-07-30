@@ -141,6 +141,25 @@ coverage:
 	-j$(MAXIMUM_CPU_CORES);
 
 ##############################################################################
+# Static Analysis                                                            #
+##############################################################################
+STATIC_ANALYSIS_TOOL = cppcheck
+HTML_REPORT_TOOL = cppcheck-htmlreport
+
+STATIC_ANALYSIS_ADD_ONS = $(MISRA_DIR)/misra.json
+STATIC_ANALYSIS_FLAGS =  -q --error-exitcode=1
+SOURCE_FILES ?= $(shell find ./software/* -name '*.c' -not -path '*/tests/*')
+
+misra_check:
+ifeq ($(rebuild),1)
+	-@rm -rf $(MISRA_2012_INSTALL_DIR)
+endif
+	@mkdir -p $(MISRA_2012_INSTALL_DIR)/xml $(MISRA_2012_INSTALL_DIR)/html
+	@$(foreach file,$(SOURCE_FILES), \
+		$(STATIC_ANALYSIS_TOOL) $(STATIC_ANALYSIS_FLAGS) --addon=$(STATIC_ANALYSIS_ADD_ONS) --xml $(file) 2> $(MISRA_2012_INSTALL_DIR)/xml/$(basename $(notdir $(file)))_misra_2012_violation.xml; \
+		$(HTML_REPORT_TOOL) --file=$(MISRA_2012_INSTALL_DIR)/xml/$(basename $(notdir $(file)))_misra_2012_violation.xml --report-dir=$(MISRA_2012_INSTALL_DIR)/html/$(basename $(notdir $(file))) --source-dir=.;)
+
+##############################################################################
 # help                                                                       #
 ##############################################################################
 help:
@@ -151,15 +170,20 @@ help:
 	@echo "  build_test   - Sub-process from ${HEADRS}unit_test${NC} to build test files only."
 	@echo "  test         - Sub-process from ${HEADRS}unit_test${NC} to execute pre-built test files."
 	@echo "  coverage     - Sub-process from ${HEADRS}unit_test${NC} to generate coverage files only."
+	@echo "  misra_check  - Check Misra 2012 Violations for all core source files."
 	@echo ""
 	@echo "${HEADRS}Available Options:${NC}"
-	@echo "  rebuild=1           - It will rebuild whole project (valid for build and unit_test only)."
+	@echo "  rebuild=1           - It will rebuild whole project (valid for build, unit_test, and misra_check only)."
 	@echo "                      - ${HEADRS}Options${NC}: {0,1}"
 	@echo "                      - ${HEADRS}Defailt Value${NC}: 0"
 	@echo ""
 	@echo "  HTML_THEME=green    - It will generate html with selected theme (valid for coverage and unit_test only)."
 	@echo "                      - ${HEADRS}Options${NC}: {green,blue,github.blue,github.green,github.dark-green,github.dark-blue}"
 	@echo "                      - ${HEADRS}Defailt Value${NC}: github.green"
+	@echo ""
+	@echo "  SOURCE_FILES=PATH   - It will check misra for given paths (valid for misra_check only)."
+	@echo "                      - ${HEADRS}Options${NC}: module path ex: SOURCE_FILES=software/bsw/mcal/can_swc/core/Can.c"
+	@echo "                      - ${HEADRS}Defailt Value${NC}: */core/*.c"
 	@echo ""
 	@echo "${HEADRS}Use${NC}: make ${INFO}<target> <Option1> <Option2> ...${NC} "
 	@echo ""
