@@ -18,8 +18,10 @@ RUN apt-get update && \
     wget \
     xz-utils \
     ruby \
+    cppcheck \
     && rm -rf /var/lib/apt/lists/* \
     && pip3 install junit2html
+    
 
 # Download Linaro GCC compiler
 RUN wget -c https://releases.linaro.org/components/toolchain/binaries/7.2-2017.11/arm-eabi/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi.tar.xz --no-check-certificate
@@ -31,6 +33,9 @@ RUN mkdir -p /opt/compilers/gcc-linaro-7.2.1-2017.11-x86_64_arm-eabi && \
     
 # Install gcovr tool
 RUN pip install gcovr==7.2
+
+# Run pip without considering dependencies
+RUN pip install Pygments==2.5.2 --force-reinstall --no-deps
 
 # Set the default command
 CMD ["/bin/bash"]

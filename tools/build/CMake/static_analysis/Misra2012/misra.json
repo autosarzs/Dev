@@ -1,0 +1,6 @@
+{
+    "script": "misra.py",
+    "args": [
+        "--rule-texts=tools/build/CMake/static_analysis/Misra2012/misra.txt"
+    ]
+}
