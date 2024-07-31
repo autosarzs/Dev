@@ -159,6 +159,18 @@ endif
 		$(STATIC_ANALYSIS_TOOL) $(STATIC_ANALYSIS_FLAGS) --addon=$(STATIC_ANALYSIS_ADD_ONS) --xml $(file) 2> $(MISRA_2012_INSTALL_DIR)/xml/$(basename $(notdir $(file)))_misra_2012_violation.xml; \
 		$(HTML_REPORT_TOOL) --file=$(MISRA_2012_INSTALL_DIR)/xml/$(basename $(notdir $(file)))_misra_2012_violation.xml --report-dir=$(MISRA_2012_INSTALL_DIR)/html/$(basename $(notdir $(file))) --source-dir=.;)
 
+cppcheck:
+ifeq ($(rebuild),1)
+	-@rm -rf $(STATIC_ANALYSIS_INSTALL_DIR)/cppcheck
+endif
+	@mkdir -p $(STATIC_ANALYSIS_INSTALL_DIR)/cppcheck/html
+	@mkdir -p $(STATIC_ANALYSIS_INSTALL_DIR)/cppcheck/xml
+	@echo "Running cppcheck..."
+	@cppcheck --enable=all --force --xml --xml-version=2 $(SW_DIR) 2> $(STATIC_ANALYSIS_INSTALL_DIR)/cppcheck/xml/cppcheck.xml
+	@echo "${HEADRS}Generating HTML report...${NC}"
+	@cppcheck-htmlreport --file=$(STATIC_ANALYSIS_INSTALL_DIR)/cppcheck/xml/cppcheck.xml --report-dir=$(STATIC_ANALYSIS_INSTALL_DIR)/cppcheck/html --source-dir=.
+	@echo "${HEADRS}HTML report generated at $(STATIC_ANALYSIS_INSTALL_DIR)/cppcheck${NC}"
+
 ##############################################################################
 # help                                                                       #
 ##############################################################################
@@ -171,6 +183,7 @@ help:
 	@echo "  test         - Sub-process from ${HEADRS}unit_test${NC} to execute pre-built test files."
 	@echo "  coverage     - Sub-process from ${HEADRS}unit_test${NC} to generate coverage files only."
 	@echo "  misra_check  - Check Misra 2012 Violations for all core source files."
+	@echo "  cppcheck     - Run different static analysis."
 	@echo ""
 	@echo "${HEADRS}Available Options:${NC}"
 	@echo "  rebuild=1           - It will rebuild whole project (valid for build, unit_test, and misra_check only)."
